@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // UIWindow 인스턴스 생성 및 설정
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = UINavigationController(rootViewController: YourInitialViewController())
+        window?.rootViewController = UINavigationController(rootViewController: MainTabBarController())
         window?.makeKeyAndVisible()
     }
 
