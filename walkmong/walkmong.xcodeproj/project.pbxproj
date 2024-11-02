@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		094CB8DD2CD669E500E60933 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 094CB8DC2CD669E500E60933 /* SnapKit */; };
+		094CB8DF2CD669E500E60933 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 094CB8DE2CD669E500E60933 /* SnapKit-Dynamic */; };
+		094CB8E22CD66A5D00E60933 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 094CB8E12CD66A5D00E60933 /* Kingfisher */; };
+		094CB8E52CD66AAE00E60933 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 094CB8E42CD66AAE00E60933 /* Moya */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		5EF033102CD619E2002277AE /* walkmong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = walkmong.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +43,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				094CB8E22CD66A5D00E60933 /* Kingfisher in Frameworks */,
+				094CB8DD2CD669E500E60933 /* SnapKit in Frameworks */,
+				094CB8E52CD66AAE00E60933 /* Moya in Frameworks */,
+				094CB8DF2CD669E500E60933 /* SnapKit-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +89,10 @@
 			);
 			name = walkmong;
 			packageProductDependencies = (
+				094CB8DC2CD669E500E60933 /* SnapKit */,
+				094CB8DE2CD669E500E60933 /* SnapKit-Dynamic */,
+				094CB8E12CD66A5D00E60933 /* Kingfisher */,
+				094CB8E42CD66AAE00E60933 /* Moya */,
 			);
 			productName = walkmong;
 			productReference = 5EF033102CD619E2002277AE /* walkmong.app */;
@@ -107,6 +122,11 @@
 			);
 			mainGroup = 5EF033072CD619E2002277AE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				094CB8DB2CD669E500E60933 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				094CB8E02CD66A5D00E60933 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				094CB8E32CD66AAE00E60933 /* XCRemoteSwiftPackageReference "Moya" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5EF033112CD619E2002277AE /* Products */;
 			projectDirPath = "";
@@ -343,6 +363,56 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		094CB8DB2CD669E500E60933 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		094CB8E02CD66A5D00E60933 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.0;
+			};
+		};
+		094CB8E32CD66AAE00E60933 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		094CB8DC2CD669E500E60933 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 094CB8DB2CD669E500E60933 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		094CB8DE2CD669E500E60933 /* SnapKit-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 094CB8DB2CD669E500E60933 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = "SnapKit-Dynamic";
+		};
+		094CB8E12CD66A5D00E60933 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 094CB8E02CD66A5D00E60933 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		094CB8E42CD66AAE00E60933 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 094CB8E32CD66AAE00E60933 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5EF033082CD619E2002277AE /* Project object */;
 }
