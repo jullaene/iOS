@@ -29,7 +29,6 @@ class MatchingView: UIView {
         return label
     }()
     
-    // selectdongbtn 이미지를 포함하는 UIImageView
     private let selectImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "selectdongbtn") // 변환된 PNG 또는 PDF 이미지 사용
@@ -85,14 +84,13 @@ class MatchingView: UIView {
         locationSelectView.addSubview(locationLabel)
         locationLabel.snp.makeConstraints { make in
             make.leading.centerY.equalToSuperview()
-            make.width.equalToSuperview()
             make.height.equalToSuperview()
         }
         
         locationSelectView.addSubview(selectImageView)
         selectImageView.snp.makeConstraints { make in
             make.leading.equalTo(locationLabel.snp.trailing).offset(4)
-            make.trailing.centerY.equalToSuperview()
+            make.centerY.equalToSuperview() // locationSelectView의 수직 중앙에 위치
             make.width.equalTo(16)
             make.height.equalTo(14)
         }
