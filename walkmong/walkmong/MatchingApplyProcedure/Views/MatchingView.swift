@@ -36,14 +36,15 @@ class MatchingView: UIView {
         return imageView
     }()
     
+    private let calendarView = CalendarView()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        // 배경 뷰 설정
         setupCustomView()
-        
-        // 지역 선택 뷰 설정
         setupLocationSelectView()
+        setupCalendarView()
+
     }
     
     required init?(coder: NSCoder) {
@@ -90,9 +91,20 @@ class MatchingView: UIView {
         locationSelectView.addSubview(selectImageView)
         selectImageView.snp.makeConstraints { make in
             make.leading.equalTo(locationLabel.snp.trailing).offset(4)
-            make.centerY.equalToSuperview() // locationSelectView의 수직 중앙에 위치
+            make.trailing.centerY.equalToSuperview()
             make.width.equalTo(16)
             make.height.equalTo(14)
+        }
+    }
+    
+    private func setupCalendarView() {
+        self.addSubview(calendarView)
+        
+        calendarView.snp.makeConstraints { make in
+            make.top.equalTo(locationSelectView.snp.bottom).offset(36)
+            make.leading.equalToSuperview().offset(16) // 화면의 왼쪽에서 16pt 간격
+            make.trailing.equalToSuperview().offset(-16) // 화면의 오른쪽에서 16pt 간격
+            make.height.equalTo(97)
         }
     }
 }
