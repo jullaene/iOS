@@ -336,8 +336,8 @@ class MatchingCell: UIView {
         loadingDatePlaceholder.snp.makeConstraints { make in
             make.width.equalTo(245)
             make.height.equalTo(28)
-            make.top.equalToSuperview().offset(10)
-            make.leading.equalToSuperview().offset(16)
+            make.top.equalToSuperview().offset(0)
+            make.leading.equalToSuperview().offset(0)
         }
         
         mainView.addSubview(loadingStatusPlaceholder)
@@ -346,7 +346,7 @@ class MatchingCell: UIView {
         loadingStatusPlaceholder.snp.makeConstraints { make in
             make.width.equalTo(63)
             make.height.equalTo(29)
-            make.trailing.equalToSuperview().offset(-16)
+            make.trailing.equalToSuperview().offset(0)
             make.centerY.equalTo(loadingDatePlaceholder)
         }
         
@@ -355,32 +355,36 @@ class MatchingCell: UIView {
         loadingImagePlaceholder.layer.cornerRadius = 10
         loadingImagePlaceholder.snp.makeConstraints { make in
             make.width.height.equalTo(97)
-            make.leading.equalToSuperview().offset(16)
-            make.top.equalTo(loadingDatePlaceholder.snp.bottom).offset(10)
+            make.leading.equalToSuperview().offset(0)
+            make.top.equalTo(loadingDatePlaceholder.snp.bottom).offset(16.5)
         }
         
         let nameAndBreedStack = UIStackView(arrangedSubviews: [loadingNamePlaceholder, loadingBreedPlaceholder])
         nameAndBreedStack.axis = .horizontal
         nameAndBreedStack.spacing = 8
+        nameAndBreedStack.alignment = .center // 중앙 정렬
+        
         mainView.addSubview(nameAndBreedStack)
         
         loadingNamePlaceholder.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
         loadingNamePlaceholder.layer.cornerRadius = 12.5
         loadingNamePlaceholder.snp.makeConstraints { make in
-            make.width.equalTo(65)
             make.height.equalTo(25)
+            make.width.greaterThanOrEqualTo(65) // 최소 너비 설정
         }
         
         loadingBreedPlaceholder.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
         loadingBreedPlaceholder.layer.cornerRadius = 12.5
         loadingBreedPlaceholder.snp.makeConstraints { make in
-            make.width.equalTo(170)
             make.height.equalTo(25)
+            make.width.greaterThanOrEqualTo(170) // 최소 너비 설정
         }
         
         nameAndBreedStack.snp.makeConstraints { make in
             make.leading.equalTo(loadingImagePlaceholder.snp.trailing).offset(12)
-            make.centerY.equalTo(loadingImagePlaceholder)
+            make.trailing.equalTo(mainView.snp.trailing).offset(0)
+            make.top.equalTo(loadingStatusPlaceholder.snp.bottom).offset(16.5)
+            make.height.equalTo(25)
         }
         
         var previousLine: UIView? = nil
@@ -394,10 +398,11 @@ class MatchingCell: UIView {
                 make.width.equalTo(245)
                 make.height.equalTo(8)
                 make.leading.equalTo(loadingImagePlaceholder.snp.trailing).offset(12)
+                make.trailing.equalTo(mainView.snp.trailing).offset(0)
                 if let prev = previousLine {
                     make.top.equalTo(prev.snp.bottom).offset(5)
                 } else {
-                    make.top.equalTo(nameAndBreedStack.snp.bottom).offset(5)
+                    make.top.equalTo(nameAndBreedStack.snp.bottom).offset(8)
                 }
             }
             loadingLines.append(line)

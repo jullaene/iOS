@@ -69,7 +69,7 @@ class MatchingView: UIView {
         setupFloatingButton()
         
         // 3초 후에 로딩 셀을 일반 셀로 전환
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3000.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
             self?.toggleLoadingCells(isLoading: false)
         }
     }
