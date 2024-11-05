@@ -66,7 +66,7 @@ class DayCell: UICollectionViewCell {
     
     func configureSelectedStyle() {
         contentView.backgroundColor = .black
-        contentView.layer.cornerRadius = 18
+        contentView.layer.cornerRadius = 18.5
         contentView.layer.masksToBounds = true
         dayOfWeekLabel.textColor = .white
         dayLabel.textColor = .white
