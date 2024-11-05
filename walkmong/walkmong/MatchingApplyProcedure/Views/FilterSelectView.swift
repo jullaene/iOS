@@ -1,9 +1,4 @@
-//
-//  FilterSelectView.swift
-//  walkmong
-//
-//  Created by 신호연 on 11/5/24.
-//
+// FilterSelectView.swift
 
 import UIKit
 import SnapKit
@@ -30,10 +25,10 @@ class FilterSelectView: UIView {
     
     private let breedButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+        button.backgroundColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)   // 선택된 상태 배경색
         button.layer.cornerRadius = 18
         button.setTitle("견종", for: .normal)
-        button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
+        button.setTitleColor(UIColor.white, for: .normal)  // 선택된 상태 글씨 색상
         button.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         return button
     }()
