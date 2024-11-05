@@ -43,6 +43,20 @@ class MatchingView: UIView {
     private let filterSelectView = FilterSelectView()
     private var matchingCells: [MatchingCell] = []
     
+    private let floatingButton: UIView = {
+        let view = UIView()
+        view.layer.backgroundColor = UIColor(red: 0.303, green: 0.764, blue: 1, alpha: 1).cgColor
+        view.layer.cornerRadius = 32
+        return view
+    }()
+    
+    private let floatingButtonIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "pencilIcon") // pencilIcon.svg를 UIImage로 변환 후 프로젝트에 추가해야 합니다.
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -52,6 +66,7 @@ class MatchingView: UIView {
         setupCalendarView()
         setupFilterSelectView()
         setupMatchingCells()
+        setupFloatingButton()
     }
     
     required init?(coder: NSCoder) {
@@ -62,7 +77,6 @@ class MatchingView: UIView {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        // safeArea 무시 설정
         scrollView.contentInsetAdjustmentBehavior = .never
         
         scrollView.snp.makeConstraints { make in
@@ -74,7 +88,7 @@ class MatchingView: UIView {
             make.width.equalToSuperview()
         }
     }
-
+    
     private func setupCustomView() {
         contentView.addSubview(customView)
         
@@ -165,6 +179,23 @@ class MatchingView: UIView {
         
         matchingCells.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
+        }
+    }
+    
+    private func setupFloatingButton() {
+        addSubview(floatingButton)
+        
+        floatingButton.snp.makeConstraints { make in
+            make.width.height.equalTo(64)
+            make.trailing.equalToSuperview().offset(-16)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-33)
+        }
+        
+        floatingButton.addSubview(floatingButtonIcon)
+        
+        floatingButtonIcon.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(32) // 아이콘 크기 조정
         }
     }
 }
