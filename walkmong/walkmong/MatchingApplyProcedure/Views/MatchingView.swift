@@ -65,8 +65,13 @@ class MatchingView: UIView {
         setupLocationSelectView()
         setupCalendarView()
         setupFilterSelectView()
-        setupMatchingCells()
+        setupMatchingCells(isLoading: true)
         setupFloatingButton()
+        
+        // 3초 후에 로딩 셀을 일반 셀로 전환
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3000.0) { [weak self] in
+            self?.toggleLoadingCells(isLoading: false)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -156,9 +161,10 @@ class MatchingView: UIView {
         }
     }
     
-    private func setupMatchingCells() {
+    private func setupMatchingCells(isLoading: Bool) {
         for _ in 0..<4 {
             let cell = MatchingCell()
+            cell.configureLoading(isLoading)
             matchingCells.append(cell)
             contentView.addSubview(cell)
         }
@@ -179,6 +185,12 @@ class MatchingView: UIView {
         
         matchingCells.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
+        }
+    }
+    
+    private func toggleLoadingCells(isLoading: Bool) {
+        for cell in matchingCells {
+            cell.configureLoading(isLoading)
         }
     }
     
