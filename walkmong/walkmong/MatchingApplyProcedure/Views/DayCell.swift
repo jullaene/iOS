@@ -30,7 +30,6 @@ class DayCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.layer.cornerRadius = 30
         setupLayout()
     }
     
@@ -42,8 +41,15 @@ class DayCell: UICollectionViewCell {
         contentView.addSubview(dayOfWeekLabel)
         contentView.addSubview(dayLabel)
         
+        // Cell 크기 설정
+        contentView.snp.makeConstraints { make in
+            make.width.equalTo(37)
+            make.height.equalTo(63)
+        }
+        
+        // 요일 및 일 레이블 중앙 정렬
         dayOfWeekLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalToSuperview().offset((63 - 25 - 22 - 4) / 2)
             make.centerX.equalToSuperview()
             make.height.equalTo(25)
         }

@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 class CalendarView: UIView {
-
+    
     private let monthLabel: UILabel = {
         let label = UILabel()
         label.text = "2024년 11월"
@@ -19,15 +19,23 @@ class CalendarView: UIView {
     }()
     
     private lazy var dayCollectionView: UICollectionView = {
+        let cellWidth: CGFloat = 37
+        let leadingTrailingInset: CGFloat = 4
+        let totalWidth = UIScreen.main.bounds.width - 32 // 기기 너비에 맞추기 위해 32를 빼고 설정
+        
+        // 간격 계산: 전체 너비에서 셀의 너비와 양쪽의 여백을 뺀 후 6으로 나눔
+        let interItemSpacing = (totalWidth - (leadingTrailingInset * 2) - (cellWidth * 7)) / 6
+
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, environment) -> NSCollectionLayoutSection? in
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0 / 7.0), heightDimension: .absolute(63))
+            let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(cellWidth), heightDimension: .absolute(63))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            
+
             let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(63))
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-            
+            group.interItemSpacing = .fixed(interItemSpacing)
+
             let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
+            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: leadingTrailingInset, bottom: 0, trailing: leadingTrailingInset)
             return section
         }
         
@@ -60,7 +68,7 @@ class CalendarView: UIView {
         
         dayCollectionView.snp.makeConstraints { make in
             make.top.equalTo(monthLabel.snp.bottom).offset(12)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.bottom.equalToSuperview()
             make.height.equalTo(63)
         }
     }
@@ -68,37 +76,19 @@ class CalendarView: UIView {
 
 // MARK: - UICollectionViewDataSource & UICollectionViewDelegateFlowLayout
 extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 7
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DayCell.identifier, for: indexPath) as? DayCell else {
             return UICollectionViewCell()
         }
         
-        // 요일과 일자 데이터 설정 (예시)
         let days = [("일", "3"), ("월", "4"), ("화", "5"), ("수", "6"), ("목", "7"), ("금", "8"), ("토", "9")]
         cell.configure(dayOfWeek: days[indexPath.item].0, day: days[indexPath.item].1)
         
         return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        // 좌우 여백 4pt씩 총 8pt를 제외하고, 7개의 셀을 균등하게 분배
-        let totalWidth = collectionView.frame.width - 8
-        let itemWidth = totalWidth / 7
-        return CGSize(width: itemWidth, height: 63)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        // 첫 번째와 마지막 셀이 캘린더 뷰의 경계에서 4pt 떨어지도록 설정
-        return UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        // 셀 간 간격을 컬렉션 뷰 너비에 맞추어 균등하게 설정
-        return 0 // 셀 간 간격을 수동으로 계산해 자동 설정을 방지
     }
 }

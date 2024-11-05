@@ -31,7 +31,7 @@ class MatchingView: UIView {
     
     private let selectImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "selectdongbtn") // 변환된 PNG 또는 PDF 이미지 사용
+        imageView.image = UIImage(named: "selectdongbtn")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -44,7 +44,6 @@ class MatchingView: UIView {
         setupCustomView()
         setupLocationSelectView()
         setupCalendarView()
-
     }
     
     required init?(coder: NSCoder) {
@@ -102,8 +101,9 @@ class MatchingView: UIView {
         
         calendarView.snp.makeConstraints { make in
             make.top.equalTo(locationSelectView.snp.bottom).offset(36)
-            make.leading.equalToSuperview().offset(16) // 화면의 왼쪽에서 16pt 간격
-            make.trailing.equalToSuperview().offset(-16) // 화면의 오른쪽에서 16pt 간격
+            make.leading.equalToSuperview().offset(16)
+            make.trailing.equalToSuperview().offset(-16)
+            make.width.equalTo(361)
             make.height.equalTo(97)
         }
     }
