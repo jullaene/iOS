@@ -105,7 +105,6 @@ class MatchingView: UIView {
             make.top.equalTo(locationSelectView.snp.bottom).offset(36)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
-            make.width.equalTo(361)
             make.height.equalTo(97)
         }
     }
