@@ -1,3 +1,4 @@
+
 import UIKit
 import SnapKit
 
@@ -88,6 +89,11 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegateFlow
         
         let days = [("일", "3"), ("월", "4"), ("화", "5"), ("수", "6"), ("목", "7"), ("금", "8"), ("토", "9")]
         cell.configure(dayOfWeek: days[indexPath.item].0, day: days[indexPath.item].1)
+        
+        // 첫 번째 셀의 디자인 설정
+        if indexPath.item == 0 {
+            cell.configureSelectedStyle()
+        }
         
         return cell
     }

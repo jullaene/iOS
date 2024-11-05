@@ -41,13 +41,11 @@ class DayCell: UICollectionViewCell {
         contentView.addSubview(dayOfWeekLabel)
         contentView.addSubview(dayLabel)
         
-        // Cell 크기 설정
         contentView.snp.makeConstraints { make in
             make.width.equalTo(37)
             make.height.equalTo(63)
         }
         
-        // 요일 및 일 레이블 중앙 정렬
         dayOfWeekLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset((63 - 25 - 22 - 4) / 2)
             make.centerX.equalToSuperview()
@@ -64,5 +62,13 @@ class DayCell: UICollectionViewCell {
     func configure(dayOfWeek: String, day: String) {
         dayOfWeekLabel.text = dayOfWeek
         dayLabel.text = day
+    }
+    
+    func configureSelectedStyle() {
+        contentView.backgroundColor = .black
+        contentView.layer.cornerRadius = 18
+        contentView.layer.masksToBounds = true
+        dayOfWeekLabel.textColor = .white
+        dayLabel.textColor = .white
     }
 }
