@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 class MatchingView: UIView {
-
+    
     private let customView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(red: 0.303, green: 0.764, blue: 1, alpha: 1)
@@ -37,7 +37,8 @@ class MatchingView: UIView {
     }()
     
     private let calendarView = CalendarView()
-    private let filterSelectView = FilterSelectView()  // 필터 선택 뷰 추가
+    private let filterSelectView = FilterSelectView()
+    private var matchingCells: [MatchingCell] = []
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,7 +46,8 @@ class MatchingView: UIView {
         setupCustomView()
         setupLocationSelectView()
         setupCalendarView()
-        setupFilterSelectView()  // 필터 선택 뷰 설정
+        setupFilterSelectView()
+        setupMatchingCells()  // MatchingCell 4개 설정
     }
     
     required init?(coder: NSCoder) {
@@ -113,9 +115,32 @@ class MatchingView: UIView {
         self.addSubview(filterSelectView)
         
         filterSelectView.snp.makeConstraints { make in
-            make.top.equalTo(customView.snp.bottom).offset(0)
+            make.top.equalTo(customView.snp.bottom)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(78)
+        }
+    }
+    
+    private func setupMatchingCells() {
+        for _ in 0..<4 {
+            let cell = MatchingCell()
+            matchingCells.append(cell)
+            self.addSubview(cell)
+        }
+        
+        // MatchingCell의 위치 및 간격 설정
+        for (index, cell) in matchingCells.enumerated() {
+            cell.snp.makeConstraints { make in
+                make.width.equalTo(353)
+                make.height.equalTo(151)
+                make.centerX.equalToSuperview()
+                
+                if index == 0 {
+                    make.top.equalTo(filterSelectView.snp.bottom).offset(12)
+                } else {
+                    make.top.equalTo(matchingCells[index - 1].snp.bottom).offset(32)
+                }
+            }
         }
     }
 }
