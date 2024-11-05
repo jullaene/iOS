@@ -49,7 +49,7 @@ final class MainTabBarController: UITabBarController {
         
         let talkVC = UIViewController()
         talkVC.view.backgroundColor = .white
-        talkVC.tabBarItem = UITabBarItem(title: "워크멍톡", image: UIImage(named: "WalkMongTalkIcon"), tag: 2)
+        talkVC.tabBarItem = UITabBarItem(title: "워크톡", image: UIImage(named: "WalkMongTalkIcon"), tag: 2)
         
         let mypageVC = UIViewController()
         mypageVC.view.backgroundColor = .white
