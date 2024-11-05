@@ -37,6 +37,7 @@ class MatchingView: UIView {
     }()
     
     private let calendarView = CalendarView()
+    private let filterSelectView = FilterSelectView()  // 필터 선택 뷰 추가
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,6 +45,7 @@ class MatchingView: UIView {
         setupCustomView()
         setupLocationSelectView()
         setupCalendarView()
+        setupFilterSelectView()  // 필터 선택 뷰 설정
     }
     
     required init?(coder: NSCoder) {
@@ -105,6 +107,16 @@ class MatchingView: UIView {
             make.trailing.equalToSuperview().offset(-16)
             make.width.equalTo(361)
             make.height.equalTo(97)
+        }
+    }
+    
+    private func setupFilterSelectView() {
+        self.addSubview(filterSelectView)
+        
+        filterSelectView.snp.makeConstraints { make in
+            make.top.equalTo(customView.snp.bottom).offset(0)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(78)
         }
     }
 }
