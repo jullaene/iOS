@@ -3,6 +3,9 @@ import SnapKit
 
 class MatchingView: UIView {
     
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    
     private let customView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(red: 0.303, green: 0.764, blue: 1, alpha: 1)
@@ -43,19 +46,37 @@ class MatchingView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        setupScrollView()
         setupCustomView()
         setupLocationSelectView()
         setupCalendarView()
         setupFilterSelectView()
-        setupMatchingCells()  // MatchingCell 4개 설정
+        setupMatchingCells()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupScrollView() {
+        addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        // safeArea 무시 설정
+        scrollView.contentInsetAdjustmentBehavior = .never
+        
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+        }
+    }
+
     private func setupCustomView() {
-        self.addSubview(customView)
+        contentView.addSubview(customView)
         
         customView.snp.makeConstraints { make in
             make.width.equalToSuperview()
@@ -76,7 +97,7 @@ class MatchingView: UIView {
     }
     
     private func setupLocationSelectView() {
-        self.addSubview(locationSelectView)
+        contentView.addSubview(locationSelectView)
         
         locationSelectView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(83)
@@ -101,7 +122,7 @@ class MatchingView: UIView {
     }
     
     private func setupCalendarView() {
-        self.addSubview(calendarView)
+        contentView.addSubview(calendarView)
         
         calendarView.snp.makeConstraints { make in
             make.top.equalTo(locationSelectView.snp.bottom).offset(36)
@@ -112,7 +133,7 @@ class MatchingView: UIView {
     }
     
     private func setupFilterSelectView() {
-        self.addSubview(filterSelectView)
+        contentView.addSubview(filterSelectView)
         
         filterSelectView.snp.makeConstraints { make in
             make.top.equalTo(customView.snp.bottom)
@@ -125,10 +146,9 @@ class MatchingView: UIView {
         for _ in 0..<4 {
             let cell = MatchingCell()
             matchingCells.append(cell)
-            self.addSubview(cell)
+            contentView.addSubview(cell)
         }
         
-        // MatchingCell의 위치 및 간격 설정
         for (index, cell) in matchingCells.enumerated() {
             cell.snp.makeConstraints { make in
                 make.width.equalTo(353)
@@ -141,6 +161,10 @@ class MatchingView: UIView {
                     make.top.equalTo(matchingCells[index - 1].snp.bottom).offset(32)
                 }
             }
+        }
+        
+        matchingCells.last?.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-20)
         }
     }
 }

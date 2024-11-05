@@ -13,6 +13,10 @@ final class MainTabBarController: UITabBarController {
         setUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
     
     private class CustomTabBar: UITabBar {
         var customHeight: CGFloat = 96
