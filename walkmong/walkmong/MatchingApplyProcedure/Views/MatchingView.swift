@@ -12,7 +12,7 @@ class MatchingView: UIView {
         return view
     }()
     
-    private let locationSelectView: UIView = {
+    let locationSelectView: UIView = {
         let view = UIView()
         return view
     }()
