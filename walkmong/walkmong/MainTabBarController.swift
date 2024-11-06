@@ -49,7 +49,7 @@ final class MainTabBarController: UITabBarController {
         
         let talkVC = UIViewController()
         talkVC.view.backgroundColor = .white
-        talkVC.tabBarItem = UITabBarItem(title: "워크멍톡", image: UIImage(named: "WalkMongTalkIcon"), tag: 2)
+        talkVC.tabBarItem = UITabBarItem(title: "워크톡", image: UIImage(named: "WalkMongTalkIcon"), tag: 2)
         
         let mypageVC = UIViewController()
         mypageVC.view.backgroundColor = .white
@@ -59,14 +59,26 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func setUI() {
+        // 배경 색상 설정
         tabBar.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.75)
         tabBar.tintColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
         tabBar.unselectedItemTintColor = UIColor(red: 0.719, green: 0.737, blue: 0.761, alpha: 1)
         tabBar.shadowImage = UIImage()
         tabBar.backgroundImage = UIImage()
         
+        // 블러 효과 추가
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.alpha = 0.9 // 블러 효과 강도 조절 (피그마에서 50%로 설정)
+        blurEffectView.frame = tabBar.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        // 블러 뷰를 탭바에 추가
+        tabBar.insertSubview(blurEffectView, at: 0)
+
+        // 상단에 경계선 추가
         let border = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
-        border.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
+        border.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.05)
         tabBar.addSubview(border)
     }
 }
