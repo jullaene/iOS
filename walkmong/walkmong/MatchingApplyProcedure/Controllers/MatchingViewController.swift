@@ -6,19 +6,15 @@ class MatchingViewController: UIViewController {
     private var matchingFilterView: MatchingFilterView?
     private var dimView: UIView!
     private var dropdownView: DropdownView!
-    private var locationSelectView: UIView! // MatchingView의 locationSelectView에 접근하기 위한 변수
-    private var locationLabel: UILabel! // MatchingView의 locationLabel 접근 변수
+    private var locationSelectView: UIView!
+    private var locationLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 네비게이션 바 숨기기
         self.navigationController?.navigationBar.isHidden = true
-
-        // 배경 색상 설정
         self.view.backgroundColor = .white
 
-        // MatchingView 추가
         let matchingView = MatchingView()
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
@@ -30,7 +26,6 @@ class MatchingViewController: UIViewController {
             make.edges.equalToSuperview()
         }
 
-        // MatchingView에서 locationSelectView와 locationLabel 가져오기
         self.locationSelectView = matchingView.locationSelectView
         self.locationLabel = matchingView.locationLabel
         
@@ -49,7 +44,7 @@ class MatchingViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideDropdownView))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideFilterAndDropdown))
         dimView.addGestureRecognizer(tapGesture)
     }
     
@@ -78,12 +73,17 @@ class MatchingViewController: UIViewController {
     }
     
     @objc private func hideDropdownView() {
-        dimView.isHidden = true
         dropdownView.isHidden = true
+        dimView.isHidden = matchingFilterView == nil // 필터 뷰가 없으면 dimView 숨김
+    }
+    
+    @objc private func hideFilterAndDropdown() {
+        hideDropdownView()
+        hideMatchingFilterView()
     }
 
     private func showMatchingFilterView() {
-        guard matchingFilterView == nil else { return } // 이미 뷰가 있다면 추가하지 않음
+        guard matchingFilterView == nil else { return }
 
         let filterView = MatchingFilterView()
         filterView.layer.cornerRadius = 30
@@ -92,22 +92,21 @@ class MatchingViewController: UIViewController {
         self.view.addSubview(filterView)
         self.matchingFilterView = filterView
         
-        // 초기 위치: 화면 아래쪽
         filterView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(605)
-            make.bottom.equalToSuperview().offset(605) // 화면 아래에 위치
+            make.bottom.equalToSuperview().offset(605)
         }
         
-        // 레이아웃 강제 업데이트 (초기 상태 적용)
         self.view.layoutIfNeeded()
+
+        dimView.isHidden = false
         
-        // 애니메이션으로 스르륵 올라오는 효과
         UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseOut], animations: {
             filterView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview() // 화면 하단에 위치
+                make.bottom.equalToSuperview()
             }
-            self.view.layoutIfNeeded() // 레이아웃 변경 즉시 반영
+            self.view.layoutIfNeeded()
         })
     }
     
@@ -116,12 +115,13 @@ class MatchingViewController: UIViewController {
         
         UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseIn], animations: {
             filterView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview().offset(605) // 다시 화면 아래로 내려감
+                make.bottom.equalToSuperview().offset(605)
             }
             self.view.layoutIfNeeded()
         }, completion: { _ in
             filterView.removeFromSuperview()
             self.matchingFilterView = nil
+            self.dimView.isHidden = true
         })
     }
 }
@@ -129,8 +129,8 @@ class MatchingViewController: UIViewController {
 // DropdownViewDelegate를 통해 선택된 동네를 업데이트합니다.
 extension MatchingViewController: DropdownViewDelegate {
     func didSelectLocation(_ location: String) {
-        locationLabel.text = location // 선택된 동네를 locationLabel에 업데이트
-        dropdownView.updateSelection(selectedLocation: location) // DropdownView의 상태 업데이트
+        locationLabel.text = location
+        dropdownView.updateSelection(selectedLocation: location)
         hideDropdownView()
     }
 }
