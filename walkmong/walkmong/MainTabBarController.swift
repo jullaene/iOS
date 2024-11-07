@@ -1,16 +1,49 @@
 import UIKit
+import SnapKit
 
 final class MainTabBarController: UITabBarController {
     
+    var dimView: UIView!
+    var dropdownView: DropdownView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // CustomTabBar로 탭바 교체
+        setupDimView()
+        setupDropdownView()
+        self.view.bringSubviewToFront(dimView)
+
         let customTabBar = CustomTabBar()
         self.setValue(customTabBar, forKey: "tabBar")
         
         self.setViewControllers(configureTabBars(), animated: true)
         setUI()
+    }
+    
+    private func setupDimView() {
+        dimView = UIView()
+        dimView.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        dimView.isHidden = true
+        self.view.addSubview(dimView)
+        
+        dimView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideFilterAndDropdown))
+        dimView.addGestureRecognizer(tapGesture)
+    }
+    
+    private func setupDropdownView() {
+        dropdownView = DropdownView()
+        dropdownView.isHidden = true
+        self.view.addSubview(dropdownView)
+    }
+    
+    @objc private func hideFilterAndDropdown() {
+        if let matchingVC = self.selectedViewController as? MatchingViewController {
+            matchingVC.hideFilterAndDropdown()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -30,7 +63,6 @@ final class MainTabBarController: UITabBarController {
         override func layoutSubviews() {
             super.layoutSubviews()
             
-            // 탭바의 frame을 직접 설정
             var newFrame = self.frame
             newFrame.size.height = customHeight
             newFrame.origin.y = self.superview!.frame.height - customHeight
@@ -59,24 +91,20 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func setUI() {
-        // 배경 색상 설정
         tabBar.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.75)
         tabBar.tintColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
         tabBar.unselectedItemTintColor = UIColor(red: 0.719, green: 0.737, blue: 0.761, alpha: 1)
         tabBar.shadowImage = UIImage()
         tabBar.backgroundImage = UIImage()
         
-        // 블러 효과 추가
         let blurEffect = UIBlurEffect(style: .light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.alpha = 0.9 // 블러 효과 강도 조절 (피그마에서 50%로 설정)
+        blurEffectView.alpha = 0.9
         blurEffectView.frame = tabBar.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
-        // 블러 뷰를 탭바에 추가
         tabBar.insertSubview(blurEffectView, at: 0)
 
-        // 상단에 경계선 추가
         let border = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
         border.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.05)
         tabBar.addSubview(border)
