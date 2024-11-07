@@ -1,11 +1,10 @@
-// FilterSelectView.swift
-
 import UIKit
 import SnapKit
 
 class FilterSelectView: UIView {
 
-    private let filterButton: UIButton = {
+    // filterButton을 외부에서 접근 가능하도록 public으로 설정
+    public let filterButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
         button.layer.cornerRadius = 18.5
@@ -45,7 +44,6 @@ class FilterSelectView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setupLayout()
     }
     
@@ -54,11 +52,13 @@ class FilterSelectView: UIView {
     }
     
     private func setupLayout() {
+        // 버튼 추가
         addSubview(filterButton)
         addSubview(distanceButton)
         addSubview(breedButton)
         addSubview(matchStatusButton)
         
+        // filterButton 레이아웃 설정
         filterButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
             make.width.equalTo(34)
@@ -66,6 +66,7 @@ class FilterSelectView: UIView {
             make.centerY.equalToSuperview()
         }
         
+        // distanceButton 레이아웃 설정
         distanceButton.snp.makeConstraints { make in
             make.leading.equalTo(filterButton.snp.trailing).offset(8)
             make.width.equalTo(60)
@@ -73,6 +74,7 @@ class FilterSelectView: UIView {
             make.centerY.equalToSuperview()
         }
         
+        // breedButton 레이아웃 설정
         breedButton.snp.makeConstraints { make in
             make.leading.equalTo(distanceButton.snp.trailing).offset(8)
             make.width.equalTo(60)
@@ -80,6 +82,7 @@ class FilterSelectView: UIView {
             make.centerY.equalToSuperview()
         }
         
+        // matchStatusButton 레이아웃 설정
         matchStatusButton.snp.makeConstraints { make in
             make.leading.equalTo(breedButton.snp.trailing).offset(8)
             make.width.equalTo(87)

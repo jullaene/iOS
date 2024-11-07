@@ -3,6 +3,8 @@ import SnapKit
 
 class MatchingView: UIView {
     
+    var filterButtonAction: (() -> Void)? // filterButton 클릭 시 실행될 동작을 전달하기 위한 클로저
+    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
@@ -159,6 +161,13 @@ class MatchingView: UIView {
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(78)
         }
+        
+        // filterButton 클릭 이벤트와 연결
+        filterSelectView.filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func filterButtonTapped() {
+        filterButtonAction?() // 클로저를 통해 클릭 이벤트를 전달
     }
     
     private func setupMatchingCells(isLoading: Bool) {
