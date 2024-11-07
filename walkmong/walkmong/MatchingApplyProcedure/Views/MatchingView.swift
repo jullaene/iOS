@@ -12,12 +12,12 @@ class MatchingView: UIView {
         return view
     }()
     
-    private let locationSelectView: UIView = {
+    let locationSelectView: UIView = {
         let view = UIView()
         return view
     }()
     
-    private let locationLabel: UILabel = {
+    let locationLabel: UILabel = {
         let label = UILabel()
         label.text = "공릉동"
         label.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
