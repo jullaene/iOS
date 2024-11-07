@@ -395,7 +395,6 @@ class MatchingCell: UIView {
             mainView.addSubview(line)
             
             line.snp.makeConstraints { make in
-                make.width.equalTo(245)
                 make.height.equalTo(8)
                 make.leading.equalTo(loadingImagePlaceholder.snp.trailing).offset(12)
                 make.trailing.equalTo(mainView.snp.trailing).offset(0)
