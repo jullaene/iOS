@@ -39,7 +39,7 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func configureTabBars() -> [UIViewController] {
-        let matchingVC = MatchingViewController()
+        let matchingVC = MatchingApplyDetailSelectViewController()
         matchingVC.view.backgroundColor = .white
         matchingVC.tabBarItem = UITabBarItem(title: "산책 구하기", image: UIImage(named: "MatchingApplyProcedureIcon"), tag: 0)
         

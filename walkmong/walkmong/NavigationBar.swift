@@ -15,7 +15,6 @@ extension UIViewController {
         let navigationBarView = UIView()
         navigationBarView.backgroundColor = .white
         self.view.addSubview(navigationBarView)
-        self.navigationItem.titleView = navigationBarView
         
         navigationBarView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(45)
