@@ -35,20 +35,60 @@ class MatchingFilterView: UIView {
         self.layer.cornerRadius = 30
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
-        distanceFrame.backgroundColor = .red
-        breedFrame.backgroundColor = .clear // 기존 배경 제거
+        distanceFrame.backgroundColor = .clear
+        breedFrame.backgroundColor = .clear
         matchingStatusFrame.backgroundColor = .clear
 
         self.addSubview(distanceFrame)
         self.addSubview(breedFrame)
         self.addSubview(matchingStatusFrame)
         self.addSubview(buttonFrame)
-
+        
+        setupDistanceFrame()
         setupMatchingStatus()
         setupBreedFrame()
         setupButtons()
     }
 
+    private func setupDistanceFrame() {
+        // "거리" 텍스트 라벨
+        let distanceLabel = UILabel()
+        distanceLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        distanceLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.17
+        paragraphStyle.alignment = .left // 좌측 정렬
+        distanceLabel.attributedText = NSMutableAttributedString(
+            string: "거리",
+            attributes: [
+                NSAttributedString.Key.kern: -0.32,
+                NSAttributedString.Key.paragraphStyle: paragraphStyle
+            ]
+        )
+        distanceFrame.addSubview(distanceLabel)
+        
+        // 빨간 배경 프레임
+        let redBackgroundView = UIView()
+        redBackgroundView.backgroundColor = UIColor.red
+        distanceFrame.addSubview(redBackgroundView)
+        
+        // "거리" 텍스트 레이아웃
+        distanceLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(16) // 좌측 여백
+            make.trailing.equalToSuperview().inset(16) // 우측 여백
+            make.height.equalTo(28)
+        }
+        
+        // 빨간 배경 프레임 레이아웃
+        redBackgroundView.snp.makeConstraints { make in
+            make.top.equalTo(distanceLabel.snp.bottom).offset(20)
+            make.leading.equalTo(distanceLabel.snp.leading) // 텍스트와 동일한 좌측 여백
+            make.trailing.equalToSuperview().inset(
+            make.height.equalTo(65)
+        }
+    }
+    
     private func setupMatchingStatus() {
         // "매칭여부" 라벨
         let statusLabel = UILabel()
