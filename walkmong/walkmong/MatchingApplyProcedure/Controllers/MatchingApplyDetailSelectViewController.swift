@@ -43,7 +43,8 @@ extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectView
             self.detailSelectModel.dateChecked = value
             self.detailSelectView.updateSelectButtons(buttonType: .dateChecked, value: value)
         case .selectPlace:
-            // TODO: 화면 전환하여 주소 가져오기
+            let nextVC = MatchingApplyMapViewController()
+            self.navigationController?.pushViewController(nextVC, animated: true)
             self.detailSelectModel.placeSelected = "address"
             // 주소 가져오기 성공 시에만 value: true
             self.detailSelectView.updateSelectButtons(buttonType: .selectPlace, value: true)
