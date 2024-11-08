@@ -36,7 +36,7 @@ class MatchingFilterView: UIView {
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
         distanceFrame.backgroundColor = .red
-        breedFrame.backgroundColor = .green
+        breedFrame.backgroundColor = .clear // 기존 배경 제거
         matchingStatusFrame.backgroundColor = .clear
 
         self.addSubview(distanceFrame)
@@ -45,6 +45,7 @@ class MatchingFilterView: UIView {
         self.addSubview(buttonFrame)
 
         setupMatchingStatus()
+        setupBreedFrame()
         setupButtons()
     }
 
@@ -53,11 +54,9 @@ class MatchingFilterView: UIView {
         let statusLabel = UILabel()
         statusLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
         statusLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.17
         paragraphStyle.alignment = .left
-
         statusLabel.attributedText = NSMutableAttributedString(
             string: "매칭여부",
             attributes: [
@@ -67,7 +66,7 @@ class MatchingFilterView: UIView {
         )
         matchingStatusFrame.addSubview(statusLabel)
 
-        // 버튼 프레임
+        // 버튼 컨테이너
         let buttonContainer = UIView()
         matchingStatusFrame.addSubview(buttonContainer)
 
@@ -132,6 +131,117 @@ class MatchingFilterView: UIView {
 
         confirmedLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
+        }
+    }
+    
+    private func setupBreedFrame() {
+        // 텍스트 프레임
+        let textFrame = UIView()
+        breedFrame.addSubview(textFrame)
+        
+        // "견종" 라벨
+        let titleLabel = UILabel()
+        titleLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        titleLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
+        let titleParagraphStyle = NSMutableParagraphStyle()
+        titleParagraphStyle.lineHeightMultiple = 1.17
+        titleLabel.attributedText = NSMutableAttributedString(
+            string: "견종",
+            attributes: [
+                NSAttributedString.Key.kern: -0.32,
+                NSAttributedString.Key.paragraphStyle: titleParagraphStyle
+            ]
+        )
+        textFrame.addSubview(titleLabel)
+        
+        // 설명 라벨
+        let descriptionLabel = UILabel()
+        descriptionLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        descriptionLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
+        let descParagraphStyle = NSMutableParagraphStyle()
+        descParagraphStyle.lineHeightMultiple = 1.17
+        descriptionLabel.attributedText = NSMutableAttributedString(
+            string: "산책이 가능한 견종을 모두 선택해주세요.",
+            attributes: [
+                NSAttributedString.Key.kern: -0.32,
+                NSAttributedString.Key.paragraphStyle: descParagraphStyle
+            ]
+        )
+        textFrame.addSubview(descriptionLabel)
+        
+        // 버튼 컨테이너
+        let buttonContainer = UIView()
+        breedFrame.addSubview(buttonContainer)
+        
+        // 버튼: 소형견, 중형견, 대형견
+        let buttonTitles = ["소형견", "중형견", "대형견"]
+        var lastButton: UIView?
+        
+        for title in buttonTitles {
+            let button = UIView()
+            button.layer.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1).cgColor
+            button.layer.cornerRadius = 19
+            buttonContainer.addSubview(button)
+            
+            let buttonLabel = UILabel()
+            buttonLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+            buttonLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
+            let buttonParagraphStyle = NSMutableParagraphStyle()
+            buttonParagraphStyle.lineHeightMultiple = 1.17
+            buttonLabel.attributedText = NSMutableAttributedString(
+                string: title,
+                attributes: [
+                    NSAttributedString.Key.kern: -0.32,
+                    NSAttributedString.Key.paragraphStyle: buttonParagraphStyle
+                ]
+            )
+            button.addSubview(buttonLabel)
+            
+            // 버튼 레이아웃
+            button.snp.makeConstraints { make in
+                if let lastButton = lastButton {
+                    make.leading.equalTo(lastButton.snp.trailing).offset(12)
+                } else {
+                    make.leading.equalToSuperview()
+                }
+                make.centerY.equalToSuperview()
+                make.width.equalTo(73)
+                make.height.equalTo(38)
+            }
+            
+            buttonLabel.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+            
+            lastButton = button
+        }
+        
+        // 텍스트 프레임 레이아웃
+        textFrame.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(16)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(353)
+            make.height.equalTo(70)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(28)
+        }
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(22)
+        }
+        
+        // 버튼 컨테이너 레이아웃
+        buttonContainer.snp.makeConstraints { make in
+            make.top.equalTo(textFrame.snp.bottom).offset(16)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(353)
+            make.height.equalTo(38)
         }
     }
 
@@ -199,8 +309,6 @@ class MatchingFilterView: UIView {
 
         resetLabel.snp.makeConstraints { make in
             make.center.equalTo(resetButton)
-            make.width.equalTo(41)
-            make.height.equalTo(22)
         }
 
         // 적용하기 버튼 레이아웃
@@ -213,8 +321,6 @@ class MatchingFilterView: UIView {
 
         applyLabel.snp.makeConstraints { make in
             make.center.equalTo(applyButton)
-            make.width.equalTo(55)
-            make.height.equalTo(22)
         }
     }
 }
