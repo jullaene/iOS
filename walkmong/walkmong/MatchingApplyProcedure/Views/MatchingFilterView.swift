@@ -37,14 +37,102 @@ class MatchingFilterView: UIView {
 
         distanceFrame.backgroundColor = .red
         breedFrame.backgroundColor = .green
-        matchingStatusFrame.backgroundColor = .blue
+        matchingStatusFrame.backgroundColor = .clear
 
         self.addSubview(distanceFrame)
         self.addSubview(breedFrame)
         self.addSubview(matchingStatusFrame)
         self.addSubview(buttonFrame)
 
+        setupMatchingStatus()
         setupButtons()
+    }
+
+    private func setupMatchingStatus() {
+        // "매칭여부" 라벨
+        let statusLabel = UILabel()
+        statusLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        statusLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.17
+        paragraphStyle.alignment = .left
+
+        statusLabel.attributedText = NSMutableAttributedString(
+            string: "매칭여부",
+            attributes: [
+                NSAttributedString.Key.kern: -0.32,
+                NSAttributedString.Key.paragraphStyle: paragraphStyle
+            ]
+        )
+        matchingStatusFrame.addSubview(statusLabel)
+
+        // 버튼 프레임
+        let buttonContainer = UIView()
+        matchingStatusFrame.addSubview(buttonContainer)
+
+        // 매칭중 버튼
+        let matchingButton = UIView()
+        matchingButton.backgroundColor = UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1)
+        matchingButton.layer.cornerRadius = 19
+        buttonContainer.addSubview(matchingButton)
+
+        let matchingLabel = UILabel()
+        matchingLabel.text = "매칭중"
+        matchingLabel.textColor = .white
+        matchingLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
+        matchingLabel.textAlignment = .center
+        matchingButton.addSubview(matchingLabel)
+
+        // 매칭확정 버튼
+        let confirmedButton = UIView()
+        confirmedButton.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+        confirmedButton.layer.cornerRadius = 19
+        buttonContainer.addSubview(confirmedButton)
+
+        let confirmedLabel = UILabel()
+        confirmedLabel.text = "매칭확정"
+        confirmedLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        confirmedLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
+        confirmedLabel.textAlignment = .center
+        confirmedButton.addSubview(confirmedLabel)
+
+        // 레이아웃 설정
+        statusLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(16)
+            make.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(28)
+        }
+
+        buttonContainer.snp.makeConstraints { make in
+            make.top.equalTo(statusLabel.snp.bottom).offset(16)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(353)
+            make.height.equalTo(38)
+        }
+
+        matchingButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.width.equalTo(73)
+            make.height.equalTo(38)
+        }
+
+        matchingLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        confirmedButton.snp.makeConstraints { make in
+            make.leading.equalTo(matchingButton.snp.trailing).offset(12)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(87)
+            make.height.equalTo(38)
+        }
+
+        confirmedLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
 
     private func setupButtons() {
