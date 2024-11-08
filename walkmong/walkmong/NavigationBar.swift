@@ -40,8 +40,7 @@ extension UIViewController {
         if showLeftBarButton {
             let leftBarButton: UIButton = {
                 let button = UIButton()
-                button.setImage(UIImage(systemName: "arrow.left"), for: .normal)
-                button.tintColor = .mainBlack
+                button.setImage(.backButton, for: .normal)
                 return button
             }()
             navigationBarView.addSubview(leftBarButton)
@@ -56,7 +55,7 @@ extension UIViewController {
         if showCloseBarButton {
             let closeBarButton: UIButton = {
                 let button = UIButton()
-                button.setImage(UIImage(systemName: "xmark"), for: .normal)
+                button.setImage(.deleteButton, for: .normal)
                 button.tintColor = .mainBlack
                 return button
             }()
@@ -69,7 +68,7 @@ extension UIViewController {
         } else if showRefreshBarButton {
             let refreshBarButton: UIButton = {
                 let button = UIButton()
-                button.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
+                button.setImage(.refreshButton, for: .normal)
                 button.tintColor = .mainBlue
                 return button
             }()
