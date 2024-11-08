@@ -7,7 +7,25 @@
 
 import UIKit
 
+protocol MatchingApplyDetailSelectViewDelegate: AnyObject {
+    func buttonTapped(buttonType: ButtonType, value: Bool)
+}
+
+enum ButtonType{
+    case dogInformationChecked, dateChecked, selectPlace, envelopeNeeded, mouthCoverNeeded, leadStringeNeeded, preMeetingNeeded, next
+}
+
 class MatchingApplyDetailSelectView: UIView {
+    
+    private var dogInformationChecked: Bool = false
+    private var dateChecked: Bool = false
+    private var placeSelected: Bool = false
+    private var envelopeNeeded: Bool?
+    private var mouthCoverNeeded: Bool?
+    private var leadStringeNeeded: Bool?
+    private var preMeetingNeeded: Bool?
+    
+    weak var delegate: MatchingApplyDetailSelectViewDelegate?
     
     //MARK: UI Properties
     private let scrollView: UIScrollView = {
@@ -42,7 +60,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.isUserInteractionEnabled = true
+        button.addTarget(self, action: #selector (checkDogInformationNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -53,7 +71,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.isUserInteractionEnabled = true
+        button.addTarget(self, action: #selector (checkDogInformationYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -125,6 +143,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(checkDateNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -135,6 +154,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(checkDateYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -173,6 +193,7 @@ class MatchingApplyDetailSelectView: UIView {
         let button = UIButton()
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 15
+        button.addTarget(self, action: #selector (selectPlaceButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -213,6 +234,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(poopEnvelopeNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -223,6 +245,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(poopEnvelopeYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -241,6 +264,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(mouthCoverNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -251,6 +275,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(mouthCoverYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -269,6 +294,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(leadStringNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -279,6 +305,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(leadStringYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -311,6 +338,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(preMeetingNeededNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -321,6 +349,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
+        button.addTarget(self, action: #selector(preMeetingNeededYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -331,6 +360,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.titleLabel?.textColor = .white
         button.backgroundColor = .gray300
         button.layer.cornerRadius = 15
+        button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -616,5 +646,108 @@ class MatchingApplyDetailSelectView: UIView {
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(58)
         }
+    }
+    
+    @objc func checkDogInformationNoButtonTapped() {
+        delegate?.buttonTapped(buttonType: .dogInformationChecked, value: false)
+    }
+    
+    @objc func checkDogInformationYesButtonTapped() {
+        delegate?.buttonTapped(buttonType: .dogInformationChecked, value: true)
+    }
+    
+    @objc func checkDateNoButtonTapped() {
+        delegate?.buttonTapped(buttonType: .dateChecked, value: false)
+    }
+    
+    @objc func checkDateYesButtonTapped() {
+        delegate?.buttonTapped(buttonType: .dateChecked, value: true)
+    }
+    
+    @objc func selectPlaceButtonTapped() {
+        delegate?.buttonTapped(buttonType: .selectPlace, value: true)
+    }
+    
+    @objc func poopEnvelopeNoButtonTapped() {
+        delegate?.buttonTapped(buttonType: .envelopeNeeded, value: false)
+    }
+    
+    @objc func poopEnvelopeYesButtonTapped() {
+        delegate?.buttonTapped(buttonType: .envelopeNeeded, value: true)
+    }
+    
+    @objc func mouthCoverNoButtonTapped() {
+        delegate?.buttonTapped(buttonType: .mouthCoverNeeded, value: false)
+    }
+    
+    @objc func mouthCoverYesButtonTapped() {
+        delegate?.buttonTapped(buttonType: .mouthCoverNeeded, value: true)
+    }
+    
+    @objc func leadStringNoButtonTapped() {
+        delegate?.buttonTapped(buttonType: .leadStringeNeeded, value: false)
+    }
+    
+    @objc func leadStringYesButtonTapped() {
+        delegate?.buttonTapped(buttonType: .leadStringeNeeded, value: true)
+    }
+    
+    @objc func preMeetingNeededNoButtonTapped() {
+        delegate?.buttonTapped(buttonType: .preMeetingNeeded, value: false)
+    }
+    
+    @objc func preMeetingNeededYesButtonTapped() {
+        delegate?.buttonTapped(buttonType: .preMeetingNeeded, value: true)
+    }
+    
+    @objc func nextButtonTapped() {
+        delegate?.buttonTapped(buttonType: .next, value: true)
+    }
+    
+    func updateSelectButtons(buttonType: ButtonType, value: Bool) {
+        switch buttonType {
+        case .dogInformationChecked:
+            updateButtonColors(selectedButton: value ? checkDogInformationYesButton : checkDogInformationNoButton,
+                               unselectedButton: value ? checkDogInformationNoButton : checkDogInformationYesButton)
+            
+        case .dateChecked:
+            updateButtonColors(selectedButton: value ? checkDateYesButton : checkDateNoButton,
+                               unselectedButton: value ? checkDateNoButton : checkDateYesButton)
+            
+        case .selectPlace:
+            if value {
+                updatePlace()
+            }
+            
+        case .envelopeNeeded:
+            updateButtonColors(selectedButton: value ? poopEnvelopeYesButton : poopEnvelopeNoButton,
+                               unselectedButton: value ? poopEnvelopeNoButton : poopEnvelopeYesButton)
+            
+        case .mouthCoverNeeded:
+            updateButtonColors(selectedButton: value ? mouthCoverYesButton : mouthCoverNoButton,
+                               unselectedButton: value ? mouthCoverNoButton : mouthCoverYesButton)
+            
+        case .leadStringeNeeded:
+            updateButtonColors(selectedButton: value ? leadStringYesButton : leadStringNoButton,
+                               unselectedButton: value ? leadStringNoButton : leadStringYesButton)
+            
+        case .preMeetingNeeded:
+            updateButtonColors(selectedButton: value ? selectPreMeetingYesButton : selectPreMeetingNoButton,
+                               unselectedButton: value ? selectPreMeetingNoButton : selectPreMeetingYesButton)
+        case .next:
+            nextButton.backgroundColor = value ? .mainBlue : .gray300
+        }
+    }
+
+    private func updateButtonColors(selectedButton: UIButton, unselectedButton: UIButton) {
+        selectedButton.backgroundColor = .mainBlue
+        selectedButton.setTitleColor(.white, for: .normal)
+        
+        unselectedButton.backgroundColor = .gray100
+        unselectedButton.setTitleColor(.gray500, for: .normal)
+    }
+    
+    private func updatePlace(){
+        // UI 변경
     }
 }
