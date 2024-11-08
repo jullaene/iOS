@@ -31,6 +31,7 @@ class DayCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
+        configureUnselectedStyle() // 초기 상태는 비선택 스타일
     }
     
     required init?(coder: NSCoder) {
@@ -70,5 +71,13 @@ class DayCell: UICollectionViewCell {
         contentView.layer.masksToBounds = true
         dayOfWeekLabel.textColor = .white
         dayLabel.textColor = .white
+    }
+    
+    func configureUnselectedStyle() {
+        contentView.backgroundColor = .clear
+        contentView.layer.cornerRadius = 0
+        contentView.layer.masksToBounds = true
+        dayOfWeekLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        dayLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
     }
 }

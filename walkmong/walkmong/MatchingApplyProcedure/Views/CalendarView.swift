@@ -1,4 +1,3 @@
-
 import UIKit
 import SnapKit
 
@@ -6,51 +5,37 @@ class CalendarView: UIView {
     
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024년 11월"
         label.textColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
         label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.17
-        label.attributedText = NSMutableAttributedString(string: "2024년 11월", attributes: [
-            .kern: -0.32,
-            .paragraphStyle: paragraphStyle
-        ])
+        label.textAlignment = .left
         return label
     }()
     
     private lazy var dayCollectionView: UICollectionView = {
-        let cellWidth: CGFloat = 37
-        let leadingTrailingInset: CGFloat = 4
-        let totalWidth = UIScreen.main.bounds.width - 32 // 기기 너비에 맞추기 위해 32를 빼고 설정
-        
-        // 간격 계산: 전체 너비에서 셀의 너비와 양쪽의 여백을 뺀 후 6으로 나눔
-        let interItemSpacing = (totalWidth - (leadingTrailingInset * 2) - (cellWidth * 7)) / 6
-
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex, environment) -> NSCollectionLayoutSection? in
-            let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(cellWidth), heightDimension: .absolute(63))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(63))
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-            group.interItemSpacing = .fixed(interItemSpacing)
-
-            let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: leadingTrailingInset, bottom: 0, trailing: leadingTrailingInset)
-            return section
-        }
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 37, height: 63)
+        layout.minimumLineSpacing = 16
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(DayCell.self, forCellWithReuseIdentifier: DayCell.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.backgroundColor = .clear
+        collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
+    
+    private var selectedIndexPath: IndexPath?
+    private var days: [(dayOfWeek: String, date: String)] = []
+    private let calendar = Calendar.current
+    private let today = Date()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        configureDays()
     }
     
     required init?(coder: NSCoder) {
@@ -62,8 +47,8 @@ class CalendarView: UIView {
         self.addSubview(dayCollectionView)
         
         monthLabel.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
-            make.width.equalTo(84)
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
             make.height.equalTo(22)
         }
         
@@ -73,13 +58,34 @@ class CalendarView: UIView {
             make.height.equalTo(63)
         }
     }
+    
+    private func configureDays() {
+        // 오늘 날짜와 요일 계산
+        let monthFormatter = DateFormatter()
+        monthFormatter.dateFormat = "M월"
+        monthLabel.text = "\(calendar.component(.year, from: today))년 \(monthFormatter.string(from: today))"
+        
+        let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+        
+        for offset in 0..<14 {
+            if let date = calendar.date(byAdding: .day, value: offset, to: today) {
+                let weekdayIndex = calendar.component(.weekday, from: date) - 1 // 요일은 1~7로 반환되므로 0부터 시작하도록 보정
+                let dayOfWeek = weekdays[weekdayIndex]
+                let day = String(calendar.component(.day, from: date))
+                days.append((dayOfWeek, day))
+            }
+        }
+        
+        dayCollectionView.reloadData()
+        selectedIndexPath = IndexPath(item: 0, section: 0) // 첫 번째 셀 기본 선택
+    }
 }
 
-// MARK: - UICollectionViewDataSource & UICollectionViewDelegateFlowLayout
-extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: - UICollectionViewDataSource & UICollectionViewDelegate
+extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 7
+        return days.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -87,14 +93,34 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegateFlow
             return UICollectionViewCell()
         }
         
-        let days = [("일", "3"), ("월", "4"), ("화", "5"), ("수", "6"), ("목", "7"), ("금", "8"), ("토", "9")]
-        cell.configure(dayOfWeek: days[indexPath.item].0, day: days[indexPath.item].1)
+        let day = days[indexPath.item]
+        cell.configure(dayOfWeek: day.dayOfWeek, day: day.date)
         
-        // 첫 번째 셀의 디자인 설정
-        if indexPath.item == 0 {
+        if selectedIndexPath == indexPath {
             cell.configureSelectedStyle()
+        } else {
+            cell.configureUnselectedStyle()
         }
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard selectedIndexPath != indexPath else { return }
+        
+        // 이전 선택 해제
+        if let previousIndexPath = selectedIndexPath,
+           let previousCell = collectionView.cellForItem(at: previousIndexPath) as? DayCell {
+            previousCell.configureUnselectedStyle()
+        }
+        
+        // 새 선택
+        selectedIndexPath = indexPath
+        if let selectedCell = collectionView.cellForItem(at: indexPath) as? DayCell {
+            selectedCell.configureSelectedStyle()
+        }
+        
+        // 스크롤 애니메이션
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
 }
