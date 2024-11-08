@@ -9,36 +9,39 @@ import UIKit
 import SnapKit
 
 class MatchingFilterView: UIView {
-
+    
     private let distanceFrame = UIView()
     private let breedFrame = UIView()
     private let matchingStatusFrame = UIView()
     private let buttonFrame = UIView()
-
-    private let resetButton = UIView()
-    private let resetLabel = UILabel()
-    private let applyButton = UIView()
-    private let applyLabel = UILabel()
-
+    
+    private var matchingButtons: [UIButton] = [] // 매칭 여부 버튼 배열
+    private var breedButtons: [UIButton] = [] // 견종 버튼 배열
+    
+    private let resetButton = UIButton() // 초기화 버튼
+    private let applyButton = UIButton() // 적용 버튼
+    
+    // MARK: - 초기화
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupView()
-        setupLayout()
+        setupView() // 뷰 구성
+        setupLayout() // 레이아웃 구성
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    // MARK: - 뷰 구성
     private func setupView() {
         self.backgroundColor = .white
         self.layer.cornerRadius = 30
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-
+        
         distanceFrame.backgroundColor = .clear
         breedFrame.backgroundColor = .clear
         matchingStatusFrame.backgroundColor = .clear
-
+        
         self.addSubview(distanceFrame)
         self.addSubview(breedFrame)
         self.addSubview(matchingStatusFrame)
@@ -49,318 +52,215 @@ class MatchingFilterView: UIView {
         setupBreedFrame()
         setupButtons()
     }
-
+    
+    // MARK: - 거리 프레임
     private func setupDistanceFrame() {
-        // "거리" 텍스트 라벨
         let distanceLabel = UILabel()
-        distanceLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        distanceLabel.text = "거리"
         distanceLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.17
-        paragraphStyle.alignment = .left // 좌측 정렬
-        distanceLabel.attributedText = NSMutableAttributedString(
-            string: "거리",
-            attributes: [
-                NSAttributedString.Key.kern: -0.32,
-                NSAttributedString.Key.paragraphStyle: paragraphStyle
-            ]
-        )
+        distanceLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
         distanceFrame.addSubview(distanceLabel)
         
-        // 빨간 배경 프레임
-        let redBackgroundView = UIView()
-        redBackgroundView.backgroundColor = UIColor.red
-        distanceFrame.addSubview(redBackgroundView)
-        
-        // "거리" 텍스트 레이아웃
         distanceLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(16)
-            make.leading.equalToSuperview().offset(16) // 좌측 여백
-            make.trailing.equalToSuperview().inset(16) // 우측 여백
-            make.height.equalTo(28)
-        }
-        
-        // 빨간 배경 프레임 레이아웃
-        redBackgroundView.snp.makeConstraints { make in
-            make.top.equalTo(distanceLabel.snp.bottom).offset(20)
-            make.leading.equalTo(distanceLabel.snp.leading) // 텍스트와 동일한 좌측 여백
-            make.trailing.equalToSuperview().inset(
-            make.height.equalTo(65)
+            make.leading.equalToSuperview().offset(16)
         }
     }
     
+    // MARK: - 매칭 여부 프레임
     private func setupMatchingStatus() {
-        // "매칭여부" 라벨
         let statusLabel = UILabel()
-        statusLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        statusLabel.text = "매칭여부"
         statusLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.17
-        paragraphStyle.alignment = .left
-        statusLabel.attributedText = NSMutableAttributedString(
-            string: "매칭여부",
-            attributes: [
-                NSAttributedString.Key.kern: -0.32,
-                NSAttributedString.Key.paragraphStyle: paragraphStyle
-            ]
-        )
+        statusLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
         matchingStatusFrame.addSubview(statusLabel)
-
-        // 버튼 컨테이너
+        
         let buttonContainer = UIView()
         matchingStatusFrame.addSubview(buttonContainer)
-
-        // 매칭중 버튼
-        let matchingButton = UIView()
-        matchingButton.backgroundColor = UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1)
-        matchingButton.layer.cornerRadius = 19
-        buttonContainer.addSubview(matchingButton)
-
-        let matchingLabel = UILabel()
-        matchingLabel.text = "매칭중"
-        matchingLabel.textColor = .white
-        matchingLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
-        matchingLabel.textAlignment = .center
-        matchingButton.addSubview(matchingLabel)
-
-        // 매칭확정 버튼
-        let confirmedButton = UIView()
-        confirmedButton.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
-        confirmedButton.layer.cornerRadius = 19
-        buttonContainer.addSubview(confirmedButton)
-
-        let confirmedLabel = UILabel()
-        confirmedLabel.text = "매칭확정"
-        confirmedLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
-        confirmedLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
-        confirmedLabel.textAlignment = .center
-        confirmedButton.addSubview(confirmedLabel)
-
-        // 레이아웃 설정
+        
+        let buttonTitles = ["매칭중", "매칭확정"]
+        for title in buttonTitles {
+            let button = createToggleButton(title: title)
+            button.addTarget(self, action: #selector(matchingButtonTapped(_:)), for: .touchUpInside)
+            buttonContainer.addSubview(button)
+            matchingButtons.append(button)
+        }
+        
         statusLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(16)
             make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(28)
         }
-
+        
         buttonContainer.snp.makeConstraints { make in
             make.top.equalTo(statusLabel.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(353)
+            make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(38)
         }
-
-        matchingButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.centerY.equalToSuperview()
-            make.width.equalTo(73)
-            make.height.equalTo(38)
-        }
-
-        matchingLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-
-        confirmedButton.snp.makeConstraints { make in
-            make.leading.equalTo(matchingButton.snp.trailing).offset(12)
-            make.centerY.equalToSuperview()
-            make.width.equalTo(87)
-            make.height.equalTo(38)
-        }
-
-        confirmedLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-    }
-    
-    private func setupBreedFrame() {
-        // 텍스트 프레임
-        let textFrame = UIView()
-        breedFrame.addSubview(textFrame)
         
-        // "견종" 라벨
-        let titleLabel = UILabel()
-        titleLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
-        titleLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        let titleParagraphStyle = NSMutableParagraphStyle()
-        titleParagraphStyle.lineHeightMultiple = 1.17
-        titleLabel.attributedText = NSMutableAttributedString(
-            string: "견종",
-            attributes: [
-                NSAttributedString.Key.kern: -0.32,
-                NSAttributedString.Key.paragraphStyle: titleParagraphStyle
-            ]
-        )
-        textFrame.addSubview(titleLabel)
-        
-        // 설명 라벨
-        let descriptionLabel = UILabel()
-        descriptionLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
-        descriptionLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
-        let descParagraphStyle = NSMutableParagraphStyle()
-        descParagraphStyle.lineHeightMultiple = 1.17
-        descriptionLabel.attributedText = NSMutableAttributedString(
-            string: "산책이 가능한 견종을 모두 선택해주세요.",
-            attributes: [
-                NSAttributedString.Key.kern: -0.32,
-                NSAttributedString.Key.paragraphStyle: descParagraphStyle
-            ]
-        )
-        textFrame.addSubview(descriptionLabel)
-        
-        // 버튼 컨테이너
-        let buttonContainer = UIView()
-        breedFrame.addSubview(buttonContainer)
-        
-        // 버튼: 소형견, 중형견, 대형견
-        let buttonTitles = ["소형견", "중형견", "대형견"]
-        var lastButton: UIView?
-        
-        for title in buttonTitles {
-            let button = UIView()
-            button.layer.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1).cgColor
-            button.layer.cornerRadius = 19
-            buttonContainer.addSubview(button)
-            
-            let buttonLabel = UILabel()
-            buttonLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
-            buttonLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
-            let buttonParagraphStyle = NSMutableParagraphStyle()
-            buttonParagraphStyle.lineHeightMultiple = 1.17
-            buttonLabel.attributedText = NSMutableAttributedString(
-                string: title,
-                attributes: [
-                    NSAttributedString.Key.kern: -0.32,
-                    NSAttributedString.Key.paragraphStyle: buttonParagraphStyle
-                ]
-            )
-            button.addSubview(buttonLabel)
-            
-            // 버튼 레이아웃
+        for (index, button) in matchingButtons.enumerated() {
             button.snp.makeConstraints { make in
-                if let lastButton = lastButton {
-                    make.leading.equalTo(lastButton.snp.trailing).offset(12)
-                } else {
+                if index == 0 {
                     make.leading.equalToSuperview()
+                } else {
+                    make.leading.equalTo(matchingButtons[index - 1].snp.trailing).offset(12)
                 }
-                make.centerY.equalToSuperview()
                 make.width.equalTo(73)
                 make.height.equalTo(38)
             }
-            
-            buttonLabel.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
-            
-            lastButton = button
-        }
-        
-        // 텍스트 프레임 레이아웃
-        textFrame.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(353)
-            make.height.equalTo(70)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(28)
-        }
-        
-        descriptionLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(22)
-        }
-        
-        // 버튼 컨테이너 레이아웃
-        buttonContainer.snp.makeConstraints { make in
-            make.top.equalTo(textFrame.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(353)
-            make.height.equalTo(38)
         }
     }
-
+    
+    // MARK: - 견종 프레임
+    private func setupBreedFrame() {
+        let breedLabel = UILabel()
+        breedLabel.text = "견종"
+        breedLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
+        breedLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        breedFrame.addSubview(breedLabel)
+        
+        let buttonContainer = UIView()
+        breedFrame.addSubview(buttonContainer)
+        
+        let buttonTitles = ["소형견", "중형견", "대형견"]
+        for title in buttonTitles {
+            let button = createToggleButton(title: title)
+            button.addTarget(self, action: #selector(breedButtonTapped(_:)), for: .touchUpInside)
+            buttonContainer.addSubview(button)
+            breedButtons.append(button)
+        }
+        
+        breedLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(16)
+        }
+        
+        buttonContainer.snp.makeConstraints { make in
+            make.top.equalTo(breedLabel.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(38)
+        }
+        
+        for (index, button) in breedButtons.enumerated() {
+            button.snp.makeConstraints { make in
+                if index == 0 {
+                    make.leading.equalToSuperview()
+                } else {
+                    make.leading.equalTo(breedButtons[index - 1].snp.trailing).offset(12)
+                }
+                make.width.equalTo(73)
+                make.height.equalTo(38)
+            }
+        }
+    }
+    
+    // MARK: - 버튼 프레임
     private func setupButtons() {
-        // 초기화 버튼
+        resetButton.setTitle("초기화", for: .normal)
+        resetButton.setTitleColor(.black, for: .normal)
         resetButton.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
         resetButton.layer.cornerRadius = 15
         buttonFrame.addSubview(resetButton)
-
-        resetLabel.text = "초기화"
-        resetLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
-        resetLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
-        let resetParagraphStyle = NSMutableParagraphStyle()
-        resetParagraphStyle.lineHeightMultiple = 1.17
-        resetLabel.attributedText = NSMutableAttributedString(string: "초기화", attributes: [NSAttributedString.Key.kern: -0.32, NSAttributedString.Key.paragraphStyle: resetParagraphStyle])
-        resetButton.addSubview(resetLabel)
-
-        // 적용하기 버튼
+        
+        applyButton.setTitle("적용하기", for: .normal)
+        applyButton.setTitleColor(.white, for: .normal)
         applyButton.backgroundColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
         applyButton.layer.cornerRadius = 15
         buttonFrame.addSubview(applyButton)
-
-        applyLabel.text = "적용하기"
-        applyLabel.textColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
-        applyLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
-        let applyParagraphStyle = NSMutableParagraphStyle()
-        applyParagraphStyle.lineHeightMultiple = 1.17
-        applyLabel.attributedText = NSMutableAttributedString(string: "적용하기", attributes: [NSAttributedString.Key.kern: -0.32, NSAttributedString.Key.paragraphStyle: applyParagraphStyle])
-        applyButton.addSubview(applyLabel)
+        
+        resetButton.snp.makeConstraints { make in
+            make.leading.centerY.equalToSuperview()
+            make.width.equalTo(93)
+            make.height.equalTo(54)
+        }
+        
+        applyButton.snp.makeConstraints { make in
+            make.trailing.centerY.equalToSuperview()
+            make.width.equalTo(251)
+            make.height.equalTo(54)
+        }
     }
-
+    
+    // MARK: - 레이아웃
     private func setupLayout() {
         distanceFrame.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(25)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(145)
         }
-
+        
         breedFrame.snp.makeConstraints { make in
             make.top.equalTo(distanceFrame.snp.bottom)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(156)
         }
-
+        
         matchingStatusFrame.snp.makeConstraints { make in
             make.top.equalTo(breedFrame.snp.bottom)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(114)
         }
-
+        
         buttonFrame.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().inset(38)
+            make.centerX.bottom.equalToSuperview().inset(38)
             make.width.equalTo(356)
             make.height.equalTo(54)
         }
-
-        // 초기화 버튼 레이아웃
-        resetButton.snp.makeConstraints { make in
-            make.leading.equalTo(buttonFrame.snp.leading)
-            make.centerY.equalTo(buttonFrame.snp.centerY)
-            make.width.equalTo(93)
-            make.height.equalTo(54)
-        }
-
-        resetLabel.snp.makeConstraints { make in
-            make.center.equalTo(resetButton)
-        }
-
-        // 적용하기 버튼 레이아웃
-        applyButton.snp.makeConstraints { make in
-            make.trailing.equalTo(buttonFrame.snp.trailing)
-            make.centerY.equalTo(buttonFrame.snp.centerY)
-            make.width.equalTo(251)
-            make.height.equalTo(54)
-        }
-
-        applyLabel.snp.makeConstraints { make in
-            make.center.equalTo(applyButton)
+    }
+    
+    // MARK: - 공통 버튼 생성 메서드
+    private func createToggleButton(title: String) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
+        button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+        button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 16)
+        button.layer.cornerRadius = 19
+        button.layer.borderWidth = 0 // 기본적으로 경계선 없음
+        button.layer.borderColor = UIColor.clear.cgColor // 경계선 색상 없음
+        button.clipsToBounds = true // 경계 클립 활성화
+        button.tag = 0 // 기본 상태: 미선택
+        
+        // 모든 버튼의 상태 초기화
+        button.transform = .identity
+        return button
+    }
+    
+    // MARK: - 버튼 클릭 이벤트
+    @objc private func matchingButtonTapped(_ sender: UIButton) {
+        toggleButton(sender)
+    }
+    
+    @objc private func breedButtonTapped(_ sender: UIButton) {
+        toggleButton(sender)
+    }
+    
+    private func toggleButton(_ button: UIButton) {
+        let isSelected = button.tag == 1 // 태그로 선택 상태 확인
+        
+        UIView.animate(withDuration: 0.1, animations: {
+            button.transform = CGAffineTransform(scaleX: 0.95, y: 0.95) // 클릭 애니메이션
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.1, animations: {
+                button.transform = .identity // 원래 크기로 복원
+            })
+        })
+        
+        if isSelected {
+            // 미선택 상태로 변경
+            button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+            button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
+            button.layer.borderWidth = 0 // 경계선 제거
+            button.layer.borderColor = UIColor.clear.cgColor // 경계선 색상 초기화
+            button.clipsToBounds = true // 버튼 경계 내 클립
+            button.tag = 0 // 미선택 상태로 변경
+        } else {
+            // 선택 상태로 변경
+            button.backgroundColor = UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1)
+            button.setTitleColor(.white, for: .normal)
+            button.layer.borderWidth = 2 // 경계선 추가
+            button.layer.borderColor = UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1).cgColor
+            button.clipsToBounds = true // 버튼 경계 내 클립
+            button.tag = 1 // 선택 상태로 변경
         }
     }
 }
