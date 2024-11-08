@@ -2,7 +2,6 @@ import UIKit
 import SnapKit
 
 class CalendarView: UIView {
-    
     private let monthLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
@@ -43,8 +42,8 @@ class CalendarView: UIView {
     }
     
     private func setupView() {
-        self.addSubview(monthLabel)
-        self.addSubview(dayCollectionView)
+        addSubview(monthLabel)
+        addSubview(dayCollectionView)
         
         monthLabel.snp.makeConstraints { make in
             make.top.equalToSuperview()
@@ -60,16 +59,16 @@ class CalendarView: UIView {
     }
     
     private func configureDays() {
-        // 오늘 날짜와 요일 계산
         let monthFormatter = DateFormatter()
         monthFormatter.dateFormat = "M월"
         monthLabel.text = "\(calendar.component(.year, from: today))년 \(monthFormatter.string(from: today))"
         
         let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
         
+        // 14개의 날짜만 계산
         for offset in 0..<14 {
             if let date = calendar.date(byAdding: .day, value: offset, to: today) {
-                let weekdayIndex = calendar.component(.weekday, from: date) - 1 // 요일은 1~7로 반환되므로 0부터 시작하도록 보정
+                let weekdayIndex = calendar.component(.weekday, from: date) - 1
                 let dayOfWeek = weekdays[weekdayIndex]
                 let day = String(calendar.component(.day, from: date))
                 days.append((dayOfWeek, day))
@@ -77,13 +76,12 @@ class CalendarView: UIView {
         }
         
         dayCollectionView.reloadData()
-        selectedIndexPath = IndexPath(item: 0, section: 0) // 첫 번째 셀 기본 선택
+        selectedIndexPath = IndexPath(item: 0, section: 0)
     }
 }
 
-// MARK: - UICollectionViewDataSource & UICollectionViewDelegate
+// MARK: - UICollectionViewDataSource & Delegate
 extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return days.count
     }
@@ -108,19 +106,16 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard selectedIndexPath != indexPath else { return }
         
-        // 이전 선택 해제
         if let previousIndexPath = selectedIndexPath,
            let previousCell = collectionView.cellForItem(at: previousIndexPath) as? DayCell {
             previousCell.configureUnselectedStyle()
         }
         
-        // 새 선택
         selectedIndexPath = indexPath
         if let selectedCell = collectionView.cellForItem(at: indexPath) as? DayCell {
             selectedCell.configureSelectedStyle()
         }
         
-        // 스크롤 애니메이션
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
 }

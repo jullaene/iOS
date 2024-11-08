@@ -1,15 +1,6 @@
-//
-//  DayCell.swift
-//  walkmong
-//
-//  Created by 신호연 on 11/4/24.
-//
-
 import UIKit
-import SnapKit
 
 class DayCell: UICollectionViewCell {
-    
     static let identifier = "DayCell"
     
     private let dayOfWeekLabel: UILabel = {
@@ -31,7 +22,7 @@ class DayCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
-        configureUnselectedStyle() // 초기 상태는 비선택 스타일
+        configureUnselectedStyle()
     }
     
     required init?(coder: NSCoder) {
@@ -42,13 +33,8 @@ class DayCell: UICollectionViewCell {
         contentView.addSubview(dayOfWeekLabel)
         contentView.addSubview(dayLabel)
         
-        contentView.snp.makeConstraints { make in
-            make.width.equalTo(37)
-            make.height.equalTo(63)
-        }
-        
         dayOfWeekLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset((63 - 25 - 22 - 4) / 2)
+            make.top.equalToSuperview().offset(6)
             make.centerX.equalToSuperview()
             make.height.equalTo(25)
         }
