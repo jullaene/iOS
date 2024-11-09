@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 class MatchingViewController: UIViewController {
-
+    
     private var matchingFilterView: MatchingFilterView?
     private var dropdownView: DropdownView! {
         return (self.tabBarController as? MainTabBarController)?.dropdownView
@@ -42,8 +42,10 @@ class MatchingViewController: UIViewController {
         locationSelectView.addGestureRecognizer(tapGesture)
     }
     
+    // MARK: - DropdownView 표시
     @objc private func showDropdownView() {
         guard let dropdownView = dropdownView else { return }
+        hideMatchingFilterView() // 다른 뷰가 표시 중이면 숨김
         
         dimView?.isHidden = false
         dropdownView.isHidden = false
@@ -61,7 +63,7 @@ class MatchingViewController: UIViewController {
     
     @objc private func hideDropdownView() {
         dropdownView?.isHidden = true
-        dimView?.isHidden = matchingFilterView == nil // 다른 요소가 없으면 dimView 숨김
+        dimView?.isHidden = matchingFilterView == nil // 다른 뷰가 없으면 dimView 숨김
     }
 
     @objc func hideFilterAndDropdown() {
@@ -69,14 +71,17 @@ class MatchingViewController: UIViewController {
         hideMatchingFilterView()
     }
 
+    // MARK: - MatchingFilterView 표시
     private func showMatchingFilterView() {
         guard matchingFilterView == nil else { return }
+        hideDropdownView()
         
         let parentView = self.tabBarController?.view ?? self.view
-
+        
         let filterView = MatchingFilterView()
         filterView.layer.cornerRadius = 30
         filterView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        filterView.delegate = self // 델리게이트 설정
         
         parentView?.addSubview(filterView)
         self.matchingFilterView = filterView
@@ -88,10 +93,10 @@ class MatchingViewController: UIViewController {
         }
         
         parentView?.layoutIfNeeded()
-
+        
         dimView?.isHidden = false
-        dimView?.superview?.bringSubviewToFront(dimView!) // dimView를 최상단으로 위치시키기
-        parentView?.bringSubviewToFront(filterView)       // matchingFilterView를 dimView 위로 가져오기
+        dimView?.superview?.bringSubviewToFront(dimView!)
+        parentView?.bringSubviewToFront(filterView)
         
         UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseOut], animations: {
             filterView.snp.updateConstraints { make in
@@ -118,11 +123,18 @@ class MatchingViewController: UIViewController {
     }
 }
 
-// DropdownViewDelegate를 통해 선택된 동네 업데이트
+// MARK: - DropdownViewDelegate 구현
 extension MatchingViewController: DropdownViewDelegate {
     func didSelectLocation(_ location: String) {
         locationLabel.text = location
         dropdownView?.updateSelection(selectedLocation: location)
         hideDropdownView()
+    }
+}
+
+// MARK: - MatchingFilterViewDelegate 구현
+extension MatchingViewController: MatchingFilterViewDelegate {
+    func didApplyFilter(selectedBreeds: [String], matchingStatus: [String]) {
+        hideMatchingFilterView()
     }
 }
