@@ -48,7 +48,7 @@ class MatchingFilterView: UIView {
         self.layer.cornerRadius = 30
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        distanceFrame.backgroundColor = .clear
+        distanceFrame.backgroundColor = .red
         breedFrame.backgroundColor = .clear
         matchingStatusFrame.backgroundColor = .clear
         
@@ -68,7 +68,7 @@ class MatchingFilterView: UIView {
         distanceFrame.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(25)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(145)
+            make.height.equalTo(140)
         }
         
         breedFrame.snp.makeConstraints { make in
@@ -97,10 +97,23 @@ class MatchingFilterView: UIView {
         distanceLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
         distanceLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
         distanceFrame.addSubview(distanceLabel)
-        
+
+        let distanceSliderFrame = UIView()
+        distanceSliderFrame.backgroundColor = .yellow
+        distanceFrame.addSubview(distanceSliderFrame)
+
         distanceLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(16)
-            make.leading.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().inset(20)
+        }
+
+        distanceSliderFrame.snp.makeConstraints { make in
+            make.top.equalTo(distanceLabel.snp.bottom).offset(16)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().offset(-16)
+            make.height.equalTo(64)
         }
     }
     
