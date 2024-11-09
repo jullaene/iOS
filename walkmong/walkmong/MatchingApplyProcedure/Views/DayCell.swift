@@ -6,7 +6,7 @@ class DayCell: UICollectionViewCell {
     private let dayOfWeekLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        label.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        label.textColor = UIColor.mainBlack
         label.textAlignment = .center
         return label
     }()
@@ -14,7 +14,7 @@ class DayCell: UICollectionViewCell {
     private let dayLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "Pretendard-Bold", size: 16)
-        label.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        label.textColor = UIColor.mainBlack
         label.textAlignment = .center
         return label
     }()
@@ -63,7 +63,7 @@ class DayCell: UICollectionViewCell {
         contentView.backgroundColor = .clear
         contentView.layer.cornerRadius = 0
         contentView.layer.masksToBounds = true
-        dayOfWeekLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
-        dayLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        dayOfWeekLabel.textColor = UIColor.mainBlack
+        dayLabel.textColor = UIColor.mainBlack
     }
 }

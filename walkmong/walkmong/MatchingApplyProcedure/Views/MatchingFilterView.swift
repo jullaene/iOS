@@ -95,7 +95,7 @@ class MatchingFilterView: UIView {
         let distanceLabel = UILabel()
         distanceLabel.text = "거리"
         distanceLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        distanceLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        distanceLabel.textColor = UIColor.mainBlack
         distanceFrame.addSubview(distanceLabel)
 
         let distanceSliderFrame = UIView()
@@ -104,7 +104,7 @@ class MatchingFilterView: UIView {
 
         // 슬라이더 선
         let sliderLine = UIView()
-        sliderLine.backgroundColor = UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
+        sliderLine.backgroundColor = UIColor.gray300
         distanceSliderFrame.addSubview(sliderLine)
 
         distanceLabel.snp.makeConstraints { make in
@@ -147,15 +147,15 @@ class MatchingFilterView: UIView {
                 // 원
                 let selectionDot = UIView()
                 let isSelected = index == 0
-                selectionDot.backgroundColor = isSelected ? UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1) : UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
+                selectionDot.backgroundColor = isSelected ? UIColor.mainBlue : UIColor.gray300
                 selectionDot.layer.cornerRadius = isSelected ? 12 : 6
                 selectionDot.layer.borderWidth = isSelected ? 1 : 0
-                selectionDot.layer.borderColor = isSelected ? UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1).cgColor : UIColor.clear.cgColor
+                selectionDot.layer.borderColor = isSelected ? UIColor.mainBlue.cgColor : UIColor.clear.cgColor
                 distanceSliderFrame.addSubview(selectionDot)
 
                 // 텍스트
                 let label = UILabel()
-                label.textColor = isSelected ? UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1) : UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
+                label.textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
                 label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
                 label.numberOfLines = 0
                 label.textAlignment = .center // 중앙 정렬
@@ -197,7 +197,7 @@ class MatchingFilterView: UIView {
         let statusLabel = UILabel()
         statusLabel.text = "매칭여부"
         statusLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        statusLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        statusLabel.textColor = UIColor.mainBlack
         matchingStatusFrame.addSubview(statusLabel)
         
         let buttonContainer = UIView()
@@ -240,7 +240,7 @@ class MatchingFilterView: UIView {
         let breedLabel = UILabel()
         breedLabel.text = "견종"
         breedLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        breedLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        breedLabel.textColor = UIColor.mainBlack
         breedFrame.addSubview(breedLabel)
         
         let buttonContainer = UIView()
@@ -282,13 +282,13 @@ class MatchingFilterView: UIView {
     private func setupButtons() {
         resetButton.setTitle("초기화", for: .normal)
         resetButton.setTitleColor(.black, for: .normal)
-        resetButton.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+        resetButton.backgroundColor = UIColor.gray100
         resetButton.layer.cornerRadius = 15
         buttonFrame.addSubview(resetButton)
         
         applyButton.setTitle("적용하기", for: .normal)
         applyButton.setTitleColor(.white, for: .normal)
-        applyButton.backgroundColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
+        applyButton.backgroundColor = UIColor.gray600
         applyButton.layer.cornerRadius = 15
         buttonFrame.addSubview(applyButton)
         
@@ -312,8 +312,8 @@ class MatchingFilterView: UIView {
     private func createToggleButton(title: String) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
-        button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
-        button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+        button.setTitleColor(UIColor.gray500, for: .normal)
+        button.backgroundColor = UIColor.gray100
         button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 16)
         button.layer.cornerRadius = 19
         button.layer.borderWidth = 0
@@ -382,14 +382,14 @@ class MatchingFilterView: UIView {
     // MARK: - 버튼 상태 업데이트
     private func updateButtonState(_ button: UIButton, isSelected: Bool) {
         if isSelected {
-            button.backgroundColor = UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1)
+            button.backgroundColor = UIColor.mainBlue
             button.setTitleColor(.white, for: .normal)
             button.layer.borderWidth = 2
-            button.layer.borderColor = UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1).cgColor
+            button.layer.borderColor = UIColor.mainBlue.cgColor
             button.tag = 1
         } else {
-            button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
-            button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
+            button.backgroundColor = UIColor.gray100
+            button.setTitleColor(UIColor.gray500, for: .normal)
             button.layer.borderWidth = 0
             button.layer.borderColor = UIColor.clear.cgColor
             button.tag = 0

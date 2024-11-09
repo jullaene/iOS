@@ -151,11 +151,11 @@ extension MatchingViewController: MatchingFilterViewDelegate {
     
     private func updateButtonState(_ button: UIButton, isSelected: Bool) {
         if isSelected {
-            button.backgroundColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
+            button.backgroundColor = UIColor.mainBlack
             button.setTitleColor(.white, for: .normal)
         } else {
-            button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
-            button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
+            button.backgroundColor = UIColor.gray100
+            button.setTitleColor(UIColor.gray500, for: .normal)
         }
     }
 }
