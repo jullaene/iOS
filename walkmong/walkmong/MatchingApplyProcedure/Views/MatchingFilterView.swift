@@ -134,13 +134,9 @@ class MatchingFilterView: UIView {
             ("먼동네\n(1.5km)", 1)
         ]
 
-        var selectedDot: UIView?
-        var selectedLabel: UILabel?
-
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
+        DispatchQueue.main.async {
             sliderLine.layoutIfNeeded() // 슬라이더 라인의 레이아웃 강제 갱신
-            let sliderWidth = sliderLine.frame.width
+                let sliderWidth = sliderLine.frame.width
 
             for (index, data) in selectionData.enumerated() {
                 // 원
@@ -183,10 +179,6 @@ class MatchingFilterView: UIView {
                     make.height.equalTo(36) // 텍스트 높이
                 }
 
-                if isSelected {
-                    selectedDot = selectionDot
-                    selectedLabel = label
-                }
             }
         }
     }
