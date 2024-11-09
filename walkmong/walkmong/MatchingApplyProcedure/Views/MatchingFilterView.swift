@@ -48,7 +48,7 @@ class MatchingFilterView: UIView {
         self.layer.cornerRadius = 30
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        distanceFrame.backgroundColor = .red
+        distanceFrame.backgroundColor = .clear
         breedFrame.backgroundColor = .clear
         matchingStatusFrame.backgroundColor = .clear
         
@@ -99,13 +99,25 @@ class MatchingFilterView: UIView {
         distanceFrame.addSubview(distanceLabel)
 
         let distanceSliderFrame = UIView()
-        distanceSliderFrame.backgroundColor = .yellow
+        distanceSliderFrame.backgroundColor = .clear
         distanceFrame.addSubview(distanceSliderFrame)
+
+        // 슬라이더 선
+        let sliderLine = UIView()
+        sliderLine.backgroundColor = UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
+        distanceSliderFrame.addSubview(sliderLine)
 
         distanceLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(16)
             make.leading.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(28)
+        }
+
+        sliderLine.snp.makeConstraints { make in
+            make.top.equalTo(distanceLabel.snp.bottom).offset(30)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(3)
         }
 
         distanceSliderFrame.snp.makeConstraints { make in
@@ -113,7 +125,58 @@ class MatchingFilterView: UIView {
             make.leading.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().offset(-16)
-            make.height.equalTo(64)
+            make.height.equalTo(100)
+        }
+
+        // 선택 요소와 텍스트 데이터
+        let selectionData: [(text: String, positionMultiplier: CGFloat)] = [
+            ("우리 동네\n(500m 이내)", 0),
+            ("가까운동네\n(1km)", 0.5),
+            ("먼동네\n(1.5km)", 1)
+        ]
+
+        DispatchQueue.main.async { [weak self] in
+            guard self != nil else { return }
+            sliderLine.layoutIfNeeded() // 슬라이더 라인의 레이아웃 강제 갱신
+            let sliderWidth = sliderLine.frame.width
+
+            for data in selectionData {
+                // 원
+                let selectionDot = UIView()
+                selectionDot.backgroundColor = UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
+                selectionDot.layer.cornerRadius = 6 // 12x12 크기의 원
+                distanceSliderFrame.addSubview(selectionDot)
+
+                // 텍스트
+                let label = UILabel()
+                label.textColor = UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
+                label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
+                label.numberOfLines = 0
+                label.textAlignment = .center // 중앙 정렬
+
+                // 스타일 적용
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.alignment = .center // 텍스트 중앙 정렬
+                paragraphStyle.lineHeightMultiple = 1.17
+                label.attributedText = NSAttributedString(string: data.text, attributes: [
+                    .kern: -0.32,
+                    .paragraphStyle: paragraphStyle
+                ])
+                distanceSliderFrame.addSubview(label)
+
+                // Auto Layout 설정
+                selectionDot.snp.makeConstraints { make in
+                    make.centerY.equalTo(sliderLine.snp.centerY)
+                    make.size.equalTo(CGSize(width: 12, height: 12))
+                    make.centerX.equalTo(sliderLine.snp.leading).offset(data.positionMultiplier * sliderWidth)
+                }
+
+                label.snp.makeConstraints { make in
+                    make.top.equalTo(selectionDot.snp.bottom).offset(4)
+                    make.centerX.equalTo(selectionDot.snp.centerX) // 중앙 정렬
+                    make.width.equalTo(64) // 적절한 고정 너비
+                }
+            }
         }
     }
     
