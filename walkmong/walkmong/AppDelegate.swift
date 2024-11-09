@@ -25,10 +25,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    func applicationWillTerminate(_ application: UIApplication) {
+        // 앱 종료 시 UserDefaults에 저장된 필터 데이터 삭제
+        let userDefaults = UserDefaults.standard
+        userDefaults.removeObject(forKey: "MatchingFilter")
+        userDefaults.removeObject(forKey: "BreedFilter")
     }
 
 
