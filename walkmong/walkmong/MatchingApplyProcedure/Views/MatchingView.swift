@@ -224,7 +224,7 @@ class MatchingView: UIView {
         }
         
         matchingCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-20)
+            make.bottom.equalToSuperview().offset(-110)
         }
     }
     
