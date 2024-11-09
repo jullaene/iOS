@@ -99,7 +99,7 @@ class MatchingCell: UIView {
     
     private func setupDateLabel() {
         dateLabel.text = "11. 06 (수) 16:00 ~ 16:30"
-        dateLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        dateLabel.textColor = UIColor.mainBlack
         dateLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
         topFrame.addSubview(dateLabel)
         
@@ -110,7 +110,7 @@ class MatchingCell: UIView {
     }
     
     private func setupMatchingStatusView() {
-        matchingStatusView.backgroundColor = UIColor(red: 0.018, green: 0.795, blue: 0.333, alpha: 1)
+        matchingStatusView.backgroundColor = UIColor.mainGreen
         matchingStatusView.layer.cornerRadius = 14.5
         topFrame.addSubview(matchingStatusView)
         
@@ -176,7 +176,7 @@ class MatchingCell: UIView {
     
     private func setupNameLabel() {
         nameLabel.text = "봄별이"
-        nameLabel.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        nameLabel.textColor = UIColor.mainBlack
         nameLabel.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         dogInfoFrame.addSubview(nameLabel)
         
@@ -199,7 +199,7 @@ class MatchingCell: UIView {
     
     private func setupSizeLabel() {
         sizeLabel.text = "소형견"
-        sizeLabel.textColor = UIColor(red: 0.018, green: 0.795, blue: 0.333, alpha: 1)
+        sizeLabel.textColor = UIColor.mainBlack
         sizeLabel.font = UIFont(name: "Pretendard-SemiBold", size: 14)
         dogInfoFrame.addSubview(sizeLabel)
         
@@ -211,7 +211,7 @@ class MatchingCell: UIView {
     
     private func setupSeparatorLabel1() {
         separatorLabel1.text = "·"
-        separatorLabel1.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        separatorLabel1.textColor = UIColor.gray500
         separatorLabel1.font = UIFont(name: "Pretendard-Regular", size: 14)
         dogInfoFrame.addSubview(separatorLabel1)
         
@@ -223,7 +223,7 @@ class MatchingCell: UIView {
     
     private func setupBreedLabel() {
         breedLabel.text = "말티즈"
-        breedLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        breedLabel.textColor = UIColor.gray500
         breedLabel.font = UIFont(name: "Pretendard-Regular", size: 14)
         dogInfoFrame.addSubview(breedLabel)
         
@@ -235,7 +235,7 @@ class MatchingCell: UIView {
         
     private func setupWeightLabel() {
         weightLabel.text = "4kg"
-        weightLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        weightLabel.textColor = UIColor.gray500
         weightLabel.font = UIFont(name: "Pretendard-Regular", size: 14)
         dogInfoFrame.addSubview(weightLabel)
         
@@ -247,7 +247,7 @@ class MatchingCell: UIView {
     
     private func setupPostContentLabel() {
         postContentLabel.text = "30분만 산책시켜주실 분 구합니다. 산책할 때 주의사항은 으아아아아아아아아아아아아아..."
-        postContentLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        postContentLabel.textColor = UIColor.gray500
         postContentLabel.font = UIFont(name: "Pretendard-Regular", size: 14)
         postContentLabel.numberOfLines = 0
         postContentLabel.lineBreakMode = .byCharWrapping
@@ -283,7 +283,7 @@ class MatchingCell: UIView {
     
     private func setupLocationLabel() {
         locationLabel.text = "노원구 공릉동"
-        locationLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        locationLabel.textColor = UIColor.gray500
         locationLabel.font = UIFont(name: "Pretendard-SemiBold", size: 12)
         locationTimeFrame.addSubview(locationLabel)
         
@@ -295,7 +295,7 @@ class MatchingCell: UIView {
 
     private func setupDistanceLabel() {
         distanceLabel.text = "1km"
-        distanceLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        distanceLabel.textColor = UIColor.gray500
         distanceLabel.font = UIFont(name: "Pretendard-SemiBold", size: 12)
         locationTimeFrame.addSubview(distanceLabel)
         
@@ -307,7 +307,7 @@ class MatchingCell: UIView {
     
     private func setupSeparatorLabel2() {
         separatorLabel2.text = "·"
-        separatorLabel2.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        separatorLabel2.textColor = UIColor.gray500
         separatorLabel2.font = UIFont(name: "Pretendard-Regular", size: 12)
         locationTimeFrame.addSubview(separatorLabel2)
         
@@ -319,7 +319,7 @@ class MatchingCell: UIView {
 
     private func setupTimeLabel() {
         timeLabel.text = "3시간 전"
-        timeLabel.textColor = UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1)
+        timeLabel.textColor = UIColor.gray500
         timeLabel.font = UIFont(name: "Pretendard-SemiBold", size: 12)
         locationTimeFrame.addSubview(timeLabel)
         
@@ -331,7 +331,7 @@ class MatchingCell: UIView {
     
     private func setupLoadingUI() {
         mainView.addSubview(loadingDatePlaceholder)
-        loadingDatePlaceholder.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
+        loadingDatePlaceholder.backgroundColor = UIColor.gray200
         loadingDatePlaceholder.layer.cornerRadius = 14
         loadingDatePlaceholder.snp.makeConstraints { make in
             make.width.equalTo(245)
@@ -341,7 +341,7 @@ class MatchingCell: UIView {
         }
         
         mainView.addSubview(loadingStatusPlaceholder)
-        loadingStatusPlaceholder.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
+        loadingStatusPlaceholder.backgroundColor = UIColor.gray200
         loadingStatusPlaceholder.layer.cornerRadius = 14.5
         loadingStatusPlaceholder.snp.makeConstraints { make in
             make.width.equalTo(63)
@@ -366,14 +366,14 @@ class MatchingCell: UIView {
         
         mainView.addSubview(nameAndBreedStack)
         
-        loadingNamePlaceholder.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
+        loadingNamePlaceholder.backgroundColor = UIColor.gray200
         loadingNamePlaceholder.layer.cornerRadius = 12.5
         loadingNamePlaceholder.snp.makeConstraints { make in
             make.height.equalTo(25)
             make.width.greaterThanOrEqualTo(65) // 최소 너비 설정
         }
         
-        loadingBreedPlaceholder.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
+        loadingBreedPlaceholder.backgroundColor = UIColor.gray200
         loadingBreedPlaceholder.layer.cornerRadius = 12.5
         loadingBreedPlaceholder.snp.makeConstraints { make in
             make.height.equalTo(25)

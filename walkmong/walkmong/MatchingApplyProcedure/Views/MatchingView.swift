@@ -10,7 +10,7 @@ class MatchingView: UIView {
     
     private let customView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 0.303, green: 0.764, blue: 1, alpha: 1)
+        view.backgroundColor = UIColor.mainBlue
         return view
     }()
     
@@ -22,7 +22,7 @@ class MatchingView: UIView {
     let locationLabel: UILabel = {
         let label = UILabel()
         label.text = "공릉동"
-        label.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        label.textColor = UIColor.mainBlack
         label.font = UIFont(name: "Pretendard-Bold", size: 20)
         
         let paragraphStyle = NSMutableParagraphStyle()
@@ -47,7 +47,7 @@ class MatchingView: UIView {
     
     private let floatingButton: UIView = {
         let view = UIView()
-        view.layer.backgroundColor = UIColor(red: 0.303, green: 0.764, blue: 1, alpha: 1).cgColor
+        view.layer.backgroundColor = UIColor.mainBlue.cgColor
         view.layer.cornerRadius = 32
         return view
     }()

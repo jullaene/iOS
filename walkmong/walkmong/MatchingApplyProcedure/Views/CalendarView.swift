@@ -4,7 +4,7 @@ import SnapKit
 class CalendarView: UIView {
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
+        label.textColor = UIColor.gray600
         label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         label.textAlignment = .left
         return label

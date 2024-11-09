@@ -34,7 +34,7 @@ class DropdownView: UIView {
     }
     
     private func setupView() {
-        self.layer.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1).cgColor
+        self.layer.backgroundColor = UIColor.gray100.cgColor
         self.layer.cornerRadius = 20
         
         addSubview(selectedLabel)
@@ -73,8 +73,8 @@ class DropdownView: UIView {
     private func setupLabel(_ label: UILabel, text: String, isSelected: Bool) {
         label.text = text
         label.textColor = isSelected
-            ? UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1)
-            : UIColor(red: 0.496, green: 0.508, blue: 0.557, alpha: 1)
+        ? UIColor.mainBlue
+        : UIColor.gray400
         label.font = UIFont(name: "Pretendard-\(isSelected ? "SemiBold" : "Medium")", size: 16)
     }
     
