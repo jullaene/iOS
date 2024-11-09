@@ -3,45 +3,38 @@ import SnapKit
 
 class FilterSelectView: UIView {
 
-    // filterButton을 외부에서 접근 가능하도록 public으로 설정
-    public let filterButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = UIColor.gray100
-        button.layer.cornerRadius = 18.5
-        button.setImage(UIImage(named: "filterIcon"), for: .normal)
-        return button
-    }()
+    // MARK: - Buttons
+    public let filterButton = FilterSelectView.createButton(
+        backgroundColor: UIColor.gray100,
+        cornerRadius: 18.5,
+        image: UIImage(named: "filterIcon")
+    )
     
-    private let distanceButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = UIColor.gray600   // 선택된 상태 배경색
-        button.layer.cornerRadius = 18.5
-        button.setTitle("거리", for: .normal)
-        button.setTitleColor(UIColor.white, for: .normal)  // 선택된 상태 글씨 색상
-        button.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        return button
-    }()
+    private let distanceButton = FilterSelectView.createButton(
+        backgroundColor: UIColor.gray600,
+        cornerRadius: 18.5,
+        title: "거리",
+        titleColor: UIColor.white,
+        font: UIFont(name: "Pretendard-SemiBold", size: 16)
+    )
     
-    let breedButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = UIColor.gray100
-        button.layer.cornerRadius = 18.5
-        button.setTitle("견종", for: .normal)
-        button.setTitleColor(UIColor.gray500, for: .normal)
-        button.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        return button
-    }()
+    let breedButton = FilterSelectView.createButton(
+        backgroundColor: UIColor.gray100,
+        cornerRadius: 18.5,
+        title: "견종",
+        titleColor: UIColor.gray500,
+        font: UIFont(name: "Pretendard-SemiBold", size: 16)
+    )
     
-    let matchStatusButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = UIColor.gray100
-        button.layer.cornerRadius = 18.5
-        button.setTitle("매칭여부", for: .normal)
-        button.setTitleColor(UIColor.gray500, for: .normal)
-        button.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        return button
-    }()
-    
+    let matchStatusButton = FilterSelectView.createButton(
+        backgroundColor: UIColor.gray100,
+        cornerRadius: 18.5,
+        title: "매칭여부",
+        titleColor: UIColor.gray500,
+        font: UIFont(name: "Pretendard-SemiBold", size: 16)
+    )
+
+    // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
@@ -51,43 +44,65 @@ class FilterSelectView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Layout
     private func setupLayout() {
-        // 버튼 추가
-        addSubview(filterButton)
-        addSubview(distanceButton)
-        addSubview(breedButton)
-        addSubview(matchStatusButton)
+        let buttons = [filterButton, distanceButton, breedButton, matchStatusButton]
+        var previousButton: UIView? = nil
         
-        // filterButton 레이아웃 설정
-        filterButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(16)
-            make.width.equalTo(34)
-            make.height.equalTo(36)
-            make.centerY.equalToSuperview()
+        for (index, button) in buttons.enumerated() {
+            addSubview(button)
+            
+            button.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.height.equalTo(38)
+                
+                if let previous = previousButton {
+                    make.leading.equalTo(previous.snp.trailing).offset(8)
+                } else {
+                    make.leading.equalToSuperview().offset(16)
+                }
+                
+                if index == 0 {
+                    make.width.equalTo(34)
+                    make.height.equalTo(36)
+                } else {
+                    make.width.equalTo(index == 3 ? 87 : 60)
+                }
+            }
+            
+            previousButton = button
+        }
+    }
+    
+    // MARK: - Helpers
+    private static func createButton(
+        backgroundColor: UIColor,
+        cornerRadius: CGFloat,
+        title: String? = nil,
+        titleColor: UIColor? = nil,
+        font: UIFont? = nil,
+        image: UIImage? = nil
+    ) -> UIButton {
+        let button = UIButton()
+        button.backgroundColor = backgroundColor
+        button.layer.cornerRadius = cornerRadius
+        
+        if let title = title {
+            button.setTitle(title, for: .normal)
         }
         
-        // distanceButton 레이아웃 설정
-        distanceButton.snp.makeConstraints { make in
-            make.leading.equalTo(filterButton.snp.trailing).offset(8)
-            make.width.equalTo(60)
-            make.height.equalTo(38)
-            make.centerY.equalToSuperview()
+        if let titleColor = titleColor {
+            button.setTitleColor(titleColor, for: .normal)
         }
         
-        // breedButton 레이아웃 설정
-        breedButton.snp.makeConstraints { make in
-            make.leading.equalTo(distanceButton.snp.trailing).offset(8)
-            make.width.equalTo(60)
-            make.height.equalTo(38)
-            make.centerY.equalToSuperview()
+        if let font = font {
+            button.titleLabel?.font = font
         }
         
-        // matchStatusButton 레이아웃 설정
-        matchStatusButton.snp.makeConstraints { make in
-            make.leading.equalTo(breedButton.snp.trailing).offset(8)
-            make.width.equalTo(87)
-            make.height.equalTo(38)
-            make.centerY.equalToSuperview()
+        if let image = image {
+            button.setImage(image, for: .normal)
         }
+        
+        return button
     }
 }
