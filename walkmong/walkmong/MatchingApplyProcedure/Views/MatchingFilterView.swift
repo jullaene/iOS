@@ -167,6 +167,8 @@ class MatchingFilterView: UIView {
         applyButton.layer.cornerRadius = 15
         buttonFrame.addSubview(applyButton)
         
+        resetButton.addTarget(self, action: #selector(resetFilter), for: .touchUpInside)
+        
         resetButton.snp.makeConstraints { make in
             make.leading.centerY.equalToSuperview()
             make.width.equalTo(93)
@@ -262,5 +264,27 @@ class MatchingFilterView: UIView {
             button.clipsToBounds = true // 버튼 경계 내 클립
             button.tag = 1 // 선택 상태로 변경
         }
+    }
+    
+    // MARK: - 버튼 클릭 이벤트
+    @objc private func resetFilter() {
+        // 모든 매칭 버튼을 미선택 상태로 초기화
+        for button in matchingButtons {
+            resetButtonState(button)
+        }
+
+        // 모든 견종 버튼을 미선택 상태로 초기화
+        for button in breedButtons {
+            resetButtonState(button)
+        }
+    }
+    
+    private func resetButtonState(_ button: UIButton) {
+        button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+        button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
+        button.layer.borderWidth = 0
+        button.layer.borderColor = UIColor.clear.cgColor
+        button.clipsToBounds = true
+        button.tag = 0
     }
 }
