@@ -9,6 +9,7 @@ class MatchingViewController: UIViewController {
     }
     private var locationSelectView: UIView!
     private var locationLabel: UILabel!
+    private var matchingView: MatchingView!
     
     var dimView: UIView? {
         return (self.tabBarController as? MainTabBarController)?.dimView
@@ -20,13 +21,12 @@ class MatchingViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
         self.view.backgroundColor = .white
 
-        let matchingView = MatchingView()
+        matchingView = MatchingView()
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
         }
         
         self.view.addSubview(matchingView)
-
         matchingView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -136,5 +136,26 @@ extension MatchingViewController: DropdownViewDelegate {
 extension MatchingViewController: MatchingFilterViewDelegate {
     func didApplyFilter(selectedBreeds: [String], matchingStatus: [String]) {
         hideMatchingFilterView()
+        
+        // MatchingView의 FilterSelectView 상태 업데이트
+        let filterSelectView = matchingView.filterSelectView
+        
+        // 견종 버튼 상태 업데이트
+        let hasSelectedBreeds = !selectedBreeds.isEmpty
+        updateButtonState(filterSelectView.breedButton, isSelected: hasSelectedBreeds)
+        
+        // 매칭 여부 버튼 상태 업데이트
+        let hasSelectedMatchingStatus = !matchingStatus.isEmpty
+        updateButtonState(filterSelectView.matchStatusButton, isSelected: hasSelectedMatchingStatus)
+    }
+    
+    private func updateButtonState(_ button: UIButton, isSelected: Bool) {
+        if isSelected {
+            button.backgroundColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
+            button.setTitleColor(.white, for: .normal)
+        } else {
+            button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+            button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
+        }
     }
 }

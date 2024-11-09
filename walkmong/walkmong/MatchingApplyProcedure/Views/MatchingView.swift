@@ -42,7 +42,7 @@ class MatchingView: UIView {
     }()
     
     private let calendarView = CalendarView()
-    private let filterSelectView = FilterSelectView()
+    let filterSelectView = FilterSelectView()
     private var matchingCells: [MatchingCell] = []
     
     private let floatingButton: UIView = {

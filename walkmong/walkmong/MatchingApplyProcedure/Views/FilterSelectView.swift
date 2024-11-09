@@ -22,7 +22,7 @@ class FilterSelectView: UIView {
         return button
     }()
     
-    private let breedButton: UIButton = {
+    let breedButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
         button.layer.cornerRadius = 18.5
@@ -32,7 +32,7 @@ class FilterSelectView: UIView {
         return button
     }()
     
-    private let matchStatusButton: UIButton = {
+    let matchStatusButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
         button.layer.cornerRadius = 18.5
