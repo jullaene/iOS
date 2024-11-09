@@ -59,9 +59,24 @@ class MatchingView: UIView {
         return imageView
     }()
     
+    private let safeAreaBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.mainBlue
+        return view
+    }()
+    
+    private let bounceBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.mainBlue
+        view.isHidden = true // 기본적으로 숨김
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        setupSafeAreaBackgroundView()
+        setupBounceBackgroundView()
         setupScrollView()
         setupCustomView()
         setupLocationSelectView()
@@ -76,14 +91,35 @@ class MatchingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func setupSafeAreaBackgroundView() {
+        addSubview(safeAreaBackgroundView) // 부모 뷰에 배경 뷰 추가
+
+        safeAreaBackgroundView.snp.makeConstraints { make in
+            make.top.equalToSuperview() // 화면의 최상단
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.top) // Safe Area의 최하단
+            make.leading.trailing.equalToSuperview() // 화면 양쪽 끝
+        }
+    }
+    
+    private func setupBounceBackgroundView() {
+        addSubview(bounceBackgroundView)
+        
+        bounceBackgroundView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(200) // 충분히 큰 높이 설정
+        }
+    }
+    
     private func setupScrollView() {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         
+        scrollView.delegate = self // UIScrollViewDelegate 연결
         scrollView.contentInsetAdjustmentBehavior = .never
         
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(safeAreaLayoutGuide.snp.top) // Safe Area 아래에서 시작
+            make.leading.trailing.bottom.equalToSuperview()
         }
         
         contentView.snp.makeConstraints { make in
@@ -91,19 +127,19 @@ class MatchingView: UIView {
             make.width.equalToSuperview()
         }
     }
-    
+
     private func setupCustomView() {
         contentView.addSubview(customView)
         
         customView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.height.equalTo(280)
+            make.height.equalTo(226)
             make.leading.equalToSuperview()
             make.top.equalToSuperview()
         }
         
         let path = UIBezierPath(
-            roundedRect: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 280),
+            roundedRect: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 226),
             byRoundingCorners: [.bottomLeft, .bottomRight],
             cornerRadii: CGSize(width: 30, height: 30)
         )
@@ -117,7 +153,7 @@ class MatchingView: UIView {
         contentView.addSubview(locationSelectView)
         
         locationSelectView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(83)
+            make.top.equalToSuperview().offset(29)
             make.leading.equalToSuperview().offset(16)
             make.width.equalTo(72)
             make.height.equalTo(28)
@@ -212,6 +248,15 @@ class MatchingView: UIView {
         floatingButtonIcon.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.width.height.equalTo(32) // 아이콘 크기 조정
+        }
+    }
+}
+
+extension MatchingView: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // 최상단 이상으로 스크롤을 당길 경우 contentOffset 제한
+        if scrollView.contentOffset.y < 0 {
+            scrollView.contentOffset = CGPoint(x: 0, y: 0) // 최상단에서 멈춤
         }
     }
 }
