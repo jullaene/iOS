@@ -151,7 +151,7 @@ extension MatchingViewController: MatchingFilterViewDelegate {
     
     private func updateButtonState(_ button: UIButton, isSelected: Bool) {
         if isSelected {
-            button.backgroundColor = UIColor.mainBlack
+            button.backgroundColor = UIColor.gray600
             button.setTitleColor(.white, for: .normal)
         } else {
             button.backgroundColor = UIColor.gray100
