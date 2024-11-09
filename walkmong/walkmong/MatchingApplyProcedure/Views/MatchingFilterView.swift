@@ -135,21 +135,27 @@ class MatchingFilterView: UIView {
             ("먼동네\n(1.5km)", 1)
         ]
 
+        var selectedDot: UIView?
+        var selectedLabel: UILabel?
+
         DispatchQueue.main.async { [weak self] in
-            guard self != nil else { return }
+            guard let self = self else { return }
             sliderLine.layoutIfNeeded() // 슬라이더 라인의 레이아웃 강제 갱신
             let sliderWidth = sliderLine.frame.width
 
-            for data in selectionData {
+            for (index, data) in selectionData.enumerated() {
                 // 원
                 let selectionDot = UIView()
-                selectionDot.backgroundColor = UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
-                selectionDot.layer.cornerRadius = 6 // 12x12 크기의 원
+                let isSelected = index == 0
+                selectionDot.backgroundColor = isSelected ? UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1) : UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
+                selectionDot.layer.cornerRadius = isSelected ? 12 : 6
+                selectionDot.layer.borderWidth = isSelected ? 1 : 0
+                selectionDot.layer.borderColor = isSelected ? UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1).cgColor : UIColor.clear.cgColor
                 distanceSliderFrame.addSubview(selectionDot)
 
                 // 텍스트
                 let label = UILabel()
-                label.textColor = UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
+                label.textColor = isSelected ? UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1) : UIColor(red: 0.847, green: 0.867, blue: 0.894, alpha: 1)
                 label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
                 label.numberOfLines = 0
                 label.textAlignment = .center // 중앙 정렬
@@ -167,7 +173,7 @@ class MatchingFilterView: UIView {
                 // Auto Layout 설정
                 selectionDot.snp.makeConstraints { make in
                     make.centerY.equalTo(sliderLine.snp.centerY)
-                    make.size.equalTo(CGSize(width: 12, height: 12))
+                    make.size.equalTo(isSelected ? CGSize(width: 24, height: 24) : CGSize(width: 12, height: 12))
                     make.centerX.equalTo(sliderLine.snp.leading).offset(data.positionMultiplier * sliderWidth)
                 }
 
@@ -175,6 +181,12 @@ class MatchingFilterView: UIView {
                     make.top.equalTo(selectionDot.snp.bottom).offset(4)
                     make.centerX.equalTo(selectionDot.snp.centerX) // 중앙 정렬
                     make.width.equalTo(64) // 적절한 고정 너비
+                    make.height.equalTo(36) // 텍스트 높이
+                }
+
+                if isSelected {
+                    selectedDot = selectionDot
+                    selectedLabel = label
                 }
             }
         }
