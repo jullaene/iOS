@@ -125,7 +125,6 @@ class MatchingFilterView: UIView {
             make.leading.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().offset(-16)
-            make.height.equalTo(100)
         }
 
         // 선택 요소와 텍스트 데이터
