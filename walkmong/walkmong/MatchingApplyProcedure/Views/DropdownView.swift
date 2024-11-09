@@ -24,6 +24,7 @@ class DropdownView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 설정
         setupView()
         updateSelection(selectedLocation: selectedLocation) // 초기 상태 업데이트
     }

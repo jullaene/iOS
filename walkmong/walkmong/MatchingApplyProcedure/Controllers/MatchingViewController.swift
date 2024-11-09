@@ -2,64 +2,39 @@ import UIKit
 import SnapKit
 
 class MatchingViewController: UIViewController {
-
-    private var dimView: UIView!
-    private var dropdownView: DropdownView!
-    private var locationSelectView: UIView! // MatchingView의 locationSelectView에 접근하기 위한 변수
-    private var locationLabel: UILabel! // MatchingView의 locationLabel 접근 변수
-
+    
+    private var matchingFilterView: MatchingFilterView?
+    private var dropdownView: DropdownView! {
+        return (self.tabBarController as? MainTabBarController)?.dropdownView
+    }
+    private var locationSelectView: UIView!
+    private var locationLabel: UILabel!
+    private var matchingView: MatchingView!
+    
+    var dimView: UIView? {
+        return (self.tabBarController as? MainTabBarController)?.dimView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // 네비게이션 바 숨기기
         self.navigationController?.navigationBar.isHidden = true
-
-        // 배경 색상 설정
         self.view.backgroundColor = .white
 
-        // MatchingView 추가
-        let matchingView = MatchingView()
+        matchingView = MatchingView()
+        matchingView.filterButtonAction = { [weak self] in
+            self?.showMatchingFilterView()
+        }
+        
         self.view.addSubview(matchingView)
-
         matchingView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 
-        // MatchingView에서 locationSelectView와 locationLabel 가져오기
         self.locationSelectView = matchingView.locationSelectView
         self.locationLabel = matchingView.locationLabel
         
-        setupDimView()
-        setupDropdownView()
         setupLocationSelectGesture()
-    }
-    
-    private func setupDimView() {
-        dimView = UIView()
-        dimView.backgroundColor = UIColor(white: 0, alpha: 0.5)
-        dimView.isHidden = true
-        self.view.addSubview(dimView)
-        
-        dimView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideDropdownView))
-        dimView.addGestureRecognizer(tapGesture)
-    }
-    
-    private func setupDropdownView() {
-        dropdownView = DropdownView()
-        dropdownView.isHidden = true
-        dropdownView.delegate = self
-        self.view.addSubview(dropdownView)
-        
-        dropdownView.snp.makeConstraints { make in
-            make.width.equalTo(201)
-            make.height.equalTo(130)
-            make.leading.equalTo(locationSelectView.snp.leading)
-            make.top.equalTo(locationSelectView.snp.bottom).offset(10)
-        }
     }
     
     private func setupLocationSelectGesture() {
@@ -67,22 +42,120 @@ class MatchingViewController: UIViewController {
         locationSelectView.addGestureRecognizer(tapGesture)
     }
     
+    // MARK: - DropdownView 표시
     @objc private func showDropdownView() {
-        dimView.isHidden = false
+        guard let dropdownView = dropdownView else { return }
+        hideMatchingFilterView() // 다른 뷰가 표시 중이면 숨김
+        
+        dimView?.isHidden = false
         dropdownView.isHidden = false
+
+        dimView?.superview?.bringSubviewToFront(dimView!)
+        dimView?.superview?.bringSubviewToFront(dropdownView)
+        
+        dropdownView.snp.remakeConstraints { make in
+            make.width.equalTo(201)
+            make.height.equalTo(130)
+            make.leading.equalTo(locationSelectView.snp.leading)
+            make.top.equalTo(locationSelectView.snp.bottom).offset(10)
+        }
     }
     
     @objc private func hideDropdownView() {
-        dimView.isHidden = true
-        dropdownView.isHidden = true
+        dropdownView?.isHidden = true
+        dimView?.isHidden = matchingFilterView == nil // 다른 뷰가 없으면 dimView 숨김
+    }
+
+    @objc func hideFilterAndDropdown() {
+        hideDropdownView()
+        hideMatchingFilterView()
+    }
+
+    // MARK: - MatchingFilterView 표시
+    private func showMatchingFilterView() {
+        guard matchingFilterView == nil else { return }
+        hideDropdownView()
+        
+        let parentView = self.tabBarController?.view ?? self.view
+        
+        let filterView = MatchingFilterView()
+        filterView.layer.cornerRadius = 30
+        filterView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        filterView.delegate = self // 델리게이트 설정
+        
+        parentView?.addSubview(filterView)
+        self.matchingFilterView = filterView
+        
+        filterView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(605)
+            make.bottom.equalToSuperview().offset(605)
+        }
+        
+        parentView?.layoutIfNeeded()
+        
+        dimView?.isHidden = false
+        dimView?.superview?.bringSubviewToFront(dimView!)
+        parentView?.bringSubviewToFront(filterView)
+        
+        UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseOut], animations: {
+            filterView.snp.updateConstraints { make in
+                make.bottom.equalToSuperview()
+            }
+            parentView?.layoutIfNeeded()
+        })
+    }
+    
+    private func hideMatchingFilterView() {
+        guard let filterView = matchingFilterView else { return }
+        guard let tabBarView = self.tabBarController?.view else { return }
+        
+        UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseIn], animations: {
+            filterView.snp.updateConstraints { make in
+                make.bottom.equalTo(tabBarView.snp.bottom).offset(605)
+            }
+            tabBarView.layoutIfNeeded()
+        }, completion: { _ in
+            filterView.removeFromSuperview()
+            self.matchingFilterView = nil
+            self.dimView?.isHidden = true
+        })
     }
 }
 
-// DropdownViewDelegate를 통해 선택된 동네를 업데이트합니다.
+// MARK: - DropdownViewDelegate 구현
 extension MatchingViewController: DropdownViewDelegate {
     func didSelectLocation(_ location: String) {
-        locationLabel.text = location // 선택된 동네를 locationLabel에 업데이트
-        dropdownView.updateSelection(selectedLocation: location) // DropdownView의 상태 업데이트
+        locationLabel.text = location
+        dropdownView?.updateSelection(selectedLocation: location)
         hideDropdownView()
+    }
+}
+
+// MARK: - MatchingFilterViewDelegate 구현
+extension MatchingViewController: MatchingFilterViewDelegate {
+    func didApplyFilter(selectedBreeds: [String], matchingStatus: [String]) {
+        hideMatchingFilterView()
+        
+        // MatchingView의 FilterSelectView 상태 업데이트
+        let filterSelectView = matchingView.filterSelectView
+        
+        // 견종 버튼 상태 업데이트
+        let hasSelectedBreeds = !selectedBreeds.isEmpty
+        updateButtonState(filterSelectView.breedButton, isSelected: hasSelectedBreeds)
+        
+        // 매칭 여부 버튼 상태 업데이트
+        let hasSelectedMatchingStatus = !matchingStatus.isEmpty
+        updateButtonState(filterSelectView.matchStatusButton, isSelected: hasSelectedMatchingStatus)
+    }
+    
+    private func updateButtonState(_ button: UIButton, isSelected: Bool) {
+        if isSelected {
+            button.backgroundColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
+            button.setTitleColor(.white, for: .normal)
+        } else {
+            button.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1)
+            button.setTitleColor(UIColor(red: 0.365, green: 0.373, blue: 0.404, alpha: 1), for: .normal)
+        }
     }
 }
