@@ -5,7 +5,9 @@ class MatchingViewController: UIViewController {
     
     private var matchingFilterView: MatchingFilterView?
     private var dropdownView: DropdownView! {
-        return (self.tabBarController as? MainTabBarController)?.dropdownView
+        let view = (self.tabBarController as? MainTabBarController)?.dropdownView
+        view?.delegate = self // 델리게이트 설정
+        return view
     }
     private var locationSelectView: UIView!
     private var locationLabel: UILabel!
