@@ -43,7 +43,6 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
         
         // 프로토콜을 통해 locationText 가져오기
         let currentLocation = (matchingView as MatchingViewLocationProvider).locationText
-        print("Current Location: \(currentLocation)")
     }
     
     private func setupGestures() {
@@ -143,7 +142,6 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
 // MARK: - DropdownViewDelegate
 extension MatchingViewController: DropdownViewDelegate {
     func didSelectLocation(_ location: String) {
-        print("Selected Location: \(location)")
         matchingView.updateLocationLabel(with: location)
         dropdownView?.updateSelection(selectedLocation: location)
         hideDropdownView()
@@ -153,8 +151,6 @@ extension MatchingViewController: DropdownViewDelegate {
 // MARK: - MatchingFilterViewDelegate
 extension MatchingViewController {
     func didApplyFilter(selectedBreeds: [String], matchingStatus: [String]) {
-        print("Selected Breeds: \(selectedBreeds)")
-        print("Selected Matching Status: \(matchingStatus)")
         
         // FilterSelectView 업데이트
         let filterView = matchingView.filterSelectView
