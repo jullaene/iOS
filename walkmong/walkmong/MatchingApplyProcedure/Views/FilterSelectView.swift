@@ -64,7 +64,7 @@ class FilterSelectView: UIView {
                 
                 if index == 0 {
                     make.width.equalTo(34)
-                    make.height.equalTo(36)
+                    make.height.equalTo(38)
                 } else {
                     make.width.equalTo(index == 3 ? 87 : 60)
                 }
