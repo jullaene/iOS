@@ -19,7 +19,7 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
     
     private func setUpViews(){
         view.backgroundColor = .white
-        addCustomNavigationBar(titleText: "산책 지원하기",showLeftBarButton: true, showCloseBarButton: false, showRefreshBarButton: false)
+        addCustomNavigationBar(titleText: "산책 지원하기", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         addProgressBar(currentStep: 1, totalSteps: 3)
         
         self.view.addSubview(detailSelectView)
