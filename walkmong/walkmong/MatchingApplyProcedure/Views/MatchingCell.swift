@@ -319,6 +319,26 @@ class MatchingCell: UIView {
         locationLabel.text = data.dongAddress
         distanceLabel.text = data.distance
         timeLabel.text = data.createdAt
+        
+        // Matching Status에 따른 UI 변경
+        matchingStatusLabel.text = data.matchingStatus
+        if data.matchingStatus == "매칭확정" {
+            matchingStatusView.backgroundColor = .gray100
+            matchingStatusLabel.textColor = .gray400
+            matchingStatusView.snp.remakeConstraints { make in
+                make.trailing.centerY.equalToSuperview()
+                make.width.equalTo(73)
+                make.height.equalTo(29)
+            }
+        } else { // 기본 "매칭중" 상태
+            matchingStatusView.backgroundColor = .mainGreen
+            matchingStatusLabel.textColor = .white
+            matchingStatusView.snp.remakeConstraints { make in
+                make.trailing.centerY.equalToSuperview()
+                make.width.equalTo(63)
+                make.height.equalTo(29)
+            }
+        }
     }
 }
 
