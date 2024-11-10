@@ -26,11 +26,8 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
         loadData()
         
         func didSelectMatchingCell(data: MatchingData) {
-            print("탭이 선택됨: \(data)")
-            print("네비게이션 컨트롤러 확인: \(String(describing: navigationController))")
 
             guard let navigationController = navigationController else {
-                print("navigationController가 nil입니다.")
                 return
             }
 
