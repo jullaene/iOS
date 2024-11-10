@@ -9,7 +9,7 @@ import UIKit
 import NMapsMap
 
 protocol MatchingApplyMapViewDelegate: AnyObject {
-    func matchingApplyMapView(_ view: MatchingApplyMapView, didSelectLocationAt coords: String)
+    func matchingApplyMapView(_ view: MatchingApplyMapView, didSelectLocationAt target: NMGLatLng)
     func willSelectLocation()
     func didTapNextButton()
 }
@@ -104,8 +104,7 @@ extension MatchingApplyMapView: NMFMapViewCameraDelegate {
     // 이동이 끝났을 때 좌표값 print
     func mapViewCameraIdle(_ mapView: NMFMapView) {
         print(mapView.cameraPosition.target)
-        let coords = "\(mapView.cameraPosition.target.lng)" + "," + "\(mapView.cameraPosition.target.lat)"
-        delegate?.matchingApplyMapView(self, didSelectLocationAt: coords)
+        delegate?.matchingApplyMapView(self, didSelectLocationAt: mapView.cameraPosition.target)
         self.nextButton.backgroundColor = .mainBlue
     }
 }

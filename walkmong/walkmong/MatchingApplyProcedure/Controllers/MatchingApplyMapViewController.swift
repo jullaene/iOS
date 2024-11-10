@@ -13,6 +13,7 @@ class MatchingApplyMapViewController: UIViewController {
     
     let matchingApplyMapView = MatchingApplyMapView()
     let modalView = MatchingApplyMapNotifyModalView()
+    let addressModalView = MatchingApplyMapAddressModalView()
     var model = MatchingApplyMapModel(didSelectLocation: false)
 
     override func viewWillAppear(_ animated: Bool) {
@@ -30,10 +31,12 @@ class MatchingApplyMapViewController: UIViewController {
         self.view.backgroundColor = .white
         setMapView()
         modalView.delegate = self
+        dismissKeyboardOnTap()
+        setupKeyboardEvent()
     }
     
     private func addSubViews(){
-        self.view.addSubviews(matchingApplyMapView, modalView)
+        self.view.addSubviews(matchingApplyMapView, modalView, addressModalView)
     }
     
     private func setConstraints(){
@@ -45,6 +48,11 @@ class MatchingApplyMapViewController: UIViewController {
         modalView.snp.makeConstraints { make in
             make.height.equalTo(268)
             make.horizontalEdges.equalToSuperview()
+        }
+        addressModalView.snp.makeConstraints { make in
+            make.height.equalTo(346)
+            make.horizontalEdges.equalToSuperview()
+            make.top.equalTo(view.snp.bottom)
         }
     }
     
@@ -60,34 +68,73 @@ extension MatchingApplyMapViewController: MatchingApplyMapViewDelegate{
     
     func didTapNextButton() {
         if self.model.didSelectLocation {
-            willHideModalView(self.modalView)
+            willRaiseModalView(self.modalView)
+            willRaiseModalView(self.addressModalView)
         }
     }
     
-    func matchingApplyMapView(_ view: MatchingApplyMapView, didSelectLocationAt coords: String) {
-        callRequest(coords: coords) { data in
+    func matchingApplyMapView(_ view: MatchingApplyMapView, didSelectLocationAt target: NMGLatLng) {
+        let coords = "\(target.lng)" + "," + "\(target.lat)"
+        Task {
             do {
+                let data = try await callRequest(coords: coords)
                 let decodeData = try JSONDecoder().decode(ReverseGeocodingModel.self, from: data)
                 for address in decodeData.results {
                     if let land = address.land.name {
-                        print(address.region.area3.name + " " + address.region.area2.name + " " + land + " " + address.land.number1 + " " +  address.land.addition0.value)
+                        self.model.dongAddress = address.region.area3.name
+                        self.model.roadAddress = "\(address.region.area2.name) \(land) \(address.land.number1) \(address.land.addition0.value)"
+                        self.model.latitude = target.lat
+                        self.model.longitude = target.lng
                     }
+                }
+                DispatchQueue.main.async {
                     self.model.didSelectLocation = true
+                    self.addressModalView.configure(with: self.model)
                 }
             } catch {
-                print(error)
+                print("Error: \(error)")
             }
         }
     }
 }
 
 extension MatchingApplyMapViewController: MatchingApplyMapNotifyModalViewDelegate{
-    func willHideModalView(_ view: UIView) {
+    func willRaiseModalView(_ view: UIView) {
+        raiseModalView(view)
+    }
+}
+
+extension MatchingApplyMapViewController: MatchingApplyMapAddressModalViewDelegate{
+    func didTapDecideButton(){
+        guard let presentingVC = self.presentingViewController as? UINavigationController else { return }
+        let viewControllerStack = presentingVC.viewControllers
+        self.dismiss(animated: true) {
+            for viewController in viewControllerStack {
+                if let rootVC = viewController as? MatchingApplyDetailSelectViewController {
+                    presentingVC.popToViewController(rootVC, animated: true)
+                }
+            }
+        }
+    }
+
+}
+
+extension MatchingApplyMapViewController {
+    private func raiseModalView(_ view: UIView){
         DispatchQueue.main.async{
             UIView.animate(withDuration: 1.5, animations: {
-                view.transform = CGAffineTransform(translationX: 0, y: -view.frame.height - 20)
+                view.transform = CGAffineTransform(translationX: 0, y: -view.frame.height)
             }) { _ in
-                view.isHidden = true
+                
+            }
+        }
+    }
+    private func downModalView(_ view: UIView){
+        DispatchQueue.main.async{
+            UIView.animate(withDuration: 1.5, animations: {
+                view.transform = CGAffineTransform(translationX: 0, y: view.frame.height)
+            }) { _ in
+                
             }
         }
     }

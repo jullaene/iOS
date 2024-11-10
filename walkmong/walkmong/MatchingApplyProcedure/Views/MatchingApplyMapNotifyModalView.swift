@@ -8,7 +8,7 @@
 import UIKit
 
 protocol MatchingApplyMapNotifyModalViewDelegate: AnyObject {
-    func willHideModalView(_ view: UIView)
+    func willRaiseModalView(_ view: UIView)
 }
 
 class MatchingApplyMapNotifyModalView: UIView {
@@ -98,6 +98,6 @@ class MatchingApplyMapNotifyModalView: UIView {
     }
     
     private func hideModalView() {
-        delegate?.willHideModalView(self)
+        delegate?.willRaiseModalView(self)
     }
 }
