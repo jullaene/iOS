@@ -25,7 +25,7 @@ class MatchingDogInformationViewController: BaseViewController {
         setupUI()
         if let data = matchingData {
             // 여러 이미지 설정 (슬라이더)
-            dogInfoView.configureImages(with: [data.dogProfile, data.dogProfile, data.dogProfile])
+            dogInfoView.configureImages(with: [data.dogProfile, "sampleImage"])
         }
     }
     
