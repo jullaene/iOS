@@ -40,6 +40,7 @@ extension UIViewController {
             let backButtonButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.backButton, for: .normal)
+                button.addTarget(self, action: #selector(self.popViewController), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(backButtonButton)
@@ -90,5 +91,8 @@ extension UIViewController {
                 make.trailing.equalToSuperview().offset(-20)
             }
         }
+    }
+    @objc private func popViewController() {
+        self.navigationController?.popViewController(animated: true)
     }
 }
