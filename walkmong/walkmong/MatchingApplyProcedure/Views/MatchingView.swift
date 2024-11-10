@@ -231,3 +231,10 @@ private extension MatchingView {
         return imageView
     }
 }
+
+// MARK: - Public Methods
+extension MatchingView {
+    func updateLocationLabel(with location: String) {
+        locationLabel.text = location
+    }
+}
