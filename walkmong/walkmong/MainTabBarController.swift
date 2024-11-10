@@ -92,7 +92,7 @@ final class MainTabBarController: UITabBarController {
     
     private func setUI() {
         tabBar.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.75)
-        tabBar.tintColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
+        tabBar.tintColor = UIColor.mainBlack
         tabBar.unselectedItemTintColor = UIColor(red: 0.719, green: 0.737, blue: 0.761, alpha: 1)
         tabBar.shadowImage = UIImage()
         tabBar.backgroundImage = UIImage()

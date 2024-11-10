@@ -1,93 +1,117 @@
 import UIKit
 import SnapKit
 
-class MatchingView: UIView {
+protocol MatchingViewLocationProvider: AnyObject {
+    var locationText: String { get }
+}
+
+class MatchingView: UIView, MatchingViewLocationProvider {
+    var locationText: String {
+        return locationLabel.text ?? ""
+    }
     
-    var filterButtonAction: (() -> Void)? // filterButton 클릭 시 실행될 동작을 전달하기 위한 클로저
+    // MARK: - Properties
+    var filterButtonAction: (() -> Void)?
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    private let customView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(red: 0.303, green: 0.764, blue: 1, alpha: 1)
-        return view
-    }()
-    
-    let locationSelectView: UIView = {
-        let view = UIView()
-        return view
-    }()
-    
-    let locationLabel: UILabel = {
-        let label = UILabel()
-        label.text = "공릉동"
-        label.textColor = UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1)
-        label.font = UIFont(name: "Pretendard-Bold", size: 20)
-        
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.17
-        label.attributedText = NSMutableAttributedString(string: "공릉동", attributes: [
-            .kern: -0.32,
-            .paragraphStyle: paragraphStyle
-        ])
-        return label
-    }()
-    
-    private let selectImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "selectdongbtn")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
+    private let customView: UIView = MatchingView.createBackgroundView(color: UIColor.mainBlue)
+    private let safeAreaBackgroundView = MatchingView.createBackgroundView(color: UIColor.mainBlue)
+    private let bounceBackgroundView = MatchingView.createBackgroundView(color: UIColor.mainBlue, isHidden: true)
+    let locationSelectView = UIView()
+    private let locationLabel = MatchingView.createLabel(
+        text: "공릉동",
+        font: UIFont(name: "Pretendard-Bold", size: 20),
+        textColor: UIColor.mainBlack,
+        kern: -0.32,
+        lineHeight: 1.17
+    )
+    private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
     private let calendarView = CalendarView()
     let filterSelectView = FilterSelectView()
     private var matchingCells: [MatchingCell] = []
+    private let floatingButton = MatchingView.createRoundedView(color: UIColor.mainBlue, cornerRadius: 32)
+    private let floatingButtonIcon = MatchingView.createImageView(named: "pencilIcon")
     
-    private let floatingButton: UIView = {
-        let view = UIView()
-        view.layer.backgroundColor = UIColor(red: 0.303, green: 0.764, blue: 1, alpha: 1).cgColor
-        view.layer.cornerRadius = 32
-        return view
-    }()
-    
-    private let floatingButtonIcon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "pencilIcon") // pencilIcon.svg를 UIImage로 변환 후 프로젝트에 추가해야 합니다.
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
+    // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        setupScrollView()
-        setupCustomView()
-        setupLocationSelectView()
-        setupCalendarView()
-        setupFilterSelectView()
-        setupMatchingCells(isLoading: true)
-        setupFloatingButton()
-        
-        // 3초 후에 로딩 셀을 일반 셀로 전환
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
-            self?.toggleLoadingCells(isLoading: false)
-        }
+        setupViews()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
+    func updateMatchingCells(with data: [MatchingData]) {
+        // Clear existing cells
+        matchingCells.forEach { $0.removeFromSuperview() }
+        matchingCells.removeAll()
+        
+        // Add new cells
+        for item in data {
+            let cell = MatchingCell()
+            cell.configure(with: item)
+            matchingCells.append(cell)
+            contentView.addSubview(cell)
+        }
+        
+        // Layout cells
+        for (index, cell) in matchingCells.enumerated() {
+            cell.snp.makeConstraints { make in
+                make.width.equalTo(353)
+                make.height.equalTo(151)
+                make.centerX.equalToSuperview()
+                make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
+            }
+        }
+        
+        matchingCells.last?.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-110)
+        }
+    }
+    
+    // MARK: - Setup Methods
+    private func setupViews() {
+        setupSafeAreaBackgroundView()
+        setupBounceBackgroundView()
+        setupScrollView()
+        setupCustomView()
+        setupLocationSelectView()
+        setupCalendarView()
+        setupFilterSelectView()
+        setupMatchingCells()
+        setupFloatingButton()
+    }
+    
+    private func setupSafeAreaBackgroundView() {
+        addSubview(safeAreaBackgroundView)
+        safeAreaBackgroundView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+        }
+    }
+    
+    private func setupBounceBackgroundView() {
+        addSubview(bounceBackgroundView)
+        bounceBackgroundView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(200)
+        }
+    }
+    
     private func setupScrollView() {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
-        
+        scrollView.delegate = self
         scrollView.contentInsetAdjustmentBehavior = .never
         
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.bottom.equalToSuperview()
         }
         
         contentView.snp.makeConstraints { make in
@@ -95,23 +119,20 @@ class MatchingView: UIView {
             make.width.equalToSuperview()
         }
     }
-    
+
     private func setupCustomView() {
         contentView.addSubview(customView)
-        
         customView.snp.makeConstraints { make in
-            make.width.equalToSuperview()
-            make.height.equalTo(280)
-            make.leading.equalToSuperview()
-            make.top.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(226)
         }
         
         let path = UIBezierPath(
-            roundedRect: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 280),
+            roundedRect: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 226),
             byRoundingCorners: [.bottomLeft, .bottomRight],
             cornerRadii: CGSize(width: 30, height: 30)
         )
-        
+
         let maskLayer = CAShapeLayer()
         maskLayer.path = path.cgPath
         customView.layer.mask = maskLayer
@@ -119,9 +140,8 @@ class MatchingView: UIView {
     
     private func setupLocationSelectView() {
         contentView.addSubview(locationSelectView)
-        
         locationSelectView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(83)
+            make.top.equalToSuperview().offset(29)
             make.leading.equalToSuperview().offset(16)
             make.width.equalTo(72)
             make.height.equalTo(28)
@@ -130,7 +150,6 @@ class MatchingView: UIView {
         locationSelectView.addSubview(locationLabel)
         locationLabel.snp.makeConstraints { make in
             make.leading.centerY.equalToSuperview()
-            make.height.equalToSuperview()
         }
         
         locationSelectView.addSubview(selectImageView)
@@ -144,36 +163,31 @@ class MatchingView: UIView {
     
     private func setupCalendarView() {
         contentView.addSubview(calendarView)
-        
         calendarView.snp.makeConstraints { make in
             make.top.equalTo(locationSelectView.snp.bottom).offset(36)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().offset(-16)
+            make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(97)
         }
     }
     
     private func setupFilterSelectView() {
         contentView.addSubview(filterSelectView)
-        
         filterSelectView.snp.makeConstraints { make in
             make.top.equalTo(customView.snp.bottom)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(78)
         }
         
-        // filterButton 클릭 이벤트와 연결
         filterSelectView.filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
     
     @objc private func filterButtonTapped() {
-        filterButtonAction?() // 클로저를 통해 클릭 이벤트를 전달
+        filterButtonAction?()
     }
     
-    private func setupMatchingCells(isLoading: Bool) {
+    private func setupMatchingCells() {
         for _ in 0..<4 {
             let cell = MatchingCell()
-            cell.configureLoading(isLoading)
             matchingCells.append(cell)
             contentView.addSubview(cell)
         }
@@ -183,29 +197,17 @@ class MatchingView: UIView {
                 make.width.equalTo(353)
                 make.height.equalTo(151)
                 make.centerX.equalToSuperview()
-                
-                if index == 0 {
-                    make.top.equalTo(filterSelectView.snp.bottom).offset(12)
-                } else {
-                    make.top.equalTo(matchingCells[index - 1].snp.bottom).offset(32)
-                }
+                make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
             }
         }
         
         matchingCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-20)
-        }
-    }
-    
-    private func toggleLoadingCells(isLoading: Bool) {
-        for cell in matchingCells {
-            cell.configureLoading(isLoading)
+            make.bottom.equalToSuperview().offset(-110)
         }
     }
     
     private func setupFloatingButton() {
         addSubview(floatingButton)
-        
         floatingButton.snp.makeConstraints { make in
             make.width.height.equalTo(64)
             make.trailing.equalToSuperview().offset(-16)
@@ -213,10 +215,65 @@ class MatchingView: UIView {
         }
         
         floatingButton.addSubview(floatingButtonIcon)
-        
         floatingButtonIcon.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.width.height.equalTo(32) // 아이콘 크기 조정
+            make.width.height.equalTo(32)
         }
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension MatchingView: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y < 0 {
+            scrollView.contentOffset = CGPoint.zero
+        }
+    }
+}
+
+// MARK: - Factory Methods
+private extension MatchingView {
+    static func createBackgroundView(color: UIColor, isHidden: Bool = false) -> UIView {
+        let view = UIView()
+        view.backgroundColor = color
+        view.isHidden = isHidden
+        return view
+    }
+    
+    static func createRoundedView(color: UIColor, cornerRadius: CGFloat) -> UIView {
+        let view = UIView()
+        view.backgroundColor = color
+        view.layer.cornerRadius = cornerRadius
+        return view
+    }
+    
+    static func createLabel(text: String, font: UIFont?, textColor: UIColor, kern: CGFloat, lineHeight: CGFloat) -> UILabel {
+        let label = UILabel()
+        label.text = text
+        label.textColor = textColor
+        label.font = font
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = lineHeight
+        
+        label.attributedText = NSAttributedString(string: text, attributes: [
+            .kern: kern,
+            .paragraphStyle: paragraphStyle
+        ])
+        return label
+    }
+    
+    static func createImageView(named: String) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: named)
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }
+}
+
+// MARK: - Public Methods
+extension MatchingView {
+    func updateLocationLabel(with location: String) {
+        locationLabel.text = location
     }
 }

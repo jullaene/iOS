@@ -1,94 +1,81 @@
-//
-//  DropDownView.swift
-//  walkmong
-//
-//  Created by 신호연 on 11/6/24.
-//
-
 import UIKit
+import SnapKit
 
 protocol DropdownViewDelegate: AnyObject {
     func didSelectLocation(_ location: String)
 }
 
 class DropdownView: UIView {
-    
+    // MARK: - Properties
     weak var delegate: DropdownViewDelegate?
     
-    private let locations = ["공릉동", "청담동"] // 선택 가능한 동네
-    private var selectedLocation: String = "공릉동" // 기본 선택
+    private let locations = ["공릉동", "청담동"]
+    private var selectedLocation: String = "공릉동"
     
-    private let selectedLabel = UILabel()
-    private let unselectedLabel1 = UILabel()
-    private let settingsLabel = UILabel()
-
+    private let labels: [UILabel] = [UILabel(), UILabel(), UILabel()]
+    
+    // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 설정
+        self.translatesAutoresizingMaskIntoConstraints = false
         setupView()
-        updateSelection(selectedLocation: selectedLocation) // 초기 상태 업데이트
+        updateSelection(selectedLocation: selectedLocation)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup UI
     private func setupView() {
-        self.layer.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 1).cgColor
+        self.layer.backgroundColor = UIColor.gray100.cgColor
         self.layer.cornerRadius = 20
         
-        addSubview(selectedLabel)
-        addSubview(unselectedLabel1)
-        addSubview(settingsLabel)
-        
-        setupLabel(selectedLabel, text: "공릉동", isSelected: true)
-        setupLabel(unselectedLabel1, text: "청담동", isSelected: false)
-        setupLabel(settingsLabel, text: "동네 설정", isSelected: false)
-        
-        selectedLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.leading.trailing.equalToSuperview().inset(20)
+        let texts = ["공릉동", "청담동", "동네 설정"]
+        for (index, label) in labels.enumerated() {
+            setupLabel(label, text: texts[index], isSelected: index == 0)
+            addSubview(label)
+            label.snp.makeConstraints { make in
+                make.leading.trailing.equalToSuperview().inset(20)
+                make.top.equalToSuperview().offset(20 + (index * 32))
+                if index == labels.count - 1 {
+                    make.bottom.equalToSuperview().offset(-20)
+                }
+            }
+            label.isUserInteractionEnabled = true
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLabelTap(_:)))
+            label.addGestureRecognizer(tapGesture)
         }
-        
-        unselectedLabel1.snp.makeConstraints { make in
-            make.top.equalTo(selectedLabel.snp.bottom).offset(12)
-            make.leading.trailing.equalToSuperview().inset(20)
-        }
-        
-        settingsLabel.snp.makeConstraints { make in
-            make.top.equalTo(unselectedLabel1.snp.bottom).offset(12)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().offset(-20)
-        }
-        
-        let selectedTap = UITapGestureRecognizer(target: self, action: #selector(handleSelectedTap))
-        selectedLabel.addGestureRecognizer(selectedTap)
-        selectedLabel.isUserInteractionEnabled = true
-        
-        let unselectedTap = UITapGestureRecognizer(target: self, action: #selector(handleUnselectedTap))
-        unselectedLabel1.addGestureRecognizer(unselectedTap)
-        unselectedLabel1.isUserInteractionEnabled = true
     }
     
     private func setupLabel(_ label: UILabel, text: String, isSelected: Bool) {
         label.text = text
-        label.textColor = isSelected
-            ? UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1)
-            : UIColor(red: 0.496, green: 0.508, blue: 0.557, alpha: 1)
+        label.textColor = isSelected ? UIColor.mainBlue : UIColor.gray400
         label.font = UIFont(name: "Pretendard-\(isSelected ? "SemiBold" : "Medium")", size: 16)
     }
     
+    // MARK: - Update Selection
     func updateSelection(selectedLocation: String) {
         self.selectedLocation = selectedLocation
-        setupLabel(selectedLabel, text: locations[0], isSelected: selectedLocation == locations[0])
-        setupLabel(unselectedLabel1, text: locations[1], isSelected: selectedLocation == locations[1])
+        for (index, label) in labels.enumerated() {
+            let isSelected = selectedLocation == locations[safe: index] ?? ""
+            setupLabel(label, text: label.text ?? "", isSelected: isSelected)
+        }
     }
     
-    @objc private func handleSelectedTap() {
-        delegate?.didSelectLocation(locations[0])
+    // MARK: - Actions
+    @objc private func handleLabelTap(_ sender: UITapGestureRecognizer) {
+        guard let tappedLabel = sender.view as? UILabel,
+              let index = labels.firstIndex(of: tappedLabel),
+              index < locations.count else { return }
+        let selected = locations[index]
+        delegate?.didSelectLocation(selected)
     }
-    
-    @objc private func handleUnselectedTap() {
-        delegate?.didSelectLocation(locations[1])
+}
+
+// MARK: - Safe Array Indexing
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }
