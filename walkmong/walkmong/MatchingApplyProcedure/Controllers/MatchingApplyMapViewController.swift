@@ -28,11 +28,16 @@ class MatchingApplyMapViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setConfigure()
+    }
+    
+    private func setConfigure(){
         self.view.backgroundColor = .white
-        setMapView()
         modalView.delegate = self
+        addressModalView.delegate = self
         dismissKeyboardOnTap()
         setupKeyboardEvent()
+        setMapView()
     }
     
     private func addSubViews(){
@@ -50,7 +55,7 @@ class MatchingApplyMapViewController: UIViewController {
             make.horizontalEdges.equalToSuperview()
         }
         addressModalView.snp.makeConstraints { make in
-            make.height.equalTo(346)
+            make.height.equalTo(314)
             make.horizontalEdges.equalToSuperview()
             make.top.equalTo(view.snp.bottom)
         }
@@ -105,13 +110,21 @@ extension MatchingApplyMapViewController: MatchingApplyMapNotifyModalViewDelegat
 }
 
 extension MatchingApplyMapViewController: MatchingApplyMapAddressModalViewDelegate{
+    func didEndEditing(for textfield: UITextField) {
+        if let keyword = textfield.text{
+            if !keyword.trimmingCharacters(in: .whitespaces).isEmpty {
+                self.model.memo = keyword.trimmingCharacters(in: .whitespaces)
+            }
+            self.addressModalView.updateButtonState(value: !keyword.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+    }
+    
     func didTapDecideButton(){
-        guard let presentingVC = self.presentingViewController as? UINavigationController else { return }
-        let viewControllerStack = presentingVC.viewControllers
-        self.dismiss(animated: true) {
-            for viewController in viewControllerStack {
-                if let rootVC = viewController as? MatchingApplyDetailSelectViewController {
-                    presentingVC.popToViewController(rootVC, animated: true)
+        if self.model.memo != nil {
+            let controllers = self.navigationController?.viewControllers
+            for vc in controllers! {
+                if vc is MatchingApplyDetailSelectViewController {
+                    self.navigationController?.popToViewController(vc as! MatchingApplyDetailSelectViewController, animated: true)
                 }
             }
         }
@@ -122,7 +135,7 @@ extension MatchingApplyMapViewController: MatchingApplyMapAddressModalViewDelega
 extension MatchingApplyMapViewController {
     private func raiseModalView(_ view: UIView){
         DispatchQueue.main.async{
-            UIView.animate(withDuration: 1.5, animations: {
+            UIView.animate(withDuration: 0.75, animations: {
                 view.transform = CGAffineTransform(translationX: 0, y: -view.frame.height)
             }) { _ in
                 
@@ -131,7 +144,7 @@ extension MatchingApplyMapViewController {
     }
     private func downModalView(_ view: UIView){
         DispatchQueue.main.async{
-            UIView.animate(withDuration: 1.5, animations: {
+            UIView.animate(withDuration: 0.75, animations: {
                 view.transform = CGAffineTransform(translationX: 0, y: view.frame.height)
             }) { _ in
                 

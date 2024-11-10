@@ -13,4 +13,5 @@ struct MatchingApplyMapModel{
     var latitude: Double?
     var longitude: Double?
     var didSelectLocation: Bool
+    var memo: String?
 }

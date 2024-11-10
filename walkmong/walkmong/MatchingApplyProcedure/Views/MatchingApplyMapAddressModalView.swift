@@ -9,6 +9,7 @@ import UIKit
 
 protocol MatchingApplyMapAddressModalViewDelegate: AnyObject {
     func didTapDecideButton()
+    func didEndEditing(for textfield: UITextField)
 }
 
 class MatchingApplyMapAddressModalView: UIView {
@@ -89,7 +90,7 @@ class MatchingApplyMapAddressModalView: UIView {
         button.setTitle("만남장소 정하기", for: .normal)
         button.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         button.titleLabel?.textColor = .white
-        button.backgroundColor = .gray600
+        button.backgroundColor = .gray300
         button.layer.cornerRadius = 15
         button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         return button
@@ -128,8 +129,7 @@ class MatchingApplyMapAddressModalView: UIView {
         iconImageView.snp.makeConstraints { make in
             make.centerY.equalTo(dongLabel)
             make.leading.equalToSuperview().offset(24)
-            make.height.equalTo(20)
-            make.width.equalTo(15.67)
+            make.height.width.equalTo(20)
         }
         roadAddressLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(24)
@@ -155,6 +155,11 @@ class MatchingApplyMapAddressModalView: UIView {
         memoTextField.delegate = self
     }
     
+    func updateButtonState(value: Bool){
+        print(value)
+        nextButton.backgroundColor = value ? .gray600 : .gray300
+    }
+    
     @objc func nextButtonTapped(){
         delegate?.didTapDecideButton()
     }
@@ -170,11 +175,21 @@ extension MatchingApplyMapAddressModalView: UITextFieldDelegate {
         let maxLength = 255
         guard let text = textField.text else { return true }
         let newlength = text.count + string.count - range.length
+        if let keyword = textField.text {
+            nextButton.backgroundColor = !keyword.trimmingCharacters(in: .whitespaces).isEmpty ? .gray600 : .gray300
+        }
         return newlength < maxLength
+    }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if let keyword = textField.text {
+            delegate?.didEndEditing(for: textField)
+            nextButton.backgroundColor = !keyword.trimmingCharacters(in: .whitespaces).isEmpty ? .gray600 : .gray300
+        }
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // 공백 값 필터링
         if let keyword = textField.text, !keyword.trimmingCharacters(in: .whitespaces).isEmpty {
+            delegate?.didEndEditing(for: textField)
             endEditing(true)
             return true
         }
