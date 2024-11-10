@@ -69,11 +69,14 @@ class MatchingApplyMapAddressModalView: UIView {
     
     private let memoTextField: UITextField = {
         let textField = UITextField()
-        let imageContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 46))
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 46))
         textField.addCharacterSpacing()
-        textField.placeholder = "스타벅스 로고 앞에서 만나요!"
-        textField.leftView = imageContainerView
+        textField.placeholder = "어디 앞에서 만날지 자세히 적어주세요."
+        textField.setPlaceholderColor(.gray400)
+        textField.leftView = paddingView
+        textField.rightView = paddingView
         textField.leftViewMode = .always
+        textField.rightViewMode = .always
         textField.textColor = .gray500
         textField.font = UIFont(name:"Pretendard-Medium",size: 16)
         textField.backgroundColor = .gray200
@@ -96,6 +99,7 @@ class MatchingApplyMapAddressModalView: UIView {
         super.init(frame: frame)
         addSubviews()
         setConstraints()
+        memoTextField.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -163,7 +167,7 @@ class MatchingApplyMapAddressModalView: UIView {
 
 extension MatchingApplyMapAddressModalView: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let maxLength = 20
+        let maxLength = 255
         guard let text = textField.text else { return true }
         let newlength = text.count + string.count - range.length
         return newlength < maxLength
@@ -171,6 +175,7 @@ extension MatchingApplyMapAddressModalView: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // 공백 값 필터링
         if let keyword = textField.text, !keyword.trimmingCharacters(in: .whitespaces).isEmpty {
+            endEditing(true)
             return true
         }
         return false
