@@ -8,22 +8,29 @@
 import UIKit
 
 class MatchingDogInformationViewController: UIViewController {
+    private var matchingData: MatchingData?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupUI()
     }
-    
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func configure(with data: MatchingData) {
+        matchingData = data
     }
-    */
 
+    private func setupUI() {
+        view.backgroundColor = .white
+
+        if let data = matchingData {
+            let nameLabel = UILabel()
+            nameLabel.text = data.dogName
+            nameLabel.font = UIFont.boldSystemFont(ofSize: 24)
+            nameLabel.textColor = .black
+            view.addSubview(nameLabel)
+            nameLabel.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+        }
+    }
 }

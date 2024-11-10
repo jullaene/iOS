@@ -1,7 +1,15 @@
 import UIKit
 import SnapKit
 
+protocol MatchingCellDelegate: AnyObject {
+    func didSelectMatchingCell(data: MatchingData)
+}
+
 class MatchingCell: UIView {
+    
+    // MARK: - Properties
+    weak var delegate: MatchingCellDelegate?
+    private var matchingData: MatchingData?
     
     // Main Container View
     private let mainView: UIView = {
@@ -129,11 +137,13 @@ class MatchingCell: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupTapGesture()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
+        setupTapGesture()
     }
     
     // MARK: - View Setup
@@ -298,6 +308,21 @@ class MatchingCell: UIView {
         }
     }
     
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.addGestureRecognizer(tapGesture)
+    }
+    
+    // MARK: - Actions
+    @objc private func handleTap() {
+        print("MatchingCell 탭 이벤트 발생")
+        guard let data = matchingData else {
+            print("매칭 데이터가 설정되지 않았습니다.")
+            return
+        }
+        delegate?.didSelectMatchingCell(data: data)
+    }
+    
     // MARK: - Helper Methods
     private static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
@@ -307,7 +332,10 @@ class MatchingCell: UIView {
         return label
     }
     
+    
+    
     func configure(with data: MatchingData) {
+        matchingData = data
         dateLabel.text = "\(data.date) \(data.startTime) ~ \(data.endTime)"
         matchingStatusLabel.text = data.matchingStatus
         puppyImageView.image = UIImage(named: data.dogProfile)
