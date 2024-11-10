@@ -315,9 +315,7 @@ class MatchingCell: UIView {
     
     // MARK: - Actions
     @objc private func handleTap() {
-        print("MatchingCell 탭 이벤트 발생")
         guard let data = matchingData else {
-            print("매칭 데이터가 설정되지 않았습니다.")
             return
         }
         delegate?.didSelectMatchingCell(data: data)
