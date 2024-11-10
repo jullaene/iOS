@@ -4,6 +4,7 @@
 //
 //  Created by 황채웅 on 11/3/24.
 //
+
 import UIKit
 import SnapKit
 
@@ -13,57 +14,53 @@ protocol MatchingFilterViewDelegate: AnyObject {
 
 class MatchingFilterView: UIView {
     
+    // MARK: - Properties
     private let distanceFrame = UIView()
     private let breedFrame = UIView()
     private let matchingStatusFrame = UIView()
     private let buttonFrame = UIView()
     
-    private var matchingButtons: [UIButton] = [] // 매칭 여부 버튼 배열
-    private var breedButtons: [UIButton] = [] // 견종 버튼 배열
+    private var matchingButtons: [UIButton] = []
+    private var breedButtons: [UIButton] = []
     
-    private let resetButton = UIButton() // 초기화 버튼
-    private let applyButton = UIButton() // 적용 버튼
+    private let resetButton = UIButton()
+    private let applyButton = UIButton()
     
     weak var delegate: MatchingFilterViewDelegate?
     
     private let userDefaults = UserDefaults.standard
     private let matchingFilterKey = "MatchingFilter"
     private let breedFilterKey = "BreedFilter"
-   
-    // MARK: - 초기화
+    
+    // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupView() // 뷰 구성
-        setupLayout() // 레이아웃 구성
-        loadFilterSettings() // 저장된 필터 설정 불러오기
+        configureView()
+        setupLayout()
+        loadFilterSettings()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - 뷰 구성
-    private func setupView() {
-        self.backgroundColor = .white
-        self.layer.cornerRadius = 30
-        self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+    // MARK: - Configuration
+    private func configureView() {
+        backgroundColor = .white
+        layer.cornerRadius = 30
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        distanceFrame.backgroundColor = .clear
-        breedFrame.backgroundColor = .clear
-        matchingStatusFrame.backgroundColor = .clear
-        
-        self.addSubview(distanceFrame)
-        self.addSubview(breedFrame)
-        self.addSubview(matchingStatusFrame)
-        self.addSubview(buttonFrame)
+        [distanceFrame, breedFrame, matchingStatusFrame, buttonFrame].forEach {
+            $0.backgroundColor = .clear
+            addSubview($0)
+        }
         
         setupDistanceFrame()
-        setupMatchingStatus()
+        setupMatchingStatusFrame()
         setupBreedFrame()
-        setupButtons()
+        setupButtonFrame()
     }
     
-    // MARK: - 레이아웃 구성
     private func setupLayout() {
         distanceFrame.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(25)
@@ -90,197 +87,61 @@ class MatchingFilterView: UIView {
         }
     }
     
-    // MARK: - 거리 프레임
+    // MARK: - Frame Setups
     private func setupDistanceFrame() {
-        let distanceLabel = UILabel()
-        distanceLabel.text = "거리"
-        distanceLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        distanceLabel.textColor = UIColor.mainBlack
-        distanceFrame.addSubview(distanceLabel)
-
+        let distanceLabel = createLabel(text: "거리", fontSize: 20, color: .mainBlack)
         let distanceSliderFrame = UIView()
-        distanceSliderFrame.backgroundColor = .clear
+        let sliderLine = createLineView(color: .gray300, height: 3)
+        
+        distanceFrame.addSubview(distanceLabel)
         distanceFrame.addSubview(distanceSliderFrame)
-
-        // 슬라이더 선
-        let sliderLine = UIView()
-        sliderLine.backgroundColor = UIColor.gray300
         distanceSliderFrame.addSubview(sliderLine)
-
+        
         distanceLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(16)
-            make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().inset(20)
+            make.top.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(28)
         }
-
+        
         sliderLine.snp.makeConstraints { make in
             make.top.equalTo(distanceLabel.snp.bottom).offset(30)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(3)
         }
-
+        
         distanceSliderFrame.snp.makeConstraints { make in
             make.top.equalTo(distanceLabel.snp.bottom).offset(16)
-            make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().inset(20)
+            make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().offset(-16)
         }
-
-        // 선택 요소와 텍스트 데이터
-        let selectionData: [(text: String, positionMultiplier: CGFloat)] = [
-            ("우리 동네\n(500m 이내)", 0),
-            ("가까운동네\n(1km)", 0.5),
-            ("먼동네\n(1.5km)", 1)
-        ]
-
-        DispatchQueue.main.async {
-            sliderLine.layoutIfNeeded() // 슬라이더 라인의 레이아웃 강제 갱신
-                let sliderWidth = sliderLine.frame.width
-
-            for (index, data) in selectionData.enumerated() {
-                // 원
-                let selectionDot = UIView()
-                let isSelected = index == 0
-                selectionDot.backgroundColor = isSelected ? UIColor.mainBlue : UIColor.gray300
-                selectionDot.layer.cornerRadius = isSelected ? 12 : 6
-                selectionDot.layer.borderWidth = isSelected ? 1 : 0
-                selectionDot.layer.borderColor = isSelected ? UIColor.mainBlue.cgColor : UIColor.clear.cgColor
-                distanceSliderFrame.addSubview(selectionDot)
-
-                // 텍스트
-                let label = UILabel()
-                label.textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
-                label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
-                label.numberOfLines = 0
-                label.textAlignment = .center // 중앙 정렬
-
-                // 스타일 적용
-                let paragraphStyle = NSMutableParagraphStyle()
-                paragraphStyle.alignment = .center // 텍스트 중앙 정렬
-                paragraphStyle.lineHeightMultiple = 1.17
-                label.attributedText = NSAttributedString(string: data.text, attributes: [
-                    .kern: -0.32,
-                    .paragraphStyle: paragraphStyle
-                ])
-                distanceSliderFrame.addSubview(label)
-
-                // Auto Layout 설정
-                selectionDot.snp.makeConstraints { make in
-                    make.centerY.equalTo(sliderLine.snp.centerY)
-                    make.size.equalTo(isSelected ? CGSize(width: 24, height: 24) : CGSize(width: 12, height: 12))
-                    make.centerX.equalTo(sliderLine.snp.leading).offset(data.positionMultiplier * sliderWidth)
-                }
-
-                label.snp.makeConstraints { make in
-                    make.top.equalTo(selectionDot.snp.bottom).offset(4)
-                    make.centerX.equalTo(selectionDot.snp.centerX) // 중앙 정렬
-                    make.width.equalTo(64) // 적절한 고정 너비
-                    make.height.equalTo(36) // 텍스트 높이
-                }
-
-            }
-        }
+        
+        setupDistanceSelection(sliderLine: sliderLine, container: distanceSliderFrame)
     }
     
-    // MARK: - 매칭 여부 프레임
-    private func setupMatchingStatus() {
-        let statusLabel = UILabel()
-        statusLabel.text = "매칭여부"
-        statusLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        statusLabel.textColor = UIColor.mainBlack
-        matchingStatusFrame.addSubview(statusLabel)
-        
-        let buttonContainer = UIView()
-        matchingStatusFrame.addSubview(buttonContainer)
-        
-        let buttonTitles = ["매칭중", "매칭확정"]
-        for title in buttonTitles {
-            let button = createToggleButton(title: title)
-            button.addTarget(self, action: #selector(matchingButtonTapped(_:)), for: .touchUpInside)
-            buttonContainer.addSubview(button)
-            matchingButtons.append(button)
-        }
-        
-        statusLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(16)
-            make.leading.equalToSuperview().offset(16)
-        }
-        
-        buttonContainer.snp.makeConstraints { make in
-            make.top.equalTo(statusLabel.snp.bottom).offset(16)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(38)
-        }
-        
-        for (index, button) in matchingButtons.enumerated() {
-            button.snp.makeConstraints { make in
-                if index == 0 {
-                    make.leading.equalToSuperview()
-                } else {
-                    make.leading.equalTo(matchingButtons[index - 1].snp.trailing).offset(12)
-                }
-                make.width.equalTo(73)
-                make.height.equalTo(38)
-            }
-        }
+    private func setupMatchingStatusFrame() {
+        setupFilterFrame(
+            label: createLabel(text: "매칭여부", fontSize: 20, color: .mainBlack),
+            container: matchingStatusFrame,
+            buttonTitles: ["매칭중", "매칭확정"],
+            buttons: &matchingButtons,
+            action: #selector(matchingButtonTapped(_:))
+        )
     }
     
-    // MARK: - 견종 프레임
     private func setupBreedFrame() {
-        let breedLabel = UILabel()
-        breedLabel.text = "견종"
-        breedLabel.font = UIFont(name: "Pretendard-Bold", size: 20)
-        breedLabel.textColor = UIColor.mainBlack
-        breedFrame.addSubview(breedLabel)
-        
-        let buttonContainer = UIView()
-        breedFrame.addSubview(buttonContainer)
-        
-        let buttonTitles = ["소형견", "중형견", "대형견"]
-        for title in buttonTitles {
-            let button = createToggleButton(title: title)
-            button.addTarget(self, action: #selector(breedButtonTapped(_:)), for: .touchUpInside)
-            buttonContainer.addSubview(button)
-            breedButtons.append(button)
-        }
-        
-        breedLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(16)
-            make.leading.equalToSuperview().offset(16)
-        }
-        
-        buttonContainer.snp.makeConstraints { make in
-            make.top.equalTo(breedLabel.snp.bottom).offset(16)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(38)
-        }
-        
-        for (index, button) in breedButtons.enumerated() {
-            button.snp.makeConstraints { make in
-                if index == 0 {
-                    make.leading.equalToSuperview()
-                } else {
-                    make.leading.equalTo(breedButtons[index - 1].snp.trailing).offset(12)
-                }
-                make.width.equalTo(73)
-                make.height.equalTo(38)
-            }
-        }
+        setupFilterFrame(
+            label: createLabel(text: "견종", fontSize: 20, color: .mainBlack),
+            container: breedFrame,
+            buttonTitles: ["소형견", "중형견", "대형견"],
+            buttons: &breedButtons,
+            action: #selector(breedButtonTapped(_:))
+        )
     }
     
-    // MARK: - 버튼 프레임
-    private func setupButtons() {
-        resetButton.setTitle("초기화", for: .normal)
-        resetButton.setTitleColor(.black, for: .normal)
-        resetButton.backgroundColor = UIColor.gray100
-        resetButton.layer.cornerRadius = 15
-        buttonFrame.addSubview(resetButton)
+    private func setupButtonFrame() {
+        configureButton(resetButton, title: "초기화", backgroundColor: .gray100, textColor: .black)
+        configureButton(applyButton, title: "적용하기", backgroundColor: .gray600, textColor: .white)
         
-        applyButton.setTitle("적용하기", for: .normal)
-        applyButton.setTitleColor(.white, for: .normal)
-        applyButton.backgroundColor = UIColor.gray600
-        applyButton.layer.cornerRadius = 15
+        buttonFrame.addSubview(resetButton)
         buttonFrame.addSubview(applyButton)
         
         resetButton.addTarget(self, action: #selector(resetFilter), for: .touchUpInside)
@@ -299,22 +160,115 @@ class MatchingFilterView: UIView {
         }
     }
     
-    // MARK: - 공통 버튼 생성 메서드
+    // MARK: - Utility Methods
+    private func createLabel(text: String, fontSize: CGFloat, color: UIColor) -> UILabel {
+        let label = UILabel()
+        label.text = text
+        label.font = UIFont(name: "Pretendard-Bold", size: fontSize)
+        label.textColor = color
+        return label
+    }
+    
+    private func createLineView(color: UIColor, height: CGFloat) -> UIView {
+        let lineView = UIView()
+        lineView.backgroundColor = color
+        return lineView
+    }
+    
+    private func configureButton(_ button: UIButton, title: String, backgroundColor: UIColor, textColor: UIColor) {
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(textColor, for: .normal)
+        button.backgroundColor = backgroundColor
+        button.layer.cornerRadius = 15
+    }
+    
+    private func setupFilterFrame(label: UILabel, container: UIView, buttonTitles: [String], buttons: inout [UIButton], action: Selector) {
+        let buttonContainer = UIView()
+        container.addSubview(label)
+        container.addSubview(buttonContainer)
+        
+        label.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().offset(16)
+        }
+        
+        buttonContainer.snp.makeConstraints { make in
+            make.top.equalTo(label.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(38)
+        }
+        
+        for title in buttonTitles {
+            let button = createToggleButton(title: title)
+            button.addTarget(self, action: action, for: .touchUpInside)
+            buttonContainer.addSubview(button)
+            buttons.append(button)
+        }
+        
+        for (index, button) in buttons.enumerated() {
+            button.snp.makeConstraints { make in
+                if index == 0 {
+                    make.leading.equalToSuperview()
+                } else {
+                    make.leading.equalTo(buttons[index - 1].snp.trailing).offset(12)
+                }
+                make.width.equalTo(73)
+                make.height.equalTo(38)
+            }
+        }
+    }
+    
     private func createToggleButton(title: String) -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
-        button.setTitleColor(UIColor.gray500, for: .normal)
-        button.backgroundColor = UIColor.gray100
+        button.setTitleColor(.gray500, for: .normal)
+        button.backgroundColor = .gray100
         button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 16)
         button.layer.cornerRadius = 19
-        button.layer.borderWidth = 0
-        button.layer.borderColor = UIColor.clear.cgColor
-        button.clipsToBounds = true
         button.tag = 0
         return button
     }
     
-    // MARK: - 버튼 클릭 이벤트
+    private func setupDistanceSelection(sliderLine: UIView, container: UIView) {
+        let selectionData: [(text: String, positionMultiplier: CGFloat)] = [
+            ("우리 동네\n(500m 이내)", 0),
+            ("가까운동네\n(1km)", 0.5),
+            ("먼동네\n(1.5km)", 1)
+        ]
+        
+        DispatchQueue.main.async {
+            sliderLine.layoutIfNeeded()
+            let sliderWidth = sliderLine.frame.width
+            
+            for (index, data) in selectionData.enumerated() {
+                let isSelected = index == 0
+                let selectionDot = UIView()
+                selectionDot.backgroundColor = isSelected ? UIColor.mainBlue : UIColor.gray300
+                selectionDot.layer.cornerRadius = isSelected ? 12 : 6
+                container.addSubview(selectionDot)
+                
+                let label = UILabel()
+                label.textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
+                label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
+                label.textAlignment = .center
+                label.numberOfLines = 0
+                label.text = data.text
+                container.addSubview(label)
+                
+                selectionDot.snp.makeConstraints { make in
+                    make.centerY.equalTo(sliderLine)
+                    make.centerX.equalTo(sliderLine.snp.leading).offset(data.positionMultiplier * sliderWidth)
+                    make.size.equalTo(isSelected ? CGSize(width: 24, height: 24) : CGSize(width: 12, height: 12))
+                }
+                
+                label.snp.makeConstraints { make in
+                    make.top.equalTo(selectionDot.snp.bottom).offset(4)
+                    make.centerX.equalTo(selectionDot)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Actions
     @objc private func matchingButtonTapped(_ sender: UIButton) {
         toggleButton(sender)
     }
@@ -323,96 +277,53 @@ class MatchingFilterView: UIView {
         toggleButton(sender)
     }
     
-    private func toggleButton(_ button: UIButton) {
-        let isSelected = button.tag == 1
-        
-        UIView.animate(withDuration: 0.1, animations: {
-            button.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-        }, completion: { _ in
-            UIView.animate(withDuration: 0.1, animations: {
-                button.transform = .identity
-            })
-        })
-        
-        if isSelected {
+    @objc private func resetFilter() {
+        for button in matchingButtons + breedButtons {
             updateButtonState(button, isSelected: false)
-        } else {
-            updateButtonState(button, isSelected: true)
         }
+        userDefaults.removeObject(forKey: matchingFilterKey)
+        userDefaults.removeObject(forKey: breedFilterKey)
     }
     
-    // MARK: - 필터 설정 저장
+    @objc private func applyFilter() {
+        saveFilterSettings()
+        let selectedBreeds = breedButtons.filter { $0.tag == 1 }.compactMap { $0.title(for: .normal) }
+        let selectedMatchingStatus = matchingButtons.filter { $0.tag == 1 }.compactMap { $0.title(for: .normal) }
+        delegate?.didApplyFilter(selectedBreeds: selectedBreeds, matchingStatus: selectedMatchingStatus)
+    }
+    
+    private func toggleButton(_ button: UIButton) {
+        let isSelected = button.tag == 1
+        UIView.animate(withDuration: 0.2) {
+            button.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        } completion: { _ in
+            UIView.animate(withDuration: 0.2) {
+                button.transform = .identity
+            }
+        }
+        updateButtonState(button, isSelected: !isSelected)
+    }
+    
+    private func updateButtonState(_ button: UIButton, isSelected: Bool) {
+        button.backgroundColor = isSelected ? .mainBlue : .gray100
+        button.setTitleColor(isSelected ? .white : .gray500, for: .normal)
+        button.layer.borderWidth = isSelected ? 2 : 0
+        button.layer.borderColor = isSelected ? UIColor.mainBlue.cgColor : UIColor.clear.cgColor
+        button.tag = isSelected ? 1 : 0
+    }
+    
+    // MARK: - UserDefaults
     private func saveFilterSettings() {
-        let selectedMatchingStatus = matchingButtons
-            .filter { $0.tag == 1 }
-            .compactMap { $0.title(for: .normal) }
-        let selectedBreeds = breedButtons
-            .filter { $0.tag == 1 }
-            .compactMap { $0.title(for: .normal) }
-        
+        let selectedMatchingStatus = matchingButtons.filter { $0.tag == 1 }.compactMap { $0.title(for: .normal) }
+        let selectedBreeds = breedButtons.filter { $0.tag == 1 }.compactMap { $0.title(for: .normal) }
         userDefaults.set(selectedMatchingStatus, forKey: matchingFilterKey)
         userDefaults.set(selectedBreeds, forKey: breedFilterKey)
     }
     
-    // MARK: - 필터 설정 불러오기
     private func loadFilterSettings() {
         let savedMatchingStatus = userDefaults.array(forKey: matchingFilterKey) as? [String] ?? []
         let savedBreeds = userDefaults.array(forKey: breedFilterKey) as? [String] ?? []
-        
-        for button in matchingButtons {
-            let isSelected = savedMatchingStatus.contains(button.title(for: .normal) ?? "")
-            updateButtonState(button, isSelected: isSelected)
-        }
-        
-        for button in breedButtons {
-            let isSelected = savedBreeds.contains(button.title(for: .normal) ?? "")
-            updateButtonState(button, isSelected: isSelected)
-        }
-    }
-    
-    // MARK: - 버튼 상태 업데이트
-    private func updateButtonState(_ button: UIButton, isSelected: Bool) {
-        if isSelected {
-            button.backgroundColor = UIColor.mainBlue
-            button.setTitleColor(.white, for: .normal)
-            button.layer.borderWidth = 2
-            button.layer.borderColor = UIColor.mainBlue.cgColor
-            button.tag = 1
-        } else {
-            button.backgroundColor = UIColor.gray100
-            button.setTitleColor(UIColor.gray500, for: .normal)
-            button.layer.borderWidth = 0
-            button.layer.borderColor = UIColor.clear.cgColor
-            button.tag = 0
-        }
-    }
-    
-    // MARK: - 적용 버튼 이벤트
-    @objc private func applyFilter() {
-        saveFilterSettings()
-        
-        let selectedBreeds = breedButtons
-            .filter { $0.tag == 1 }
-            .compactMap { $0.title(for: .normal) }
-        
-        let selectedMatchingStatus = matchingButtons
-            .filter { $0.tag == 1 }
-            .compactMap { $0.title(for: .normal) }
-        
-        delegate?.didApplyFilter(selectedBreeds: selectedBreeds, matchingStatus: selectedMatchingStatus)
-    }
-    
-    // MARK: - 초기화 버튼 이벤트
-    @objc private func resetFilter() {
-        for button in matchingButtons {
-            updateButtonState(button, isSelected: false)
-        }
-
-        for button in breedButtons {
-            updateButtonState(button, isSelected: false)
-        }
-        
-        userDefaults.removeObject(forKey: matchingFilterKey)
-        userDefaults.removeObject(forKey: breedFilterKey)
+        matchingButtons.forEach { updateButtonState($0, isSelected: savedMatchingStatus.contains($0.title(for: .normal) ?? "")) }
+        breedButtons.forEach { updateButtonState($0, isSelected: savedBreeds.contains($0.title(for: .normal) ?? "")) }
     }
 }
