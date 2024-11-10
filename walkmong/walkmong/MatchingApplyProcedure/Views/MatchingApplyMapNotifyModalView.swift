@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol MatchingApplyMapNotifyModalViewDelegate: AnyObject {
+    func willHideModalView(_ view: UIView)
+}
+
 class MatchingApplyMapNotifyModalView: UIView {
+    
+    weak var delegate: MatchingApplyMapNotifyModalViewDelegate?
     
     private let containerView: UIView = {
         let view = UIView()
@@ -89,5 +95,9 @@ class MatchingApplyMapNotifyModalView: UIView {
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview().inset(20)
         }
+    }
+    
+    private func hideModalView() {
+        delegate?.willHideModalView(self)
     }
 }
