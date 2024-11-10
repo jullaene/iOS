@@ -7,17 +7,22 @@
 
 import UIKit
 
+import Foundation
+
 struct MatchingData {
     let date: String
+    let startTime: String
+    let endTime: String
     let matchingStatus: String
-    let puppyImageName: String
-    let name: String
-    let genderIconName: String
-    let size: String
+    let dogName: String
+    let dogProfile: String
+    let dogGender: String
+    let dogAge: Int
     let breed: String
     let weight: String
-    let postContent: String
-    let location: String
+    let dogSize: String
+    let content: String
+    let dongAddress: String
     let distance: String
-    let time: String
+    let createdAt: String
 }

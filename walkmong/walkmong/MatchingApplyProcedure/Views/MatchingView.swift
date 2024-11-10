@@ -44,6 +44,35 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
+    func updateMatchingCells(with data: [MatchingData]) {
+        // Clear existing cells
+        matchingCells.forEach { $0.removeFromSuperview() }
+        matchingCells.removeAll()
+        
+        // Add new cells
+        for item in data {
+            let cell = MatchingCell()
+            cell.configure(with: item)
+            matchingCells.append(cell)
+            contentView.addSubview(cell)
+        }
+        
+        // Layout cells
+        for (index, cell) in matchingCells.enumerated() {
+            cell.snp.makeConstraints { make in
+                make.width.equalTo(353)
+                make.height.equalTo(151)
+                make.centerX.equalToSuperview()
+                make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
+            }
+        }
+        
+        matchingCells.last?.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-110)
+        }
+    }
+    
     // MARK: - Setup Methods
     private func setupViews() {
         setupSafeAreaBackgroundView()

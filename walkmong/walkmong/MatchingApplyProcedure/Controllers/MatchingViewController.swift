@@ -1,3 +1,4 @@
+import Foundation
 import UIKit
 import SnapKit
 
@@ -17,11 +18,15 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
         return (self.tabBarController as? MainTabBarController)?.dimView
     }
     
+    // Data source
+    private var matchingData: [MatchingData] = []
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupGestures()
+        loadData()
     }
     
     // MARK: - UI Setup
@@ -42,12 +47,23 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
         locationSelectView = matchingView.locationSelectView
         
         // 프로토콜을 통해 locationText 가져오기
-        let currentLocation = (matchingView as MatchingViewLocationProvider).locationText
+        _ = (matchingView as MatchingViewLocationProvider).locationText
     }
     
     private func setupGestures() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showDropdownView))
         locationSelectView.addGestureRecognizer(tapGesture)
+    }
+    
+    // MARK: - Load Data
+    private func loadData() {
+        // Replace this with your actual data fetching logic
+        matchingData = [
+            MatchingData(date: "11. 06 (수)", startTime: "16:00", endTime: "16:30", matchingStatus: "매칭중", dogName: "봄별이", dogProfile: "puppyImage.png", dogGender: "Female", dogAge: 3, breed: "말티즈", weight: "4kg", dogSize: "소형견", content: "30분만 산책시켜주실 분 구합니다.", dongAddress: "노원구 공릉동", distance: "1km", createdAt: "3시간 전")
+        ]
+        
+        // Pass data to MatchingView
+        matchingView.updateMatchingCells(with: matchingData)
     }
     
     // MARK: - DropdownView Logic

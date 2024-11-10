@@ -299,13 +299,26 @@ class MatchingCell: UIView {
     }
     
     // MARK: - Helper Methods
-    
     private static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
         label.text = "·"
         label.textColor = UIColor.gray500
         label.font = UIFont(name: "Pretendard-Regular", size: 14)
         return label
+    }
+    
+    func configure(with data: MatchingData) {
+        dateLabel.text = "\(data.date) \(data.startTime) ~ \(data.endTime)"
+        matchingStatusLabel.text = data.matchingStatus
+        puppyImageView.image = UIImage(named: data.dogProfile)
+        nameLabel.text = data.dogName
+        sizeLabel.text = data.dogSize
+        breedLabel.text = data.breed
+        weightLabel.text = data.weight
+        postContentLabel.text = data.content
+        locationLabel.text = data.dongAddress
+        distanceLabel.text = data.distance
+        timeLabel.text = data.createdAt
     }
 }
 
