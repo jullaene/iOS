@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 protocol DropdownViewDelegate: AnyObject {
     func didSelectLocation(_ location: String)
@@ -8,17 +9,17 @@ class DropdownView: UIView {
     // MARK: - Properties
     weak var delegate: DropdownViewDelegate?
     
-    private let locations = ["공릉동", "청담동"] // 선택 가능한 동네
-    private var selectedLocation: String = "공릉동" // 기본 선택
+    private let locations = ["공릉동", "청담동"]
+    private var selectedLocation: String = "공릉동"
     
     private let labels: [UILabel] = [UILabel(), UILabel(), UILabel()]
     
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 설정
+        self.translatesAutoresizingMaskIntoConstraints = false
         setupView()
-        updateSelection(selectedLocation: selectedLocation) // 초기 상태 업데이트
+        updateSelection(selectedLocation: selectedLocation)
     }
     
     required init?(coder: NSCoder) {
@@ -32,7 +33,7 @@ class DropdownView: UIView {
         
         let texts = ["공릉동", "청담동", "동네 설정"]
         for (index, label) in labels.enumerated() {
-            setupLabel(label, text: texts[index], isSelected: index == 0) // 첫 번째 레이블 선택 상태
+            setupLabel(label, text: texts[index], isSelected: index == 0)
             addSubview(label)
             label.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview().inset(20)

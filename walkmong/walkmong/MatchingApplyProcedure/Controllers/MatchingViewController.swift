@@ -1,8 +1,7 @@
 import UIKit
 import SnapKit
 
-class MatchingViewController: UIViewController {
-    
+class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
     // MARK: - Properties
     private var matchingFilterView: MatchingFilterView?
     private var locationSelectView: UIView!
@@ -43,7 +42,7 @@ class MatchingViewController: UIViewController {
         locationSelectView = matchingView.locationSelectView
         
         // 프로토콜을 통해 locationText 가져오기
-        let currentLocation = (matchingView! as MatchingViewLocationProvider).locationText
+        let currentLocation = (matchingView as MatchingViewLocationProvider).locationText
         print("Current Location: \(currentLocation)")
     }
     
@@ -144,29 +143,29 @@ class MatchingViewController: UIViewController {
 // MARK: - DropdownViewDelegate
 extension MatchingViewController: DropdownViewDelegate {
     func didSelectLocation(_ location: String) {
-        // 프로토콜을 통해 MatchingView 업데이트
         print("Selected Location: \(location)")
+        matchingView.updateLocationLabel(with: location)
         dropdownView?.updateSelection(selectedLocation: location)
         hideDropdownView()
     }
 }
 
 // MARK: - MatchingFilterViewDelegate
-extension MatchingViewController: MatchingFilterViewDelegate {
+extension MatchingViewController {
     func didApplyFilter(selectedBreeds: [String], matchingStatus: [String]) {
-        hideMatchingFilterView()
-        updateFilterSelectView(selectedBreeds: selectedBreeds, matchingStatus: matchingStatus)
-    }
-    
-    private func updateFilterSelectView(selectedBreeds: [String], matchingStatus: [String]) {
-        let filterSelectView = matchingView.filterSelectView
+        print("Selected Breeds: \(selectedBreeds)")
+        print("Selected Matching Status: \(matchingStatus)")
         
-        updateButtonState(filterSelectView.breedButton, isSelected: !selectedBreeds.isEmpty)
-        updateButtonState(filterSelectView.matchStatusButton, isSelected: !matchingStatus.isEmpty)
+        // FilterSelectView 업데이트
+        let filterView = matchingView.filterSelectView
+        updateFilterButtonState(filterView.breedButton, isSelected: !selectedBreeds.isEmpty)
+        updateFilterButtonState(filterView.matchStatusButton, isSelected: !matchingStatus.isEmpty)
+        
+        hideMatchingFilterView()
     }
     
-    private func updateButtonState(_ button: UIButton, isSelected: Bool) {
-        button.backgroundColor = isSelected ? UIColor.gray600 : UIColor.gray100
-        button.setTitleColor(isSelected ? .white : UIColor.gray500, for: .normal)
+    private func updateFilterButtonState(_ button: UIButton, isSelected: Bool) {
+        button.backgroundColor = isSelected ? .gray600 : .gray100
+        button.setTitleColor(isSelected ? .white : .gray500, for: .normal)
     }
 }
