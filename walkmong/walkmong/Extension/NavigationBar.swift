@@ -6,11 +6,10 @@
 //
 
 import UIKit
-import SnapKit
 
 extension UIViewController {
     // MARK: - Custom Navigation Bar
-    func addCustomNavigationBar(titleText: String = "", showLeftBarButton: Bool, showCloseBarButton: Bool, showRefreshBarButton: Bool) {
+    func addCustomNavigationBar(titleText: String?, showLeftBackButton: Bool, showLeftCloseButton: Bool, showRightCloseButton: Bool, showRightRefreshButton: Bool) {
         
         let navigationBarView = UIView()
         navigationBarView.backgroundColor = .white
@@ -36,23 +35,36 @@ extension UIViewController {
             make.center.equalToSuperview()
         }
 
-        // Left bar button 설정
-        if showLeftBarButton {
-            let leftBarButton: UIButton = {
+        // Left button 설정
+        if showLeftBackButton {
+            let backButtonButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.backButton, for: .normal)
+                button.addTarget(self, action: #selector(self.popViewController), for: .touchUpInside)
                 return button
             }()
-            navigationBarView.addSubview(leftBarButton)
-            leftBarButton.snp.makeConstraints { make in
+            navigationBarView.addSubview(backButtonButton)
+            backButtonButton.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.height.width.equalTo(40)
+                make.leading.equalToSuperview().offset(20)
+            }
+        }else if showLeftCloseButton {
+            let closeBarButton: UIButton = {
+                let button = UIButton()
+                button.setImage(.deleteButton, for: .normal)
+                return button
+            }()
+            navigationBarView.addSubview(closeBarButton)
+            closeBarButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.height.width.equalTo(40)
                 make.leading.equalToSuperview().offset(20)
             }
         }
 
-        // Close bar button 설정
-        if showCloseBarButton {
+        // Right button 설정
+        if showRightCloseButton {
             let closeBarButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.deleteButton, for: .normal)
@@ -65,7 +77,7 @@ extension UIViewController {
                 make.height.width.equalTo(40)
                 make.trailing.equalToSuperview().offset(-20)
             }
-        } else if showRefreshBarButton {
+        } else if showRightRefreshButton {
             let refreshBarButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.refreshButton, for: .normal)
@@ -80,45 +92,7 @@ extension UIViewController {
             }
         }
     }
-    
-    func addProgressBar(currentStep:Int, totalSteps:Int){
-        let backgroundView: UIView = {
-            let view = UIView()
-            view.backgroundColor = .white
-            return view
-        }()
-        let progressBackgroundView: UIView = {
-            let view = UIView()
-            view.backgroundColor = .gray200
-            view.layer.cornerRadius = 2
-            return view
-        }()
-        let progressView: UIView = {
-            let view = UIView()
-            view.backgroundColor = .mainBlue
-            view.layer.cornerRadius = 2
-            return view
-        }()
-        
-        self.view.addSubview(backgroundView)
-        backgroundView.addSubview(progressBackgroundView)
-        backgroundView.addSubview(progressView)
-        
-        backgroundView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview()
-            make.top.equalToSuperview().offset(119)
-            make.height.equalTo(35)
-        }
-        progressBackgroundView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.top.equalToSuperview().offset(7)
-            make.height.equalTo(4)
-        }
-        progressView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(20)
-            make.top.equalToSuperview().offset(7)
-            make.width.equalTo((view.bounds.width-40)*CGFloat(currentStep)/CGFloat(totalSteps))
-            make.height.equalTo(4)
-        }
+    @objc private func popViewController() {
+        self.navigationController?.popViewController(animated: true)
     }
 }
