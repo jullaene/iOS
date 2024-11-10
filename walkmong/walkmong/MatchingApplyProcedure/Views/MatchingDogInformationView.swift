@@ -1,8 +1,8 @@
 import UIKit
 import SnapKit
 
-class MatchingDogInformationView: UIView, UIScrollViewDelegate {
-    
+class MatchingDogInformationView: UIView {
+
     // MARK: - UI Components
     private let mainScrollView = UIScrollView()
     private let contentView = UIView()
@@ -13,10 +13,35 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
 
     private let profileFrame = UIView()
     private let infoFrame = UIView()
-    private let walkInfoFrame = UIView()
-    private let relatedInfoFrame = UIView()
-    private let ownerInfoFrame = UIView()
-    private let buttonFrame = UIView()
+    private let walkInfoFrame: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.gray100
+        view.layer.cornerRadius = 20
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private let relatedInfoFrame: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.gray100
+        view.layer.cornerRadius = 20
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private let ownerInfoFrame: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.gray100
+        view.layer.cornerRadius = 20
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private let buttonFrame: UIView = {
+        let view = UIView()
+        view.backgroundColor = .blue
+        return view
+    }()
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -99,8 +124,6 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.height.equalTo(754)
         }
         
-        walkInfoFrame.backgroundColor = UIColor.gray100
-        walkInfoFrame.layer.cornerRadius = 20
         infoFrame.addSubview(walkInfoFrame)
         walkInfoFrame.snp.makeConstraints { make in
             make.top.equalTo(infoFrame.snp.top)
@@ -109,8 +132,6 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.height.equalTo(226)
         }
         
-        relatedInfoFrame.backgroundColor = UIColor.gray100
-        relatedInfoFrame.layer.cornerRadius = 20
         infoFrame.addSubview(relatedInfoFrame)
         relatedInfoFrame.snp.makeConstraints { make in
             make.top.equalTo(walkInfoFrame.snp.bottom).offset(16)
@@ -119,8 +140,6 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.height.equalTo(324)
         }
         
-        ownerInfoFrame.backgroundColor = UIColor.gray100
-        ownerInfoFrame.layer.cornerRadius = 20
         infoFrame.addSubview(ownerInfoFrame)
         ownerInfoFrame.snp.makeConstraints { make in
             make.top.equalTo(relatedInfoFrame.snp.bottom).offset(16)
@@ -134,7 +153,6 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         }
         
         addSubview(buttonFrame)
-        buttonFrame.backgroundColor = .blue
         buttonFrame.snp.makeConstraints { make in
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
             make.centerX.equalToSuperview()
@@ -146,22 +164,17 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     // MARK: - Public Methods
     func configureImages(with imageNames: [String]) {
         imageViews.forEach { $0.removeFromSuperview() }
-        imageViews = []
+        imageViews = imageNames.map { imageName -> UIImageView in
+            let imageView = createImageView(named: imageName)
+            imageContentView.addSubview(imageView)
+            return imageView
+        }
         
         let screenWidth = UIScreen.main.bounds.width
-        
-        for (index, imageName) in imageNames.enumerated() {
-            let imageView = UIImageView()
-            imageView.image = UIImage(named: imageName) ?? UIImage(named: "defaultDogImage")
-            imageView.contentMode = .scaleAspectFill
-            imageView.clipsToBounds = true
-            imageContentView.addSubview(imageView)
-            imageViews.append(imageView)
-            
+        for (index, imageView) in imageViews.enumerated() {
             imageView.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
                 make.width.equalTo(screenWidth)
-                make.height.equalTo(imageScrollView.snp.height)
                 make.leading.equalToSuperview().offset(CGFloat(index) * screenWidth)
             }
         }
@@ -173,7 +186,18 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         pageControl.numberOfPages = imageNames.count
     }
     
-    // MARK: - UIScrollViewDelegate
+    // MARK: - Helper Methods
+    private func createImageView(named imageName: String) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: imageName) ?? UIImage(named: "defaultDogImage")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension MatchingDogInformationView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageIndex = round(scrollView.contentOffset.x / UIScreen.main.bounds.width)
         pageControl.currentPage = Int(pageIndex)
