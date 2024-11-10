@@ -60,7 +60,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector (checkDogInformationNoButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector (checkDogInformationNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -71,7 +71,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector (checkDogInformationYesButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector (checkDogInformationYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -143,7 +143,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(checkDateNoButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(checkDateNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -154,7 +154,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(checkDateYesButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(checkDateYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -193,7 +193,7 @@ class MatchingApplyDetailSelectView: UIView {
         let button = UIButton()
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 15
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector (selectPlaceButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector (selectPlaceButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -234,7 +234,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(poopEnvelopeNoButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(poopEnvelopeNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -245,7 +245,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(poopEnvelopeYesButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(poopEnvelopeYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -264,7 +264,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(mouthCoverNoButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(mouthCoverNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -275,7 +275,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(mouthCoverYesButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(mouthCoverYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -294,7 +294,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(leadStringNoButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(leadStringNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -305,7 +305,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(leadStringYesButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(leadStringYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -338,7 +338,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(preMeetingNeededNoButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(preMeetingNeededNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -349,7 +349,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(preMeetingNeededYesButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(preMeetingNeededYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -360,7 +360,7 @@ class MatchingApplyDetailSelectView: UIView {
         button.titleLabel?.textColor = .white
         button.backgroundColor = .gray300
         button.layer.cornerRadius = 15
-        button.addTarget(MatchingApplyDetailSelectView.self, action: #selector(nextButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         return button
     }()
     
