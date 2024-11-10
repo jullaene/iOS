@@ -85,5 +85,14 @@ extension MatchingApplyMapView: NMFMapViewCameraDelegate {
     // 이동이 끝났을 때 좌표값 print
     func mapViewCameraIdle(_ mapView: NMFMapView) {
         print(mapView.cameraPosition.target)
+        let coords = "\(mapView.cameraPosition.target.lng)" + "," + "\(mapView.cameraPosition.target.lat)"
+        callRequest(coords: coords) { data in
+            do {
+                let decodeData = try JSONDecoder().decode(ReverseGeocodingModel.self, from: data)
+                print(decodeData)
+            } catch {
+                print(error)
+            }
+        }
     }
 }
