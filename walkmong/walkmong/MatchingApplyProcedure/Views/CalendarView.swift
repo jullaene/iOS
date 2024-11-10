@@ -2,9 +2,10 @@ import UIKit
 import SnapKit
 
 class CalendarView: UIView {
+    // MARK: - UI Components
     private let monthLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(red: 0.198, green: 0.203, blue: 0.222, alpha: 1)
+        label.textColor = UIColor.gray600
         label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         label.textAlignment = .left
         return label
@@ -26,22 +27,28 @@ class CalendarView: UIView {
         return collectionView
     }()
     
+    // MARK: - Properties
     private var selectedIndexPath: IndexPath?
     private var days: [(dayOfWeek: String, date: String)] = []
     private let calendar = Calendar.current
     private let today = Date()
     
+    // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupView()
-        configureDays()
+        setupUI()
+        updateMonthLabel()
+        generateDays()
+        dayCollectionView.reloadData()
+        selectedIndexPath = IndexPath(item: 0, section: 0)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupView() {
+    // MARK: - Setup UI
+    private func setupUI() {
         addSubview(monthLabel)
         addSubview(dayCollectionView)
         
@@ -58,25 +65,30 @@ class CalendarView: UIView {
         }
     }
     
-    private func configureDays() {
+    // MARK: - Update Methods
+    private func updateMonthLabel() {
         let monthFormatter = DateFormatter()
         monthFormatter.dateFormat = "M월"
         monthLabel.text = "\(calendar.component(.year, from: today))년 \(monthFormatter.string(from: today))"
-        
+    }
+    
+    private func generateDays() {
+        days = calculateDays(for: 14)
+    }
+    
+    private func calculateDays(for count: Int) -> [(dayOfWeek: String, date: String)] {
         let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+        var result: [(dayOfWeek: String, date: String)] = []
         
-        // 14개의 날짜만 계산
-        for offset in 0..<14 {
+        for offset in 0..<count {
             if let date = calendar.date(byAdding: .day, value: offset, to: today) {
                 let weekdayIndex = calendar.component(.weekday, from: date) - 1
                 let dayOfWeek = weekdays[weekdayIndex]
                 let day = String(calendar.component(.day, from: date))
-                days.append((dayOfWeek, day))
+                result.append((dayOfWeek, day))
             }
         }
-        
-        dayCollectionView.reloadData()
-        selectedIndexPath = IndexPath(item: 0, section: 0)
+        return result
     }
 }
 
@@ -93,12 +105,7 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
         
         let day = days[indexPath.item]
         cell.configure(dayOfWeek: day.dayOfWeek, day: day.date)
-        
-        if selectedIndexPath == indexPath {
-            cell.configureSelectedStyle()
-        } else {
-            cell.configureUnselectedStyle()
-        }
+        selectedIndexPath == indexPath ? cell.configureSelectedStyle() : cell.configureUnselectedStyle()
         
         return cell
     }
@@ -106,16 +113,20 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard selectedIndexPath != indexPath else { return }
         
-        if let previousIndexPath = selectedIndexPath,
-           let previousCell = collectionView.cellForItem(at: previousIndexPath) as? DayCell {
+        updateSelection(from: selectedIndexPath, to: indexPath)
+        selectedIndexPath = indexPath
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+    }
+    
+    // MARK: - Selection Update
+    private func updateSelection(from previous: IndexPath?, to current: IndexPath) {
+        if let previousIndexPath = previous,
+           let previousCell = dayCollectionView.cellForItem(at: previousIndexPath) as? DayCell {
             previousCell.configureUnselectedStyle()
         }
         
-        selectedIndexPath = indexPath
-        if let selectedCell = collectionView.cellForItem(at: indexPath) as? DayCell {
-            selectedCell.configureSelectedStyle()
+        if let currentCell = dayCollectionView.cellForItem(at: current) as? DayCell {
+            currentCell.configureSelectedStyle()
         }
-        
-        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
 }
