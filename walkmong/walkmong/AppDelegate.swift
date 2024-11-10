@@ -30,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let userDefaults = UserDefaults.standard
         userDefaults.removeObject(forKey: "MatchingFilter")
         userDefaults.removeObject(forKey: "BreedFilter")
+        userDefaults.removeObject(forKey: "DistanceFilter")
     }
 
 
