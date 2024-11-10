@@ -12,10 +12,14 @@ final class MatchingApplyPlaceSearchViewController: UIViewController {
     let placeSearchView = walkmong.MatchingApplyPlaceSearchView()
     var placeSearchResult: [String] = ["검색결과1","검색결과2","검색결과3","검색결과4","검색결과5","검색결과6","검색결과7","검색결과8","검색결과9","검색결과10","검색결과11","검색결과12"]
     
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         dismissKeyboardOnTap()
-        addCustomNavigationBar(titleText: "만남장소", showLeftBarButton: true, showCloseBarButton: false, showRefreshBarButton: false)
+        addCustomNavigationBar(titleText: "만남장소", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         setUpViews()
         setConstraints()
     }

@@ -19,7 +19,7 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
     
     private func setUpViews(){
         view.backgroundColor = .white
-        addCustomNavigationBar(titleText: "산책 지원하기",showLeftBarButton: true, showCloseBarButton: false, showRefreshBarButton: false)
+        addCustomNavigationBar(titleText: "산책 지원하기", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         addProgressBar(currentStep: 1, totalSteps: 3)
         
         self.view.addSubview(detailSelectView)
@@ -43,7 +43,7 @@ extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectView
             self.detailSelectModel.dateChecked = value
             self.detailSelectView.updateSelectButtons(buttonType: .dateChecked, value: value)
         case .selectPlace:
-            let nextVC = MatchingApplyMapViewController()
+            let nextVC = MatchingApplyPlaceSearchViewController()
             self.navigationController?.pushViewController(nextVC, animated: true)
             self.detailSelectModel.placeSelected = "address"
             // 주소 가져오기 성공 시에만 value: true
