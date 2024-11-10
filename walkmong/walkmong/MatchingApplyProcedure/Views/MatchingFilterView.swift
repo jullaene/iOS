@@ -22,6 +22,8 @@ class MatchingFilterView: UIView {
     
     private var matchingButtons: [UIButton] = []
     private var breedButtons: [UIButton] = []
+    private var distanceDots: [UIView] = []
+    private var distanceLabels: [UILabel] = []
     
     private let resetButton = UIButton()
     private let applyButton = UIButton()
@@ -31,6 +33,9 @@ class MatchingFilterView: UIView {
     private let userDefaults = UserDefaults.standard
     private let matchingFilterKey = "MatchingFilter"
     private let breedFilterKey = "BreedFilter"
+    private let distanceFilterKey = "DistanceFilter" // 거리 필터 상태 저장 키
+    
+    private var selectedDistanceIndex: Int = 0 // 기본값은 "우리 동네"
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -115,6 +120,105 @@ class MatchingFilterView: UIView {
         }
         
         setupDistanceSelection(sliderLine: sliderLine, container: distanceSliderFrame)
+    }
+    
+    private func setupDistanceSelection(sliderLine: UIView, container: UIView) {
+        let selectionData: [(text: String, positionMultiplier: CGFloat)] = [
+            ("우리 동네\n(500m 이내)", 0),
+            ("가까운동네\n(1km)", 0.5),
+            ("먼동네\n(1.5km)", 1)
+        ]
+        
+        DispatchQueue.main.async {
+            sliderLine.layoutIfNeeded()
+            let sliderWidth = sliderLine.frame.width
+            
+            for (index, data) in selectionData.enumerated() {
+                let isSelected = index == self.selectedDistanceIndex
+                
+                // 터치 영역용 wrapper 뷰 생성
+                let touchArea = UIView()
+                touchArea.tag = index
+                touchArea.isUserInteractionEnabled = true
+                container.addSubview(touchArea)
+                
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleDistanceTap(_:)))
+                touchArea.addGestureRecognizer(tapGesture)
+                
+                // dot 뷰 생성
+                let selectionDot = UIView()
+                selectionDot.backgroundColor = isSelected ? UIColor.mainBlue : UIColor.gray300
+                selectionDot.layer.cornerRadius = isSelected ? 12 : 6
+                touchArea.addSubview(selectionDot)
+                self.distanceDots.append(selectionDot)
+                
+                // 라벨 생성
+                let label = UILabel()
+                label.textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
+                label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
+                label.textAlignment = .center
+                label.numberOfLines = 0
+                label.text = data.text
+                touchArea.addSubview(label)
+                self.distanceLabels.append(label)
+                
+                // 터치 영역 위치 및 크기 설정
+                touchArea.snp.makeConstraints { make in
+                    make.centerX.equalTo(sliderLine.snp.leading).offset(data.positionMultiplier * sliderWidth)
+                    make.centerY.equalTo(sliderLine) // 슬라이더 라인을 기준으로 배치
+                    make.width.equalTo(80) // 터치 영역의 폭
+                    make.height.equalTo(80) // 터치 영역의 높이
+                }
+                
+                // dot 위치 및 크기 설정
+                selectionDot.snp.makeConstraints { make in
+                    make.centerX.equalToSuperview()
+                    make.centerY.equalTo(sliderLine) // 슬라이더 라인과 정확히 겹치도록 배치
+                    make.size.equalTo(isSelected ? CGSize(width: 24, height: 24) : CGSize(width: 12, height: 12))
+                }
+                
+                // 라벨 위치 설정 (항상 하단 고정)
+                label.snp.makeConstraints { make in
+                    make.top.equalTo(sliderLine.snp.bottom).offset(14) // 슬라이더 라인 하단에 고정
+                    make.centerX.equalTo(selectionDot) // dot와 수평 정렬
+                }
+            }
+        }
+    }
+    
+    @objc private func handleDistanceTap(_ sender: UITapGestureRecognizer) {
+        guard let tappedDot = sender.view else { return }
+        let newIndex = tappedDot.tag
+        updateDistanceSelection(selectedIndex: newIndex)
+    }
+    
+    private func updateDistanceSelection(selectedIndex: Int) {
+        selectedDistanceIndex = selectedIndex
+        for (index, dot) in distanceDots.enumerated() {
+            let isSelected = index == selectedDistanceIndex
+            let newSize: CGFloat = isSelected ? 24 : 12
+
+            UIView.animate(withDuration: 0.2, animations: {
+                dot.backgroundColor = isSelected ? UIColor.mainBlue : UIColor.gray300
+                dot.snp.updateConstraints { make in
+                    make.size.equalTo(CGSize(width: newSize, height: newSize))
+                }
+                // cornerRadius를 동그란 상태로 고정
+                dot.layer.cornerRadius = newSize / 2
+                self.distanceLabels[index].textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
+                dot.superview?.layoutIfNeeded() // 애니메이션 내에서 즉시 레이아웃 적용
+            })
+        }
+        saveDistanceSelection()
+    }
+    
+    private func saveDistanceSelection() {
+        userDefaults.set(selectedDistanceIndex, forKey: distanceFilterKey)
+    }
+    
+    private func loadDistanceSelection() {
+        selectedDistanceIndex = userDefaults.integer(forKey: distanceFilterKey) // 기본값 0
+        updateDistanceSelection(selectedIndex: selectedDistanceIndex)
     }
     
     private func setupMatchingStatusFrame() {
@@ -228,47 +332,6 @@ class MatchingFilterView: UIView {
         return button
     }
     
-    private func setupDistanceSelection(sliderLine: UIView, container: UIView) {
-        let selectionData: [(text: String, positionMultiplier: CGFloat)] = [
-            ("우리 동네\n(500m 이내)", 0),
-            ("가까운동네\n(1km)", 0.5),
-            ("먼동네\n(1.5km)", 1)
-        ]
-        
-        DispatchQueue.main.async {
-            sliderLine.layoutIfNeeded()
-            let sliderWidth = sliderLine.frame.width
-            
-            for (index, data) in selectionData.enumerated() {
-                let isSelected = index == 0
-                let selectionDot = UIView()
-                selectionDot.backgroundColor = isSelected ? UIColor.mainBlue : UIColor.gray300
-                selectionDot.layer.cornerRadius = isSelected ? 12 : 6
-                container.addSubview(selectionDot)
-                
-                let label = UILabel()
-                label.textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
-                label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
-                label.textAlignment = .center
-                label.numberOfLines = 0
-                label.text = data.text
-                container.addSubview(label)
-                
-                selectionDot.snp.makeConstraints { make in
-                    make.centerY.equalTo(sliderLine)
-                    make.centerX.equalTo(sliderLine.snp.leading).offset(data.positionMultiplier * sliderWidth)
-                    make.size.equalTo(isSelected ? CGSize(width: 24, height: 24) : CGSize(width: 12, height: 12))
-                }
-                
-                label.snp.makeConstraints { make in
-                    make.top.equalTo(selectionDot.snp.bottom).offset(4)
-                    make.centerX.equalTo(selectionDot)
-                }
-            }
-        }
-    }
-    
-    // MARK: - Actions
     @objc private func matchingButtonTapped(_ sender: UIButton) {
         toggleButton(sender)
     }
@@ -281,8 +344,11 @@ class MatchingFilterView: UIView {
         for button in matchingButtons + breedButtons {
             updateButtonState(button, isSelected: false)
         }
+        selectedDistanceIndex = 0
+        updateDistanceSelection(selectedIndex: selectedDistanceIndex)
         userDefaults.removeObject(forKey: matchingFilterKey)
         userDefaults.removeObject(forKey: breedFilterKey)
+        userDefaults.removeObject(forKey: distanceFilterKey)
     }
     
     @objc private func applyFilter() {
@@ -312,15 +378,16 @@ class MatchingFilterView: UIView {
         button.tag = isSelected ? 1 : 0
     }
     
-    // MARK: - UserDefaults
     private func saveFilterSettings() {
         let selectedMatchingStatus = matchingButtons.filter { $0.tag == 1 }.compactMap { $0.title(for: .normal) }
         let selectedBreeds = breedButtons.filter { $0.tag == 1 }.compactMap { $0.title(for: .normal) }
         userDefaults.set(selectedMatchingStatus, forKey: matchingFilterKey)
         userDefaults.set(selectedBreeds, forKey: breedFilterKey)
+        saveDistanceSelection()
     }
     
     private func loadFilterSettings() {
+        loadDistanceSelection()
         let savedMatchingStatus = userDefaults.array(forKey: matchingFilterKey) as? [String] ?? []
         let savedBreeds = userDefaults.array(forKey: breedFilterKey) as? [String] ?? []
         matchingButtons.forEach { updateButtonState($0, isSelected: savedMatchingStatus.contains($0.title(for: .normal) ?? "")) }
