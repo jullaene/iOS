@@ -33,9 +33,9 @@ class MatchingFilterView: UIView {
     private let userDefaults = UserDefaults.standard
     private let matchingFilterKey = "MatchingFilter"
     private let breedFilterKey = "BreedFilter"
-    private let distanceFilterKey = "DistanceFilter" // 거리 필터 상태 저장 키
+    private let distanceFilterKey = "DistanceFilter"
     
-    private var selectedDistanceIndex: Int = 0 // 기본값은 "우리 동네"
+    private var selectedDistanceIndex: Int = 0
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -136,7 +136,6 @@ class MatchingFilterView: UIView {
             for (index, data) in selectionData.enumerated() {
                 let isSelected = index == self.selectedDistanceIndex
                 
-                // 터치 영역용 wrapper 뷰 생성
                 let touchArea = UIView()
                 touchArea.tag = index
                 touchArea.isUserInteractionEnabled = true
@@ -145,14 +144,12 @@ class MatchingFilterView: UIView {
                 let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleDistanceTap(_:)))
                 touchArea.addGestureRecognizer(tapGesture)
                 
-                // dot 뷰 생성
                 let selectionDot = UIView()
                 selectionDot.backgroundColor = isSelected ? UIColor.mainBlue : UIColor.gray300
                 selectionDot.layer.cornerRadius = isSelected ? 12 : 6
                 touchArea.addSubview(selectionDot)
                 self.distanceDots.append(selectionDot)
                 
-                // 라벨 생성
                 let label = UILabel()
                 label.textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
                 label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
@@ -162,25 +159,22 @@ class MatchingFilterView: UIView {
                 touchArea.addSubview(label)
                 self.distanceLabels.append(label)
                 
-                // 터치 영역 위치 및 크기 설정
                 touchArea.snp.makeConstraints { make in
                     make.centerX.equalTo(sliderLine.snp.leading).offset(data.positionMultiplier * sliderWidth)
-                    make.centerY.equalTo(sliderLine) // 슬라이더 라인을 기준으로 배치
-                    make.width.equalTo(80) // 터치 영역의 폭
-                    make.height.equalTo(80) // 터치 영역의 높이
+                    make.centerY.equalTo(sliderLine)
+                    make.width.equalTo(80)
+                    make.height.equalTo(80)
                 }
                 
-                // dot 위치 및 크기 설정
                 selectionDot.snp.makeConstraints { make in
                     make.centerX.equalToSuperview()
-                    make.centerY.equalTo(sliderLine) // 슬라이더 라인과 정확히 겹치도록 배치
+                    make.centerY.equalTo(sliderLine)
                     make.size.equalTo(isSelected ? CGSize(width: 24, height: 24) : CGSize(width: 12, height: 12))
                 }
                 
-                // 라벨 위치 설정 (항상 하단 고정)
                 label.snp.makeConstraints { make in
-                    make.top.equalTo(sliderLine.snp.bottom).offset(14) // 슬라이더 라인 하단에 고정
-                    make.centerX.equalTo(selectionDot) // dot와 수평 정렬
+                    make.top.equalTo(sliderLine.snp.bottom).offset(14)
+                    make.centerX.equalTo(selectionDot)
                 }
             }
         }
@@ -203,10 +197,9 @@ class MatchingFilterView: UIView {
                 dot.snp.updateConstraints { make in
                     make.size.equalTo(CGSize(width: newSize, height: newSize))
                 }
-                // cornerRadius를 동그란 상태로 고정
                 dot.layer.cornerRadius = newSize / 2
                 self.distanceLabels[index].textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
-                dot.superview?.layoutIfNeeded() // 애니메이션 내에서 즉시 레이아웃 적용
+                dot.superview?.layoutIfNeeded()
             })
         }
         saveDistanceSelection()
@@ -217,7 +210,7 @@ class MatchingFilterView: UIView {
     }
     
     private func loadDistanceSelection() {
-        selectedDistanceIndex = userDefaults.integer(forKey: distanceFilterKey) // 기본값 0
+        selectedDistanceIndex = userDefaults.integer(forKey: distanceFilterKey)
         updateDistanceSelection(selectedIndex: selectedDistanceIndex)
     }
     
