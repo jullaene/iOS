@@ -101,7 +101,6 @@
 				7B44DDCF4FAC0FE0068BA037 /* Pods-walkmong.debug.xcconfig */,
 				18076F474ED081B6C7ED1D51 /* Pods-walkmong.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -241,8 +240,6 @@
 		5EF033242CD619E3002277AE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7B44DDCF4FAC0FE0068BA037 /* Pods-walkmong.debug.xcconfig */;
-			baseConfigurationReferenceAnchor = 5EF033122CD619E2002277AE /* walkmong */;
-			baseConfigurationReferenceRelativePath = WalkmongSecrets.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -281,8 +278,6 @@
 		5EF033252CD619E3002277AE /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 18076F474ED081B6C7ED1D51 /* Pods-walkmong.release.xcconfig */;
-			baseConfigurationReferenceAnchor = 5EF033122CD619E2002277AE /* walkmong */;
-			baseConfigurationReferenceRelativePath = WalkmongSecrets.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

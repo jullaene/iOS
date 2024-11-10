@@ -15,7 +15,7 @@ final class MatchingApplyPlaceSearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         dismissKeyboardOnTap()
-        addCustomNavigationBar(titleText: "만남장소", showLeftBarButton: true, showCloseBarButton: false, showRefreshBarButton: false)
+        addCustomNavigationBar(titleText: "만남장소", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         setUpViews()
         setConstraints()
     }
