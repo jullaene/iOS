@@ -23,7 +23,10 @@ class MatchingDogInformationViewController: BaseViewController {
         
         // UI 설정
         setupUI()
-        dogInfoView.configure(with: matchingData)
+        if let data = matchingData {
+            // 여러 이미지 설정 (슬라이더)
+            dogInfoView.configureImages(with: [data.dogProfile, data.dogProfile, data.dogProfile])
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,8 +60,7 @@ class MatchingDogInformationViewController: BaseViewController {
     }
     
     private func setupCustomNavigationBar() {
-        // BaseViewController에서 제공되는 customNavigationBar 사용
-        customNavigationBar.setTitle("프로필")
+        customNavigationBar.setTitle("")
         customNavigationBar.addBackButtonAction(target: self, action: #selector(customBackButtonTapped))
     }
     
