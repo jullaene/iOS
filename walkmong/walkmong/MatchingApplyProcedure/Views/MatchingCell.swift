@@ -199,7 +199,7 @@ class MatchingCell: UIView {
     
     private func setupSizeLabel() {
         sizeLabel.text = "소형견"
-        sizeLabel.textColor = UIColor.mainBlack
+        sizeLabel.textColor = UIColor.mainGreen
         sizeLabel.font = UIFont(name: "Pretendard-SemiBold", size: 14)
         dogInfoFrame.addSubview(sizeLabel)
         
