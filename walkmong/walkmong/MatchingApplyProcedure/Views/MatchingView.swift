@@ -97,6 +97,16 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(226)
         }
+        
+        let path = UIBezierPath(
+            roundedRect: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 226),
+            byRoundingCorners: [.bottomLeft, .bottomRight],
+            cornerRadii: CGSize(width: 30, height: 30)
+        )
+
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = path.cgPath
+        customView.layer.mask = maskLayer
     }
     
     private func setupLocationSelectView() {
