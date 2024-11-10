@@ -9,79 +9,60 @@ import UIKit
 import SnapKit
 
 class MatchingDogInformationViewController: BaseViewController {
+    
+    // MARK: - Properties
     private var matchingData: MatchingData?
-
+    private let dogInfoView = MatchingDogInformationView()
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // 커스텀 네비게이션 바 설정
-        setNavigationBarTitle("프로필")
-        addBackButtonAction(self, action: #selector(customBackButtonTapped))
-
+        setupCustomNavigationBar()
+        
+        // UI 설정
         setupUI()
+        dogInfoView.configure(with: matchingData)
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // 기본 탭바 숨기기
+        tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // 기본 탭바 다시 표시
+        tabBarController?.tabBar.isHidden = false
+    }
+    
+    // MARK: - Public Methods
     func configure(with data: MatchingData) {
         matchingData = data
     }
-
+    
+    // MARK: - UI Setup
     private func setupUI() {
-        // Safe Area 이외의 기본 배경색 설정
         view.backgroundColor = .white
-
-        // 데이터가 없으면 기본 메시지 표시
-        guard let data = matchingData else {
-            let emptyLabel = UILabel()
-            emptyLabel.text = "강아지 정보가 없습니다."
-            emptyLabel.textColor = .gray
-            emptyLabel.textAlignment = .center
-            view.addSubview(emptyLabel)
-            emptyLabel.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
-            return
-        }
-
-        // 강아지 이름 표시
-        let nameLabel = UILabel()
-        nameLabel.text = data.dogName
-        nameLabel.font = UIFont.boldSystemFont(ofSize: 24)
-        nameLabel.textColor = .black
-        nameLabel.textAlignment = .center
-        view.addSubview(nameLabel)
-
-        // 강아지 나이 및 품종 표시
-        let infoLabel = UILabel()
-        infoLabel.text = "나이: \(data.dogAge)살 / 품종: \(data.breed)"
-        infoLabel.font = UIFont.systemFont(ofSize: 16)
-        infoLabel.textColor = .darkGray
-        infoLabel.textAlignment = .center
-        view.addSubview(infoLabel)
-
-        // 강아지 프로필 이미지 표시
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: data.dogProfile) ?? UIImage(named: "defaultDogImage")
-        imageView.contentMode = .scaleAspectFit
-        view.addSubview(imageView)
-
-        // 레이아웃 설정
-        imageView.snp.makeConstraints { make in
-            make.top.equalTo(customNavigationBar.snp.bottom).offset(20)
-            make.centerX.equalToSuperview()
-            make.width.height.equalTo(120) // 이미지 크기
-        }
-
-        nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(20)
-            make.centerX.equalToSuperview()
-        }
-
-        infoLabel.snp.makeConstraints { make in
-            make.top.equalTo(nameLabel.snp.bottom).offset(12)
-            make.centerX.equalToSuperview()
+        view.addSubview(dogInfoView)
+        
+        dogInfoView.snp.makeConstraints { make in
+            make.top.equalTo(customNavigationBar.snp.bottom)
+            make.leading.trailing.bottom.equalToSuperview()
         }
     }
-
+    
+    private func setupCustomNavigationBar() {
+        // BaseViewController에서 제공되는 customNavigationBar 사용
+        customNavigationBar.setTitle("프로필")
+        customNavigationBar.addBackButtonAction(target: self, action: #selector(customBackButtonTapped))
+    }
+    
+    // MARK: - Actions
     @objc private func customBackButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
