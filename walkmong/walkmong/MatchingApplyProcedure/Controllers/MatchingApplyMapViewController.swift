@@ -51,11 +51,11 @@ class MatchingApplyMapViewController: UIViewController {
             make.horizontalEdges.equalToSuperview()
         }
         modalView.snp.makeConstraints { make in
-            make.height.equalTo(268)
+            make.height.equalTo(283)
             make.horizontalEdges.equalToSuperview()
         }
         addressModalView.snp.makeConstraints { make in
-            make.height.equalTo(314)
+            make.height.equalTo(341)
             make.horizontalEdges.equalToSuperview()
             make.top.equalTo(view.snp.bottom)
         }
@@ -87,7 +87,8 @@ extension MatchingApplyMapViewController: MatchingApplyMapViewDelegate{
                 for address in decodeData.results {
                     if let land = address.land.name {
                         self.model.dongAddress = address.region.area3.name
-                        self.model.roadAddress = "\(address.region.area2.name) \(land) \(address.land.number1) \(address.land.addition0.value)"
+                        self.model.roadAddress = "\(address.region.area2.name) \(land) \(address.land.number1)"
+                        self.model.buildingName = address.land.addition0.value
                         self.model.latitude = target.lat
                         self.model.longitude = target.lng
                     }

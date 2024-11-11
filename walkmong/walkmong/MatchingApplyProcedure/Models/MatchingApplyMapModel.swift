@@ -10,6 +10,7 @@ import Foundation
 struct MatchingApplyMapModel{
     var dongAddress: String?
     var roadAddress: String?
+    var buildingName: String?
     var latitude: Double?
     var longitude: Double?
     var didSelectLocation: Bool

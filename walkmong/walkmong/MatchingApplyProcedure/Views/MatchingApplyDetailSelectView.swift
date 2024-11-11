@@ -735,7 +735,7 @@ class MatchingApplyDetailSelectView: UIView {
             updateButtonColors(selectedButton: value ? selectPreMeetingYesButton : selectPreMeetingNoButton,
                                unselectedButton: value ? selectPreMeetingNoButton : selectPreMeetingYesButton)
         case .next:
-            nextButton.backgroundColor = value ? .mainBlue : .gray300
+            nextButton.backgroundColor = value ? .gray600 : .gray300
         }
     }
 

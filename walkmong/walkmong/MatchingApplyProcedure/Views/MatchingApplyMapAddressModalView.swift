@@ -53,9 +53,13 @@ class MatchingApplyMapAddressModalView: UIView {
     private let roadAddressLabel: UILabel = {
         let label = UILabel()
         label.text = "도로명 주소"
+        label.lineBreakMode = .byTruncatingTail
+        label.numberOfLines = 2
         label.font = UIFont(name:"Pretendard-Bold",size:20)
         label.textColor = .gray600
         label.textAlignment = .left
+        label.addCharacterSpacing()
+        label.setLineSpacing(ratio: 1.4)
         return label
     }()
     
@@ -71,7 +75,6 @@ class MatchingApplyMapAddressModalView: UIView {
     private let memoTextField: UITextField = {
         let textField = UITextField()
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 46))
-        textField.addCharacterSpacing()
         textField.placeholder = "어디 앞에서 만날지 자세히 적어주세요."
         textField.setPlaceholderColor(.gray400)
         textField.leftView = paddingView
@@ -82,6 +85,7 @@ class MatchingApplyMapAddressModalView: UIView {
         textField.font = UIFont(name:"Pretendard-Medium",size: 16)
         textField.backgroundColor = .gray200
         textField.layer.cornerRadius = 5
+        textField.addCharacterSpacing()
         return textField
     }()
     
@@ -115,11 +119,11 @@ class MatchingApplyMapAddressModalView: UIView {
     
     private func setConstraints(){
         containerView.snp.makeConstraints { make in
-            make.height.equalTo(346)
+            make.height.equalTo(341)
             make.horizontalEdges.equalToSuperview()
         }
         innerView.snp.makeConstraints { make in
-            make.height.equalTo(346)
+            make.height.equalTo(341)
             make.horizontalEdges.equalToSuperview()
         }
         dongLabel.snp.makeConstraints { make in
@@ -132,12 +136,12 @@ class MatchingApplyMapAddressModalView: UIView {
             make.height.width.equalTo(20)
         }
         roadAddressLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(24)
+            make.horizontalEdges.equalToSuperview().inset(24)
             make.top.equalTo(dongLabel.snp.bottom).offset(12)
         }
         memoLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(24)
-            make.top.equalTo(roadAddressLabel.snp.bottom).offset(24)
+            make.top.equalTo(roadAddressLabel.snp.top).offset(84)
         }
         memoTextField.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(24)
@@ -166,7 +170,7 @@ class MatchingApplyMapAddressModalView: UIView {
     
     func configure(with data: MatchingApplyMapModel){
         self.dongLabel.text = data.dongAddress
-        self.roadAddressLabel.text = data.roadAddress
+        self.roadAddressLabel.text = (data.roadAddress ?? "도로명 주소") + "\n" + (data.buildingName ?? "")
     }
 }
 

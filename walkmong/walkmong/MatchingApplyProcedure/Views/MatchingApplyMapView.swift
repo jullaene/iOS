@@ -33,9 +33,10 @@ class MatchingApplyMapView: UIView {
         return mapView
     }()
     
-    private let centerMarker: NMFMarker = {
+    private let centerMarker: CustomMarker = {
         let marker = CustomMarker()
-        marker.showInfoWindow()
+        marker.height = 64
+        marker.width = 50
         return marker
     }()
 
@@ -74,12 +75,16 @@ class MatchingApplyMapView: UIView {
         
         centerMarker.position = initialPosition
         centerMarker.mapView = mapView.mapView
+        centerMarker.touchHandler = { (overlay) -> Bool in
+            self.centerMarker.showInfoWindow()
+            return true // Indicates that the event was handled
+        }
         
         mapView.mapView.addCameraDelegate(delegate: self)
     }
     
     func updateButtonState(value: Bool){
-        self.nextButton.backgroundColor = value ? .mainBlue : .gray300
+        self.nextButton.backgroundColor = value ? .gray600 : .gray300
     }
     
     @objc private func didTapNextButton(){
@@ -105,6 +110,6 @@ extension MatchingApplyMapView: NMFMapViewCameraDelegate {
     func mapViewCameraIdle(_ mapView: NMFMapView) {
         print(mapView.cameraPosition.target)
         delegate?.matchingApplyMapView(self, didSelectLocationAt: mapView.cameraPosition.target)
-        self.nextButton.backgroundColor = .mainBlue
+        self.nextButton.backgroundColor = .gray600
     }
 }

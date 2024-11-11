@@ -36,28 +36,26 @@ class MatchingApplyMapNotifyModalView: UIView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "보호자와 만나서 반려견을 전달받을 장소를 선택해주세요."
+        label.text = "보호자와 만나서 반려견을 전달받을\n장소를 선택해주세요."
         label.numberOfLines = 2
         label.textAlignment = .left
-        label.lineBreakStrategy = .hangulWordPriority
-        label.lineBreakMode = .byWordWrapping
         label.font = UIFont(name: "Pretendard-Bold", size: 24)
         label.textColor = .gray600
-        let attrString = NSMutableAttributedString(string: label.text!)
+        label.addCharacterSpacing()
         label.setLineSpacing(ratio: 1.4)
         return label
     }()
     
     private let subtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "장소 선택 후 보호자와 상의하여 장소를 변경해도 괜찮아요."
+        label.text = "장소 선택 후 보호자와 상의하여 장소를\n변경해도 괜찮아요."
         label.numberOfLines = 2
         label.textAlignment = .left
         label.lineBreakStrategy = .hangulWordPriority
         label.lineBreakMode = .byWordWrapping
         label.font = UIFont(name: "Pretendard-Medium", size: 16)
         label.textColor = .gray400
-        let attrString = NSMutableAttributedString(string: label.text!)
+        label.addCharacterSpacing()
         label.setLineSpacing(ratio: 1.4)
         return label
     }()
@@ -80,11 +78,11 @@ class MatchingApplyMapNotifyModalView: UIView {
     
     private func setConstraints(){
         containerView.snp.makeConstraints { make in
-            make.height.equalTo(268)
+            make.height.equalTo(283)
             make.horizontalEdges.equalToSuperview()
         }
         innerView.snp.makeConstraints { make in
-            make.height.equalTo(268)
+            make.height.equalTo(283)
             make.horizontalEdges.equalToSuperview()
         }
         titleLabel.snp.makeConstraints { make in
