@@ -10,14 +10,9 @@ class OwnerInfoView: UIView {
         font: UIFont(name: "Pretendard-Bold", size: 20)
     )
     
-    private let profileImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "profileExample.png")
-        imageView.layer.cornerRadius = 41
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
+    private let profileImageView = OwnerInfoView.createImageView(
+        imageName: "profileExample.png", cornerRadius: 41
+    )
     
     private let nameLabel = OwnerInfoView.createLabel(
         text: "김영희",
@@ -43,13 +38,9 @@ class OwnerInfoView: UIView {
         font: UIFont(name: "Pretendard-Regular", size: 14)
     )
     
-    private let starIcon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "starIcon.svg")
-        imageView.tintColor = UIColor.mainBlue
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
+    private let starIcon = OwnerInfoView.createImageView(
+        imageName: "starIcon.svg", tintColor: UIColor.mainBlue
+    )
     
     private let ratingLabel = OwnerInfoView.createLabel(
         text: "4.5",
@@ -57,12 +48,9 @@ class OwnerInfoView: UIView {
         font: UIFont(name: "Pretendard-SemiBold", size: 14)
     )
     
-    private let locationIcon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "locationIconBlue.svg")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
+    private let locationIcon = OwnerInfoView.createImageView(
+        imageName: "locationIconBlue.svg"
+    )
     
     private let locationLabel = OwnerInfoView.createLabel(
         text: "노원구 공릉동 1km",
@@ -86,16 +74,12 @@ class OwnerInfoView: UIView {
         backgroundColor = .gray100
         layer.cornerRadius = 20
         
-        addSubview(titleLabel)
-        addSubview(profileImageView)
-        addSubview(nameLabel)
-        addSubview(ageLabel)
-        addSubview(separatorLabel)
-        addSubview(genderLabel)
-        addSubview(starIcon)
-        addSubview(ratingLabel)
-        addSubview(locationIcon)
-        addSubview(locationLabel)
+        // Add subviews
+        let subviews = [
+            titleLabel, profileImageView, nameLabel, ageLabel, separatorLabel,
+            genderLabel, starIcon, ratingLabel, locationIcon, locationLabel
+        ]
+        subviews.forEach { addSubview($0) }
         
         setupConstraints()
     }
@@ -156,7 +140,7 @@ class OwnerInfoView: UIView {
         }
     }
     
-    // MARK: - Helper Method
+    // MARK: - Helper Methods
     private static func createLabel(text: String, textColor: UIColor, font: UIFont?) -> UILabel {
         let label = UILabel()
         label.text = text
@@ -164,4 +148,18 @@ class OwnerInfoView: UIView {
         label.font = font
         return label
     }
-}
+    
+    private static func createImageView(imageName: String, cornerRadius: CGFloat = 0, tintColor: UIColor? = nil) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: imageName)
+        if let tintColor = tintColor {
+            imageView.tintColor = tintColor
+        }
+        if cornerRadius > 0 {
+            imageView.layer.cornerRadius = cornerRadius
+            imageView.clipsToBounds = true
+        }
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }
+} 
