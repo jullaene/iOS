@@ -13,7 +13,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
 
     private let profileFrame = UIView()
     private let infoFrame = UIView()
-    private let walkInfoFrame = UIView()
+    private let walkInfoFrame = WalkInfoView()
     private let relatedInfoFrame = RelatedInfoView()
     private let ownerInfoFrame = OwnerInfoView()
     private let buttonFrame = UIView()
