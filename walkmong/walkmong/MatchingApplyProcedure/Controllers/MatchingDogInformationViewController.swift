@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class MatchingDogInformationViewController: BaseViewController, ProfileViewDelegate {
+class MatchingDogInformationViewController: BaseViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
     
     // MARK: - Properties
     private var matchingData: MatchingData?
@@ -14,6 +14,7 @@ class MatchingDogInformationViewController: BaseViewController, ProfileViewDeleg
         setupUI()
         configureProfileDelegate()
         configureMatchingData()
+        configureViewDelegate()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -50,6 +51,10 @@ class MatchingDogInformationViewController: BaseViewController, ProfileViewDeleg
     private func configureProfileDelegate() {
         dogInfoView.setProfileDelegate(self)
     }
+
+    private func configureViewDelegate() {
+        dogInfoView.delegate = self
+    }
     
     private func configureMatchingData() {
         if let data = matchingData {
@@ -64,6 +69,12 @@ class MatchingDogInformationViewController: BaseViewController, ProfileViewDeleg
     // MARK: - ProfileViewDelegate
     func profileButtonTapped() {
         navigateToDogProfile()
+    }
+
+    // MARK: - MatchingDogInformationViewDelegate
+    func applyWalkButtonTapped() {
+        let detailSelectVC = MatchingApplyDetailSelectViewController()
+        navigationController?.pushViewController(detailSelectVC, animated: true)
     }
 
     // MARK: - Navigation

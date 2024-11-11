@@ -1,8 +1,15 @@
 import UIKit
 import SnapKit
 
+protocol MatchingDogInformationViewDelegate: AnyObject {
+    func applyWalkButtonTapped()
+}
+
 class MatchingDogInformationView: UIView, UIScrollViewDelegate {
 
+    // MARK: - Delegate
+    weak var delegate: MatchingDogInformationViewDelegate?
+    
     // MARK: - UI Components
     private let mainScrollView = UIScrollView()
     private let contentView = UIView()
@@ -30,14 +37,27 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         super.init(frame: frame)
         setupView()
         setupFrames()
+        setupButtonActions()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
         setupFrames()
+        setupButtonActions()
+    }
+    
+    // MARK: - Private Methods
+    private func setupButtonActions() {
+        let applyTapGesture = UITapGestureRecognizer(target: self, action: #selector(applyWalkButtonTapped))
+        applyWalkButton.addGestureRecognizer(applyTapGesture)
+        applyWalkButton.isUserInteractionEnabled = true
     }
 
+    @objc private func applyWalkButtonTapped() {
+        delegate?.applyWalkButtonTapped()
+    }
+    
     // MARK: - Setup Methods
     private func setupView() {
         backgroundColor = .white
@@ -213,4 +233,5 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         imageView.clipsToBounds = true
         return imageView
     }
+    
 }
