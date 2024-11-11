@@ -39,7 +39,6 @@ class MatchingDogInformationView: UIView {
     
     private let buttonFrame: UIView = {
         let view = UIView()
-        view.backgroundColor = .blue
         return view
     }()
     
@@ -159,6 +158,7 @@ class MatchingDogInformationView: UIView {
             make.width.equalToSuperview()
             make.height.equalTo(102)
         }
+        setupButtonFrame()
     }
     
     // MARK: - Public Methods
@@ -193,6 +193,66 @@ class MatchingDogInformationView: UIView {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
+    }
+    
+    private func setupButtonFrame() {
+        // 워크톡 버튼
+        let walkTalkButton = UIView()
+        walkTalkButton.backgroundColor = UIColor.gray100
+        walkTalkButton.layer.cornerRadius = 15
+        buttonFrame.addSubview(walkTalkButton)
+        walkTalkButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().inset(20)
+            make.width.equalTo(93)
+            make.height.equalTo(53)
+        }
+        
+        // 워크톡 버튼 내부 텍스트
+        let walkTalkLabel = UILabel()
+        walkTalkLabel.text = "워크톡"
+        walkTalkLabel.textColor = UIColor.gray400
+        walkTalkLabel.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        walkTalkLabel.textAlignment = .center
+        walkTalkButton.addSubview(walkTalkLabel)
+        walkTalkLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().inset(10)
+        }
+        
+        // 워크톡 버튼 내부 아이콘
+        let messageIcon = UIImageView()
+        messageIcon.image = UIImage(named: "messageIcon")
+        messageIcon.contentMode = .scaleAspectFit
+        walkTalkButton.addSubview(messageIcon)
+        messageIcon.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(walkTalkLabel.snp.trailing).offset(8)
+            make.width.equalTo(18)
+        }
+        
+        // 산책 지원하기 버튼
+        let supportWalkButton = UIView()
+        supportWalkButton.backgroundColor = UIColor.gray600
+        supportWalkButton.layer.cornerRadius = 15
+        buttonFrame.addSubview(supportWalkButton)
+        supportWalkButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(walkTalkButton.snp.trailing).offset(12)
+            make.trailing.equalToSuperview().inset(17)
+            make.height.equalTo(54)
+        }
+        
+        // 산책 지원하기 버튼 내부 텍스트
+        let supportWalkLabel = UILabel()
+        supportWalkLabel.text = "산책 지원하기"
+        supportWalkLabel.textColor = UIColor.gray100
+        supportWalkLabel.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        supportWalkLabel.textAlignment = .center
+        supportWalkButton.addSubview(supportWalkLabel)
+        supportWalkLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
 }
 
