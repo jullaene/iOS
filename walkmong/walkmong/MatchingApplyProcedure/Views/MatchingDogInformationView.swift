@@ -11,8 +11,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     private let pageControl = UIPageControl()
     private var imageViews: [UIImageView] = []
 
-    private let profileFrame = UIView()
-    private let infoFrame = UIView()
+    private let profileFrame = ProfileView()
     private let walkInfoFrame = WalkInfoView()
     private let relatedInfoFrame = RelatedInfoView()
     private let ownerInfoFrame = OwnerInfoView()
@@ -91,6 +90,11 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.centerX.equalToSuperview()
             make.height.equalTo(24)
         }
+    }
+
+    // MARK: - Public Method
+    func setProfileDelegate(_ delegate: ProfileViewDelegate) {
+        profileFrame.setDelegate(delegate)
     }
 
     private func setupFrames() {

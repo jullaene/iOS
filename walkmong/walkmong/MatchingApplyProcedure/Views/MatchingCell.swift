@@ -405,7 +405,7 @@ class MatchingCell: UIView {
 //     }
     
 //     mainView.addSubview(loadingImagePlaceholder)
-//     loadingImagePlaceholder.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
+//     loadingImagePlaceholder.backgroundColor = UIColor.gray100
 //     loadingImagePlaceholder.layer.cornerRadius = 10
 //     loadingImagePlaceholder.snp.makeConstraints { make in
 //         make.width.height.equalTo(97)
@@ -444,7 +444,7 @@ class MatchingCell: UIView {
 //     var previousLine: UIView? = nil
 //     for _ in 0..<5 {
 //         let line = UIView()
-//         line.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
+//         line.backgroundColor = UIColor.gray100
 //         line.layer.cornerRadius = 4
 //         mainView.addSubview(line)
         
