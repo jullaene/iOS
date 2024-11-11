@@ -125,6 +125,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
 
     private func setupButtonFrame() {
         addSubview(buttonFrame)
+        buttonFrame.backgroundColor = .white
         buttonFrame.snp.makeConstraints { make in
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
             make.centerX.equalToSuperview()
@@ -132,24 +133,30 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.height.equalTo(102)
         }
 
-        setupButton(walkTalkButton, text: "워크톡", textColor: UIColor.gray400, parent: buttonFrame, inset: 20)
-        setupButton(applyWalkButton, text: "산책 지원하기", textColor: UIColor.gray100, parent: buttonFrame, offset: 12)
-    }
-
-    private func setupButton(_ button: UIView, text: String, textColor: UIColor, parent: UIView, inset: CGFloat = 0, offset: CGFloat = 0) {
-        parent.addSubview(button)
-        button.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            if inset > 0 {
-                make.leading.equalToSuperview().inset(inset)
-                make.width.equalTo(93)
-            } else {
-                make.leading.equalTo(walkTalkButton.snp.trailing).offset(offset)
-                make.trailing.equalToSuperview().inset(17)
-            }
+        // 워크톡 버튼
+        buttonFrame.addSubview(walkTalkButton)
+        walkTalkButton.snp.makeConstraints { make in
+            make.top.equalTo(buttonFrame.snp.top).offset(24)
+            make.leading.equalTo(buttonFrame.snp.leading).offset(20)
+            make.width.equalTo(93)
             make.height.equalTo(54)
         }
 
+        // 산책 지원하기 버튼
+        buttonFrame.addSubview(applyWalkButton)
+        applyWalkButton.snp.makeConstraints { make in
+            make.top.equalTo(buttonFrame.snp.top).offset(24)
+            make.leading.equalTo(walkTalkButton.snp.trailing).offset(12)
+            make.trailing.equalTo(buttonFrame.snp.trailing).inset(17)
+            make.height.equalTo(54)
+        }
+
+        // 버튼 라벨 설정
+        setupButtonLabel(walkTalkButton, text: "워크톡", textColor: UIColor.gray400)
+        setupButtonLabel(applyWalkButton, text: "산책 지원하기", textColor: UIColor.gray100)
+    }
+
+    private func setupButtonLabel(_ button: UIView, text: String, textColor: UIColor) {
         let label = UILabel()
         label.text = text
         label.textColor = textColor
