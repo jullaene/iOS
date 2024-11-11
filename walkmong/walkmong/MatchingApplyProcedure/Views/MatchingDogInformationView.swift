@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class MatchingDogInformationView: UIView {
+class MatchingDogInformationView: UIView, UIScrollViewDelegate {
 
     // MARK: - UI Components
     private let mainScrollView = UIScrollView()
@@ -15,7 +15,7 @@ class MatchingDogInformationView: UIView {
     private let infoFrame = UIView()
     private let walkInfoFrame = UIView()
     private let relatedInfoFrame = RelatedInfoView()
-    private let ownerInfoFrame = UIView()
+    private let ownerInfoFrame = OwnerInfoView()
     private let buttonFrame = UIView()
 
     private let walkTalkButton: UIView = MatchingDogInformationView.createRoundedButton(
@@ -142,11 +142,11 @@ class MatchingDogInformationView: UIView {
             make.centerY.equalToSuperview()
             if inset > 0 {
                 make.leading.equalToSuperview().inset(inset)
+                make.width.equalTo(93)
             } else {
                 make.leading.equalTo(walkTalkButton.snp.trailing).offset(offset)
                 make.trailing.equalToSuperview().inset(17)
             }
-            make.width.equalTo(inset > 0 ? 93 : nil)
             make.height.equalTo(54)
         }
 
@@ -159,6 +159,12 @@ class MatchingDogInformationView: UIView {
         label.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
+    }
+
+    // MARK: - UIScrollViewDelegate
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pageIndex = round(scrollView.contentOffset.x / UIScreen.main.bounds.width)
+        pageControl.currentPage = Int(pageIndex)
     }
 
     // MARK: - Helper Methods
