@@ -14,23 +14,17 @@ class MatchingDogInformationView: UIView {
     private let profileFrame = UIView()
     private let infoFrame = UIView()
     private let walkInfoFrame = UIView()
-    private let relatedInfoFrame = UIView()
+    private let relatedInfoFrame = RelatedInfoView()
     private let ownerInfoFrame = UIView()
     private let buttonFrame = UIView()
 
-    private let walkTalkButton: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.gray100
-        view.layer.cornerRadius = 15
-        return view
-    }()
-
-    private let applyWalkButton: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.gray600
-        view.layer.cornerRadius = 15
-        return view
-    }()
+    private let walkTalkButton: UIView = MatchingDogInformationView.createRoundedButton(
+        backgroundColor: UIColor.gray100, cornerRadius: 15
+    )
+    
+    private let applyWalkButton: UIView = MatchingDogInformationView.createRoundedButton(
+        backgroundColor: UIColor.gray600, cornerRadius: 15
+    )
 
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -53,25 +47,28 @@ class MatchingDogInformationView: UIView {
         addSubview(mainScrollView)
         mainScrollView.showsVerticalScrollIndicator = false
         mainScrollView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-102)
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 102, right: 0))
         }
 
-        // ScrollView Content View 설정
+        // Content View 설정
         mainScrollView.addSubview(contentView)
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
         }
 
-        // ScrollView 내부 콘텐츠: 이미지 뷰
+        // Image ScrollView와 PageControl 설정
+        setupImageScrollView()
+        setupPageControl()
+    }
+
+    private func setupImageScrollView() {
         contentView.addSubview(imageScrollView)
         imageScrollView.isPagingEnabled = true
         imageScrollView.showsHorizontalScrollIndicator = false
         imageScrollView.delegate = self
         imageScrollView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.trailing.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(imageScrollView.snp.width).multipliedBy(297.66 / 393.0)
         }
 
@@ -80,8 +77,9 @@ class MatchingDogInformationView: UIView {
             make.edges.equalToSuperview()
             make.height.equalToSuperview()
         }
+    }
 
-        // PageControl 설정
+    private func setupPageControl() {
         contentView.addSubview(pageControl)
         pageControl.currentPage = 0
         pageControl.pageIndicatorTintColor = UIColor.mainBlue.withAlphaComponent(0.3)
@@ -96,51 +94,36 @@ class MatchingDogInformationView: UIView {
     }
 
     private func setupFrames() {
-        // Profile Frame
-        profileFrame.backgroundColor = .red
-        contentView.addSubview(profileFrame)
-        profileFrame.snp.makeConstraints { make in
-            make.top.equalTo(pageControl.snp.bottom).offset(2)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(102)
-        }
-
-        infoFrame.backgroundColor = .yellow
-        contentView.addSubview(infoFrame)
-        infoFrame.snp.makeConstraints { make in
-            make.top.equalTo(profileFrame.snp.bottom).offset(34)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(754)
-        }
-
-        infoFrame.addSubview(walkInfoFrame)
-        walkInfoFrame.snp.makeConstraints { make in
-            make.top.equalTo(infoFrame.snp.top)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(353)
-            make.height.equalTo(226)
-        }
-
-        infoFrame.addSubview(relatedInfoFrame)
-        relatedInfoFrame.snp.makeConstraints { make in
-            make.top.equalTo(walkInfoFrame.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(353)
-            make.height.equalTo(324)
-        }
-
-        infoFrame.addSubview(ownerInfoFrame)
-        ownerInfoFrame.snp.makeConstraints { make in
-            make.top.equalTo(relatedInfoFrame.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(353)
-            make.height.equalTo(172)
-        }
+        addFramesToContentView([
+            (profileFrame, 102, pageControl.snp.bottom, 2),
+            (walkInfoFrame, 226, profileFrame.snp.bottom, 34),
+            (relatedInfoFrame, nil, walkInfoFrame.snp.bottom, 16),
+            (ownerInfoFrame, 172, relatedInfoFrame.snp.bottom, 16)
+        ])
 
         contentView.snp.makeConstraints { make in
-            make.bottom.equalTo(infoFrame.snp.bottom).offset(20)
+            make.bottom.equalTo(ownerInfoFrame.snp.bottom).offset(20)
         }
 
+        // Button Frame
+        setupButtonFrame()
+    }
+
+    private func addFramesToContentView(_ frames: [(UIView, CGFloat?, ConstraintRelatableTarget, CGFloat)]) {
+        for (frame, height, topAnchor, topOffset) in frames {
+            contentView.addSubview(frame)
+            frame.snp.makeConstraints { make in
+                make.top.equalTo(topAnchor).offset(topOffset)
+                make.centerX.equalToSuperview()
+                make.width.equalTo(353)
+                if let height = height {
+                    make.height.equalTo(height)
+                }
+            }
+        }
+    }
+
+    private func setupButtonFrame() {
         addSubview(buttonFrame)
         buttonFrame.snp.makeConstraints { make in
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
@@ -148,110 +131,69 @@ class MatchingDogInformationView: UIView {
             make.width.equalToSuperview()
             make.height.equalTo(102)
         }
-        setupButtonFrame()
+
+        setupButton(walkTalkButton, text: "워크톡", textColor: UIColor.gray400, parent: buttonFrame, inset: 20)
+        setupButton(applyWalkButton, text: "산책 지원하기", textColor: UIColor.gray100, parent: buttonFrame, offset: 12)
     }
 
-    private func setupButtonFrame() {
-        // 워크톡 버튼
-        buttonFrame.addSubview(walkTalkButton)
-        walkTalkButton.snp.makeConstraints { make in
+    private func setupButton(_ button: UIView, text: String, textColor: UIColor, parent: UIView, inset: CGFloat = 0, offset: CGFloat = 0) {
+        parent.addSubview(button)
+        button.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().inset(20)
-            make.width.equalTo(93)
-            make.height.equalTo(53)
-        }
-
-        let walkTalkLabel = UILabel()
-        walkTalkLabel.text = "워크톡"
-        walkTalkLabel.textColor = UIColor.gray400
-        walkTalkLabel.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        walkTalkLabel.textAlignment = .center
-        walkTalkButton.addSubview(walkTalkLabel)
-        walkTalkLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-
-        // 산책 지원 버튼
-        buttonFrame.addSubview(applyWalkButton)
-        applyWalkButton.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.leading.equalTo(walkTalkButton.snp.trailing).offset(12)
-            make.trailing.equalToSuperview().inset(17)
+            if inset > 0 {
+                make.leading.equalToSuperview().inset(inset)
+            } else {
+                make.leading.equalTo(walkTalkButton.snp.trailing).offset(offset)
+                make.trailing.equalToSuperview().inset(17)
+            }
+            make.width.equalTo(inset > 0 ? 93 : nil)
             make.height.equalTo(54)
         }
 
-        let applyWalkLabel = UILabel()
-        applyWalkLabel.text = "산책 지원하기"
-        applyWalkLabel.textColor = UIColor.gray100
-        applyWalkLabel.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        applyWalkLabel.textAlignment = .center
-        applyWalkButton.addSubview(applyWalkLabel)
-        applyWalkLabel.snp.makeConstraints { make in
+        let label = UILabel()
+        label.text = text
+        label.textColor = textColor
+        label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        label.textAlignment = .center
+        button.addSubview(label)
+        label.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
-        // 버튼 탭 제스처 추가
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(applyWalkButtonTapped))
-        applyWalkButton.addGestureRecognizer(tapGesture)
     }
 
     // MARK: - Helper Methods
+    private static func createRoundedButton(backgroundColor: UIColor, cornerRadius: CGFloat) -> UIView {
+        let view = UIView()
+        view.backgroundColor = backgroundColor
+        view.layer.cornerRadius = cornerRadius
+        return view
+    }
+
+    func configureImages(with imageNames: [String]) {
+        imageViews.forEach { $0.removeFromSuperview() }
+        imageViews = imageNames.map { createImageView(named: $0) }
+        
+        for (index, imageView) in imageViews.enumerated() {
+            imageContentView.addSubview(imageView)
+            imageView.snp.makeConstraints { make in
+                make.top.bottom.equalToSuperview()
+                make.width.equalTo(UIScreen.main.bounds.width)
+                make.leading.equalToSuperview().offset(CGFloat(index) * UIScreen.main.bounds.width)
+            }
+        }
+        
+        imageContentView.snp.makeConstraints { make in
+            make.width.equalTo(UIScreen.main.bounds.width * CGFloat(imageNames.count))
+        }
+        
+        pageControl.numberOfPages = imageNames.count
+    }
+
     private func createImageView(named imageName: String) -> UIImageView {
         let imageView = UIImageView()
         imageView.image = UIImage(named: imageName) ?? UIImage(named: "defaultDogImage")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
-    }
-
-    // MARK: - Actions
-    @objc private func applyWalkButtonTapped() {
-        (self.findViewController() as? MatchingDogInformationViewController)?.navigateToMatchingApplyDetailSelect()
-    }
-
-    func configureImages(with imageNames: [String]) {
-        imageViews.forEach { $0.removeFromSuperview() }
-        imageViews = imageNames.map { imageName -> UIImageView in
-            let imageView = createImageView(named: imageName)
-            imageContentView.addSubview(imageView)
-            return imageView
-        }
-        
-        let screenWidth = UIScreen.main.bounds.width
-        for (index, imageView) in imageViews.enumerated() {
-            imageView.snp.makeConstraints { make in
-                make.top.bottom.equalToSuperview()
-                make.width.equalTo(screenWidth)
-                make.leading.equalToSuperview().offset(CGFloat(index) * screenWidth)
-            }
-        }
-        
-        imageContentView.snp.makeConstraints { make in
-            make.width.equalTo(screenWidth * CGFloat(imageNames.count))
-        }
-        
-        pageControl.numberOfPages = imageNames.count
-    }
-}
-
-// MARK: - UIScrollViewDelegate
-extension MatchingDogInformationView: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let pageIndex = round(scrollView.contentOffset.x / UIScreen.main.bounds.width)
-        pageControl.currentPage = Int(pageIndex)
-    }
-}
-
-// MARK: - UIView 확장
-extension UIView {
-    func findViewController() -> UIViewController? {
-        var nextResponder: UIResponder? = self
-        while let responder = nextResponder {
-            if let viewController = responder as? UIViewController {
-                return viewController
-            }
-            nextResponder = responder.next
-        }
-        return nil
     }
 }
