@@ -52,7 +52,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         imageScrollView.showsHorizontalScrollIndicator = false
         imageScrollView.delegate = self
         imageScrollView.clipsToBounds = false
-        imageScrollView.decelerationRate = .fast // 빠른 감속 설정
+        imageScrollView.decelerationRate = .fast
         imageScrollView.contentInset = UIEdgeInsets(
             top: 0,
             left: (UIScreen.main.bounds.width - imageWidth) / 2,
@@ -62,9 +62,12 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     }
 
     private func setupPageControl() {
+        addSubview(pageControl)
         pageControl.currentPage = 0
-        pageControl.pageIndicatorTintColor = UIColor.lightGray.withAlphaComponent(0.5)
-        pageControl.currentPageIndicatorTintColor = .darkGray
+        pageControl.pageIndicatorTintColor = UIColor.mainBlue.withAlphaComponent(0.3)
+        pageControl.currentPageIndicatorTintColor = .mainBlue
+        pageControl.backgroundColor = UIColor(red: 0.749, green: 0.749, blue: 0.749, alpha: 0.44)
+        pageControl.layer.cornerRadius = 12
     }
 
     private func setupNameLabel() {
@@ -110,7 +113,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
 
         // Page Control
         pageControl.snp.makeConstraints { make in
-            make.top.equalTo(imageScrollView.snp.bottom).offset(12)
+            make.top.equalTo(imageScrollView.snp.bottom).offset(12.34)
             make.centerX.equalToSuperview()
             make.height.equalTo(24)
         }
@@ -127,7 +130,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
             make.leading.trailing.equalToSuperview().inset(20)
         }
     }
-
+    
     // MARK: - Public Methods
     func configureImages(with imageNames: [String]) {
         // 기존 이미지 뷰 제거
