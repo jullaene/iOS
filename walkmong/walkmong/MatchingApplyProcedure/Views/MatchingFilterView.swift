@@ -308,9 +308,12 @@ class MatchingFilterView: UIView {
                 } else {
                     make.leading.equalTo(buttons[index - 1].snp.trailing).offset(12)
                 }
-                make.width.equalTo(73)
+                make.top.bottom.equalToSuperview()
                 make.height.equalTo(38)
             }
+            
+            // 동적 크기 조정: 텍스트에 따라 너비 설정
+            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
     }
     
