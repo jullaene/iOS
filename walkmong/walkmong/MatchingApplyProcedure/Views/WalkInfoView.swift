@@ -15,18 +15,19 @@ class WalkInfoView: UIView {
         let iconName: String
         let title: String
         let iconHeight: CGFloat
-        let height: CGFloat
     }
     
     // MARK: - UI Components
     private let framesData: [FrameData] = [
-        FrameData(iconName: "scheduleIcon", title: "산책 일정", iconHeight: 22, height: 48),
-        FrameData(iconName: "meetingPlace", title: "만남 장소", iconHeight: 17.5, height: 22),
-        FrameData(iconName: "walkItems", title: "산책 용품", iconHeight: 18, height: 22),
-        FrameData(iconName: "preMeeting", title: "사전 만남", iconHeight: 20, height: 22)
+        FrameData(iconName: "scheduleIcon", title: "산책 일정", iconHeight: 22),
+        FrameData(iconName: "meetingPlace", title: "만남 장소", iconHeight: 17.5),
+        FrameData(iconName: "walkItems", title: "산책 용품", iconHeight: 18),
+        FrameData(iconName: "preMeeting", title: "사전 만남", iconHeight: 20)
     ]
     
-    private var frames: [UIView] = []
+    private var referenceIcon: UIImageView?
+    private var referenceTitleLabel: UILabel?
+    private var endLabel: UILabel?
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -43,62 +44,64 @@ class WalkInfoView: UIView {
     private func setupView() {
         backgroundColor = .gray100
         layer.cornerRadius = 20
-        setupFrames()
-    }
-    
-    private func setupFrames() {
-        var lastFrame: UIView? = nil
         
-        for data in framesData {
-            let frame = createFrame(data: data)
-            addSubview(frame)
+        var lastView: UIView? = nil
+        
+        for (index, data) in framesData.enumerated() {
+            let icon = createIcon(named: data.iconName, height: data.iconHeight)
+            let titleLabel = createTitleLabel(with: data.title)
             
-            frame.snp.makeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.width.equalTo(305)
-                make.height.equalTo(data.height)
-                make.top.equalTo(lastFrame?.snp.bottom ?? self.snp.top).offset(lastFrame == nil ? 20 : 24)
+            addSubview(icon)
+            addSubview(titleLabel)
+            
+            // 아이콘 레이아웃
+            icon.snp.makeConstraints { make in
+                make.height.equalTo(data.iconHeight)
+                make.width.equalTo(icon.snp.height)
+                
+                if index == 0 {
+                    // 첫 번째 아이콘은 중심에 배치
+                    make.leading.equalToSuperview().offset(24)
+                    self.referenceIcon = icon
+                } else {
+                    // 이후 아이콘은 첫 번째 아이콘의 centerX에 정렬
+                    make.centerX.equalTo(referenceIcon!)
+                }
+                
+                if data.title == "만남 장소" {
+                    // "만남 장소"는 endLabel의 아래로 배치
+                    make.top.equalTo(endLabel!.snp.bottom).offset(24)
+                } else {
+                    make.top.equalTo(lastView?.snp.bottom ?? self.snp.top).offset(lastView == nil ? 20 : 24)
+                }
             }
             
-            lastFrame = frame
-            frames.append(frame)
+            // 타이틀 레이아웃
+            titleLabel.snp.makeConstraints { make in
+                make.centerY.equalTo(icon.snp.centerY)
+                
+                if index == 0 {
+                    // 첫 번째 타이틀은 아이콘의 오른쪽에 배치
+                    make.left.equalTo(icon.snp.right).offset(8)
+                    self.referenceTitleLabel = titleLabel
+                } else {
+                    // 이후 타이틀은 첫 번째 타이틀의 leading에 정렬
+                    make.left.equalTo(referenceTitleLabel!)
+                }
+            }
+            
+            // 세부 레이블 추가
+            if data.title == "산책 일정" {
+                setupScheduleDetails(relativeTo: titleLabel)
+            } else {
+                setupDetailLabel(title: data.title, relativeTo: titleLabel)
+            }
+            
+            lastView = icon // 다음 뷰의 기준점
         }
     }
     
     // MARK: - Helpers
-    private func createFrame(data: FrameData) -> UIView {
-        let frame = UIView()
-        let icon = createIcon(named: data.iconName, height: data.iconHeight)
-        let titleLabel = createTitleLabel(with: data.title)
-        frame.addSubview(icon)
-        frame.addSubview(titleLabel)
-        
-        icon.snp.makeConstraints { make in
-            make.left.equalToSuperview()
-            make.height.equalTo(data.iconHeight)
-            make.width.equalTo(icon.snp.height)
-            make.centerY.equalTo(data.title == "산책 일정" ? titleLabel.snp.centerY : frame.snp.centerY)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(icon.snp.right).offset(8)
-            
-            if data.title == "산책 일정" {
-                make.top.equalToSuperview()
-            } else {
-                make.centerY.equalToSuperview()
-            }
-        }
-        
-        if data.title == "산책 일정" {
-            setupScheduleDetails(in: frame, relativeTo: titleLabel)
-        } else {
-            setupDetailLabel(in: frame, text: detailText(for: data.title))
-        }
-        
-        return frame
-    }
-    
     private func createIcon(named name: String, height: CGFloat) -> UIImageView {
         let icon = UIImageView(image: UIImage(named: name))
         return icon
@@ -112,51 +115,52 @@ class WalkInfoView: UIView {
         return titleLabel
     }
     
-    private func setupDetailLabel(in frame: UIView, text: String?) {
-        guard let text = text else { return }
+    private func setupDetailLabel(title: String, relativeTo titleLabel: UILabel) {
         let detailLabel = UILabel()
-        detailLabel.text = text
+        detailLabel.text = detailText(for: title)
         detailLabel.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         detailLabel.textColor = UIColor.mainBlue
-        frame.addSubview(detailLabel)
+        addSubview(detailLabel)
+        
         detailLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview()
-            make.centerY.equalToSuperview()
+            make.centerY.equalTo(titleLabel.snp.centerY)
+            make.trailing.equalToSuperview().offset(-24)
         }
     }
     
-    private func setupScheduleDetails(in frame: UIView, relativeTo titleLabel: UIView) {
+    private func setupScheduleDetails(relativeTo titleLabel: UILabel) {
         let startLabel = createSubtitleLabel(with: "시작")
         let startDateLabel = createSubtitleLabel(with: "2024.10.25 (금) 16:00", color: .mainBlue)
         let endLabel = createSubtitleLabel(with: "종료")
         let endDateLabel = createSubtitleLabel(with: "2024.10.25 (금) 16:30", color: .mainBlue)
         
-        frame.addSubview(startLabel)
-        frame.addSubview(startDateLabel)
-        frame.addSubview(endLabel)
-        frame.addSubview(endDateLabel)
+        addSubview(startLabel)
+        addSubview(startDateLabel)
+        addSubview(endLabel)
+        addSubview(endDateLabel)
         
         startLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
             make.left.equalTo(titleLabel.snp.right).offset(8)
+            make.centerY.equalTo(titleLabel.snp.centerY)
         }
         
         startDateLabel.snp.makeConstraints { make in
             make.left.equalTo(startLabel.snp.right).offset(4)
-            make.top.equalToSuperview()
-            make.trailing.equalToSuperview()
+            make.centerY.equalTo(startLabel.snp.centerY)
+            make.trailing.equalToSuperview().offset(-25)
         }
         
         endLabel.snp.makeConstraints { make in
+            make.left.equalTo(titleLabel.snp.right).offset(8)
             make.top.equalTo(startLabel.snp.bottom).offset(4)
-            make.left.equalTo(startLabel)
         }
         
         endDateLabel.snp.makeConstraints { make in
             make.left.equalTo(endLabel.snp.right).offset(4)
-            make.top.equalTo(startDateLabel.snp.bottom).offset(4)
-            make.trailing.equalToSuperview()
+            make.centerY.equalTo(endLabel.snp.centerY)
         }
+        
+        self.endLabel = endLabel // endLabel 참조 저장
     }
     
     private func createSubtitleLabel(with text: String, color: UIColor = .gray400) -> UILabel {
