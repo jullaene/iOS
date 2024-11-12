@@ -11,18 +11,28 @@ import SnapKit
 class DogProfileView: UIView, UIScrollViewDelegate {
 
     // MARK: - UI Components
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
     private let imageScrollView = UIScrollView()
     private let imageContentView = UIView()
     private let pageControl = UIPageControl()
-    private let nameLabel = UILabel()
-    private let infoStackView = UIStackView()
+    
+    private let basicInfoFrame = UIView()
+    private let socialInfoFrame = UIView()
+    private let vaccinationFrame = UIView()
+
     private var imageViews: [UIView] = []
 
     // MARK: - Constants
-    private let imageWidth: CGFloat = 353
-    private let imageHeight: CGFloat = 267
-    private let imageSpacing: CGFloat = 8
-    private let cornerRadius: CGFloat = 20
+    private struct Constants {
+        static let imageWidth: CGFloat = 353
+        static let imageHeight: CGFloat = 267
+        static let imageSpacing: CGFloat = 8
+        static let cornerRadius: CGFloat = 20
+        static let frameWidth: CGFloat = 353
+        static let frameSpacing: CGFloat = 52
+        static let bottomPadding: CGFloat = 40
+    }
 
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -40,11 +50,12 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     // MARK: - Setup Methods
     private func setupView() {
         backgroundColor = .white
+        addSubview(scrollView)
+        scrollView.addSubview(contentView)
 
         setupScrollView()
         setupPageControl()
-        setupNameLabel()
-        setupInfoStackView()
+        setupFrames()
     }
 
     private func setupScrollView() {
@@ -55,50 +66,49 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         imageScrollView.decelerationRate = .fast
         imageScrollView.contentInset = UIEdgeInsets(
             top: 0,
-            left: (UIScreen.main.bounds.width - imageWidth) / 2,
+            left: (UIScreen.main.bounds.width - Constants.imageWidth) / 2,
             bottom: 0,
-            right: (UIScreen.main.bounds.width - imageWidth) / 2
+            right: (UIScreen.main.bounds.width - Constants.imageWidth) / 2
         )
     }
 
     private func setupPageControl() {
-        addSubview(pageControl)
         pageControl.currentPage = 0
         pageControl.pageIndicatorTintColor = UIColor.mainBlue.withAlphaComponent(0.3)
         pageControl.currentPageIndicatorTintColor = .mainBlue
-        pageControl.backgroundColor = UIColor(red: 0.749, green: 0.749, blue: 0.749, alpha: 0.44)
+        pageControl.backgroundColor = UIColor(white: 0.75, alpha: 0.44)
         pageControl.layer.cornerRadius = 12
     }
 
-    private func setupNameLabel() {
-        nameLabel.font = UIFont.boldSystemFont(ofSize: 18)
-        nameLabel.textColor = .black
-        nameLabel.textAlignment = .center
-        nameLabel.text = "강아지 이름"
+    private func setupFrames() {
+        basicInfoFrame.backgroundColor = .red
+        socialInfoFrame.backgroundColor = .yellow
+        vaccinationFrame.backgroundColor = .blue
     }
 
-    private func setupInfoStackView() {
-        infoStackView.axis = .vertical
-        infoStackView.spacing = 12
-        infoStackView.distribution = .equalSpacing
-        infoStackView.alignment = .leading
-
-        ["성별: 남", "나이: 3살", "견종: 포메라니안", "몸무게: 4kg", "중성화 여부: O"].forEach {
-            let label = UILabel()
-            label.font = UIFont.systemFont(ofSize: 16)
-            label.textColor = .darkGray
-            label.text = $0
-            infoStackView.addArrangedSubview(label)
-        }
-    }
-
+    // MARK: - Layout
     private func setupLayout() {
-        addSubview(imageScrollView)
-        addSubview(pageControl)
-        addSubview(nameLabel)
-        addSubview(infoStackView)
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
-        // Image ScrollView
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+        }
+
+        contentView.addSubview(imageScrollView)
+        contentView.addSubview(pageControl)
+        contentView.addSubview(basicInfoFrame)
+        contentView.addSubview(socialInfoFrame)
+        contentView.addSubview(vaccinationFrame)
+
+        setupImageScrollViewLayout()
+        setupPageControlLayout()
+        setupFramesLayout()
+    }
+
+    private func setupImageScrollViewLayout() {
         imageScrollView.addSubview(imageContentView)
         imageScrollView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(2)
@@ -110,45 +120,57 @@ class DogProfileView: UIView, UIScrollViewDelegate {
             make.edges.equalToSuperview()
             make.height.equalToSuperview()
         }
+    }
 
-        // Page Control
+    private func setupPageControlLayout() {
         pageControl.snp.makeConstraints { make in
             make.top.equalTo(imageScrollView.snp.bottom).offset(12.34)
             make.centerX.equalToSuperview()
             make.height.equalTo(24)
         }
+    }
 
-        // Name Label
-        nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(pageControl.snp.bottom).offset(20)
+    private func setupFramesLayout() {
+        basicInfoFrame.snp.makeConstraints { make in
+            make.top.equalTo(pageControl.snp.bottom).offset(32)
             make.centerX.equalToSuperview()
+            make.width.equalTo(Constants.frameWidth)
         }
 
-        // Info Stack View
-        infoStackView.snp.makeConstraints { make in
-            make.top.equalTo(nameLabel.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview().inset(20)
+        socialInfoFrame.snp.makeConstraints { make in
+            make.top.equalTo(basicInfoFrame.snp.bottom).offset(Constants.frameSpacing)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(Constants.frameWidth)
+        }
+
+        vaccinationFrame.snp.makeConstraints { make in
+            make.top.equalTo(socialInfoFrame.snp.bottom).offset(Constants.frameSpacing)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(Constants.frameWidth)
+            make.height.equalTo(86)
+        }
+
+        contentView.snp.makeConstraints { make in
+            make.bottom.equalTo(vaccinationFrame.snp.bottom).offset(Constants.bottomPadding)
         }
     }
-    
+
     // MARK: - Public Methods
     func configureImages(with imageNames: [String]) {
-        // 기존 이미지 뷰 제거
         imageViews.forEach { $0.removeFromSuperview() }
         imageViews = imageNames.map { createCustomImageView(named: $0) }
 
-        // 새로운 이미지 추가
         for (index, imageView) in imageViews.enumerated() {
             imageContentView.addSubview(imageView)
             imageView.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
-                make.width.equalTo(imageWidth)
-                make.leading.equalToSuperview().offset(CGFloat(index) * (imageWidth + imageSpacing))
+                make.width.equalTo(Constants.imageWidth)
+                make.leading.equalToSuperview().offset(CGFloat(index) * (Constants.imageWidth + Constants.imageSpacing))
             }
         }
 
         imageContentView.snp.makeConstraints { make in
-            make.width.equalTo((imageWidth + imageSpacing) * CGFloat(imageViews.count) - imageSpacing)
+            make.width.equalTo((Constants.imageWidth + Constants.imageSpacing) * CGFloat(imageViews.count) - Constants.imageSpacing)
         }
 
         pageControl.numberOfPages = imageNames.count
@@ -161,14 +183,14 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         imageView.image = UIImage(named: imageName) ?? UIImage(named: "defaultDogImage")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = cornerRadius
+        imageView.layer.cornerRadius = Constants.cornerRadius
 
         view.addSubview(imageView)
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 
-        view.layer.cornerRadius = cornerRadius
+        view.layer.cornerRadius = Constants.cornerRadius
         view.clipsToBounds = true
 
         return view
@@ -176,11 +198,10 @@ class DogProfileView: UIView, UIScrollViewDelegate {
 
     // MARK: - UIScrollViewDelegate
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let itemWidth = imageWidth + imageSpacing
+        let itemWidth = Constants.imageWidth + Constants.imageSpacing
         let targetX = scrollView.contentOffset.x + scrollView.contentInset.left
         let estimatedIndex = targetX / itemWidth
 
-        // `velocity`를 기준으로 이동할 페이지 계산
         let velocityThreshold: CGFloat = 0.2
         let finalIndex: CGFloat
         if abs(velocity.x) > velocityThreshold {
@@ -190,8 +211,6 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         }
 
         let clampedIndex = max(0, min(finalIndex, CGFloat(imageViews.count - 1)))
-
-        // 중앙 정렬로 스크롤 위치 설정
         let newOffsetX = clampedIndex * itemWidth - scrollView.contentInset.left
         targetContentOffset.pointee = CGPoint(x: newOffsetX, y: 0)
 
