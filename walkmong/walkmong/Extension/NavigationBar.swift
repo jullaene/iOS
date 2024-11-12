@@ -49,7 +49,7 @@ extension UIViewController {
                 make.height.width.equalTo(20)
                 make.leading.equalToSuperview().offset(20)
             }
-        }else if showLeftCloseButton {
+        } else if showLeftCloseButton {
             let closeBarButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.deleteButton, for: .normal)
@@ -91,7 +91,14 @@ extension UIViewController {
                 make.trailing.equalToSuperview().offset(-20)
             }
         }
+
+        // Enable Swipe Back Gesture
+        if let navigationController = self.navigationController {
+            navigationController.interactivePopGestureRecognizer?.delegate = nil
+            navigationController.interactivePopGestureRecognizer?.isEnabled = true
+        }
     }
+
     @objc private func popViewController() {
         self.navigationController?.popViewController(animated: true)
     }
