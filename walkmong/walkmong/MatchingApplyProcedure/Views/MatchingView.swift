@@ -30,7 +30,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
     private let calendarView = CalendarView()
     let filterSelectView = FilterSelectView()
-    private var matchingCells: [MatchingCell] = []
+    private(set) var matchingCells: [MatchingCell] = []
     private let floatingButton = MatchingView.createRoundedView(color: UIColor.mainBlue, cornerRadius: 32)
     private let floatingButtonIcon = MatchingView.createImageView(named: "pencilIcon")
     
@@ -53,7 +53,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         // Add new cells
         for item in data {
             let cell = MatchingCell()
-            cell.configure(with: item)
+            cell.configure(with: item) // 데이터만 설정
             matchingCells.append(cell)
             contentView.addSubview(cell)
         }
@@ -67,7 +67,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
                 make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
             }
         }
-        
+
         matchingCells.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-110)
         }
