@@ -18,7 +18,17 @@ class DogProfileViewController: BaseViewController {
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
-        configureDogProfileImages()
+        configureDogProfileView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true // 탭바 숨김
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tabBarController?.tabBar.isHidden = false // 탭바 다시 표시
     }
 
     // MARK: - UI Setup
@@ -36,9 +46,9 @@ class DogProfileViewController: BaseViewController {
         customNavigationBar.addBackButtonAction(target: self, action: #selector(customBackButtonTapped))
     }
 
-    private func configureDogProfileImages() {
+    private func configureDogProfileView() {
         let imageNames = ["puppyImage01", "sampleImage"]
-        dogProfileView.configureImages(with: imageNames)
+        dogProfileView.configure(with: imageNames)
     }
 
     // MARK: - Actions
