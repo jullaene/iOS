@@ -126,7 +126,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         ])
 
         contentView.snp.makeConstraints { make in
-            make.bottom.equalTo(ownerInfoFrame.snp.bottom).offset(20)
+            make.bottom.equalTo(ownerInfoFrame.snp.bottom).offset(32)
         }
 
         // Button Frame
