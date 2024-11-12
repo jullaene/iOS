@@ -52,7 +52,7 @@ final class MainTabBarController: UITabBarController {
     }
     
     private class CustomTabBar: UITabBar {
-        var customHeight: CGFloat = 96
+        var customHeight: CGFloat = 86
         
         override var intrinsicContentSize: CGSize {
             var size = super.intrinsicContentSize
