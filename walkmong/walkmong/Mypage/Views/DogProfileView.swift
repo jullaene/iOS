@@ -17,7 +17,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     private let imageContentView = UIView()
     private let pageControl = UIPageControl()
     
-    private let basicInfoFrame = UIView()
+    private let basicInfoFrame = BasicInfoView()
     private let socialInfoFrame = UIView()
     private let vaccinationFrame = UIView()
 
@@ -59,6 +59,11 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     }
 
     private func setupScrollView() {
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.isScrollEnabled = true
+        scrollView.alwaysBounceVertical = true
+        
         imageScrollView.isPagingEnabled = false
         imageScrollView.showsHorizontalScrollIndicator = false
         imageScrollView.delegate = self
@@ -83,7 +88,6 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     private func setupFrames() {
         basicInfoFrame.backgroundColor = .red
         socialInfoFrame.backgroundColor = .yellow
-        vaccinationFrame.backgroundColor = .blue
     }
 
     // MARK: - Layout
@@ -94,7 +98,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
 
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.width.equalToSuperview()
+            make.width.equalToSuperview() // 수직 스크롤을 위해 너비 고정
         }
 
         contentView.addSubview(imageScrollView)
