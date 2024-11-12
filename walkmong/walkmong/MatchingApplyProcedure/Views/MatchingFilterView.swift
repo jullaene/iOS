@@ -86,7 +86,7 @@ class MatchingFilterView: UIView {
         }
         
         buttonFrame.snp.makeConstraints { make in
-            make.centerX.bottom.equalToSuperview().inset(38)
+            make.centerX.bottom.equalToSuperview().inset(42)
             make.width.equalTo(356)
             make.height.equalTo(54)
         }
