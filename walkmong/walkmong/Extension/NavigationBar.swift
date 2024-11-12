@@ -16,7 +16,7 @@ extension UIViewController {
         self.view.addSubview(navigationBarView)
         
         navigationBarView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(45)
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(76)
         }
@@ -46,7 +46,7 @@ extension UIViewController {
             navigationBarView.addSubview(backButtonButton)
             backButtonButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
-                make.height.width.equalTo(40)
+                make.height.width.equalTo(20)
                 make.leading.equalToSuperview().offset(20)
             }
         }else if showLeftCloseButton {
