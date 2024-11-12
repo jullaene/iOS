@@ -154,13 +154,13 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview()
-            make.height.equalTo(102)
+            make.height.equalTo(78)
         }
 
         // 워크톡 버튼
         buttonFrame.addSubview(walkTalkButton)
         walkTalkButton.snp.makeConstraints { make in
-            make.top.equalTo(buttonFrame.snp.top).offset(24)
+            make.centerY.equalToSuperview()
             make.leading.equalTo(buttonFrame.snp.leading).offset(20)
             make.width.equalTo(93)
             make.height.equalTo(54)
@@ -169,7 +169,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         // 산책 지원하기 버튼
         buttonFrame.addSubview(applyWalkButton)
         applyWalkButton.snp.makeConstraints { make in
-            make.top.equalTo(buttonFrame.snp.top).offset(24)
+            make.centerY.equalToSuperview()
             make.leading.equalTo(walkTalkButton.snp.trailing).offset(12)
             make.trailing.equalTo(buttonFrame.snp.trailing).inset(17)
             make.height.equalTo(54)
