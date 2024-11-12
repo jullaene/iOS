@@ -49,7 +49,7 @@ class VaccinationView: UIView {
 
     private let iconView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "VaccinationCompletedIcon") // 아이콘 이름
+        imageView.image = UIImage(named: "VaccinationCompletedIcon") // 기본 아이콘 이름
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -118,6 +118,21 @@ class VaccinationView: UIView {
             make.leading.equalTo(iconView.snp.trailing).offset(Constants.iconSpacing)
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-Constants.spacing)
+        }
+    }
+
+    // MARK: - Public Methods
+    func updateVaccinationStatus(rabiesYn: Bool) {
+        if rabiesYn {
+            vaccinationFrame.backgroundColor = UIColor(red: 0.913, green: 1, blue: 0.948, alpha: 1)
+            iconView.image = UIImage(named: "VaccinationCompletedIcon")
+            descriptionLabel.textColor = UIColor.mainGreen
+            descriptionLabel.text = "광견병 예방접종을 완료했어요."
+        } else {
+            vaccinationFrame.backgroundColor = UIColor(red: 0.957, green: 0.929, blue: 0.902, alpha: 1)
+            iconView.image = UIImage(named: "VaccinationIncompleteIcon")
+            descriptionLabel.textColor = UIColor(red: 0.929, green: 0.529, blue: 0.471, alpha: 1)
+            descriptionLabel.text = "광견병 예방접종이 필요합니다."
         }
     }
 }
