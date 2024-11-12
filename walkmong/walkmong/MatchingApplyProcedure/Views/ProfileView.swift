@@ -23,7 +23,7 @@ class ProfileView: UIView {
     private let nameLabel = ProfileView.createLabel(
         text: "봄별이",
         font: UIFont(name: "Pretendard-Bold", size: 28),
-        textColor: UIColor(red: 0.081, green: 0.081, blue: 0.076, alpha: 1),
+        textColor: UIColor.mainBlack,
         alignment: .left
     )
     
@@ -31,7 +31,7 @@ class ProfileView: UIView {
     
     private let profileButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(red: 0.276, green: 0.754, blue: 1, alpha: 1)
+        button.backgroundColor = UIColor.mainBlue
         button.layer.cornerRadius = 10
         button.setTitle("프로필", for: .normal)
         button.titleLabel?.font = UIFont(name: "Pretendard-Bold", size: 16)
