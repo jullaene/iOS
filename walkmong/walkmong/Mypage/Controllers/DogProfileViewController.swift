@@ -18,6 +18,7 @@ class DogProfileViewController: BaseViewController {
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
+        configureDogProfileImages()
     }
 
     // MARK: - UI Setup
@@ -33,6 +34,11 @@ class DogProfileViewController: BaseViewController {
     private func setupCustomNavigationBar() {
         customNavigationBar.setTitle("프로필")
         customNavigationBar.addBackButtonAction(target: self, action: #selector(customBackButtonTapped))
+    }
+
+    private func configureDogProfileImages() {
+        let imageNames = ["puppyImage01", "sampleImage"]
+        dogProfileView.configureImages(with: imageNames)
     }
 
     // MARK: - Actions
