@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class DogProfileView: UIView {
+class DogProfileView: UIView, UIScrollViewDelegate {
 
     // MARK: - Constants
     private struct Constants {
@@ -78,6 +78,7 @@ class DogProfileView: UIView {
         scrollView.addSubview(contentView)
         contentView.addMultipleSubviews(imageScrollView, pageControl, basicInfoFrame, socialInfoFrame, vaccinationFrame)
         imageScrollView.addSubview(imageContentView)
+        imageScrollView.delegate = self
     }
 
     private func setupConstraints() {
@@ -93,6 +94,14 @@ class DogProfileView: UIView {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(UIScreen.main.bounds.width * 0.756)
         }
+
+        // 이미지 중앙 정렬을 위한 contentInset 추가
+        imageScrollView.contentInset = UIEdgeInsets(
+            top: 0,
+            left: (UIScreen.main.bounds.width - Constants.imageWidth) / 2,
+            bottom: 0,
+            right: (UIScreen.main.bounds.width - Constants.imageWidth) / 2
+        )
 
         imageContentView.snp.makeConstraints { $0.edges.height.equalToSuperview() }
 
@@ -155,7 +164,7 @@ class DogProfileView: UIView {
     private func scrollToImage(at index: Int) {
         guard (0..<imageViews.count).contains(index) else { return }
         let targetOffsetX = CGFloat(index) * (Constants.imageWidth + Constants.imageSpacing) - imageScrollView.contentInset.left
-        imageScrollView.setContentOffset(CGPoint(x: max(0, targetOffsetX), y: 0), animated: false)
+        imageScrollView.setContentOffset(CGPoint(x: max(0, targetOffsetX), y: 0), animated: true)
     }
 
     private func createImageView(named imageName: String) -> UIView {
@@ -172,6 +181,23 @@ class DogProfileView: UIView {
         view.layer.cornerRadius = Constants.cornerRadius
         view.clipsToBounds = true
         return view
+    }
+
+    // MARK: - UIScrollViewDelegate
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let pageWidth = Constants.imageWidth + Constants.imageSpacing
+        let targetX = targetContentOffset.pointee.x + scrollView.contentInset.left
+        let currentPage = round(targetX / pageWidth)
+        
+        let nearestPageOffsetX = currentPage * pageWidth - scrollView.contentInset.left
+        targetContentOffset.pointee.x = nearestPageOffsetX
+        pageControl.currentPage = Int(currentPage)
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pageWidth = Constants.imageWidth + Constants.imageSpacing
+        let currentPage = round((scrollView.contentOffset.x + scrollView.contentInset.left) / pageWidth)
+        pageControl.currentPage = Int(currentPage)
     }
 }
 
