@@ -31,7 +31,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     
     private let basicInfoFrame = BasicInfoView()
     private let socialInfoFrame = SocialInfoView()
-    private let vaccinationFrame = UIView()
+    private let vaccinationFrame = VaccinationView()
 
     private var imageViews: [UIView] = []
 
@@ -56,7 +56,6 @@ class DogProfileView: UIView, UIScrollViewDelegate {
 
         setupScrollView()
         setupPageControl()
-        setupFrames()
     }
 
     private func setupScrollView() {
@@ -84,12 +83,6 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         pageControl.currentPageIndicatorTintColor = .mainBlue
         pageControl.backgroundColor = UIColor(white: 0.75, alpha: 0.44)
         pageControl.layer.cornerRadius = 12
-    }
-
-    private func setupFrames() {
-        basicInfoFrame.backgroundColor = .clear
-        socialInfoFrame.backgroundColor = .clear
-        vaccinationFrame.backgroundColor = .clear
     }
 
     // MARK: - Layout
@@ -137,24 +130,25 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     }
 
     private func setupFramesLayout() {
+        // Basic Info Frame
         basicInfoFrame.snp.makeConstraints { make in
             make.top.equalTo(pageControl.snp.bottom).offset(32)
             make.centerX.equalToSuperview()
             make.width.equalTo(Constants.frameWidth)
-            make.height.equalTo(212)
+            make.height.equalTo(212) // 고정된 높이
         }
 
+        // Social Info Frame
         socialInfoFrame.snp.makeConstraints { make in
             make.top.equalTo(basicInfoFrame.snp.bottom).offset(Constants.frameSpacing)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(Constants.frameWidth)
+            make.leading.trailing.equalToSuperview().inset(20) // 좌우 여백 추가
         }
 
+        // Vaccination Frame
         vaccinationFrame.snp.makeConstraints { make in
             make.top.equalTo(socialInfoFrame.snp.bottom).offset(Constants.frameSpacing)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(Constants.frameWidth)
-            make.height.equalTo(86)
+            make.leading.trailing.equalToSuperview().inset(20) // 좌우 여백 추가
+            make.height.equalTo(86) // 고정된 높이
         }
     }
 
