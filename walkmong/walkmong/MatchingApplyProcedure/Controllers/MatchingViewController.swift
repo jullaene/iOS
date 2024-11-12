@@ -17,44 +17,54 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
         return (self.tabBarController as? MainTabBarController)?.dimView
     }
     private var matchingData: [MatchingData] = []
+    private var isNavigationBarHidden: Bool = true // 상태 관리
     
     // MARK: - Lifecycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(isNavigationBarHidden, animated: animated)
+        updateUILayout()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.extendedLayoutIncludesOpaqueBars = true
         setupUI()
         setupGestures()
         loadData()
-        
-        func didSelectMatchingCell(data: MatchingData) {
-
-            guard let navigationController = navigationController else {
-                return
-            }
-
-            let detailViewController = MatchingDogInformationViewController()
-            detailViewController.configure(with: data)
-            navigationController.pushViewController(detailViewController, animated: true)
-        }
     }
     
     // MARK: - UI Setup
     private func setupUI() {
-        self.navigationController?.navigationBar.isHidden = true
         self.view.backgroundColor = .white
         matchingView = MatchingView()
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
         }
         self.view.addSubview(matchingView)
-        matchingView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+        updateUILayout()
         locationSelectView = matchingView.locationSelectView
     }
     
     private func setupGestures() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showDropdownView))
         locationSelectView.addGestureRecognizer(tapGesture)
+    }
+    
+    private func updateUILayout() {
+        matchingView.snp.remakeConstraints { make in
+            if isNavigationBarHidden {
+                make.edges.equalToSuperview()
+            } else {
+                make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+                make.leading.trailing.bottom.equalToSuperview()
+            }
+        }
     }
     
     // MARK: - Load Data
@@ -187,12 +197,9 @@ extension MatchingViewController: DropdownViewDelegate {
 // MARK: - MatchingFilterViewDelegate
 extension MatchingViewController {
     func didApplyFilter(selectedBreeds: [String], matchingStatus: [String]) {
-        
-        // FilterSelectView 업데이트
         let filterView = matchingView.filterSelectView
         updateFilterButtonState(filterView.breedButton, isSelected: !selectedBreeds.isEmpty)
         updateFilterButtonState(filterView.matchStatusButton, isSelected: !matchingStatus.isEmpty)
-        
         hideMatchingFilterView()
     }
     
