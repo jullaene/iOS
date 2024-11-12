@@ -1,8 +1,8 @@
 import UIKit
 import SnapKit
 
-class MatchingDogInformationViewController: BaseViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
-    
+class MatchingDogInformationViewController: UIViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
+
     // MARK: - Properties
     private var matchingData: MatchingData?
     private let dogInfoView = MatchingDogInformationView()
@@ -19,6 +19,7 @@ class MatchingDogInformationViewController: BaseViewController, ProfileViewDeleg
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
         toggleTabBar(isHidden: true)
     }
     
@@ -37,14 +38,19 @@ class MatchingDogInformationViewController: BaseViewController, ProfileViewDeleg
         view.backgroundColor = .white
         view.addSubview(dogInfoView)
         dogInfoView.snp.makeConstraints { make in
-            make.top.equalTo(customNavigationBar.snp.bottom)
+            make.top.equalToSuperview().offset(121) // 네비게이션 바 높이만큼 아래로
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
 
     private func setupCustomNavigationBar() {
-        customNavigationBar.setTitle("")
-        customNavigationBar.addBackButtonAction(target: self, action: #selector(customBackButtonTapped))
+        addCustomNavigationBar(
+            titleText: nil,
+            showLeftBackButton: true,
+            showLeftCloseButton: false,
+            showRightCloseButton: false,
+            showRightRefreshButton: false
+        )
     }
     
     // MARK: - Private Methods
@@ -81,10 +87,5 @@ class MatchingDogInformationViewController: BaseViewController, ProfileViewDeleg
     private func navigateToDogProfile() {
         let dogProfileVC = DogProfileViewController()
         navigationController?.pushViewController(dogProfileVC, animated: true)
-    }
-    
-    // MARK: - Actions
-    @objc private func customBackButtonTapped() {
-        navigationController?.popViewController(animated: true)
     }
 }

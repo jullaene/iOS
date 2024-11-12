@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class DogProfileViewController: BaseViewController {
+class DogProfileViewController: UIViewController {
 
     // MARK: - Properties
     private let dogProfileView = DogProfileView()
@@ -20,15 +20,11 @@ class DogProfileViewController: BaseViewController {
         setupUI()
         configureDogProfileView()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true // 탭바 숨김
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        tabBarController?.tabBar.isHidden = false // 탭바 다시 표시
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        tabBarController?.tabBar.isHidden = true
     }
 
     // MARK: - UI Setup
@@ -36,23 +32,23 @@ class DogProfileViewController: BaseViewController {
         view.backgroundColor = .white
         view.addSubview(dogProfileView)
         dogProfileView.snp.makeConstraints { make in
-            make.top.equalTo(customNavigationBar.snp.bottom)
+            make.top.equalToSuperview().offset(121) // 네비게이션 바 높이만큼 아래로
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
 
     private func setupCustomNavigationBar() {
-        customNavigationBar.setTitle("프로필")
-        customNavigationBar.addBackButtonAction(target: self, action: #selector(customBackButtonTapped))
+        addCustomNavigationBar(
+            titleText: "프로필",
+            showLeftBackButton: true,
+            showLeftCloseButton: false,
+            showRightCloseButton: false,
+            showRightRefreshButton: false
+        )
     }
 
     private func configureDogProfileView() {
         let imageNames = ["puppyImage01", "sampleImage"]
         dogProfileView.configure(with: imageNames)
-    }
-
-    // MARK: - Actions
-    @objc private func customBackButtonTapped() {
-        navigationController?.popViewController(animated: true)
     }
 }
