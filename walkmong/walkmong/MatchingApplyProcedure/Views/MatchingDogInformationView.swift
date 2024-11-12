@@ -181,14 +181,37 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     }
 
     private func setupButtonLabel(_ button: UIView, text: String, textColor: UIColor) {
-        let label = UILabel()
-        label.text = text
-        label.textColor = textColor
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        label.textAlignment = .center
-        button.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        if button == walkTalkButton {
+            let label = UILabel()
+            label.text = text
+            label.textColor = textColor
+            label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+            label.textAlignment = .center
+
+            let iconImageView = UIImageView()
+            iconImageView.image = UIImage(named: "messageIcon")
+            iconImageView.contentMode = .scaleAspectFit
+            
+            let stackView = UIStackView(arrangedSubviews: [label, iconImageView])
+            stackView.axis = .horizontal
+            stackView.spacing = 8
+            stackView.alignment = .center
+            stackView.distribution = .fill
+            
+            button.addSubview(stackView)
+            stackView.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+        } else {
+            let label = UILabel()
+            label.text = text
+            label.textColor = textColor
+            label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+            label.textAlignment = .center
+            button.addSubview(label)
+            label.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
         }
     }
 
