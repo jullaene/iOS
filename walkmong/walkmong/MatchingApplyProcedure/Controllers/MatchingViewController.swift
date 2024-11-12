@@ -2,23 +2,20 @@ import Foundation
 import UIKit
 import SnapKit
 
-class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
+class MatchingViewController: UIViewController, MatchingFilterViewDelegate, MatchingCellDelegate {
+    
     // MARK: - Properties
     private var matchingFilterView: MatchingFilterView?
     private var locationSelectView: UIView!
     private var matchingView: MatchingView!
-    
     private var dropdownView: DropdownView! {
         let view = (self.tabBarController as? MainTabBarController)?.dropdownView
         view?.delegate = self
         return view
     }
-    
     private var dimView: UIView? {
         return (self.tabBarController as? MainTabBarController)?.dimView
     }
-    
-    // Data source
     private var matchingData: [MatchingData] = []
     
     // MARK: - Lifecycle
@@ -27,27 +24,32 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
         setupUI()
         setupGestures()
         loadData()
+        
+        func didSelectMatchingCell(data: MatchingData) {
+
+            guard let navigationController = navigationController else {
+                return
+            }
+
+            let detailViewController = MatchingDogInformationViewController()
+            detailViewController.configure(with: data)
+            navigationController.pushViewController(detailViewController, animated: true)
+        }
     }
     
     // MARK: - UI Setup
     private func setupUI() {
         self.navigationController?.navigationBar.isHidden = true
         self.view.backgroundColor = .white
-        
         matchingView = MatchingView()
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
         }
-        
         self.view.addSubview(matchingView)
         matchingView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
         locationSelectView = matchingView.locationSelectView
-        
-        // 프로토콜을 통해 locationText 가져오기
-        _ = (matchingView as MatchingViewLocationProvider).locationText
     }
     
     private func setupGestures() {
@@ -70,8 +72,11 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
             MatchingData(date: "11. 16 (토)", startTime: "18:00", endTime: "19:30", matchingStatus: "매칭확정", dogName: "뽀그리", dogProfile: "puppyImage03.png", dogGender: "Male", dogAge: 3, breed: "푸들", weight: "7kg", dogSize: "소형견", content: "30분만 산책시켜주실 분 구합니다. 산책할 때 주의사항은 으아아아아아아아아아아아아아...", dongAddress: "노원구 공릉동", distance: "1km", createdAt: "3시간 전")
         ]
         
-        // Pass data to MatchingView
         matchingView.updateMatchingCells(with: matchingData)
+        
+        for cell in matchingView.matchingCells {
+            cell.delegate = self
+        }
     }
     
     // MARK: - DropdownView Logic
@@ -140,6 +145,13 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate {
             self.matchingFilterView = nil
             self.updateDimViewVisibility(isHidden: true)
         }
+    }
+    
+    // MARK: - MatchingCellDelegate
+    func didSelectMatchingCell(data: MatchingData) {
+        let detailViewController = MatchingDogInformationViewController()
+        detailViewController.configure(with: data)
+        navigationController?.pushViewController(detailViewController, animated: true)
     }
     
     @objc func hideFilterAndDropdown() {

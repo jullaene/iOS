@@ -74,6 +74,7 @@ final class MainTabBarController: UITabBarController {
         let matchingVC = MatchingViewController()
         matchingVC.view.backgroundColor = .white
         matchingVC.tabBarItem = UITabBarItem(title: "산책 구하기", image: UIImage(named: "MatchingApplyProcedureIcon"), tag: 0)
+        let matchingNavVC = UINavigationController(rootViewController: matchingVC) // UINavigationController로 감싸기
         
         let matchingStateVC = UIViewController()
         matchingStateVC.view.backgroundColor = .white
@@ -87,7 +88,7 @@ final class MainTabBarController: UITabBarController {
         mypageVC.view.backgroundColor = .white
         mypageVC.tabBarItem = UITabBarItem(title: "마이페이지", image: UIImage(named: "MypageIcon"), tag: 3)
         
-        return [matchingVC, matchingStateVC, talkVC, mypageVC]
+        return [matchingNavVC, matchingStateVC, talkVC, mypageVC]
     }
     
     private func setUI() {

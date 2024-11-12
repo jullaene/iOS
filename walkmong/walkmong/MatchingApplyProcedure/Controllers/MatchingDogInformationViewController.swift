@@ -1,29 +1,90 @@
-//
-//  MatchingDogInformationViewController.swift
-//  walkmong
-//
-//  Created by 황채웅 on 11/3/24.
-//
-
 import UIKit
+import SnapKit
 
-class MatchingDogInformationViewController: UIViewController {
+class MatchingDogInformationViewController: BaseViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
+    
+    // MARK: - Properties
+    private var matchingData: MatchingData?
+    private let dogInfoView = MatchingDogInformationView()
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupCustomNavigationBar()
+        setupUI()
+        configureProfileDelegate()
+        configureMatchingData()
+        configureViewDelegate()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        toggleTabBar(isHidden: true)
     }
-    */
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        toggleTabBar(isHidden: false)
+    }
+    
+    // MARK: - Public Methods
+    func configure(with data: MatchingData) {
+        matchingData = data
+    }
 
+    // MARK: - UI Setup
+    private func setupUI() {
+        view.backgroundColor = .white
+        view.addSubview(dogInfoView)
+        dogInfoView.snp.makeConstraints { make in
+            make.top.equalTo(customNavigationBar.snp.bottom)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
+    }
+
+    private func setupCustomNavigationBar() {
+        customNavigationBar.setTitle("")
+        customNavigationBar.addBackButtonAction(target: self, action: #selector(customBackButtonTapped))
+    }
+    
+    // MARK: - Private Methods
+    private func configureProfileDelegate() {
+        dogInfoView.setProfileDelegate(self)
+    }
+
+    private func configureViewDelegate() {
+        dogInfoView.delegate = self
+    }
+    
+    private func configureMatchingData() {
+        if let data = matchingData {
+            dogInfoView.configureImages(with: [data.dogProfile, "sampleImage"])
+        }
+    }
+    
+    private func toggleTabBar(isHidden: Bool) {
+        tabBarController?.tabBar.isHidden = isHidden
+    }
+
+    // MARK: - ProfileViewDelegate
+    func profileButtonTapped() {
+        navigateToDogProfile()
+    }
+
+    // MARK: - MatchingDogInformationViewDelegate
+    func applyWalkButtonTapped() {
+        let detailSelectVC = MatchingApplyDetailSelectViewController()
+        navigationController?.pushViewController(detailSelectVC, animated: true)
+    }
+
+    // MARK: - Navigation
+    private func navigateToDogProfile() {
+        let dogProfileVC = DogProfileViewController()
+        navigationController?.pushViewController(dogProfileVC, animated: true)
+    }
+    
+    // MARK: - Actions
+    @objc private func customBackButtonTapped() {
+        navigationController?.popViewController(animated: true)
+    }
 }

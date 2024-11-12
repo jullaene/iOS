@@ -1,7 +1,15 @@
 import UIKit
 import SnapKit
 
+protocol MatchingCellDelegate: AnyObject {
+    func didSelectMatchingCell(data: MatchingData)
+}
+
 class MatchingCell: UIView {
+    
+    // MARK: - Properties
+    weak var delegate: MatchingCellDelegate?
+    private var matchingData: MatchingData?
     
     // Main Container View
     private let mainView: UIView = {
@@ -129,11 +137,13 @@ class MatchingCell: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupTapGesture()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
+        setupTapGesture()
     }
     
     // MARK: - View Setup
@@ -298,6 +308,19 @@ class MatchingCell: UIView {
         }
     }
     
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        self.addGestureRecognizer(tapGesture)
+    }
+    
+    // MARK: - Actions
+    @objc private func handleTap() {
+        guard let data = matchingData else {
+            return
+        }
+        delegate?.didSelectMatchingCell(data: data)
+    }
+    
     // MARK: - Helper Methods
     private static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
@@ -307,7 +330,10 @@ class MatchingCell: UIView {
         return label
     }
     
+    
+    
     func configure(with data: MatchingData) {
+        matchingData = data
         dateLabel.text = "\(data.date) \(data.startTime) ~ \(data.endTime)"
         matchingStatusLabel.text = data.matchingStatus
         puppyImageView.image = UIImage(named: data.dogProfile)
@@ -379,7 +405,7 @@ class MatchingCell: UIView {
 //     }
     
 //     mainView.addSubview(loadingImagePlaceholder)
-//     loadingImagePlaceholder.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
+//     loadingImagePlaceholder.backgroundColor = UIColor.gray100
 //     loadingImagePlaceholder.layer.cornerRadius = 10
 //     loadingImagePlaceholder.snp.makeConstraints { make in
 //         make.width.height.equalTo(97)
@@ -418,7 +444,7 @@ class MatchingCell: UIView {
 //     var previousLine: UIView? = nil
 //     for _ in 0..<5 {
 //         let line = UIView()
-//         line.backgroundColor = UIColor(red: 0.906, green: 0.922, blue: 0.937, alpha: 1)
+//         line.backgroundColor = UIColor.gray100
 //         line.layer.cornerRadius = 4
 //         mainView.addSubview(line)
         
