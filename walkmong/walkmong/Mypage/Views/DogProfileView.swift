@@ -52,6 +52,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         imageScrollView.showsHorizontalScrollIndicator = false
         imageScrollView.delegate = self
         imageScrollView.clipsToBounds = false
+        imageScrollView.decelerationRate = .fast // 빠른 감속 설정
         imageScrollView.contentInset = UIEdgeInsets(
             top: 0,
             left: (UIScreen.main.bounds.width - imageWidth) / 2,
