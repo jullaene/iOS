@@ -85,7 +85,8 @@ class SocialInfoView: UIView {
 
     private func createFrame(title: String, description: String) -> UIView {
         let frame = UIView()
-        frame.backgroundColor = .lightGray
+        frame.backgroundColor = .gray100
+        frame.layer.cornerRadius = 5
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = Constants.titleFont
@@ -94,7 +95,7 @@ class SocialInfoView: UIView {
         let descriptionLabel = UILabel()
         descriptionLabel.text = description
         descriptionLabel.font = Constants.descriptionFont
-        descriptionLabel.textColor = .blue
+        descriptionLabel.textColor = .mainBlue
         descriptionLabel.numberOfLines = 0
 
         frame.addSubview(titleLabel)
