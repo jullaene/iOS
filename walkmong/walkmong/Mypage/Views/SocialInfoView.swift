@@ -9,11 +9,9 @@ import UIKit
 import SnapKit
 
 class SocialInfoView: UIView {
-
     // MARK: - Constants
     private struct Constants {
         static let frameWidth: CGFloat = 353
-        static let cornerRadius: CGFloat = 5
         static let spacing: CGFloat = 8
         static let horizontalPadding: CGFloat = 12
         static let verticalPadding: CGFloat = 12
@@ -53,14 +51,12 @@ class SocialInfoView: UIView {
     }
 
     private func setupLayout() {
-        // Header Label Layout
         headerLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(Constants.spacing)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(Constants.headerHeight)
         }
 
-        // Frames Layout
         for (index, frame) in frames.enumerated() {
             frame.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview()
@@ -71,67 +67,50 @@ class SocialInfoView: UIView {
                 }
             }
         }
+
+        // 마지막 프레임의 아래쪽 여백 추가
+        frames.last?.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-Constants.spacing)
+        }
     }
 
-    // MARK: - Helper Methods
+    // Helper Methods
     private func createHeaderLabel(text: String) -> UILabel {
         let label = UILabel()
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.17
-        label.attributedText = NSMutableAttributedString(
-            string: text,
-            attributes: [
-                .kern: -0.32,
-                .paragraphStyle: paragraphStyle
-            ]
-        )
-        label.textColor = UIColor.gray600
+        label.text = text
         label.font = Constants.headerFont
+        label.textColor = .black
         return label
     }
 
     private func createFrame(title: String, description: String) -> UIView {
         let frame = UIView()
-        frame.backgroundColor = UIColor.gray100
-        frame.layer.cornerRadius = Constants.cornerRadius
+        frame.backgroundColor = .lightGray
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = Constants.titleFont
+        titleLabel.textColor = .darkGray
 
-        let titleLabel = createLabel(
-            text: title,
-            font: Constants.titleFont,
-            textColor: UIColor.gray400
-        )
-        let descriptionLabel = createLabel(
-            text: description,
-            font: Constants.descriptionFont,
-            textColor: UIColor.mainBlue,
-            numberOfLines: 0
-        )
+        let descriptionLabel = UILabel()
+        descriptionLabel.text = description
+        descriptionLabel.font = Constants.descriptionFont
+        descriptionLabel.textColor = .blue
+        descriptionLabel.numberOfLines = 0
 
         frame.addSubview(titleLabel)
         frame.addSubview(descriptionLabel)
 
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(Constants.verticalPadding)
-            make.leading.equalToSuperview().offset(Constants.horizontalPadding)
-            make.trailing.lessThanOrEqualToSuperview().offset(-Constants.horizontalPadding)
+            make.leading.trailing.equalToSuperview().inset(Constants.horizontalPadding)
         }
 
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.leading.equalToSuperview().offset(Constants.horizontalPadding)
-            make.trailing.lessThanOrEqualToSuperview().offset(-Constants.horizontalPadding)
+            make.leading.trailing.equalToSuperview().inset(Constants.horizontalPadding)
             make.bottom.equalToSuperview().offset(-Constants.verticalPadding)
         }
 
         return frame
-    }
-
-    private func createLabel(text: String, font: UIFont, textColor: UIColor, numberOfLines: Int = 1) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.font = font
-        label.textColor = textColor
-        label.numberOfLines = numberOfLines
-        return label
     }
 }
