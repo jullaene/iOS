@@ -225,13 +225,67 @@ class MatchingFilterView: UIView {
     }
     
     private func setupBreedFrame() {
-        setupFilterFrame(
-            label: createLabel(text: "견종", fontSize: 20, color: .mainBlack),
-            container: breedFrame,
-            buttonTitles: ["소형견", "중형견", "대형견"],
-            buttons: &breedButtons,
-            action: #selector(breedButtonTapped(_:))
+        let breedLabel = createLabel(text: "견종", fontSize: 20, color: .mainBlack)
+        let instructionLabel = UILabel()
+        instructionLabel.frame = CGRect(x: 0, y: 0, width: 353, height: 22)
+        instructionLabel.textColor = UIColor.mainBlack
+        instructionLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.17
+        instructionLabel.attributedText = NSMutableAttributedString(
+            string: "산책이 가능한 견종을 모두 선택해주세요.",
+            attributes: [
+                NSAttributedString.Key.kern: -0.32,
+                NSAttributedString.Key.paragraphStyle: paragraphStyle
+            ]
         )
+        
+        breedFrame.addSubview(breedLabel)
+        breedFrame.addSubview(instructionLabel)
+        
+        breedLabel.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().offset(16)
+        }
+        
+        instructionLabel.snp.makeConstraints { make in
+            make.top.equalTo(breedLabel.snp.bottom).offset(20)
+            make.leading.equalToSuperview().offset(16)
+            make.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(22)
+        }
+        
+        let buttonContainer = UIView()
+        breedFrame.addSubview(buttonContainer)
+        
+        buttonContainer.snp.makeConstraints { make in
+            make.top.equalTo(instructionLabel.snp.bottom).offset(16) // 안내문구 아래 16pt 간격
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(38)
+        }
+        
+        let buttonTitles = ["소형견", "중형견", "대형견"]
+        for title in buttonTitles {
+            let button = createToggleButton(title: title)
+            button.addTarget(self, action: #selector(breedButtonTapped(_:)), for: .touchUpInside)
+            buttonContainer.addSubview(button)
+            breedButtons.append(button)
+        }
+        
+        for (index, button) in breedButtons.enumerated() {
+            button.snp.makeConstraints { make in
+                if index == 0 {
+                    make.leading.equalToSuperview()
+                } else {
+                    make.leading.equalTo(breedButtons[index - 1].snp.trailing).offset(12)
+                }
+                make.top.bottom.equalToSuperview()
+                make.height.equalTo(38)
+            }
+            
+            // 동적 크기 조정: 텍스트에 따라 너비 설정
+            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        }
     }
     
     private func setupButtonFrame() {
