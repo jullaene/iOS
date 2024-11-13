@@ -139,7 +139,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             frame.snp.makeConstraints { make in
                 make.top.equalTo(topAnchor).offset(topOffset)
                 make.centerX.equalToSuperview()
-                make.width.equalTo(353)
+                make.leading.trailing.equalToSuperview().inset(20)
                 if let height = height {
                     make.height.equalTo(height)
                 }
