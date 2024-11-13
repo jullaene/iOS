@@ -136,6 +136,25 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     // MARK: - Public Methods
     func configure(with imageNames: [String]) {
         configureImages(imageNames)
+
+        // 이미지가 하나일 경우 페이지 컨트롤 숨기고 basicInfoFrame 레이아웃 변경
+        if imageNames.count <= 1 {
+            pageControl.isHidden = true
+            basicInfoFrame.snp.remakeConstraints {
+                $0.top.equalTo(imageScrollView.snp.bottom).offset(32)
+                $0.centerX.equalToSuperview()
+                $0.leading.trailing.equalToSuperview().inset(20)
+                $0.height.equalTo(212)
+            }
+        } else {
+            pageControl.isHidden = false
+            basicInfoFrame.snp.remakeConstraints {
+                $0.top.equalTo(pageControl.snp.bottom).offset(32)
+                $0.centerX.equalToSuperview()
+                $0.leading.trailing.equalToSuperview().inset(20)
+                $0.height.equalTo(212)
+            }
+        }
     }
 
     // MARK: - Private Methods
