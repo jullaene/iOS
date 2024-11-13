@@ -247,6 +247,25 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         }
         
         pageControl.numberOfPages = imageNames.count
+        
+        // 이미지가 1개면 페이지 컨트롤 숨김 및 레이아웃 변경
+        if imageNames.count <= 1 {
+              pageControl.isHidden = true
+              profileFrame.snp.remakeConstraints { make in
+                  make.top.equalTo(imageScrollView.snp.bottom).offset(32)
+                  make.centerX.equalToSuperview()
+                  make.leading.trailing.equalToSuperview().inset(20)
+                  make.height.equalTo(102)
+              }
+          } else {
+              pageControl.isHidden = false
+              profileFrame.snp.remakeConstraints { make in
+                  make.top.equalTo(pageControl.snp.bottom).offset(32)
+                  make.centerX.equalToSuperview()
+                  make.leading.trailing.equalToSuperview().inset(20)
+                  make.height.equalTo(102)
+              }
+          }
     }
 
     private func createImageView(named imageName: String) -> UIImageView {
