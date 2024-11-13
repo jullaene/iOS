@@ -18,7 +18,7 @@ extension UIViewController {
         navigationBarView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(76)
+            make.height.equalTo(52)
         }
         
         let titleLabel: UILabel = {
