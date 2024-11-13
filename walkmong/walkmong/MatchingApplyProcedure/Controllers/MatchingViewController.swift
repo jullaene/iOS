@@ -172,6 +172,12 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
     // MARK: - UI Helpers
     private func updateDimViewVisibility(isHidden: Bool) {
         dimView?.isHidden = isHidden
+        if !isHidden {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideFilterAndDropdown))
+            dimView?.addGestureRecognizer(tapGesture)
+        } else {
+            dimView?.gestureRecognizers?.forEach { dimView?.removeGestureRecognizer($0) }
+        }
     }
     
     private func bringViewToFront(_ views: [UIView?]) {
