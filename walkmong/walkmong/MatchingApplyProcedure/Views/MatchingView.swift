@@ -61,10 +61,10 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         // Layout cells
         for (index, cell) in matchingCells.enumerated() {
             cell.snp.makeConstraints { make in
-                make.width.equalTo(353)
                 make.height.equalTo(151)
                 make.centerX.equalToSuperview()
                 make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
+                make.leading.trailing.equalToSuperview().inset(20)
             }
         }
 
