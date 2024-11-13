@@ -33,7 +33,7 @@ final class MatchingApplyPlaceSearchViewController: UIViewController {
     
     private func setConstraints(){
         placeSearchView.snp.makeConstraints{ make in
-            make.top.equalToSuperview().offset(121)
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
         }

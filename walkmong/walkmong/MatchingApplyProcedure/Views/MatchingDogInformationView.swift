@@ -119,14 +119,14 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
 
     private func setupFrames() {
         addFramesToContentView([
-            (profileFrame, 102, pageControl.snp.bottom, 2),
+            (profileFrame, 102, pageControl.snp.bottom, 32),
             (walkInfoFrame, 226, profileFrame.snp.bottom, 34),
             (relatedInfoFrame, nil, walkInfoFrame.snp.bottom, 16),
             (ownerInfoFrame, 172, relatedInfoFrame.snp.bottom, 16)
         ])
 
         contentView.snp.makeConstraints { make in
-            make.bottom.equalTo(ownerInfoFrame.snp.bottom).offset(20)
+            make.bottom.equalTo(ownerInfoFrame.snp.bottom).offset(32)
         }
 
         // Button Frame
@@ -139,7 +139,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             frame.snp.makeConstraints { make in
                 make.top.equalTo(topAnchor).offset(topOffset)
                 make.centerX.equalToSuperview()
-                make.width.equalTo(353)
+                make.leading.trailing.equalToSuperview().inset(20)
                 if let height = height {
                     make.height.equalTo(height)
                 }
@@ -154,13 +154,13 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview()
-            make.height.equalTo(102)
+            make.height.equalTo(78)
         }
 
         // 워크톡 버튼
         buttonFrame.addSubview(walkTalkButton)
         walkTalkButton.snp.makeConstraints { make in
-            make.top.equalTo(buttonFrame.snp.top).offset(24)
+            make.centerY.equalToSuperview()
             make.leading.equalTo(buttonFrame.snp.leading).offset(20)
             make.width.equalTo(93)
             make.height.equalTo(54)
@@ -169,7 +169,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         // 산책 지원하기 버튼
         buttonFrame.addSubview(applyWalkButton)
         applyWalkButton.snp.makeConstraints { make in
-            make.top.equalTo(buttonFrame.snp.top).offset(24)
+            make.centerY.equalToSuperview()
             make.leading.equalTo(walkTalkButton.snp.trailing).offset(12)
             make.trailing.equalTo(buttonFrame.snp.trailing).inset(17)
             make.height.equalTo(54)
@@ -181,14 +181,37 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     }
 
     private func setupButtonLabel(_ button: UIView, text: String, textColor: UIColor) {
-        let label = UILabel()
-        label.text = text
-        label.textColor = textColor
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        label.textAlignment = .center
-        button.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        if button == walkTalkButton {
+            let label = UILabel()
+            label.text = text
+            label.textColor = textColor
+            label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+            label.textAlignment = .center
+
+            let iconImageView = UIImageView()
+            iconImageView.image = UIImage(named: "messageIcon")
+            iconImageView.contentMode = .scaleAspectFit
+            
+            let stackView = UIStackView(arrangedSubviews: [label, iconImageView])
+            stackView.axis = .horizontal
+            stackView.spacing = 8
+            stackView.alignment = .center
+            stackView.distribution = .fill
+            
+            button.addSubview(stackView)
+            stackView.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+        } else {
+            let label = UILabel()
+            label.text = text
+            label.textColor = textColor
+            label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+            label.textAlignment = .center
+            button.addSubview(label)
+            label.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
         }
     }
 
@@ -224,6 +247,25 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         }
         
         pageControl.numberOfPages = imageNames.count
+        
+        // 이미지가 1개면 페이지 컨트롤 숨김 및 레이아웃 변경
+        if imageNames.count <= 1 {
+              pageControl.isHidden = true
+              profileFrame.snp.remakeConstraints { make in
+                  make.top.equalTo(imageScrollView.snp.bottom).offset(32)
+                  make.centerX.equalToSuperview()
+                  make.leading.trailing.equalToSuperview().inset(20)
+                  make.height.equalTo(102)
+              }
+          } else {
+              pageControl.isHidden = false
+              profileFrame.snp.remakeConstraints { make in
+                  make.top.equalTo(pageControl.snp.bottom).offset(32)
+                  make.centerX.equalToSuperview()
+                  make.leading.trailing.equalToSuperview().inset(20)
+                  make.height.equalTo(102)
+              }
+          }
     }
 
     private func createImageView(named imageName: String) -> UIImageView {
