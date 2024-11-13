@@ -32,7 +32,7 @@ class DogProfileViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(dogProfileView)
         dogProfileView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(121) // 네비게이션 바 높이만큼 아래로
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
