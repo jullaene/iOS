@@ -1,10 +1,4 @@
-//
-//  BroadAPI.swift
-//  walkmong
-//
-//  Created by 신호연 on 11/14/24.
-//
-
+// BoardAPI.swift
 import Foundation
 import Moya
 
@@ -44,7 +38,7 @@ extension BoardAPI: TargetType {
             if let addressId = addressId { params["addressId"] = addressId }
             if let distance = distance { params["distance"] = distance }
             if let dogSize = dogSize { params["dogSize"] = dogSize }
-            if let matchingYn = matchingYn { params["matchingYn"] = matchingYn }
+            if let matchingYn = matchingYn { params["matchingYn"] = validYn(matchingYn) }
             return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
         }
     }
@@ -58,4 +52,8 @@ extension BoardAPI: TargetType {
         ]
     }
 
+    // Yn 값 검증 함수
+    private func validYn(_ value: String) -> String {
+        return (value == "Y" || value == "N") ? value : "N" // 기본값은 N으로 설정
+    }
 }
