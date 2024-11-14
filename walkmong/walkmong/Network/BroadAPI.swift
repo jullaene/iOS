@@ -10,21 +10,23 @@ import Moya
 
 enum BoardAPI {
     case getAddressList
+    case getBoardList(date: String?, addressId: Int?, distance: String?, dogSize: String?, matchingYn: String?)
 }
 
 extension BoardAPI: TargetType {
     var baseURL: URL {
-        // Secret.plist에서 BASE_URL 가져오기
-        guard let baseUrl = SecretManager.shared.getValue(forKey: "BASE_URL") else {
+        guard let url = SecretManager.shared.getValue(forKey: "BASE_URL") else {
             fatalError("BASE_URL이 설정되지 않았습니다!")
         }
-        return URL(string: baseUrl)!
+        return URL(string: url)!
     }
     
     var path: String {
         switch self {
         case .getAddressList:
             return "/api/v1/board/address/list"
+        case .getBoardList:
+            return "/api/v1/board/list"
         }
     }
     
@@ -33,17 +35,27 @@ extension BoardAPI: TargetType {
     }
     
     var task: Task {
-        return .requestPlain
+        switch self {
+        case .getAddressList:
+            return .requestPlain
+        case let .getBoardList(date, addressId, distance, dogSize, matchingYn):
+            var params: [String: Any] = [:]
+            if let date = date { params["date"] = date }
+            if let addressId = addressId { params["addressId"] = addressId }
+            if let distance = distance { params["distance"] = distance }
+            if let dogSize = dogSize { params["dogSize"] = dogSize }
+            if let matchingYn = matchingYn { params["matchingYn"] = matchingYn }
+            return .requestParameters(parameters: params, encoding: URLEncoding.queryString)
+        }
     }
     
     var headers: [String: String]? {
-        // Secret.plist에서 API_TOKEN 가져오기
         guard let token = SecretManager.shared.getValue(forKey: "API_TOKEN") else {
-            print("API_TOKEN을 찾을 수 없습니다!")
             return nil
         }
         return [
             "Authorization": "Bearer \(token)"
         ]
     }
+
 }
