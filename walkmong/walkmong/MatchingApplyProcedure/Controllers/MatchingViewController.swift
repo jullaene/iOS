@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Moya
 
-class MatchingViewController: UIViewController, MatchingFilterViewDelegate, MatchingCellDelegate {
+class MatchingViewController: UIViewController, MatchingCellDelegate {
 
     // MARK: - Properties
     private var matchingFilterView: MatchingFilterView?
@@ -73,17 +73,12 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
 
     // MARK: - Fetch Data
     private func fetchMatchingData() {
-        
         boardProvider.request(.getBoardList(date: nil, addressId: nil, distance: nil, dogSize: nil, matchingYn: nil)) { [weak self] result in
             switch result {
             case .success(let response):
                 do {
                     let decoder = JSONDecoder()
-                    
-                    // keyDecodingStrategy 설정 (필요 시 사용)
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    
-                    // null 값을 안전하게 처리
                     let boardResponse = try decoder.decode(BoardResponse.self, from: response.data)
                     self?.matchingData = boardResponse.data
                     
@@ -124,10 +119,7 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
             return
         }
         
-        print("Selected date retrieved: \(selectedDate)")
-        
         matchingView.updateMatchingCells(with: matchingData)
-        
         for cell in matchingView.matchingCells {
             cell.delegate = self
             if let data = cell.matchingData {
@@ -164,12 +156,19 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
     private func showMatchingFilterView() {
         guard matchingFilterView == nil else { return }
         hideDropdownView()
+
         let filterView = MatchingFilterView()
         filterView.layer.cornerRadius = 30
         filterView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         filterView.delegate = self
-        self.view.addSubview(filterView)
         self.matchingFilterView = filterView
+
+        // iOS 15 이상에서 UIWindowScene을 사용
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.addSubview(filterView)
+        }
+        
         filterView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(605)
@@ -177,7 +176,6 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
         }
         self.view.layoutIfNeeded()
         updateDimViewVisibility(isHidden: false)
-        bringViewToFront([dimView, filterView])
         animateConstraints {
             filterView.snp.updateConstraints { make in
                 make.bottom.equalToSuperview()
@@ -232,17 +230,7 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
     }
 }
 
-// MARK: - DropdownViewDelegate
-extension MatchingViewController: DropdownViewDelegate {
-    func didSelectLocation(_ location: String) {
-        matchingView.updateLocationLabel(with: location)
-        dropdownView?.updateSelection(selectedLocation: location)
-        hideDropdownView()
-    }
-}
-
-// MARK: - MatchingFilterViewDelegate
-extension MatchingViewController {
+extension MatchingViewController: MatchingFilterViewDelegate {
     func didApplyFilter(selectedBreeds: [String], matchingStatus: [String]) {
         let filterView = matchingView.filterSelectView
         updateFilterButtonState(filterView.breedButton, isSelected: !selectedBreeds.isEmpty)
@@ -253,5 +241,13 @@ extension MatchingViewController {
     private func updateFilterButtonState(_ button: UIButton, isSelected: Bool) {
         button.backgroundColor = isSelected ? .gray600 : .gray100
         button.setTitleColor(isSelected ? .white : .gray500, for: .normal)
+    }
+}
+
+extension MatchingViewController: DropdownViewDelegate {
+    func didSelectLocation(_ location: String) {
+        matchingView.updateLocationLabel(with: location)
+        dropdownView?.updateSelection(selectedLocation: location)
+        hideDropdownView()
     }
 }

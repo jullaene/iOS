@@ -180,11 +180,18 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         
         filterSelectView.filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
-    
+
     @objc private func filterButtonTapped() {
         filterButtonAction?()
     }
-    
+
+    private func bringFilterSelectViewToFront() {
+        if let superview = self.superview {
+            superview.bringSubviewToFront(self)
+            superview.bringSubviewToFront(filterSelectView)
+        }
+    }
+
     private func setupMatchingCells() {
         for _ in 0..<4 {
             let cell = MatchingCell()
