@@ -251,7 +251,6 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = QC8QR8UH59;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = walkmong/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "워크멍";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -290,7 +289,6 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = QC8QR8UH59;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = walkmong/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "워크멍";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
