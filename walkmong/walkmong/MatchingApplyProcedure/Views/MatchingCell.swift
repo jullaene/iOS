@@ -271,7 +271,7 @@ class MatchingCell: UIView {
         guard let data = matchingData else { return }
         delegate?.didSelectMatchingCell(data: data)
     }
-
+    
     func configure(with data: MatchingData) {
         matchingData = data
         dateLabel.text = "\(data.date) \(data.startTime) ~ \(data.endTime)"
@@ -290,7 +290,7 @@ class MatchingCell: UIView {
         locationLabel.text = data.dongAddress
         distanceLabel.text = data.formattedDistance
         timeLabel.text = data.readableCreatedAt
-
+        
         // Gender 아이콘 설정
         switch data.dogGender {
         case "FEMALE":
@@ -303,6 +303,51 @@ class MatchingCell: UIView {
     }
     
     func configureDateLabel(selectedDate: String, startTime: String, endTime: String) {
-        dateLabel.text = "\(selectedDate) \(startTime) ~ \(endTime)"
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        
+        // 현재 연도와 월 가져오기
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let currentMonth = Calendar.current.component(.month, from: Date())
+        
+        // `selectedDate`에서 날짜와 요일 추출
+        let components = selectedDate.split(separator: ".")
+        guard components.count >= 1, let day = Int(components[0].trimmingCharacters(in: .whitespaces)) else {
+            print("Invalid selectedDate format: \(selectedDate)")
+            dateLabel.text = "날짜 변환 오류"
+            return
+        }
+        
+        // 날짜 구성
+        var dateComponents = DateComponents()
+        dateComponents.year = currentYear
+        dateComponents.month = currentMonth
+        dateComponents.day = day
+        
+        guard let datePart = Calendar.current.date(from: dateComponents) else {
+            print("Failed to create date from components: \(dateComponents)")
+            dateLabel.text = "날짜 변환 오류"
+            return
+        }
+        
+        // 날짜를 "MM. dd (EEE)" 형식으로 변환
+        dateFormatter.dateFormat = "MM. dd (EEE)"
+        let formattedDate = dateFormatter.string(from: datePart)
+        
+        // 시간만 변환
+        dateFormatter.dateFormat = "HH:mm"
+        guard let startTimeDate = dateFormatter.date(from: startTime),
+              let endTimeDate = dateFormatter.date(from: endTime) else {
+            print("Failed to parse startTime or endTime: \(startTime), \(endTime)")
+            dateLabel.text = "시간 변환 오류"
+            return
+        }
+        
+        // 변환된 시간 출력
+        let formattedStartTime = dateFormatter.string(from: startTimeDate)
+        let formattedEndTime = dateFormatter.string(from: endTimeDate)
+        
+        // 최종 출력
+        dateLabel.text = "\(formattedDate) \(formattedStartTime) ~ \(formattedEndTime)"
     }
 }

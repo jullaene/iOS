@@ -81,7 +81,6 @@ class CalendarView: UIView {
     
     private func generateDays() {
         days = calculateDays(for: 14)
-        print("Generated days: \(days)") // days 배열 출력
     }
     
     private func calculateDays(for count: Int) -> [(dayOfWeek: String, date: String)] {
@@ -97,7 +96,6 @@ class CalendarView: UIView {
             }
         }
 
-        print("Calculated days: \(result)") // 생성된 날짜 및 요일 확인
         return result
     }
 }

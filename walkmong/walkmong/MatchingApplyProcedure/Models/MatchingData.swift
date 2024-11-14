@@ -23,8 +23,19 @@ struct MatchingData: Codable {
 
     // 계산 프로퍼티
     var date: String {
-        let components = startTime.split(separator: " ")
-        return components.first.map { String($0) } ?? ""
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS" // 서버에서 전달되는 형식
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        // 변환 시도
+        guard let date = formatter.date(from: startTime) else {
+            print("Date conversion failed for startTime: \(startTime)")
+            return "날짜 변환 오류"
+        }
+        
+        // 원하는 형식으로 변환
+        formatter.dateFormat = "MM. dd (EEE)"
+        return formatter.string(from: date)
     }
 
     var matchingStatus: String {
@@ -57,22 +68,20 @@ struct MatchingData: Codable {
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS"
         formatter.locale = Locale(identifier: "ko_KR")
         
-        // 서버에서 받은 `createdAt` 문자열을 `Date`로 변환
         guard let createdDate = formatter.date(from: createdAt) else {
             return "알 수 없음"
         }
         
-        let now = Date() // 현재 시간
-        let elapsed = now.timeIntervalSince(createdDate) // 경과 시간 (초 단위)
+        let now = Date()
+        let elapsed = now.timeIntervalSince(createdDate)
 
-        // 경과 시간을 기준으로 다른 형식으로 반환
-        if elapsed < 600 { // 10분 미만
+        if elapsed < 600 {
             let minutes = Int(elapsed / 60)
             return "\(minutes)분 전"
-        } else if elapsed < 3600 { // 1시간 미만
-            let minutes = Int(elapsed / 60 / 10) * 10 // 10분 단위
+        } else if elapsed < 3600 {
+            let minutes = Int(elapsed / 60 / 10) * 10
             return "\(minutes)분 전"
-        } else if elapsed < 86400 { // 24시간 미만
+        } else if elapsed < 86400 {
             let hours = Int(elapsed / 3600)
             return "\(hours)시간 전"
         } else {
@@ -81,14 +90,13 @@ struct MatchingData: Codable {
         }
     }
 
-    // 디코딩 중 null 값을 처리하기 위한 커스텀 init
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.startTime = try container.decode(String.self, forKey: .startTime)
         self.endTime = try container.decode(String.self, forKey: .endTime)
         self.matchingYn = try container.decode(String.self, forKey: .matchingYn)
         self.dogName = try container.decode(String.self, forKey: .dogName)
-        self.dogProfile = try? container.decode(String.self, forKey: .dogProfile) // null 허용
+        self.dogProfile = try? container.decode(String.self, forKey: .dogProfile)
         self.dogGender = try container.decode(String.self, forKey: .dogGender)
         self.breed = try container.decode(String.self, forKey: .breed)
         self.weight = try container.decode(Double.self, forKey: .weight)
