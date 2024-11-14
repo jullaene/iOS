@@ -1,7 +1,7 @@
 import UIKit
 
 class BaseTitleLabel: UILabel {
-    init(text: String, font: UIFont, textColor: UIColor = .mainBlack) {
+    init(text: String, font: UIFont, textColor: UIColor = .gray600) {
         super.init(frame: .zero)
         self.text = text
         self.font = font
