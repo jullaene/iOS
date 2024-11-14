@@ -6,6 +6,8 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     // MARK: - Properties
     private var matchingData: MatchingData?
     private let dogInfoView = MatchingDogInformationView()
+    private var boardDetail: BoardDetail?
+    private let networkManager = NetworkManager()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -15,6 +17,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         configureProfileDelegate()
         configureMatchingData()
         configureViewDelegate()
+        fetchBoardDetailData(boardId: 1)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -33,6 +36,34 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         matchingData = data
     }
 
+    private func fetchBoardDetailData(boardId: Int) {
+        let networkManager = NetworkManager()
+        networkManager.fetchBoardDetail(boardId: boardId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let detail):
+                    self?.dogInfoView.getProfileView().updateProfileView(
+                        dogName: detail.dogName,
+                        dogSize: detail.dogSize,
+                        breed: detail.breed,
+                        weight: detail.weight,
+                        dogAge: detail.dogAge,
+                        dongAddress: detail.dongAddress,
+                        distance: detail.distance,
+                        dogGender: detail.dogGender
+                    )
+                case .failure(let error):
+                    print("Error: \(error)")
+                }
+            }
+        }
+    }
+
+    private func updateUI(with detail: BoardDetail) {
+        dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
+        // 추가적으로 필요한 데이터 업데이트
+    }
+    
     // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white

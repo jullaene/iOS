@@ -23,6 +23,12 @@ class NetworkManager {
         }
     }
     
+    func fetchBoardDetail(boardId: Int, completion: @escaping (Result<BoardDetail, Error>) -> Void) {
+        provider.request(.getBoardDetail(boardId: boardId)) { result in
+            self.handleResponse(result: result, completion: completion)
+        }
+    }
+    
     private func handleResponse<T: Decodable>(result: Result<Response, MoyaError>, completion: @escaping (Result<T, Error>) -> Void) {
         switch result {
         case .success(let response):

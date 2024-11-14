@@ -117,6 +117,10 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         profileFrame.setDelegate(delegate)
     }
 
+    func getProfileView() -> ProfileView {
+        return profileFrame
+    }
+    
     private func setupFrames() {
         addFramesToContentView([
             (profileFrame, 102, pageControl.snp.bottom, 32),

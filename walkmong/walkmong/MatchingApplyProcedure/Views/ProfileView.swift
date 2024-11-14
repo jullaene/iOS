@@ -21,7 +21,7 @@ class ProfileView: UIView {
     private let topFrameView = UIView()
     
     private let nameLabel = ProfileView.createLabel(
-        text: "봄별이",
+        text: "",
         font: UIFont(name: "Pretendard-Bold", size: 28),
         textColor: UIColor.mainBlack,
         alignment: .left
@@ -40,7 +40,7 @@ class ProfileView: UIView {
     }()
     
     private let dogInfoLabel = ProfileView.createLabel(
-        text: "소형견 · 말티즈 4kg · 4살",
+        text: "",
         font: UIFont(name: "Pretendard-Regular", size: 16),
         textColor: .gray500
     )
@@ -48,7 +48,7 @@ class ProfileView: UIView {
     private let locationIconView = ProfileView.createImageView(named: "locationIcon")
     
     private let locationLabel = ProfileView.createLabel(
-        text: "노원구 공릉동 1km",
+        text: "",
         font: UIFont(name: "Pretendard-Regular", size: 14),
         textColor: .gray500
     )
@@ -127,6 +127,57 @@ class ProfileView: UIView {
     // MARK: - Public Methods
     func setDelegate(_ delegate: ProfileViewDelegate) {
         self.delegate = delegate
+    }
+    
+    func updateProfileView(
+        dogName: String,
+        dogSize: String,
+        breed: String,
+        weight: Double,
+        dogAge: Int,
+        dongAddress: String,
+        distance: Double,
+        dogGender: String 
+    ) {
+        // 이름 업데이트
+        nameLabel.text = dogName
+
+        // 성별 아이콘 업데이트
+        let genderIconName: String
+        switch dogGender.uppercased() {
+        case "FEMALE":
+            genderIconName = "femaleIcon"
+        case "MALE":
+            genderIconName = "maleIcon"
+        default:
+            genderIconName = "defaultIcon"
+        }
+        femaleIconView.image = UIImage(named: genderIconName)
+
+        // 강아지 정보 업데이트
+        let sizeText: String
+        switch dogSize.uppercased() {
+        case "SMALL":
+            sizeText = "소형견"
+        case "MIDDLE":
+            sizeText = "중형견"
+        case "BIG":
+            sizeText = "대형견"
+        default:
+            sizeText = "알 수 없음"
+        }
+
+        let weightText = weight.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(weight))kg" : "\(weight)kg"
+        dogInfoLabel.text = "\(sizeText) · \(breed) \(weightText) · \(dogAge)살"
+
+        // 위치 정보 업데이트
+        let distanceText: String
+        if distance >= 1.0 {
+            distanceText = "\(Int(distance))km"
+        } else {
+            distanceText = "\(Int(distance * 1000))m"
+        }
+        locationLabel.text = "\(dongAddress) \(distanceText)"
     }
     
     // MARK: - Actions
