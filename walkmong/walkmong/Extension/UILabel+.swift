@@ -9,6 +9,10 @@ import UIKit
 
 extension UILabel {
     func setLineSpacing(ratio: Double) {
+        
+        self.lineBreakMode = .byWordWrapping
+        self.lineBreakStrategy = .hangulWordPriority
+        
         let style = NSMutableParagraphStyle()
         let lineheight = self.font.pointSize * ratio
         style.minimumLineHeight = lineheight
