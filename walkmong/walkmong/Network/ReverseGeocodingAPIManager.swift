@@ -25,8 +25,8 @@ func callRequest(coords: String) async throws -> Data {
     
     var urlRequest = URLRequest(url: url)
     
-    if let clientID = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String,
-       let secretKey = Bundle.main.object(forInfoDictionaryKey: "SECRET_KEY") as? String {
+    if let clientID = Bundle.main.object(forInfoDictionaryKey: "NAVER_CLI_ID") as? String,
+       let secretKey = Bundle.main.object(forInfoDictionaryKey: "NAVER_KEY") as? String {
         urlRequest.addValue(clientID, forHTTPHeaderField: "X-NCP-APIGW-API-KEY-ID")
         urlRequest.addValue(secretKey, forHTTPHeaderField: "X-NCP-APIGW-API-KEY")
     }

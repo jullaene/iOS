@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        NMFAuthManager.shared().clientId = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String
+        NMFAuthManager.shared().clientId = Bundle.main.object(forInfoDictionaryKey: "NAVER_CLI_ID") as? String
         return true
     }
 
