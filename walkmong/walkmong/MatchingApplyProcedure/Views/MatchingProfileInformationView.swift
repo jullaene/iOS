@@ -9,13 +9,14 @@ import UIKit
 
 class BaseProfileInformationView: UIView {
     
-    internal let profileTitleLabel = SmallTitleLabel(text: "반려견 정보")
+    internal let profileTitleLabel = SmallTitleLabel(text: "산책자 정보")
     
     internal let profileImageview: UIImageView = {
         let imageview = UIImageView()
         imageview.image = .matchingApplyProcedureIcon
-        imageview.contentMode = .scaleAspectFit
+        imageview.contentMode = .scaleAspectFill
         imageview.layer.cornerRadius = 41
+        imageview.clipsToBounds = true
         return imageview
     }()
         
@@ -26,7 +27,7 @@ class BaseProfileInformationView: UIView {
     internal let locationImageView: UIImageView = {
         let imageview = UIImageView()
         imageview.image = .locationIcon
-        imageview.contentMode = .scaleAspectFit
+        imageview.contentMode = .center
         return imageview
     }()
     
@@ -66,7 +67,7 @@ class BaseProfileInformationView: UIView {
         }
         locationImageView.snp.makeConstraints { make in
             make.centerY.equalTo(locationLabel.snp.centerY)
-            make.trailing.equalTo(locationLabel.snp.leading).inset(4)
+            make.leading.equalTo(nameLabel.snp.leading)
             make.width.height.equalTo(14)
         }
         profileInformationLabel.snp.makeConstraints { make in
@@ -75,7 +76,7 @@ class BaseProfileInformationView: UIView {
         }
     }
     func configure(name: String, informationText: String, location: String, profileImage: UIImage) {
-        profileImageview.image = .matchingApplyProcedureIcon // 임시 이미지
+        profileImageview.image = profileImage // 임시 이미지
         nameLabel.text = name
         profileInformationLabel.text = informationText
         locationLabel.text = location
@@ -95,8 +96,8 @@ class DogProfileInformationView: BaseProfileInformationView{
         super.init(frame: frame)
         self.addSubview(genderIcon)
         genderIcon.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(74)
-            make.leading.equalToSuperview().offset(173.5)
+            make.centerY.equalTo(nameLabel.snp.centerY)
+            make.leading.equalTo(nameLabel.snp.trailing).offset(4)
             make.width.equalTo(9)
             make.height.equalTo(16)
         }
@@ -107,8 +108,9 @@ class DogProfileInformationView: BaseProfileInformationView{
     }
     
     func configure(isFemale: Bool, name: String, informationText: String, location: String, profileImage: UIImage) {
+        profileTitleLabel.text = "반려견 정보"
         genderIcon.image = isFemale ? .femaleIcon : .maleIcon
-        profileImageview.image = .matchingApplyProcedureIcon // 임시 이미지
+        profileImageview.image = profileImage
         nameLabel.text = name
         profileInformationLabel.text = informationText
         locationLabel.text = location

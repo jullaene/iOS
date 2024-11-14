@@ -16,13 +16,23 @@ protocol MatchingApplyFinalViewDelegate: AnyObject {
 class MatchingApplyFinalView: UIView {
     
     weak var delegate: MatchingApplyFinalViewDelegate?
+
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.backgroundColor = .gray100
+        scrollView.contentInsetAdjustmentBehavior = .never
+        return scrollView
+    }()
     
-    private let navigationBar = CustomNavigationBar(titleText: "산책 지원하기", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
-    private let progressBar = ProgressBarView(currentStep: 3, totalSteps: 3)
+    private let scrollContentView: UIView = {
+        let contentView = UIView()
+        contentView.backgroundColor = .gray100
+        return contentView
+    }()
     
     private let titleLabel = MiddleTitleLabel(text: "산책 신청 확인", textColor: .mainBlack)
-    private let dogInformationView = DogProfileInformationView()
-    private let walkerInformationView = BaseProfileInformationView()
+    private var dogInformationView = DogProfileInformationView()
+    private var walkerInformationView = BaseProfileInformationView()
     private let planTitleLabel = MiddleTitleLabel(text: "산책 일정")
     private let planStartInformationView: UIView = {
         let view = UIView()
@@ -94,7 +104,7 @@ class MatchingApplyFinalView: UIView {
         return view
     }()
     private let messageLabel: MainParagraphLabel = {
-        let label = MainParagraphLabel(text: "반려인에게 전달할 메시지", textColor: .gray500)
+        let label = MainParagraphLabel(text: "반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지반려인에게 전달할 메시지", textColor: .gray500)
         label.setLineSpacing(ratio: 1.4)
         label.addCharacterSpacing()
         label.numberOfLines = 10
@@ -111,8 +121,9 @@ class MatchingApplyFinalView: UIView {
     
     private let checkBoxButton: UIButton = {
         let button = UIButton()
+        button.isSelected = false
         button.setImage(UIImage.checkBoxLined.imageWithColor(color: .gray300), for: .normal)
-        button.setImage(UIImage.checkBox.imageWithColor(color: .mainBlue), for: .selected)
+        button.setImage(UIImage.checkbox.imageWithColor(color: .mainBlue), for: .selected)
         return button
     }()
     private let checkedLabel:MainHighlightParagraphLabel = {
@@ -128,6 +139,7 @@ class MatchingApplyFinalView: UIView {
         addSubView()
         setConstraints()
         setButtonActions()
+        setUI()
     }
     
     required init?(coder: NSCoder) {
@@ -135,30 +147,29 @@ class MatchingApplyFinalView: UIView {
     }
     
     private func addSubView() {
-        addSubviews(navigationBar,
-                    progressBar,
-                    titleLabel,
-                    dogInformationView,
-                    walkerInformationView,
-                    planTitleLabel,
-                    planStartInformationView,
-                    planEndInformationView,
-                    placeTitleLabel,
-                    placeInformationView,
-                    placeAddressLabel,
-                    placeMemoLabel,
-                    stuffTitleLabel,
-                    stuffbackgroundView,
-                    stuffLabel,
-                    preMeetingTitleLabel,
-                    preMeetingWarningIcon,
-                    preMeetingWarningMessageLabel,
-                    preMeetingBackgroundView,
-                    preMeetingLabel,
-                    messageTitleLabel,
-                    messageBackgroundView,
-                    messageLabel,
-                    checkView)
+        addSubviews(scrollView, checkView)
+        scrollView.addSubview(scrollContentView)
+        scrollContentView.addSubviews(titleLabel,
+                                      dogInformationView,
+                                      walkerInformationView,
+                                      planTitleLabel,
+                                      planStartInformationView,
+                                      planEndInformationView,
+                                      placeTitleLabel,
+                                      placeInformationView,
+                                      placeAddressLabel,
+                                      placeMemoLabel,
+                                      stuffTitleLabel,
+                                      stuffbackgroundView,
+                                      stuffLabel,
+                                      preMeetingTitleLabel,
+                                      preMeetingWarningIcon,
+                                      preMeetingWarningMessageLabel,
+                                      preMeetingBackgroundView,
+                                      preMeetingLabel,
+                                      messageTitleLabel,
+                                      messageBackgroundView,
+                                      messageLabel)
         planStartInformationView.addSubviews(planStartLabel, planStartDateLabel)
         planEndInformationView.addSubviews(planEndLabel, planEndDateLabel)
         checkView.addSubviews(checkBoxButton,
@@ -167,18 +178,18 @@ class MatchingApplyFinalView: UIView {
     }
     
     private func setConstraints() {
-        navigationBar.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(52)
-            make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(52)
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
-        progressBar.snp.makeConstraints { make in
-            make.top.equalTo(navigationBar.snp.bottom).offset(16)
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.height.equalTo(4)
+        
+        scrollContentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+            make.bottom.equalTo(messageBackgroundView.snp.bottom).offset(273)
         }
+        
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(progressBar.snp.bottom).offset(54)
+            make.top.equalTo(scrollView.snp.top).offset(15)
             make.leading.equalToSuperview().offset(18)
         }
         dogInformationView.snp.makeConstraints { make in
@@ -199,7 +210,7 @@ class MatchingApplyFinalView: UIView {
             make.top.equalTo(planTitleLabel.snp.bottom).offset(16)
             make.leading.equalToSuperview().offset(20)
             make.height.equalTo(67)
-            make.width.equalTo((self.bounds.size.width - 40 - 8)/2)
+            make.width.equalTo(scrollContentView.snp.width).multipliedBy(0.5).offset(-24)
         }
         planStartLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(12)
@@ -211,7 +222,8 @@ class MatchingApplyFinalView: UIView {
         }
         planEndInformationView.snp.makeConstraints { make in            make.top.equalTo(planTitleLabel.snp.bottom).offset(16)
             make.trailing.equalToSuperview().inset(20)
-            make.width.equalTo((self.bounds.size.width - 40 - 8)/2)
+            make.height.equalTo(67)
+            make.width.equalTo(scrollContentView.snp.width).multipliedBy(0.5).offset(-24)
         }
         planEndLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(12)
@@ -222,7 +234,7 @@ class MatchingApplyFinalView: UIView {
             make.leading.equalToSuperview().offset(9.5)
         }
         placeTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(walkerInformationView.snp.bottom).offset(48)
+            make.top.equalTo(planEndInformationView.snp.bottom).offset(48)
             make.leading.equalToSuperview().offset(20)
         }
         placeInformationView.snp.makeConstraints { make in
@@ -280,10 +292,10 @@ class MatchingApplyFinalView: UIView {
         messageBackgroundView.snp.makeConstraints { make in
             make.top.equalTo(messageTitleLabel.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(273)
         }
         messageLabel.snp.makeConstraints { make in
-            make.top.equalTo(placeAddressLabel.snp.bottom).offset(10)
-            make.horizontalEdges.equalTo(messageBackgroundView.snp.leading).inset(12)
+            make.top.horizontalEdges.equalTo(messageBackgroundView).inset(12)
             make.bottom.equalTo(messageBackgroundView.snp.bottom).inset(12)
         }
         checkView.snp.makeConstraints { make in
@@ -298,21 +310,30 @@ class MatchingApplyFinalView: UIView {
         }
         checkedLabel.snp.makeConstraints { make in
             make.leading.equalTo(checkBoxButton.snp.trailing).offset(12)
+            make.centerY.equalTo(checkBoxButton.snp.centerY)
             make.trailing.equalToSuperview().inset(20)
         }
         nextButton.snp.makeConstraints { make in
-            // Constraints 설정 예정
+            make.height.equalTo(54)
+            make.horizontalEdges.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(46)
         }
     }
-
+    
     
     private func setButtonActions() {
-        navigationBar.delegate = self
         checkBoxButton.addTarget(self, action: #selector(checkBoxButtonTapped), for: .touchUpInside)
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
+    private func setUI() {
+        dogInformationView.configure(isFemale: true, name: "봄별이", informationText: "소형견 · 말티즈 · 4kg", location: "노원구 공릉동 1km", profileImage: .puppy)
+        walkerInformationView.configure(name: "김철수", informationText: "30대 초반 · 남성", location: "노원구 공릉동", profileImage: .illustration1)
+    }
+    
     @objc private func checkBoxButtonTapped() {
+        checkBoxButton.isSelected.toggle()
+        nextButton.backgroundColor = checkBoxButton.isSelected ? .gray600 : .gray300
         delegate?.didCheckedInformation(button: checkBoxButton)
     }
     

@@ -24,7 +24,7 @@ extension UILabel {
           ])
     }
     
-    func addCharacterSpacing(_ value: Double = -0.32) {
+    func addCharacterSpacing(_ value: Double = -0.032) {
         let kernValue = self.font.pointSize * CGFloat(value)
         guard let text = text, !text.isEmpty else { return }
         let string = NSMutableAttributedString(string: text)

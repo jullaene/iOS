@@ -15,18 +15,9 @@ class NextButton: UIButton {
         self.titleLabel?.textColor = .white
         self.backgroundColor = .gray300
         self.layer.cornerRadius = 15
-        setConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setConstraints(){
-        self.snp.makeConstraints { make in
-            make.height.equalTo(54)
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(46)
-        }
     }
 }

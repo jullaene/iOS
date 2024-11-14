@@ -21,18 +21,13 @@ class CustomNavigationBar: UIView {
     private let closeButtonButton = UIButton()
     private let refreshButtonButton = UIButton()
     
-    init(titleText: String, showLeftBackButton: Bool, showLeftCloseButton: Bool, showRightCloseButton: Bool, showRightRefreshButton: Bool) {
+    init(titleText: String, showLeftBackButton: Bool, showLeftCloseButton: Bool, showRightCloseButton: Bool, showRightRefreshButton: Bool, backgroundColor: UIColor = .white) {
         super.init(frame: .zero)
         
-        self.backgroundColor = .white
+        self.backgroundColor = backgroundColor
         setupTitleLabel(titleText: titleText)
         setupLeftButtons(showLeftBackButton: showLeftBackButton, showLeftCloseButton: showLeftCloseButton)
         setupRightButtons(showRightCloseButton: showRightCloseButton, showRightRefreshButton: showRightRefreshButton)
-        
-        self.snp.makeConstraints { make in
-            make.height.equalTo(52)
-            make.top.equalToSuperview().offset(52)
-        }
     }
     
     required init?(coder: NSCoder) {

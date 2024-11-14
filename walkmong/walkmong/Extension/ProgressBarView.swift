@@ -44,15 +44,22 @@ class ProgressBarView: UIView {
         
         progressBackgroundView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.centerY.equalToSuperview()
+            make.top.equalToSuperview()
             make.height.equalTo(4)
         }
-        
         progressView.snp.makeConstraints { make in
-            make.leading.equalTo(progressBackgroundView.snp.leading)
-            make.centerY.equalTo(progressBackgroundView.snp.centerY)
-            make.height.equalTo(progressBackgroundView.snp.height)
-            make.width.equalTo((bounds.width - 40) * CGFloat(currentStep) / CGFloat(totalSteps))
+            make.leading.equalToSuperview().inset(20)
+            make.top.equalToSuperview()
+            make.height.equalTo(4)
+        }
+    }
+    func setProgress(){
+        print(progressBackgroundView.bounds.width)
+        print(CGFloat(currentStep) / CGFloat(totalSteps))
+        let progressWidth = (self.bounds.width-20) * CGFloat(currentStep) / CGFloat(totalSteps)
+        print(progressWidth)
+        progressView.snp.makeConstraints { make in
+            make.width.equalTo(progressWidth)
         }
     }
 }

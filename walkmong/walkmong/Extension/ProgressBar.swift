@@ -8,10 +8,10 @@
 import UIKit
 
 extension UIViewController {
-    func addProgressBar(currentStep:Int, totalSteps:Int){
+    func addProgressBar(currentStep:Int, totalSteps:Int, backgroundColor: UIColor = .white){
         let backgroundView: UIView = {
             let view = UIView()
-            view.backgroundColor = .white
+            view.backgroundColor = backgroundColor
             return view
         }()
         let progressBackgroundView: UIView = {
