@@ -9,21 +9,41 @@ import UIKit
 
 class MatchingApplyFinalViewController: UIViewController {
 
+    private let finalView = MatchingApplyFinalView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        self.view.backgroundColor = .gray100
+        setUI()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func setUI() {
+        addSubView()
+        setConstraints()
+        finalView.delegate = self
     }
-    */
+    
+    private func addSubView() {
+        self.view.addSubview(finalView)
+    }
+    
+    private func setConstraints() {
+        finalView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+}
 
+extension MatchingApplyFinalViewController: MatchingApplyFinalViewDelegate {
+    func didCheckedInformation(button: UIButton) {
+        
+    }
+    
+    func didTapApplyButton() {
+        
+    }
+    
+    func didTapBackButton() {
+        
+    }
 }
