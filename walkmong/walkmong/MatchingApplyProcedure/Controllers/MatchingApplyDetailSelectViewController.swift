@@ -12,6 +12,11 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
     let detailSelectView = MatchingApplyDetailSelectView()
     var detailSelectModel = MatchingApplyDetailSelectModel(dogInformationChecked: false, dateChecked: false, nextButtonEnabled: false)
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpViews()
