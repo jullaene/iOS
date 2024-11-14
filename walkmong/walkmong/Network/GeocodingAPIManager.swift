@@ -26,6 +26,11 @@ func callRequest(query: String, completion: @escaping (Data) -> Void) {
     
     var urlRequest = URLRequest(url: url)
     
+    guard let id = SecretManager.shared.getValue(forKey: "NAVER_CLI_ID"), let key = SecretManager.shared.getValue(forKey: "NAVER_KEY") else {
+        print("KEY Error")
+        return
+    }
+        
     urlRequest.addValue("클라이언트Id", forHTTPHeaderField: "X-NCP-APIGW-API-KEY-ID")
     urlRequest.addValue("secret 키", forHTTPHeaderField: "X-NCP-APIGW-API-KEY")
     
