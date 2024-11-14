@@ -13,6 +13,7 @@ extension UIViewController {
         
         let navigationBarView = UIView()
         navigationBarView.backgroundColor = .white
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.view.addSubview(navigationBarView)
         
         navigationBarView.snp.makeConstraints { make in
