@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import Moya
 
 class MatchingViewController: UIViewController, MatchingFilterViewDelegate, MatchingCellDelegate {
     
@@ -37,6 +38,7 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
         setupUI()
         setupGestures()
         loadData()
+        fetchAddressList()
     }
     
     // MARK: - UI Setup
@@ -212,5 +214,28 @@ extension MatchingViewController {
     private func updateFilterButtonState(_ button: UIButton, isSelected: Bool) {
         button.backgroundColor = isSelected ? .gray600 : .gray100
         button.setTitleColor(isSelected ? .white : .gray500, for: .normal)
+    }
+}
+
+extension MatchingViewController {
+    func fetchAddressList() {
+        let provider = MoyaProvider<BoardAPI>()
+        provider.request(.getAddressList) { [weak self] result in
+            switch result {
+            case .success(let response):
+                do {
+                    let addressResponse = try JSONDecoder().decode(AddressResponse.self, from: response.data)
+                    let locations = addressResponse.data.map { $0.dongAddress }
+                    DispatchQueue.main.async {
+                        self?.dropdownView?.updateLocations(locations: locations)
+                        print("API 호출 성공: \(locations)")
+                    }
+                } catch {
+                    print("디코딩 실패: \(error)")
+                }
+            case .failure(let error):
+                print("API 호출 실패: \(error.localizedDescription)")
+            }
+        }
     }
 }

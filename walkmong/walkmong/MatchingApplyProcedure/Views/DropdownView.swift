@@ -1,20 +1,21 @@
 import UIKit
 import SnapKit
 
+import UIKit
+import SnapKit
+
 protocol DropdownViewDelegate: AnyObject {
     func didSelectLocation(_ location: String)
 }
 
 class DropdownView: UIView {
-    // MARK: - Properties
     weak var delegate: DropdownViewDelegate?
-    
-    private let locations = ["공릉동", "청담동"]
+
+    private var locations: [String] = ["공릉동", "청담동"]
     private var selectedLocation: String = "공릉동"
-    
+
     private let labels: [UILabel] = [UILabel(), UILabel(), UILabel()]
-    
-    // MARK: - Initializer
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +27,6 @@ class DropdownView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Setup UI
     private func setupView() {
         self.layer.backgroundColor = UIColor.gray100.cgColor
         self.layer.cornerRadius = 20
@@ -54,7 +54,6 @@ class DropdownView: UIView {
         label.font = UIFont(name: "Pretendard-\(isSelected ? "SemiBold" : "Medium")", size: 16)
     }
     
-    // MARK: - Update Selection
     func updateSelection(selectedLocation: String) {
         self.selectedLocation = selectedLocation
         for (index, label) in labels.enumerated() {
@@ -62,8 +61,12 @@ class DropdownView: UIView {
             setupLabel(label, text: label.text ?? "", isSelected: isSelected)
         }
     }
+
+    func updateLocations(locations: [String]) {
+        self.locations = locations
+        updateSelection(selectedLocation: locations.first ?? "공릉동")
+    }
     
-    // MARK: - Actions
     @objc private func handleLabelTap(_ sender: UITapGestureRecognizer) {
         guard let tappedLabel = sender.view as? UILabel,
               let index = labels.firstIndex(of: tappedLabel),
@@ -73,7 +76,6 @@ class DropdownView: UIView {
     }
 }
 
-// MARK: - Safe Array Indexing
 private extension Array {
     subscript(safe index: Int) -> Element? {
         return indices.contains(index) ? self[index] : nil
