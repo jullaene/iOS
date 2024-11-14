@@ -29,7 +29,6 @@ struct MatchingData: Codable {
         
         // 변환 시도
         guard let date = formatter.date(from: startTime) else {
-            print("Date conversion failed for startTime: \(startTime)")
             return "날짜 변환 오류"
         }
         

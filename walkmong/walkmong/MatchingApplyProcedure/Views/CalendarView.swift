@@ -47,7 +47,6 @@ class CalendarView: UIView {
         generateDays()
         dayCollectionView.reloadData()
         selectedIndexPath = IndexPath(item: 0, section: 0)
-        print("Initial selected index path: \(selectedIndexPath!)")
     }
     
     required init?(coder: NSCoder) {
