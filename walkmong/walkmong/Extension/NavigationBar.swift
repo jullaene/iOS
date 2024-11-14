@@ -9,10 +9,10 @@ import UIKit
 
 extension UIViewController {
     // MARK: - Custom Navigation Bar
-    func addCustomNavigationBar(titleText: String?, showLeftBackButton: Bool, showLeftCloseButton: Bool, showRightCloseButton: Bool, showRightRefreshButton: Bool) {
+    func addCustomNavigationBar(titleText: String?, showLeftBackButton: Bool, showLeftCloseButton: Bool, showRightCloseButton: Bool, showRightRefreshButton: Bool, backgroundColor: UIColor = .white) {
         
         let navigationBarView = UIView()
-        navigationBarView.backgroundColor = .white
+        navigationBarView.backgroundColor = backgroundColor
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.view.addSubview(navigationBarView)
         

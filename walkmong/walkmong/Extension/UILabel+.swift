@@ -9,6 +9,10 @@ import UIKit
 
 extension UILabel {
     func setLineSpacing(ratio: Double) {
+        
+        self.lineBreakMode = .byWordWrapping
+        self.lineBreakStrategy = .hangulWordPriority
+        
         let style = NSMutableParagraphStyle()
         let lineheight = self.font.pointSize * ratio
         style.minimumLineHeight = lineheight
@@ -20,7 +24,7 @@ extension UILabel {
           ])
     }
     
-    func addCharacterSpacing(_ value: Double = -0.32) {
+    func addCharacterSpacing(_ value: Double = -0.032) {
         let kernValue = self.font.pointSize * CGFloat(value)
         guard let text = text, !text.isEmpty else { return }
         let string = NSMutableAttributedString(string: text)
