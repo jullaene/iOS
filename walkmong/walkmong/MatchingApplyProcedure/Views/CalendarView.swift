@@ -47,6 +47,7 @@ class CalendarView: UIView {
         generateDays()
         dayCollectionView.reloadData()
         selectedIndexPath = IndexPath(item: 0, section: 0)
+        print("Initial selected index path: \(selectedIndexPath!)")
     }
     
     required init?(coder: NSCoder) {
@@ -80,12 +81,13 @@ class CalendarView: UIView {
     
     private func generateDays() {
         days = calculateDays(for: 14)
+        print("Generated days: \(days)") // days 배열 출력
     }
     
     private func calculateDays(for count: Int) -> [(dayOfWeek: String, date: String)] {
         let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
         var result: [(dayOfWeek: String, date: String)] = []
-        
+
         for offset in 0..<count {
             if let date = calendar.date(byAdding: .day, value: offset, to: today) {
                 let weekdayIndex = calendar.component(.weekday, from: date) - 1
@@ -94,6 +96,8 @@ class CalendarView: UIView {
                 result.append((dayOfWeek, day))
             }
         }
+
+        print("Calculated days: \(result)") // 생성된 날짜 및 요일 확인
         return result
     }
 }
@@ -139,10 +143,40 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
 
 extension CalendarView {
     func getSelectedDate() -> String? {
-        guard let indexPath = selectedIndexPath else { return nil }
+        guard let indexPath = selectedIndexPath else {
+            print("No selected index path")
+            return nil
+        }
         let day = days[indexPath.item]
-        
-        // 날짜와 요일을 포맷팅 (예: 11. 03 (일))
-        return "\(day.date). \(day.dayOfWeek)"
+        print("Selected day info: \(day)")
+
+        // 현재 연도와 월 가져오기
+        let currentYear = calendar.component(.year, from: today)
+        let currentMonth = calendar.component(.month, from: today)
+        print("Current year: \(currentYear), Current month: \(currentMonth)")
+
+        // 선택된 날짜(day.date)를 정수로 변환
+        guard let dayInt = Int(day.date) else {
+            print("Failed to convert day.date (\(day.date)) to Int")
+            return nil
+        }
+
+        // 날짜 컴포넌트 생성
+        let components = DateComponents(year: currentYear, month: currentMonth, day: dayInt)
+        guard let date = calendar.date(from: components) else {
+            print("Failed to generate date from components: \(components)")
+            return nil
+        }
+
+        print("Generated date: \(date)")
+
+        // 포맷터 설정
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "MM. dd (EEE)" // "11. 14 (목)" 형식
+
+        let formattedDate = formatter.string(from: date)
+        print("Formatted date: \(formattedDate)")
+        return formattedDate
     }
 }

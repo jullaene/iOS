@@ -40,6 +40,7 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
         setupGestures()
         fetchMatchingData()
         fetchAddressList()
+        updateMatchingView()
     }
 
     // MARK: - UI Setup
@@ -118,7 +119,12 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
     }
 
     private func updateMatchingView() {
-        guard let selectedDate = matchingView.selectedDate else { return }
+        guard let selectedDate = matchingView.selectedDate else {
+            print("No selected date available")
+            return
+        }
+        
+        print("Selected date retrieved: \(selectedDate)")
         
         matchingView.updateMatchingCells(with: matchingData)
         
