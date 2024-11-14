@@ -45,9 +45,6 @@ extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectView
         case .selectPlace:
             let nextVC = MatchingApplyPlaceSearchViewController()
             self.navigationController?.pushViewController(nextVC, animated: true)
-            self.detailSelectModel.placeSelected = "address"
-            // 주소 가져오기 성공 시에만 value: true
-            self.detailSelectView.updateSelectButtons(buttonType: .selectPlace, value: true)
         case .envelopeNeeded:
             self.detailSelectModel.envelopeNeeded = value
             self.detailSelectView.updateSelectButtons(buttonType: .envelopeNeeded, value: value)

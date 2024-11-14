@@ -120,17 +120,19 @@ extension MatchingApplyMapViewController: MatchingApplyMapAddressModalViewDelega
         }
     }
     
-    func didTapDecideButton(){
+    func didTapDecideButton() {
         if self.model.memo != nil {
             let controllers = self.navigationController?.viewControllers
             for vc in controllers! {
-                if vc is MatchingApplyDetailSelectViewController {
-                    self.navigationController?.popToViewController(vc as! MatchingApplyDetailSelectViewController, animated: true)
+                if let matchingVC = vc as? MatchingApplyDetailSelectViewController {
+                    matchingVC.detailSelectModel.placeSelected = (self.model.roadAddress ?? "") + (self.model.buildingName ?? "")
+                    matchingVC.detailSelectModel.placeMemo = self.model.memo
+                    self.navigationController?.popToViewController(matchingVC, animated: true)
+                    break
                 }
             }
         }
     }
-
 }
 
 extension MatchingApplyMapViewController {
