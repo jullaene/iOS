@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import Kingfisher
 
 protocol MatchingCellDelegate: AnyObject {
     func didSelectMatchingCell(data: MatchingData)
@@ -270,15 +271,21 @@ class MatchingCell: UIView {
         guard let data = matchingData else { return }
         delegate?.didSelectMatchingCell(data: data)
     }
-    
-    // MARK: - Configuration
+
     func configure(with data: MatchingData) {
         matchingData = data
         dateLabel.text = "\(data.date) \(data.startTime) ~ \(data.endTime)"
         matchingStatusLabel.text = data.matchingStatus
-        puppyImageView.image = UIImage(named: data.safeDogProfile)
+        
+        // Kingfisher를 활용한 이미지 로드
+        if let imageUrl = URL(string: data.safeDogProfile) {
+            puppyImageView.kf.setImage(with: imageUrl, placeholder: UIImage(named: "placeholderImage"))
+        } else {
+            puppyImageView.image = UIImage(named: "placeholderImage") // 기본 이미지
+        }
+        
         nameLabel.text = data.dogName
-        sizeLabel.text = data.translatedDogSize // 번역된 사이즈 사용
+        sizeLabel.text = data.translatedDogSize
         postContentLabel.text = data.content
         locationLabel.text = data.dongAddress
         distanceLabel.text = data.formattedDistance
