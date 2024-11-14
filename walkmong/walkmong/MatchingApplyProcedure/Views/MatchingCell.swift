@@ -300,6 +300,31 @@ class MatchingCell: UIView {
         default:
             genderIcon.image = nil
         }
+        
+        // 매칭 상태에 따른 UI 업데이트
+        updateMatchingStatusUI(for: data.matchingYn)
+    }
+
+    private func updateMatchingStatusUI(for status: String) {
+        if status == "Y" { // 매칭확정 상태
+            matchingStatusView.backgroundColor = .gray100
+            matchingStatusLabel.textColor = .gray400
+            matchingStatusLabel.text = "매칭확정"
+            matchingStatusView.snp.remakeConstraints { make in
+                make.trailing.centerY.equalToSuperview()
+                make.width.equalTo(73) // 매칭확정 상태의 너비
+                make.height.equalTo(29)
+            }
+        } else { // 기본 매칭중 상태
+            matchingStatusView.backgroundColor = .mainGreen
+            matchingStatusLabel.textColor = .white
+            matchingStatusLabel.text = "매칭중"
+            matchingStatusView.snp.remakeConstraints { make in
+                make.trailing.centerY.equalToSuperview()
+                make.width.equalTo(63) // 매칭중 상태의 너비
+                make.height.equalTo(29)
+            }
+        }
     }
     
     func configureDateLabel(selectedDate: String, startTime: String, endTime: String) {
