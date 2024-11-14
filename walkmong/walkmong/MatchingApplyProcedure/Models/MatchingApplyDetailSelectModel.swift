@@ -16,4 +16,5 @@ public struct MatchingApplyDetailSelectModel{
     var leadStringeNeeded: Bool?
     var preMeetingNeeded: Bool?
     var nextButtonEnabled: Bool
+    var placeMemo: String?
 }

@@ -27,7 +27,6 @@ class MatchingApplyPlaceSearchView: UIView {
         let imageContainerView = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 46))
         imageContainerView.addSubview(iconImageView)
         
-        textField.addCharacterSpacing()
         textField.leftView = imageContainerView
         textField.leftViewMode = .always
         textField.textColor = .mainBlack
@@ -35,6 +34,7 @@ class MatchingApplyPlaceSearchView: UIView {
         textField.backgroundColor = .gray100
         textField.layer.cornerRadius = 5
         textField.keyboardType = .webSearch
+        textField.addCharacterSpacing()
         return textField
     }()
     

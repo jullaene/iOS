@@ -7,11 +7,9 @@
 
 import Foundation
 
-func callRequest(coords: String, completion: @escaping (Data) -> Void) {
-    
+func callRequest(coords: String) async throws -> Data {
     guard var urlComponents = URLComponents(string: "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc") else {
-        print("URL Components Error")
-        return
+        throw NSError(domain: "URLComponentsError", code: 100, userInfo: nil)
     }
     
     let queryItemArray = [
@@ -22,8 +20,7 @@ func callRequest(coords: String, completion: @escaping (Data) -> Void) {
     urlComponents.queryItems = queryItemArray
     
     guard let url = urlComponents.url else {
-        print("URL Error")
-        return
+        throw NSError(domain: "URLCreationError", code: 101, userInfo: nil)
     }
     
     var urlRequest = URLRequest(url: url)
@@ -34,12 +31,11 @@ func callRequest(coords: String, completion: @escaping (Data) -> Void) {
         urlRequest.addValue(secretKey, forHTTPHeaderField: "X-NCP-APIGW-API-KEY")
     }
     
-    URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-        
-        guard let data = data, let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            print("status code error")
-            return
-        }
-        completion(data)
-    }.resume()
+    let (data, response) = try await URLSession.shared.data(for: urlRequest)
+    
+    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        throw NSError(domain: "HTTPError", code: 102, userInfo: nil)
+    }
+    
+    return data
 }

@@ -8,7 +8,14 @@
 import UIKit
 import NMapsMap
 
+protocol MatchingApplyMapViewDelegate: AnyObject {
+    func matchingApplyMapView(_ view: MatchingApplyMapView, didSelectLocationAt target: NMGLatLng)
+    func willSelectLocation()
+    func didTapNextButton()
+}
+
 class MatchingApplyMapView: UIView {
+    weak var delegate: MatchingApplyMapViewDelegate?
     
     private let nextButton: UIButton = {
         let button = UIButton()
@@ -17,7 +24,7 @@ class MatchingApplyMapView: UIView {
         button.titleLabel?.textColor = .white
         button.backgroundColor = .gray300
         button.layer.cornerRadius = 15
-        // addTarget
+        button.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
         return button
     }()
     
@@ -26,9 +33,10 @@ class MatchingApplyMapView: UIView {
         return mapView
     }()
     
-    private let centerMarker: NMFMarker = {
+    private let centerMarker: CustomMarker = {
         let marker = CustomMarker()
-        marker.showInfoWindow()
+        marker.height = 64
+        marker.width = 50
         return marker
     }()
 
@@ -67,8 +75,20 @@ class MatchingApplyMapView: UIView {
         
         centerMarker.position = initialPosition
         centerMarker.mapView = mapView.mapView
+        centerMarker.touchHandler = { (overlay) -> Bool in
+            self.centerMarker.showInfoWindow()
+            return true // Indicates that the event was handled
+        }
         
         mapView.mapView.addCameraDelegate(delegate: self)
+    }
+    
+    func updateButtonState(value: Bool){
+        self.nextButton.backgroundColor = value ? .gray600 : .gray300
+    }
+    
+    @objc private func didTapNextButton(){
+        delegate?.didTapNextButton()
     }
     
 }
@@ -77,22 +97,19 @@ extension MatchingApplyMapView: NMFMapViewCameraDelegate {
     // 화면 이동을 추적
     func mapView(_ mapView: NMFMapView, cameraIsChangingByReason reason: Int) {
         centerMarker.position = mapView.cameraPosition.target
+        self.nextButton.backgroundColor = .gray300
+        delegate?.willSelectLocation()
     }
     // 화면 이동을 추적
     func mapView(_ mapView: NMFMapView, cameraDidChangeByReason reason: Int, animated: Bool) {
         centerMarker.position = mapView.cameraPosition.target
+        self.nextButton.backgroundColor = .gray300
+        delegate?.willSelectLocation()
     }
     // 이동이 끝났을 때 좌표값 print
     func mapViewCameraIdle(_ mapView: NMFMapView) {
         print(mapView.cameraPosition.target)
-        let coords = "\(mapView.cameraPosition.target.lng)" + "," + "\(mapView.cameraPosition.target.lat)"
-        callRequest(coords: coords) { data in
-            do {
-                let decodeData = try JSONDecoder().decode(ReverseGeocodingModel.self, from: data)
-                print(decodeData)
-            } catch {
-                print(error)
-            }
-        }
+        delegate?.matchingApplyMapView(self, didSelectLocationAt: mapView.cameraPosition.target)
+        self.nextButton.backgroundColor = .gray600
     }
 }
