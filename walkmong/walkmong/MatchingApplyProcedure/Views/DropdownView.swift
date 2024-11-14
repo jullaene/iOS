@@ -1,9 +1,6 @@
 import UIKit
 import SnapKit
 
-import UIKit
-import SnapKit
-
 protocol DropdownViewDelegate: AnyObject {
     func didSelectLocation(_ location: String)
 }
@@ -11,16 +8,14 @@ protocol DropdownViewDelegate: AnyObject {
 class DropdownView: UIView {
     weak var delegate: DropdownViewDelegate?
 
-    private var locations: [String] = ["공릉동", "청담동"]
-    private var selectedLocation: String = "공릉동"
-
-    private let labels: [UILabel] = [UILabel(), UILabel(), UILabel()]
+    private var locations: [String] = []
+    private var selectedLocation: String?
+    private var labels: [UILabel] = []
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.translatesAutoresizingMaskIntoConstraints = false
         setupView()
-        updateSelection(selectedLocation: selectedLocation)
     }
     
     required init?(coder: NSCoder) {
@@ -30,22 +25,39 @@ class DropdownView: UIView {
     private func setupView() {
         self.layer.backgroundColor = UIColor.gray100.cgColor
         self.layer.cornerRadius = 20
-        
-        let texts = ["공릉동", "청담동", "동네 설정"]
-        for (index, label) in labels.enumerated() {
-            setupLabel(label, text: texts[index], isSelected: index == 0)
+    }
+    
+    func updateLocations(locations: [String]) {
+        labels.forEach { $0.removeFromSuperview() }
+        labels.removeAll()
+
+        let formattedLocations = locations.compactMap { extractDong(from: $0) }
+        self.locations = formattedLocations + ["동네 설정"]
+        self.selectedLocation = formattedLocations.first
+
+        for (index, location) in self.locations.enumerated() {
+            let label = UILabel()
+            setupLabel(label, text: location, isSelected: index == 0)
             addSubview(label)
+            labels.append(label)
+            
             label.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview().inset(20)
                 make.top.equalToSuperview().offset(20 + (index * 32))
-                if index == labels.count - 1 {
+                if index == self.locations.count - 1 {
                     make.bottom.equalToSuperview().offset(-20)
                 }
             }
+            
             label.isUserInteractionEnabled = true
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLabelTap(_:)))
             label.addGestureRecognizer(tapGesture)
         }
+    }
+    
+    private func extractDong(from location: String) -> String? {
+        let components = location.split(separator: " ")
+        return components.last.map { String($0) }
     }
     
     private func setupLabel(_ label: UILabel, text: String, isSelected: Bool) {
@@ -61,18 +73,18 @@ class DropdownView: UIView {
             setupLabel(label, text: label.text ?? "", isSelected: isSelected)
         }
     }
-
-    func updateLocations(locations: [String]) {
-        self.locations = locations
-        updateSelection(selectedLocation: locations.first ?? "공릉동")
-    }
     
     @objc private func handleLabelTap(_ sender: UITapGestureRecognizer) {
         guard let tappedLabel = sender.view as? UILabel,
               let index = labels.firstIndex(of: tappedLabel),
               index < locations.count else { return }
         let selected = locations[index]
+        
+        if selected == "동네 설정" { return }
+
+        selectedLocation = selected
         delegate?.didSelectLocation(selected)
+        updateSelection(selectedLocation: selected)
     }
 }
 

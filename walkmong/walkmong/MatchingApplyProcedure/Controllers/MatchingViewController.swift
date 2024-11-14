@@ -228,7 +228,6 @@ extension MatchingViewController {
                     let locations = addressResponse.data.map { $0.dongAddress }
                     DispatchQueue.main.async {
                         self?.dropdownView?.updateLocations(locations: locations)
-                        print("API 호출 성공: \(locations)")
                     }
                 } catch {
                     print("디코딩 실패: \(error)")
