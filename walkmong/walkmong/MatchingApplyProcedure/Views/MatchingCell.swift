@@ -9,7 +9,7 @@ class MatchingCell: UIView {
     
     // MARK: - Properties
     weak var delegate: MatchingCellDelegate?
-    private var matchingData: MatchingData?
+    internal var matchingData: MatchingData?
     
     // Main Container View
     private let mainView: UIView = {
@@ -22,7 +22,7 @@ class MatchingCell: UIView {
     
     // Top Section (Date & Matching Status)
     private let topFrame = UIView()
-    private let dateLabel: UILabel = {
+    internal let dateLabel: UILabel = { // 접근 제어자 변경
         let label = UILabel()
         label.textColor = UIColor.mainBlack
         label.font = UIFont(name: "Pretendard-Bold", size: 20)
@@ -84,6 +84,7 @@ class MatchingCell: UIView {
     private let locationTimeFrame = UIView()
     private let locationIcon: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(named: "locationIcon") // 위치 아이콘 이미지 설정
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -208,7 +209,7 @@ class MatchingCell: UIView {
         genderIcon.snp.makeConstraints { make in
             make.leading.equalTo(nameLabel.snp.trailing).offset(5)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(16)
+            make.height.equalTo(16)
         }
         
         sizeLabel.snp.makeConstraints { make in
@@ -275,39 +276,26 @@ class MatchingCell: UIView {
         matchingData = data
         dateLabel.text = "\(data.date) \(data.startTime) ~ \(data.endTime)"
         matchingStatusLabel.text = data.matchingStatus
-        
-        // dogProfile을 안전하게 처리하고 기본 이미지 설정
-        if let profileImageName = data.dogProfile {
-            puppyImageView.image = UIImage(named: profileImageName)
-        } else {
-            puppyImageView.image = UIImage(named: "puppyImage01") // 기본 이미지 이름
-        }
-        
+        puppyImageView.image = UIImage(named: data.safeDogProfile)
         nameLabel.text = data.dogName
-        sizeLabel.text = data.dogSize
+        sizeLabel.text = data.translatedDogSize // 번역된 사이즈 사용
         postContentLabel.text = data.content
         locationLabel.text = data.dongAddress
         distanceLabel.text = data.formattedDistance
-        timeLabel.text = data.createdAt
-        
-        // Matching Status에 따른 UI 변경
-        matchingStatusLabel.text = data.matchingStatus
-        if data.matchingStatus == "매칭확정" {
-            matchingStatusView.backgroundColor = .gray100
-            matchingStatusLabel.textColor = .gray400
-            matchingStatusView.snp.remakeConstraints { make in
-                make.trailing.centerY.equalToSuperview()
-                make.width.equalTo(73)
-                make.height.equalTo(29)
-            }
-        } else { // 기본 "매칭중" 상태
-            matchingStatusView.backgroundColor = .mainGreen
-            matchingStatusLabel.textColor = .white
-            matchingStatusView.snp.remakeConstraints { make in
-                make.trailing.centerY.equalToSuperview()
-                make.width.equalTo(63)
-                make.height.equalTo(29)
-            }
+        timeLabel.text = data.readableCreatedAt
+
+        // Gender 아이콘 설정
+        switch data.dogGender {
+        case "FEMALE":
+            genderIcon.image = UIImage(named: "femaleIcon")
+        case "MALE":
+            genderIcon.image = UIImage(named: "maleIcon")
+        default:
+            genderIcon.image = nil
         }
+    }
+    
+    func configureDateLabel(selectedDate: String, startTime: String, endTime: String) {
+        dateLabel.text = "\(selectedDate) \(startTime) ~ \(endTime)"
     }
 }

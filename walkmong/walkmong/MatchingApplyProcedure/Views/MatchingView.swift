@@ -28,7 +28,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         lineHeight: 1.17
     )
     private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
-    private let calendarView = CalendarView()
+    private(set) var calendarView = CalendarView() // 접근 제어자 수정
     let filterSelectView = FilterSelectView()
     private(set) var matchingCells: [MatchingCell] = []
     private let floatingButton = MatchingView.createRoundedView(color: UIColor.mainBlue, cornerRadius: 32)
@@ -275,5 +275,10 @@ private extension MatchingView {
 extension MatchingView {
     func updateLocationLabel(with location: String) {
         locationLabel.text = location
+    }
+}
+extension MatchingView {
+    var selectedDate: String? {
+        return calendarView.selectedDate // CalendarView에서 선택된 날짜 반환
     }
 }

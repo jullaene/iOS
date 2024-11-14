@@ -33,6 +33,12 @@ class CalendarView: UIView {
     private let calendar = Calendar.current
     private let today = Date()
     
+    var selectedDate: String? {
+        guard let indexPath = selectedIndexPath else { return nil }
+        let day = days[indexPath.item]
+        return "\(day.date). \(day.dayOfWeek)"
+    }
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -128,5 +134,15 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
         if let currentCell = dayCollectionView.cellForItem(at: current) as? DayCell {
             currentCell.configureSelectedStyle()
         }
+    }
+}
+
+extension CalendarView {
+    func getSelectedDate() -> String? {
+        guard let indexPath = selectedIndexPath else { return nil }
+        let day = days[indexPath.item]
+        
+        // 날짜와 요일을 포맷팅 (예: 11. 03 (일))
+        return "\(day.date). \(day.dayOfWeek)"
     }
 }

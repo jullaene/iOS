@@ -17,7 +17,7 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
     private var dimView: UIView? {
         return (self.tabBarController as? MainTabBarController)?.dimView
     }
-    private var matchingData: [MatchingData] = []
+    fileprivate var matchingData: [MatchingData] = []
     private var isNavigationBarHidden: Bool = true
     private let boardProvider = MoyaProvider<BoardAPI>()
 
@@ -72,6 +72,7 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
 
     // MARK: - Fetch Data
     private func fetchMatchingData() {
+        
         boardProvider.request(.getBoardList(date: nil, addressId: nil, distance: nil, dogSize: nil, matchingYn: nil)) { [weak self] result in
             switch result {
             case .success(let response):
@@ -117,12 +118,22 @@ class MatchingViewController: UIViewController, MatchingFilterViewDelegate, Matc
     }
 
     private func updateMatchingView() {
+        guard let selectedDate = matchingView.selectedDate else { return }
+        
         matchingView.updateMatchingCells(with: matchingData)
+        
         for cell in matchingView.matchingCells {
             cell.delegate = self
+            if let data = cell.matchingData {
+                cell.configureDateLabel(
+                    selectedDate: selectedDate,
+                    startTime: data.startTime,
+                    endTime: data.endTime
+                )
+            }
         }
     }
-
+    
     // MARK: - DropdownView Logic
     @objc private func showDropdownView() {
         guard let dropdownView = dropdownView else { return }
