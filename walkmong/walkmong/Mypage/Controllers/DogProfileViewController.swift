@@ -36,6 +36,7 @@ class DogProfileViewController: UIViewController {
                                        friendly: dogProfile.friendly,
                                        barking: dogProfile.barking
                                    )
+                    self?.dogProfileView.configureVaccinationStatus(rabiesYn: dogProfile.rabiesYn)
                 }
             case .failure(let error):
                 print("Error: \(error.localizedDescription)")

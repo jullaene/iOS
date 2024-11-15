@@ -234,6 +234,10 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         socialInfoFrame.configure(bite: bite, friendly: friendly, barking: barking)
     }
     
+    func configureVaccinationStatus(rabiesYn: String) {
+        vaccinationFrame.updateVaccinationStatus(rabiesYn: rabiesYn)
+    }
+    
     private func scrollToImage(at index: Int) {
         guard (0..<imageViews.count).contains(index) else { return }
         let targetOffsetX = CGFloat(index) * (Constants.imageWidth + Constants.imageSpacing) - imageScrollView.contentInset.left
