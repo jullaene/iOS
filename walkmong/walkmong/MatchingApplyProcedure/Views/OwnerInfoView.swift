@@ -149,11 +149,15 @@ class OwnerInfoView: UIView {
         dongAddress: String,
         distance: Double
     ) {
-        // 프로필 이미지
-        if let profileUrl = URL(string: ownerProfile ?? "") {
-            profileImageView.kf.setImage(with: profileUrl, placeholder: UIImage(named: "profileExample.png"))
+        // 프로필 이미지 처리
+        if let profileUrlString = ownerProfile?.trimmingCharacters(in: .whitespacesAndNewlines),
+           let profileUrl = URL(string: profileUrlString),
+           profileUrl.scheme == "http" || profileUrl.scheme == "https" {
+            // 유효한 URL인 경우 Kingfisher로 로드
+            profileImageView.kf.setImage(with: profileUrl, placeholder: UIImage(named: "profileExample"))
         } else {
-            profileImageView.image = UIImage(named: "profileExample.png")
+            // URL이 유효하지 않은 경우 기본 이미지 설정
+            profileImageView.image = UIImage(named: "profileExample")
         }
         
         // 이름
