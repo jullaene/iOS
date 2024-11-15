@@ -31,6 +31,11 @@ class DogProfileViewController: UIViewController {
                         weight: dogProfile.weight,
                         neuteringYn: dogProfile.neuteringYn
                     )
+                    self?.dogProfileView.configureSocialInfo(
+                                       bite: dogProfile.bite,
+                                       friendly: dogProfile.friendly,
+                                       barking: dogProfile.barking
+                                   )
                 }
             case .failure(let error):
                 print("Error: \(error.localizedDescription)")
