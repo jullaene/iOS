@@ -21,10 +21,7 @@ class MatchingApplyMapViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: animated)
         addSubViews()
         setConstraints()
-        addCustomNavigationBar(titleText: "만남장소", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
-        let coverView = UIView(frame: CGRect(origin: .zero, size: CGSize(width: self.view.bounds.width, height: 52)))
-        coverView.backgroundColor = .white
-        self.view.addSubview(coverView)
+        setUI()
     }
     
     override func viewDidLoad() {
@@ -39,6 +36,12 @@ class MatchingApplyMapViewController: UIViewController {
         dismissKeyboardOnTap()
         setupKeyboardEvent()
         setMapView()
+    }
+    private func setUI(){
+        addCustomNavigationBar(titleText: "만남장소", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
+        let coverView = UIView(frame: CGRect(origin: .zero, size: CGSize(width: self.view.bounds.width, height: 52)))
+        coverView.backgroundColor = .white
+        self.view.addSubview(coverView)
     }
     
     private func addSubViews(){

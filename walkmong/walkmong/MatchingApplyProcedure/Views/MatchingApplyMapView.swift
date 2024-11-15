@@ -16,6 +16,7 @@ protocol MatchingApplyMapViewDelegate: AnyObject {
 
 class MatchingApplyMapView: UIView {
     weak var delegate: MatchingApplyMapViewDelegate?
+    var initialPosition: NMGLatLng?
     
     private let nextButton: UIButton = {
         let button = UIButton()
@@ -43,7 +44,6 @@ class MatchingApplyMapView: UIView {
         super.init(frame: frame)
         addSubViews()
         setConstraints()
-        setupMap()
         nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
     }
     
@@ -66,8 +66,7 @@ class MatchingApplyMapView: UIView {
         }
     }
     
-    private func setupMap() {
-        let initialPosition = NMGLatLng(lat: 37.479132, lng: 127.011770)
+    func setupMap(initialPosition: NMGLatLng) {
         let cameraUpdate = NMFCameraUpdate(scrollTo: initialPosition)
         mapView.mapView.moveCamera(cameraUpdate)
         mapView.showScaleBar = false
@@ -79,7 +78,6 @@ class MatchingApplyMapView: UIView {
             self.centerMarker.showInfoWindow()
             return true // Indicates that the event was handled
         }
-        
         mapView.mapView.addCameraDelegate(delegate: self)
     }
     

@@ -7,11 +7,10 @@
 
 import Foundation
 
-func callRequest(query: String, completion: @escaping (Data) -> Void) {
+func callRequest(query: String) async throws -> Data {
     
     guard var urlComponents = URLComponents(string: "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode") else {
-        print("URL Components Error")
-        return
+        throw URLError(.badURL)
     }
     
     let queryItemArray = [
@@ -20,26 +19,24 @@ func callRequest(query: String, completion: @escaping (Data) -> Void) {
     urlComponents.queryItems = queryItemArray
     
     guard let url = urlComponents.url else {
-        print("URL Error")
-        return
+        throw URLError(.badURL)
     }
     
     var urlRequest = URLRequest(url: url)
     
-    guard let id = SecretManager.shared.getValue(forKey: "NAVER_CLI_ID"), let key = SecretManager.shared.getValue(forKey: "NAVER_KEY") else {
-        print("KEY Error")
-        return
+    guard let id = SecretManager.shared.getValue(forKey: "NAVER_CLI_ID"),
+          let key = SecretManager.shared.getValue(forKey: "NAVER_KEY") else {
+        throw NSError(domain: "GeocodingAPIManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Missing API keys"])
     }
         
-    urlRequest.addValue("클라이언트Id", forHTTPHeaderField: "X-NCP-APIGW-API-KEY-ID")
-    urlRequest.addValue("secret 키", forHTTPHeaderField: "X-NCP-APIGW-API-KEY")
+    urlRequest.addValue(id, forHTTPHeaderField: "X-NCP-APIGW-API-KEY-ID")
+    urlRequest.addValue(key, forHTTPHeaderField: "X-NCP-APIGW-API-KEY")
     
-    URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-        
-        guard let data = data, let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            print("status code error")
-            return
-        }
-        completion(data)
-    }.resume()
+    let (data, response) = try await URLSession.shared.data(for: urlRequest)
+    
+    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        throw NSError(domain: "GeocodingAPIManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response or status code"])
+    }
+    
+    return data
 }
