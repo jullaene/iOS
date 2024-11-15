@@ -1,5 +1,5 @@
 //
-//  DogProfileResponse.swift
+//  DogProfile.swift
 //  walkmong
 //
 //  Created by 신호연 on 11/15/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DogProfileResponse: Decodable {
+struct DogProfile: Decodable {
     let dogId: Int
     let dogName: String
     let dogProfile: String
