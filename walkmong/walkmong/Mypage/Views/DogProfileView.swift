@@ -176,6 +176,27 @@ class DogProfileView: UIView, UIScrollViewDelegate {
             $0.width.equalTo((Constants.imageWidth + Constants.imageSpacing) * CGFloat(imageViews.count) - Constants.imageSpacing)
         }
 
+        // 이미지가 하나일 경우
+        if imageNames.count == 1 {
+            let horizontalInset = (UIScreen.main.bounds.width - Constants.imageWidth) / 2
+            imageScrollView.contentInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
+            imageScrollView.isScrollEnabled = false
+
+            // 레이아웃 완료 후 contentOffset 고정
+            DispatchQueue.main.async {
+                self.imageScrollView.setContentOffset(CGPoint(x: -horizontalInset, y: 0), animated: false)
+            }
+        } else {
+            // 여러 개의 이미지일 경우
+            imageScrollView.contentInset = UIEdgeInsets(
+                top: 0,
+                left: (UIScreen.main.bounds.width - Constants.imageWidth) / 2,
+                bottom: 0,
+                right: (UIScreen.main.bounds.width - Constants.imageWidth) / 2
+            )
+            imageScrollView.isScrollEnabled = true
+        }
+
         pageControl.numberOfPages = imageNames.count
         scrollToImage(at: 0)
     }
