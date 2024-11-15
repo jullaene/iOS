@@ -8,5 +8,5 @@
 import Foundation
 
 struct MatchingApplyPlaceSearchModel: Codable{
-    var result: Geocoding
+    var result: [GeoAddress]?
 }

@@ -11,7 +11,7 @@ struct Geocoding: Codable {
     let status: String
     let meta: Meta
     let addresses: [GeoAddress]
-    let errorMessage: String
+    let errorMessage: String?
 }
  
 struct GeoAddress: Codable {

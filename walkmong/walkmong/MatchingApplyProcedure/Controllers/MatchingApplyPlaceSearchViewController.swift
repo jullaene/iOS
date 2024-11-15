@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import NMapsMap
 
 final class MatchingApplyPlaceSearchViewController: UIViewController {
     
     let placeSearchView = walkmong.MatchingApplyPlaceSearchView()
-    var placeSearchResult: [String] = ["검색결과1","검색결과2","검색결과3","검색결과4","검색결과5","검색결과6","검색결과7","검색결과8","검색결과9","검색결과10","검색결과11","검색결과12"]
+    var placeSearchResult: [GeoAddress] = []
+    var model = MatchingApplyPlaceSearchModel()
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.setNavigationBarHidden(true, animated: animated)
@@ -28,7 +30,6 @@ final class MatchingApplyPlaceSearchViewController: UIViewController {
         self.view.backgroundColor = .white
         self.view.addSubview(placeSearchView)
         placeSearchView.delegate = self
-        placeSearchView.placeSearchResults = placeSearchResult
     }
     
     private func setConstraints(){
@@ -39,18 +40,34 @@ final class MatchingApplyPlaceSearchViewController: UIViewController {
         }
     }
     
-    private func placeSearchAPI(_ keyword: String) -> [String]{
-        return []
+    private func updateAddressList(with geocodingData: Geocoding) {
+        self.placeSearchResult.removeAll()
+        self.placeSearchView.placeSearchResults.removeAll()
+        for address in geocodingData.addresses {
+            self.placeSearchResult.append(address)
+            self.placeSearchView.placeSearchResults.append(address.jibunAddress)
+        }
+        self.reloadMatchingApplyPlaceSearchView(self.placeSearchView)
     }
+
 }
 
 extension MatchingApplyPlaceSearchViewController: MatchingApplyPlaceSearchViewDelegate{
+    func reloadMatchingApplyPlaceSearchView(_ view: MatchingApplyPlaceSearchView) {
+        view.reloadData()
+    }
     
     func matchingApplyPlaceSearchView(_ textField: UITextField, willSearchKeywords keyword: String) {
         DispatchQueue.global(qos: .background).async {
-            // 비동기적으로 네트워크 요청을 보냄
-            self.placeSearchResult = self.placeSearchAPI(keyword)
-            // 메인 스레드로 돌아와 UI 업데이트
+            Task {
+                do {
+                    let data = try await callRequest(query: keyword)
+                    let decodedData = try JSONDecoder().decode(Geocoding.self, from: data)
+                    await self.updateAddressList(with: decodedData)
+                } catch {
+                    print("Error: \(error)")
+                }
+            }
             DispatchQueue.main.async {
                 textField.endEditing(true)
                 self.placeSearchView.setNeedsLayout()
@@ -61,7 +78,13 @@ extension MatchingApplyPlaceSearchViewController: MatchingApplyPlaceSearchViewDe
     
     func matchingApplyPlaceSearchView(_ collectionView: UICollectionView, didSelectPlaceSearchResultAt indexPath: IndexPath) {
         // 터치 이벤트 처리
+        let selectedPlace = self.placeSearchResult[indexPath.row]
+        print(selectedPlace.jibunAddress)
         let nextVC = MatchingApplyMapViewController()
+        if let lat = Double(selectedPlace.y), let lng = Double(selectedPlace.x) {
+            print(lat, lng)
+            nextVC.matchingApplyMapView.setupMap(initialPosition: NMGLatLng(lat: lat, lng: lng))
+        }
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
 }

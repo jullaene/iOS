@@ -10,6 +10,7 @@ import UIKit
 protocol MatchingApplyPlaceSearchViewDelegate: AnyObject {
     func matchingApplyPlaceSearchView(_ collectionView: UICollectionView, didSelectPlaceSearchResultAt indexPath: IndexPath)
     func matchingApplyPlaceSearchView(_ textField: UITextField, willSearchKeywords keyword: String)
+    func reloadMatchingApplyPlaceSearchView(_ view: MatchingApplyPlaceSearchView)
 }
 
 class MatchingApplyPlaceSearchView: UIView {
@@ -156,6 +157,9 @@ class MatchingApplyPlaceSearchView: UIView {
                 make.bottom.equalToSuperview()
             }
         }
+    }
+    func reloadData(){
+        self.placeSearchResultCollectionView.reloadData()
     }
     
 }
