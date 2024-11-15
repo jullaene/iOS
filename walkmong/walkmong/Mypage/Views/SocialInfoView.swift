@@ -10,7 +10,7 @@ import SnapKit
 
 class SocialInfoView: UIView {
     // MARK: - Constants
-    private struct Constants {
+    private enum Constants {
         static let frameWidth: CGFloat = 353
         static let spacing: CGFloat = 8
         static let horizontalPadding: CGFloat = 12
@@ -23,7 +23,11 @@ class SocialInfoView: UIView {
     }
 
     // MARK: - UI Components
-    private lazy var headerLabel: UILabel = createHeaderLabel(text: "사회성 및 성향")
+    private lazy var headerLabel: UILabel = createLabel(
+        text: "사회성 및 성향",
+        font: Constants.headerFont,
+        textColor: .black
+    )
     private var frames: [(container: UIView, descriptionLabel: UILabel)] = []
 
     // MARK: - Initializer
@@ -44,14 +48,14 @@ class SocialInfoView: UIView {
         backgroundColor = .clear
         addSubview(headerLabel)
 
-        let titles = ["입질 여부", "친화력", "짖음 여부"]
-        let descriptions = ["우리 애는 진짜 안물어요.", "사람은 좋아하는데 다른 강아지 싫어해요.", "거의 안짖어요."]
-        
-        for (title, description) in zip(titles, descriptions) {
-            let frame = createFrame(title: title, description: description)
-            addSubview(frame.container)
-            frames.append(frame)
-        }
+        let framesData = [
+            ("입질 여부", "우리 애는 진짜 안물어요."),
+            ("친화력", "사람은 좋아하는데 다른 강아지 싫어해요."),
+            ("짖음 여부", "거의 안짖어요.")
+        ]
+
+        frames = framesData.map { createFrame(title: $0.0, description: $0.1) }
+        frames.forEach { addSubview($0.container) }
     }
 
     private func setupLayout() {
@@ -86,12 +90,12 @@ class SocialInfoView: UIView {
         }
     }
 
-    // Helper Methods
-    private func createHeaderLabel(text: String) -> UILabel {
+    // MARK: - Helper Methods
+    private func createLabel(text: String, font: UIFont, textColor: UIColor) -> UILabel {
         let label = UILabel()
         label.text = text
-        label.font = Constants.headerFont
-        label.textColor = .black
+        label.font = font
+        label.textColor = textColor
         return label
     }
 
@@ -100,15 +104,8 @@ class SocialInfoView: UIView {
         container.backgroundColor = .gray100
         container.layer.cornerRadius = 5
 
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.font = Constants.titleFont
-        titleLabel.textColor = .darkGray
-
-        let descriptionLabel = UILabel()
-        descriptionLabel.text = description
-        descriptionLabel.font = Constants.descriptionFont
-        descriptionLabel.textColor = .mainBlue
+        let titleLabel = createLabel(text: title, font: Constants.titleFont, textColor: .darkGray)
+        let descriptionLabel = createLabel(text: description, font: Constants.descriptionFont, textColor: .mainBlue)
         descriptionLabel.numberOfLines = 0
 
         container.addSubview(titleLabel)
