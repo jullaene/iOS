@@ -9,6 +9,7 @@ import UIKit
 
 protocol MatchingApplyDetailSelectViewDelegate: AnyObject {
     func buttonTapped(buttonType: ButtonType, value: Bool)
+    func updatePlaceSelected(_ view: MatchingApplyDetailSelectView,_ model: MatchingApplyMapModel)
 }
 
 enum ButtonType{
@@ -60,7 +61,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector (checkDogInformationNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -71,7 +71,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector (checkDogInformationYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -143,7 +142,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(checkDateNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -154,7 +152,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(checkDateYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -193,7 +190,6 @@ class MatchingApplyDetailSelectView: UIView {
         let button = UIButton()
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 15
-        button.addTarget(self, action: #selector (selectPlaceButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -234,7 +230,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(poopEnvelopeNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -245,7 +240,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(poopEnvelopeYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -264,7 +258,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(mouthCoverNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -275,7 +268,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(mouthCoverYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -294,7 +286,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(leadStringNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -305,7 +296,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(leadStringYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -338,7 +328,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(preMeetingNeededNoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -349,7 +338,6 @@ class MatchingApplyDetailSelectView: UIView {
         button.setTitleColor(.gray500, for: .normal)
         button.backgroundColor = .gray100
         button.layer.cornerRadius = 38/2
-        button.addTarget(self, action: #selector(preMeetingNeededYesButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -360,14 +348,24 @@ class MatchingApplyDetailSelectView: UIView {
         button.titleLabel?.textColor = .white
         button.backgroundColor = .gray300
         button.layer.cornerRadius = 15
-        button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         return button
+    }()
+    
+    private let addressLabel = SmallTitleLabel(text: "선택한 주소")
+    
+    private let placeMemoLabel: MainParagraphLabel = {
+        let label = MainParagraphLabel(text: "메모", textColor: .gray500)
+        label.setLineSpacing(ratio: 1.4)
+        label.addCharacterSpacing()
+        label.numberOfLines = 10
+        return label
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubViews()
         setConstraints()
+        addButtonTargets()
     }
     
     required init?(coder: NSCoder) {
@@ -409,7 +407,8 @@ class MatchingApplyDetailSelectView: UIView {
             selectPreMeetingWarningIcon,
             selectPreMeetingWarningMessageLabel,
             selectPreMeetingNoButton,
-            selectPreMeetingYesButton)
+            selectPreMeetingYesButton,
+            addressLabel)
         
         selectDateBackgroundView.addSubviews(
             calendarIcon,
@@ -421,7 +420,8 @@ class MatchingApplyDetailSelectView: UIView {
         
         selectPlaceButton.addSubviews(
             placeSelectButtonLabel,
-            placeSelectButtonArrowIcon)
+            placeSelectButtonArrowIcon,
+            placeMemoLabel)
     }
     
     private func setConstraints(){
@@ -630,15 +630,22 @@ class MatchingApplyDetailSelectView: UIView {
             make.top.equalTo(calendarStartDateLabel.snp.bottom).offset(4)
         }
         
-        placeSelectButtonLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().inset(16)
-        }
-        
-        placeSelectButtonArrowIcon.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.trailing.equalToSuperview().inset(16)
-            make.height.width.equalTo(16)
+        if placeSelected {
+            addressLabel.snp.remakeConstraints { make in
+                make.top.equalTo(selectPlaceLabel.snp.bottom).offset(48)
+                make.horizontalEdges.equalToSuperview().inset(20)
+            }
+            
+        }else {
+            placeSelectButtonLabel.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.leading.equalToSuperview().inset(16)
+            }
+            placeSelectButtonArrowIcon.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.trailing.equalToSuperview().inset(16)
+                make.height.width.equalTo(16)
+            }
         }
         
         nextButton.snp.makeConstraints { make in
@@ -647,6 +654,23 @@ class MatchingApplyDetailSelectView: UIView {
             make.bottom.equalToSuperview().inset(58)
         }
     }
+    private func addButtonTargets() {
+        selectPlaceButton.addTarget(self, action: #selector (selectPlaceButtonTapped), for: .touchUpInside)
+        checkDogInformationNoButton.addTarget(self, action: #selector(checkDogInformationNoButtonTapped), for: .touchUpInside)
+        checkDogInformationYesButton.addTarget(self, action: #selector(checkDogInformationYesButtonTapped), for: .touchUpInside)
+        checkDateNoButton.addTarget(self, action: #selector(checkDateNoButtonTapped), for: .touchUpInside)
+        checkDateYesButton.addTarget(self, action: #selector(checkDateYesButtonTapped), for: .touchUpInside)
+        poopEnvelopeNoButton.addTarget(self, action: #selector(poopEnvelopeNoButtonTapped), for: .touchUpInside)
+        poopEnvelopeYesButton.addTarget(self, action: #selector(poopEnvelopeYesButtonTapped), for: .touchUpInside)
+        mouthCoverNoButton.addTarget(self, action: #selector(mouthCoverNoButtonTapped), for: .touchUpInside)
+        mouthCoverYesButton.addTarget(self, action: #selector(mouthCoverYesButtonTapped), for: .touchUpInside)
+        leadStringNoButton.addTarget(self, action: #selector(leadStringNoButtonTapped), for: .touchUpInside)
+        leadStringYesButton.addTarget(self, action: #selector(leadStringYesButtonTapped), for: .touchUpInside)
+        selectPreMeetingNoButton.addTarget(self, action: #selector(preMeetingNeededNoButtonTapped), for: .touchUpInside)
+        selectPreMeetingYesButton.addTarget(self, action: #selector(preMeetingNeededYesButtonTapped), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+    }
+
     
     @objc func checkDogInformationNoButtonTapped() {
         delegate?.buttonTapped(buttonType: .dogInformationChecked, value: false)
@@ -704,7 +728,7 @@ class MatchingApplyDetailSelectView: UIView {
         delegate?.buttonTapped(buttonType: .next, value: true)
     }
     
-    func updateSelectButtons(buttonType: ButtonType, value: Bool) {
+    func updateSelectButtons(buttonType: ButtonType, value: Bool,_ data: MatchingApplyMapModel?) {
         switch buttonType {
         case .dogInformationChecked:
             updateButtonColors(selectedButton: value ? checkDogInformationYesButton : checkDogInformationNoButton,
@@ -715,8 +739,8 @@ class MatchingApplyDetailSelectView: UIView {
                                unselectedButton: value ? checkDateNoButton : checkDateYesButton)
             
         case .selectPlace:
-            if value {
-                updatePlace()
+            if let data = data {
+                updatePlace(data: data)
             }
             
         case .envelopeNeeded:
@@ -747,7 +771,22 @@ class MatchingApplyDetailSelectView: UIView {
         unselectedButton.setTitleColor(.gray500, for: .normal)
     }
     
-    private func updatePlace(){
-        // UI 변경
+    private func updatePlace(data: MatchingApplyMapModel){
+        addressLabel.text = data.roadAddress
+        placeMemoLabel.text = data.memo
+        addressLabel.snp.remakeConstraints { make in
+            make.top.equalTo(selectPlaceLabel.snp.bottom).offset(48)
+            make.horizontalEdges.equalToSuperview().inset(20)
+        }
+        selectPlaceButton.snp.remakeConstraints { make in
+            make.top.equalTo(addressLabel.snp.bottom).offset(12)
+            make.horizontalEdges.equalToSuperview().inset(20)
+        }
+        placeMemoLabel.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(12)
+            make.top.bottom.equalToSuperview().inset(12)
+        }
+        placeSelectButtonLabel.removeFromSuperview()
+        placeSelectButtonArrowIcon.removeFromSuperview()
     }
 }

@@ -9,8 +9,9 @@ import UIKit
 import NMapsMap
 import Alamofire
 
+
 class MatchingApplyMapViewController: UIViewController {
-    
+        
     let matchingApplyMapView = MatchingApplyMapView()
     let modalView = MatchingApplyMapNotifyModalView()
     let addressModalView = MatchingApplyMapAddressModalView()
@@ -91,10 +92,12 @@ extension MatchingApplyMapViewController: MatchingApplyMapViewDelegate{
                         self.model.buildingName = address.land.addition0.value
                         self.model.latitude = target.lat
                         self.model.longitude = target.lng
+                        self.model.didSelectLocation = true
+                    }else {
+                        self.model.didSelectLocation = false
                     }
                 }
                 DispatchQueue.main.async {
-                    self.model.didSelectLocation = true
                     self.addressModalView.configure(with: self.model)
                 }
             } catch {
@@ -125,8 +128,7 @@ extension MatchingApplyMapViewController: MatchingApplyMapAddressModalViewDelega
             let controllers = self.navigationController?.viewControllers
             for vc in controllers! {
                 if let matchingVC = vc as? MatchingApplyDetailSelectViewController {
-                    matchingVC.detailSelectModel.placeSelected = (self.model.roadAddress ?? "") + (self.model.buildingName ?? "")
-                    matchingVC.detailSelectModel.placeMemo = self.model.memo
+                    matchingVC.detailSelectView.delegate?.updatePlaceSelected(matchingVC.detailSelectView, self.model)
                     self.navigationController?.popToViewController(matchingVC, animated: true)
                     break
                 }

@@ -96,7 +96,6 @@ class MatchingApplyMapAddressModalView: UIView {
         button.titleLabel?.textColor = .white
         button.backgroundColor = .gray300
         button.layer.cornerRadius = 15
-        button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -105,6 +104,7 @@ class MatchingApplyMapAddressModalView: UIView {
         addSubviews()
         setConstraints()
         memoTextField.delegate = self
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {

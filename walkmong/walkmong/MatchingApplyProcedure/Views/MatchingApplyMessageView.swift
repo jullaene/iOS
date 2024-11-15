@@ -59,7 +59,6 @@ class MatchingApplyMessageView: UIView {
         button.titleLabel?.textColor = .white
         button.backgroundColor = .gray300
         button.layer.cornerRadius = 15
-        button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         return button
     }()
 
@@ -69,6 +68,7 @@ class MatchingApplyMessageView: UIView {
         addSubviews()
         setConstraints()
         messageTextView.delegate = self
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
