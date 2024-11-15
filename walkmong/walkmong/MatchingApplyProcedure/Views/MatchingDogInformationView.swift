@@ -118,6 +118,10 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         // Image ScrollView와 PageControl 설정
         setupImageScrollView()
         setupPageControl()
+        
+        DispatchQueue.main.async {
+            self.layoutIfNeeded()
+        }
     }
 
     private func setupImageScrollView() {
@@ -125,15 +129,17 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         imageScrollView.isPagingEnabled = true
         imageScrollView.showsHorizontalScrollIndicator = false
         imageScrollView.delegate = self
+
+        // 스크롤뷰의 높이 비율 설정
         imageScrollView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(imageScrollView.snp.width).multipliedBy(297.66 / 393.0)
+            make.height.equalTo(UIScreen.main.bounds.width * (297.66 / 393.0)) // 비율 적용
         }
 
         imageScrollView.addSubview(imageContentView)
         imageContentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.equalToSuperview()
+            make.height.equalTo(imageScrollView.snp.height)
         }
     }
 
@@ -290,13 +296,15 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             imageContentView.addSubview(view)
             view.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
-                make.width.equalTo(UIScreen.main.bounds.width)
+                make.width.equalTo(UIScreen.main.bounds.width) // 디바이스 너비와 일치
                 make.leading.equalToSuperview().offset(CGFloat(index) * UIScreen.main.bounds.width)
             }
         }
 
         // 콘텐츠 뷰의 너비 업데이트
         imageContentView.snp.remakeConstraints { make in
+            make.edges.equalToSuperview()
+            make.height.equalTo(imageScrollView.snp.height)
             make.width.equalTo(UIScreen.main.bounds.width * CGFloat(imageUrls.count))
         }
 

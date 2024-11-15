@@ -42,7 +42,6 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             DispatchQueue.main.async {
                 switch result {
                 case .success(let detail):
-                    print("Fetched BoardDetail: \(detail)") // 데이터 전체 확인
 
                     if detail.startTime.isEmpty || detail.endTime.isEmpty {
                         print("Warning: Start or End Time is missing!")
