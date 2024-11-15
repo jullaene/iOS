@@ -58,18 +58,10 @@ class BasicInfoView: UIView {
         addSubview(container)
 
         // Info Labels
-        let infos = [
-            ("이름", "봄별이"),
-            ("성별", "여"),
-            ("나이", "4살"),
-            ("견종", "말티즈"),
-            ("몸무게", "4kg"),
-            ("중성화", "O")
-        ]
-
-        infos.forEach { info in
-            let titleLabel = createInfoTitleLabel(text: info.0)
-            let contentLabel = createInfoContentLabel(text: info.1)
+        let titles = ["이름", "성별", "나이", "견종", "몸무게", "중성화"]
+        titles.forEach { title in
+            let titleLabel = createInfoTitleLabel(text: title)
+            let contentLabel = createInfoContentLabel(text: "")
             container.addSubview(titleLabel)
             container.addSubview(contentLabel)
             infoLabels.append((title: titleLabel, content: contentLabel))
@@ -136,5 +128,22 @@ class BasicInfoView: UIView {
         label.font = Fonts.infoContent
         label.textAlignment = .left
         return label
+    }
+
+    // MARK: - Public Methods
+    func configure(
+        with dogName: String,
+        dogGender: String,
+        dogAge: String,
+        breed: String,
+        weight: String,
+        neuteringYn: String
+    ) {
+        let contentData = [dogName, dogGender, dogAge, breed, weight, neuteringYn]
+
+        for (index, content) in contentData.enumerated() {
+            guard index < infoLabels.count else { continue }
+            infoLabels[index].content.text = content
+        }
     }
 }

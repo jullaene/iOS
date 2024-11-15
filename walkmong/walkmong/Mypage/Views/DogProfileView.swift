@@ -200,6 +200,35 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         pageControl.numberOfPages = imageNames.count
         scrollToImage(at: 0)
     }
+    
+    func configureBasicInfo(
+            dogName: String,
+            dogGender: String,
+            dogAge: Int,
+            breed: String,
+            weight: Double,
+            neuteringYn: String
+        ) {
+            // 몸무게 처리 로직
+            let weightString: String
+            if weight < 1 {
+                weightString = "\(Int(weight * 1000))g" // g 단위로 변환
+            } else if weight == floor(weight) {
+                weightString = "\(Int(weight))kg" // 소수점 없는 kg 단위
+            } else {
+                weightString = "\(weight)kg" // 소수점 포함 kg 단위
+            }
+
+            // 내부적으로 basicInfoFrame에 데이터 전달
+            basicInfoFrame.configure(
+                with: dogName,
+                dogGender: dogGender == "FEMALE" ? "여" : "남",
+                dogAge: "\(dogAge)살",
+                breed: breed,
+                weight: weightString,
+                neuteringYn: neuteringYn == "Y" ? "O" : "X"
+            )
+        }
 
     private func scrollToImage(at index: Int) {
         guard (0..<imageViews.count).contains(index) else { return }
