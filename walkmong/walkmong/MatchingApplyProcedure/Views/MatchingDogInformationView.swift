@@ -296,7 +296,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         }
 
         // 콘텐츠 뷰의 너비 업데이트
-        imageContentView.snp.makeConstraints { make in
+        imageContentView.snp.remakeConstraints { make in
             make.width.equalTo(UIScreen.main.bounds.width * CGFloat(imageUrls.count))
         }
 
