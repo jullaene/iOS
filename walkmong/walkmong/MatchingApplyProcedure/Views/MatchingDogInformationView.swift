@@ -72,6 +72,26 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         )
     }
     
+    func setOwnerInfoDetails(
+        ownerProfile: String?,
+        ownerName: String,
+        ownerAge: Int,
+        ownerGender: String,
+        ownerRate: Double,
+        dongAddress: String,
+        distance: Double
+    ) {
+        ownerInfoFrame.updateOwnerInfo(
+            ownerProfile: ownerProfile,
+            ownerName: ownerName,
+            ownerAge: ownerAge,
+            ownerGender: ownerGender,
+            ownerRate: ownerRate,
+            dongAddress: dongAddress,
+            distance: distance
+        )
+    }
+    
     @objc private func applyWalkButtonTapped() {
         delegate?.applyWalkButtonTapped()
     }

@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import Kingfisher
 
 class OwnerInfoView: UIView {
     
@@ -15,13 +16,13 @@ class OwnerInfoView: UIView {
     )
     
     private let nameLabel = OwnerInfoView.createLabel(
-        text: "김영희",
+        text: "",
         textColor: .gray600,
         font: UIFont(name: "Pretendard-SemiBold", size: 20)
     )
     
     private let ageLabel = OwnerInfoView.createLabel(
-        text: "30대 초반",
+        text: "",
         textColor: .gray600,
         font: UIFont(name: "Pretendard-Regular", size: 14)
     )
@@ -33,7 +34,7 @@ class OwnerInfoView: UIView {
     )
     
     private let genderLabel = OwnerInfoView.createLabel(
-        text: "여성",
+        text: "",
         textColor: .gray600,
         font: UIFont(name: "Pretendard-Regular", size: 14)
     )
@@ -43,7 +44,7 @@ class OwnerInfoView: UIView {
     )
     
     private let ratingLabel = OwnerInfoView.createLabel(
-        text: "4.5",
+        text: "",
         textColor: .mainBlue,
         font: UIFont(name: "Pretendard-SemiBold", size: 14)
     )
@@ -53,7 +54,7 @@ class OwnerInfoView: UIView {
     )
     
     private let locationLabel = OwnerInfoView.createLabel(
-        text: "노원구 공릉동 1km",
+        text: "",
         textColor: .mainBlue,
         font: UIFont(name: "Pretendard-SemiBold", size: 14)
     )
@@ -74,13 +75,11 @@ class OwnerInfoView: UIView {
         backgroundColor = .gray100
         layer.cornerRadius = 20
         
-        // Add subviews
         let subviews = [
             titleLabel, profileImageView, nameLabel, ageLabel, separatorLabel,
             genderLabel, starIcon, ratingLabel, locationIcon, locationLabel
         ]
         subviews.forEach { addSubview($0) }
-        
         setupConstraints()
     }
     
@@ -140,6 +139,56 @@ class OwnerInfoView: UIView {
         }
     }
     
+    // MARK: - Public Method
+    func updateOwnerInfo(
+        ownerProfile: String?,
+        ownerName: String,
+        ownerAge: Int,
+        ownerGender: String,
+        ownerRate: Double,
+        dongAddress: String,
+        distance: Double
+    ) {
+        // 프로필 이미지
+        if let profileUrl = URL(string: ownerProfile ?? "") {
+            profileImageView.kf.setImage(with: profileUrl, placeholder: UIImage(named: "profileExample.png"))
+        } else {
+            profileImageView.image = UIImage(named: "profileExample.png")
+        }
+        
+        // 이름
+        nameLabel.text = ownerName
+        
+        // 나이
+        let ageGroup = (ownerAge / 10) * 10
+        let ageCategory: String
+        switch ownerAge % 10 {
+        case 0...2:
+            ageCategory = "초반"
+        case 3...6:
+            ageCategory = "중반"
+        case 7...9:
+            ageCategory = "후반"
+        default:
+            ageCategory = ""
+        }
+        ageLabel.text = "\(ageGroup)대 \(ageCategory)"
+        
+        // 성별
+        genderLabel.text = ownerGender == "FEMALE" ? "여성" : "남성"
+        
+        // 평점
+        ratingLabel.text = String(format: "%.1f", ownerRate)
+        
+        // 위치
+        if distance >= 1 {
+            locationLabel.text = String(format: "%.1fkm", distance).replacingOccurrences(of: ".0km", with: "km")
+        } else {
+            locationLabel.text = "\(Int(distance * 1000))m"
+        }
+        locationLabel.text = "\(dongAddress) \(locationLabel.text ?? "")"
+    }
+    
     // MARK: - Helper Methods
     private static func createLabel(text: String, textColor: UIColor, font: UIFont?) -> UILabel {
         let label = UILabel()
@@ -162,4 +211,4 @@ class OwnerInfoView: UIView {
         imageView.contentMode = .scaleAspectFit
         return imageView
     }
-} 
+}

@@ -69,6 +69,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
 
     private func updateUI(with detail: BoardDetail) {
         dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
+        
         dogInfoView.setWalkInfoDelegate(
             date: detail.date,
             startTime: detail.startTime,
@@ -82,6 +83,16 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             walkNote: detail.walkNote,
             walkRequest: detail.walkRequest,
             additionalRequest: detail.additionalRequest
+        )
+        
+        dogInfoView.setOwnerInfoDetails(
+            ownerProfile: detail.ownerProfile,
+            ownerName: detail.ownerName,
+            ownerAge: detail.ownerAge,
+            ownerGender: detail.ownerGender,
+            ownerRate: detail.ownerRate,
+            dongAddress: detail.dongAddress,
+            distance: detail.distance
         )
     }
     
