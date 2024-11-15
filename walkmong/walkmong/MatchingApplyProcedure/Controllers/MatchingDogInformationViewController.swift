@@ -52,7 +52,6 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
                 self?.isLoading = false
                 switch result {
                 case .success(let detail):
-                    print("Successfully fetched details for boardId: \(boardId)")
                     self?.boardDetail = detail
                     self?.updateUI(with: detail)
                 case .failure(let error):
@@ -63,9 +62,20 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     }
 
     private func updateUI(with detail: BoardDetail) {
-
         dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
 
+        // 공개 메소드를 통해 profileFrame 업데이트
+        dogInfoView.getProfileFrame().updateProfileView(
+            dogName: detail.dogName,
+            dogSize: detail.dogSize,
+            breed: detail.breed,
+            weight: detail.weight,
+            dogAge: detail.dogAge,
+            dongAddress: detail.dongAddress,
+            distance: detail.distance,
+            dogGender: detail.dogGender
+        )
+        
         dogInfoView.setWalkInfoDelegate(
             date: detail.date,
             startTime: detail.startTime,
@@ -74,14 +84,12 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             suppliesProvidedYn: detail.suppliesProvidedYn,
             preMeetAvailableYn: detail.preMeetAvailableYn
         )
-        print("Configured walk info delegate")
 
         dogInfoView.setRelatedInfoDetails(
             walkNote: detail.walkNote,
             walkRequest: detail.walkRequest,
             additionalRequest: detail.additionalRequest
         )
-        print("Configured related info details")
 
         dogInfoView.setOwnerInfoDetails(
             ownerProfile: detail.ownerProfile ?? "defaultProfileImage",
@@ -92,7 +100,6 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             dongAddress: detail.dongAddress,
             distance: detail.distance
         )
-        print("Configured owner info details")
     }
     
     // MARK: - UI Setup

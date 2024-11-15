@@ -93,6 +93,10 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         )
     }
     
+    func getProfileFrame() -> ProfileView {
+        return profileFrame
+    }
+    
     @objc private func applyWalkButtonTapped() {
         delegate?.applyWalkButtonTapped()
     }
