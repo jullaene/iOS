@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import Kingfisher
 
 protocol MatchingDogInformationViewDelegate: AnyObject {
     func applyWalkButtonTapped()
@@ -16,7 +17,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     private let imageScrollView = UIScrollView()
     private let imageContentView = UIView()
     private let pageControl = UIPageControl()
-    private var imageViews: [UIImageView] = []
+    private var imageViews: [UIView] = []
 
     private let profileFrame = ProfileView()
     private let walkInfoFrame = WalkInfoView()
@@ -279,51 +280,65 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         return view
     }
 
-    func configureImages(with imageNames: [String]) {
+    func configureImages(with imageUrls: [String?]) {
+        // 기존 이미지 제거
         imageViews.forEach { $0.removeFromSuperview() }
-        imageViews = imageNames.map { createImageView(named: $0) }
-        
-        for (index, imageView) in imageViews.enumerated() {
-            imageContentView.addSubview(imageView)
-            imageView.snp.makeConstraints { make in
+        imageViews = imageUrls.map { createImageView(named: $0) }
+
+        // 이미지 뷰 추가
+        for (index, view) in imageViews.enumerated() {
+            imageContentView.addSubview(view)
+            view.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
                 make.width.equalTo(UIScreen.main.bounds.width)
                 make.leading.equalToSuperview().offset(CGFloat(index) * UIScreen.main.bounds.width)
             }
         }
-        
+
+        // 콘텐츠 뷰의 너비 업데이트
         imageContentView.snp.makeConstraints { make in
-            make.width.equalTo(UIScreen.main.bounds.width * CGFloat(imageNames.count))
+            make.width.equalTo(UIScreen.main.bounds.width * CGFloat(imageUrls.count))
         }
-        
-        pageControl.numberOfPages = imageNames.count
-        
-        // 이미지가 1개면 페이지 컨트롤 숨김 및 레이아웃 변경
-        if imageNames.count <= 1 {
-              pageControl.isHidden = true
-              profileFrame.snp.remakeConstraints { make in
-                  make.top.equalTo(imageScrollView.snp.bottom).offset(32)
-                  make.centerX.equalToSuperview()
-                  make.leading.trailing.equalToSuperview().inset(20)
-                  make.height.equalTo(102)
-              }
-          } else {
-              pageControl.isHidden = false
-              profileFrame.snp.remakeConstraints { make in
-                  make.top.equalTo(pageControl.snp.bottom).offset(32)
-                  make.centerX.equalToSuperview()
-                  make.leading.trailing.equalToSuperview().inset(20)
-                  make.height.equalTo(102)
-              }
-          }
+
+        // 페이지 컨트롤 업데이트
+        pageControl.numberOfPages = imageUrls.count
+
+        // 이미지가 1개인 경우 처리
+        if imageUrls.count <= 1 {
+            pageControl.isHidden = true
+            profileFrame.snp.remakeConstraints { make in
+                make.top.equalTo(imageScrollView.snp.bottom).offset(32)
+                make.centerX.equalToSuperview()
+                make.leading.trailing.equalToSuperview().inset(20)
+                make.height.equalTo(102)
+            }
+        } else {
+            pageControl.isHidden = false
+            profileFrame.snp.remakeConstraints { make in
+                make.top.equalTo(pageControl.snp.bottom).offset(32)
+                make.centerX.equalToSuperview()
+                make.leading.trailing.equalToSuperview().inset(20)
+                make.height.equalTo(102)
+            }
+        }
     }
 
-    private func createImageView(named imageName: String) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: imageName) ?? UIImage(named: "defaultDogImage")
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        return imageView
+    private func createImageView(named imageUrl: String?) -> UIView {
+        let containerView = UIView()
+        containerView.backgroundColor = .white
+
+        if let imageUrl = imageUrl, let url = URL(string: imageUrl) {
+            let imageView = UIImageView()
+            imageView.kf.setImage(with: url)
+            imageView.contentMode = .scaleAspectFill
+            imageView.clipsToBounds = true
+            containerView.addSubview(imageView)
+            imageView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
+        
+        return containerView
     }
     
 }
