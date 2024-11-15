@@ -17,7 +17,12 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         configureProfileDelegate()
         configureMatchingData()
         configureViewDelegate()
-        fetchBoardDetailData(boardId: 1)
+        
+        if let data = matchingData {
+            fetchBoardDetailData(boardId: data.boardId)
+        } else {
+            print("Error: matchingData is nil. Cannot fetch board details.")
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -33,34 +38,23 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     
     // MARK: - Public Methods
     func configure(with data: MatchingData) {
-        matchingData = data
+        self.matchingData = data
+        fetchBoardDetailData(boardId: data.boardId)
     }
 
     private func fetchBoardDetailData(boardId: Int) {
+        // 디버그용 로그 출력
+        print("Fetching board details for boardId: \(boardId)")
+
         let networkManager = NetworkManager()
         networkManager.fetchBoardDetail(boardId: boardId) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let detail):
-
-                    if detail.startTime.isEmpty || detail.endTime.isEmpty {
-                        print("Warning: Start or End Time is missing!")
-                    }
-
-                    self?.dogInfoView.getProfileView().updateProfileView(
-                        dogName: detail.dogName,
-                        dogSize: detail.dogSize,
-                        breed: detail.breed,
-                        weight: detail.weight,
-                        dogAge: detail.dogAge,
-                        dongAddress: detail.dongAddress,
-                        distance: detail.distance,
-                        dogGender: detail.dogGender
-                    )
+                    print("Successfully fetched details for boardId: \(boardId)") // 성공 로그
                     self?.updateUI(with: detail)
-                    
                 case .failure(let error):
-                    print("Error fetching BoardDetail: \(error)")
+                    print("Error fetching BoardDetail for boardId \(boardId): \(error)") // 실패 로그
                 }
             }
         }

@@ -13,6 +13,7 @@ struct BoardResponse: Codable {
 }
 
 struct MatchingData: Codable {
+    let boardId: Int
     let startTime: String
     let endTime: String
     let matchingYn: String
