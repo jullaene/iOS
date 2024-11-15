@@ -68,11 +68,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     }
 
     private func updateUI(with detail: BoardDetail) {
-
-        // 이미지 업데이트
         dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
-
-        // WalkInfoView에 데이터 전달
         dogInfoView.setWalkInfoDelegate(
             date: detail.date,
             startTime: detail.startTime,
@@ -80,6 +76,12 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             locationNegotiationYn: detail.locationNegotiationYn,
             suppliesProvidedYn: detail.suppliesProvidedYn,
             preMeetAvailableYn: detail.preMeetAvailableYn
+        )
+        
+        dogInfoView.setRelatedInfoDetails(
+            walkNote: detail.walkNote,
+            walkRequest: detail.walkRequest,
+            additionalRequest: detail.additionalRequest
         )
     }
     
