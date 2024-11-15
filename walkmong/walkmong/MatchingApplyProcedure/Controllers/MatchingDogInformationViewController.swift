@@ -8,6 +8,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     private let dogInfoView = MatchingDogInformationView()
     private var boardDetail: BoardDetail?
     private let networkManager = NetworkManager()
+    private var isLoading: Bool = false
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -43,26 +44,28 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     }
 
     private func fetchBoardDetailData(boardId: Int) {
-        // 디버그용 로그 출력
-        print("Fetching board details for boardId: \(boardId)")
 
-        let networkManager = NetworkManager()
+        isLoading = true
+
         networkManager.fetchBoardDetail(boardId: boardId) { [weak self] result in
             DispatchQueue.main.async {
+                self?.isLoading = false
                 switch result {
                 case .success(let detail):
-                    print("Successfully fetched details for boardId: \(boardId)") // 성공 로그
+                    print("Successfully fetched details for boardId: \(boardId)")
+                    self?.boardDetail = detail
                     self?.updateUI(with: detail)
                 case .failure(let error):
-                    print("Error fetching BoardDetail for boardId \(boardId): \(error)") // 실패 로그
+                    print("Error fetching BoardDetail for boardId \(boardId): \(error)")
                 }
             }
         }
     }
 
     private func updateUI(with detail: BoardDetail) {
+
         dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
-        
+
         dogInfoView.setWalkInfoDelegate(
             date: detail.date,
             startTime: detail.startTime,
@@ -71,15 +74,17 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             suppliesProvidedYn: detail.suppliesProvidedYn,
             preMeetAvailableYn: detail.preMeetAvailableYn
         )
-        
+        print("Configured walk info delegate")
+
         dogInfoView.setRelatedInfoDetails(
             walkNote: detail.walkNote,
             walkRequest: detail.walkRequest,
             additionalRequest: detail.additionalRequest
         )
-        
+        print("Configured related info details")
+
         dogInfoView.setOwnerInfoDetails(
-            ownerProfile: detail.ownerProfile,
+            ownerProfile: detail.ownerProfile ?? "defaultProfileImage",
             ownerName: detail.ownerName,
             ownerAge: detail.ownerAge,
             ownerGender: detail.ownerGender,
@@ -87,6 +92,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             dongAddress: detail.dongAddress,
             distance: detail.distance
         )
+        print("Configured owner info details")
     }
     
     // MARK: - UI Setup
@@ -142,7 +148,15 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
 
     // MARK: - Navigation
     private func navigateToDogProfile() {
+        print("Attempting to navigate to DogProfileViewController")
+        guard let boardDetail = boardDetail else {
+            print("Error: boardDetail is nil. Cannot navigate to dog profile.")
+            return
+        }
+
+        print("Navigating to DogProfileViewController with dogId: \(boardDetail.dogId)")
         let dogProfileVC = DogProfileViewController()
+        dogProfileVC.configure(with: boardDetail.dogId)
         navigationController?.pushViewController(dogProfileVC, animated: true)
     }
 }

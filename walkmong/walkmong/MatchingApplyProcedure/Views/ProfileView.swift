@@ -137,7 +137,7 @@ class ProfileView: UIView {
         dogAge: Int,
         dongAddress: String,
         distance: Double,
-        dogGender: String 
+        dogGender: String
     ) {
         // 이름 업데이트
         nameLabel.text = dogName
