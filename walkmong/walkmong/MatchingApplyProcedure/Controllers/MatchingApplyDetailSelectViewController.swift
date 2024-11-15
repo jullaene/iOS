@@ -39,29 +39,35 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
 }
 
 extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectViewDelegate {
+    func updatePlaceSelected(_ view: MatchingApplyDetailSelectView, _ model: MatchingApplyMapModel) {
+        view.updateSelectButtons(buttonType: .selectPlace, value: true, model)
+        self.detailSelectModel.placeSelected = model
+        updateNextButtonState()
+    }
+    
     func buttonTapped(buttonType: ButtonType, value: Bool) {
         switch buttonType {
         case .dogInformationChecked:
             self.detailSelectModel.dogInformationChecked = value
-            self.detailSelectView.updateSelectButtons(buttonType: .dogInformationChecked, value: value)
+            self.detailSelectView.updateSelectButtons(buttonType: .dogInformationChecked, value: value, nil)
         case .dateChecked:
             self.detailSelectModel.dateChecked = value
-            self.detailSelectView.updateSelectButtons(buttonType: .dateChecked, value: value)
+            self.detailSelectView.updateSelectButtons(buttonType: .dateChecked, value: value, nil)
         case .selectPlace:
             let nextVC = MatchingApplyPlaceSearchViewController()
             self.navigationController?.pushViewController(nextVC, animated: true)
         case .envelopeNeeded:
             self.detailSelectModel.envelopeNeeded = value
-            self.detailSelectView.updateSelectButtons(buttonType: .envelopeNeeded, value: value)
+            self.detailSelectView.updateSelectButtons(buttonType: .envelopeNeeded, value: value, nil)
         case .mouthCoverNeeded:
             self.detailSelectModel.mouthCoverNeeded = value
-            self.detailSelectView.updateSelectButtons(buttonType: .mouthCoverNeeded, value: value)
+            self.detailSelectView.updateSelectButtons(buttonType: .mouthCoverNeeded, value: value, nil)
         case .leadStringeNeeded:
-            self.detailSelectModel.leadStringeNeeded = value
-            self.detailSelectView.updateSelectButtons(buttonType: .leadStringeNeeded, value: value)
+            self.detailSelectModel.leadStringNeeded = value
+            self.detailSelectView.updateSelectButtons(buttonType: .leadStringeNeeded, value: value, nil)
         case .preMeetingNeeded:
             self.detailSelectModel.preMeetingNeeded = value
-            self.detailSelectView.updateSelectButtons(buttonType: .preMeetingNeeded, value: value)
+            self.detailSelectView.updateSelectButtons(buttonType: .preMeetingNeeded, value: value, nil)
         case .next:
             if self.detailSelectModel.nextButtonEnabled {
                 let nextVC = MatchingApplyMessageViewController()
@@ -77,13 +83,13 @@ extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectView
             self.detailSelectModel.placeSelected != nil &&
             self.detailSelectModel.envelopeNeeded != nil &&
             self.detailSelectModel.mouthCoverNeeded != nil &&
-            self.detailSelectModel.leadStringeNeeded != nil &&
+            self.detailSelectModel.leadStringNeeded != nil &&
             self.detailSelectModel.preMeetingNeeded != nil {
             self.detailSelectModel.nextButtonEnabled = true
-            detailSelectView.updateSelectButtons(buttonType: .next, value: true)
+            detailSelectView.updateSelectButtons(buttonType: .next, value: true, nil)
         }else {
             self.detailSelectModel.nextButtonEnabled = false
-            detailSelectView.updateSelectButtons(buttonType: .next, value: false)
+            detailSelectView.updateSelectButtons(buttonType: .next, value: false, nil)
         }
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MatchingApplyMapModel{
+struct MatchingApplyMapModel: Codable{
     var dongAddress: String?
     var roadAddress: String?
     var buildingName: String?

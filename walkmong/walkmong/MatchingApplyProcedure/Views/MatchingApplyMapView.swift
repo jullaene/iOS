@@ -24,7 +24,6 @@ class MatchingApplyMapView: UIView {
         button.titleLabel?.textColor = .white
         button.backgroundColor = .gray300
         button.layer.cornerRadius = 15
-        button.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
         return button
     }()
     
@@ -45,6 +44,7 @@ class MatchingApplyMapView: UIView {
         addSubViews()
         setConstraints()
         setupMap()
+        nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {

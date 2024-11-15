@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct MatchingApplyDetailSelectModel{
+struct MatchingApplyDetailSelectModel: Codable{
     var dogInformationChecked: Bool
     var dateChecked: Bool
-    var placeSelected: String?
+    var placeSelected: MatchingApplyMapModel?
     var envelopeNeeded: Bool?
     var mouthCoverNeeded: Bool?
-    var leadStringeNeeded: Bool?
+    var leadStringNeeded: Bool?
     var preMeetingNeeded: Bool?
     var nextButtonEnabled: Bool
     var placeMemo: String?
