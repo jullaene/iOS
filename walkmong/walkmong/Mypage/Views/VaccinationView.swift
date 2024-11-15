@@ -106,11 +106,12 @@ class VaccinationView: UIView {
     }
 
     // MARK: - Public Methods
-    func updateVaccinationStatus(rabiesYn: Bool) {
-        vaccinationFrame.backgroundColor = rabiesYn ? Constants.completedBackgroundColor : Constants.incompleteBackgroundColor
-        iconView.image = UIImage(named: rabiesYn ? Constants.completedIcon : Constants.incompleteIcon)
-        descriptionLabel.textColor = rabiesYn ? Constants.completedTextColor : Constants.incompleteTextColor
-        descriptionLabel.text = rabiesYn ? "광견병 예방접종을 완료했어요." : "광견병 예방접종이 필요합니다."
+    func updateVaccinationStatus(rabiesYn: String) {
+        let isVaccinated = rabiesYn == "Y"
+        vaccinationFrame.backgroundColor = isVaccinated ? Constants.completedBackgroundColor : Constants.incompleteBackgroundColor
+        iconView.image = UIImage(named: isVaccinated ? Constants.completedIcon : Constants.incompleteIcon)
+        descriptionLabel.textColor = isVaccinated ? Constants.completedTextColor : Constants.incompleteTextColor
+        descriptionLabel.text = isVaccinated ? "광견병 예방접종을 완료했어요." : "광견병 예방접종이 필요합니다."
     }
 
     // MARK: - Helper Methods

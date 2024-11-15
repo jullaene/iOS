@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 class DogProfileView: UIView, UIScrollViewDelegate {
 
@@ -160,7 +161,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     // MARK: - Private Methods
     private func configureImages(_ imageNames: [String]) {
         imageViews.forEach { $0.removeFromSuperview() }
-        imageViews = imageNames.map { createImageView(named: $0) }
+        imageViews = imageNames.map { createImageView(urlString: $0) }
 
         for (index, imageView) in imageViews.enumerated() {
             imageContentView.addSubview(imageView)
@@ -175,20 +176,78 @@ class DogProfileView: UIView, UIScrollViewDelegate {
             $0.width.equalTo((Constants.imageWidth + Constants.imageSpacing) * CGFloat(imageViews.count) - Constants.imageSpacing)
         }
 
+        // 이미지가 하나일 경우
+        if imageNames.count == 1 {
+            let horizontalInset = (UIScreen.main.bounds.width - Constants.imageWidth) / 2
+            imageScrollView.contentInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
+            imageScrollView.isScrollEnabled = false
+
+            // 레이아웃 완료 후 contentOffset 고정
+            DispatchQueue.main.async {
+                self.imageScrollView.setContentOffset(CGPoint(x: -horizontalInset, y: 0), animated: false)
+            }
+        } else {
+            // 여러 개의 이미지일 경우
+            imageScrollView.contentInset = UIEdgeInsets(
+                top: 0,
+                left: (UIScreen.main.bounds.width - Constants.imageWidth) / 2,
+                bottom: 0,
+                right: (UIScreen.main.bounds.width - Constants.imageWidth) / 2
+            )
+            imageScrollView.isScrollEnabled = true
+        }
+
         pageControl.numberOfPages = imageNames.count
         scrollToImage(at: 0)
     }
+    
+    func configureBasicInfo(
+        dogName: String,
+        dogGender: String,
+        dogAge: Int,
+        breed: String,
+        weight: Double,
+        neuteringYn: String
+    ) {
+        // 몸무게 처리 로직
+        let weightString: String
+        if weight < 1 {
+            weightString = "\(Int(weight * 1000))g" // g 단위로 변환
+        } else if weight == floor(weight) {
+            weightString = "\(Int(weight))kg" // 소수점 없는 kg 단위
+        } else {
+            weightString = "\(weight)kg" // 소수점 포함 kg 단위
+        }
 
+        // 내부적으로 basicInfoFrame에 데이터 전달
+        basicInfoFrame.configure(
+            with: dogName,
+            dogGender: dogGender == "FEMALE" ? "여" : "남",
+            dogAge: "\(dogAge)살",
+            breed: breed,
+            weight: weightString,
+            neuteringYn: neuteringYn == "Y" ? "O" : "X"
+        )
+    }
+
+    func configureSocialInfo(bite: String, friendly: String, barking: String) {
+        socialInfoFrame.configure(bite: bite, friendly: friendly, barking: barking)
+    }
+    
+    func configureVaccinationStatus(rabiesYn: String) {
+        vaccinationFrame.updateVaccinationStatus(rabiesYn: rabiesYn)
+    }
+    
     private func scrollToImage(at index: Int) {
         guard (0..<imageViews.count).contains(index) else { return }
         let targetOffsetX = CGFloat(index) * (Constants.imageWidth + Constants.imageSpacing) - imageScrollView.contentInset.left
         imageScrollView.setContentOffset(CGPoint(x: max(0, targetOffsetX), y: 0), animated: true)
     }
 
-    private func createImageView(named imageName: String) -> UIView {
+    private func createImageView(urlString: String) -> UIView {
         let view = UIView()
         let imageView = UIImageView()
-        imageView.image = UIImage(named: imageName) ?? UIImage(named: "defaultDogImage")
+        imageView.kf.setImage(with: URL(string: urlString), placeholder: UIImage(named: "defaultDogImage"))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = Constants.cornerRadius

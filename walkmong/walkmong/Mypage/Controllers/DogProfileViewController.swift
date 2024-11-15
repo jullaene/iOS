@@ -10,23 +10,40 @@ import SnapKit
 
 class DogProfileViewController: UIViewController {
 
-    // MARK: - Properties
     private let dogProfileView = DogProfileView()
 
-    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
+
+        let networkManager = NetworkManager()
+        networkManager.fetchDogProfile(dogId: 1) { [weak self] result in
+            switch result {
+            case .success(let dogProfile):
+                DispatchQueue.main.async {
+                    self?.dogProfileView.configure(with: [dogProfile.dogProfile])
+                    self?.dogProfileView.configureBasicInfo(
+                        dogName: dogProfile.dogName,
+                        dogGender: dogProfile.dogGender,
+                        dogAge: dogProfile.dogAge,
+                        breed: dogProfile.breed,
+                        weight: dogProfile.weight,
+                        neuteringYn: dogProfile.neuteringYn
+                    )
+                    self?.dogProfileView.configureSocialInfo(
+                                       bite: dogProfile.bite,
+                                       friendly: dogProfile.friendly,
+                                       barking: dogProfile.barking
+                                   )
+                    self?.dogProfileView.configureVaccinationStatus(rabiesYn: dogProfile.rabiesYn)
+                }
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+            }
+        }
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-        tabBarController?.tabBar.isHidden = true
-    }
-
-    // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(dogProfileView)
