@@ -18,6 +18,16 @@ class DogProfileViewController: UIViewController {
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
+        
+        let networkManager = NetworkManager()
+        networkManager.fetchDogProfile(dogId: 123) { result in
+            switch result {
+            case .success(let dogProfile):
+                print("Fetched Dog Profile: \(dogProfile)")
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
