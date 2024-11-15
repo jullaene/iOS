@@ -172,7 +172,7 @@ extension MatchingApplyPlaceSearchView: UICollectionViewDelegate {
 
 extension MatchingApplyPlaceSearchView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return placeSearchResults.count
+        return placeSearchResults.count > 5 ? 5 : placeSearchResults.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
