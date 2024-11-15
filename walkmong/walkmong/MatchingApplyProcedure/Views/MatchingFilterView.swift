@@ -68,7 +68,7 @@ class MatchingFilterView: UIView {
     
     private func setupLayout() {
         distanceFrame.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(25)
+            make.top.equalToSuperview().offset(10)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(140)
         }
@@ -259,7 +259,7 @@ class MatchingFilterView: UIView {
         breedFrame.addSubview(buttonContainer)
         
         buttonContainer.snp.makeConstraints { make in
-            make.top.equalTo(instructionLabel.snp.bottom).offset(16) // 안내문구 아래 16pt 간격
+            make.top.equalTo(instructionLabel.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(38)
         }
