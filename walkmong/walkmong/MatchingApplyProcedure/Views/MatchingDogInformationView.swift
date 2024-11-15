@@ -54,6 +54,24 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         applyWalkButton.isUserInteractionEnabled = true
     }
 
+    func setWalkInfoDelegate(
+        date: String,
+        startTime: String,
+        endTime: String,
+        locationNegotiationYn: String,
+        suppliesProvidedYn: String,
+        preMeetAvailableYn: String
+    ) {
+        walkInfoFrame.updateDetails(
+            date: date,
+            startTime: startTime,
+            endTime: endTime,
+            locationNegotiationYn: locationNegotiationYn,
+            suppliesProvidedYn: suppliesProvidedYn,
+            preMeetAvailableYn: preMeetAvailableYn
+        )
+    }
+    
     @objc private func applyWalkButtonTapped() {
         delegate?.applyWalkButtonTapped()
     }
@@ -124,7 +142,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     private func setupFrames() {
         addFramesToContentView([
             (profileFrame, 102, pageControl.snp.bottom, 32),
-            (walkInfoFrame, 226, profileFrame.snp.bottom, 34),
+            (walkInfoFrame, nil, profileFrame.snp.bottom, 34),
             (relatedInfoFrame, nil, walkInfoFrame.snp.bottom, 16),
             (ownerInfoFrame, 172, relatedInfoFrame.snp.bottom, 16)
         ])

@@ -28,6 +28,7 @@ class WalkInfoView: UIView {
     private var referenceIcon: UIImageView?
     private var referenceTitleLabel: UILabel?
     private var endLabel: UILabel?
+    private var detailLabels: [String: UILabel] = [:]
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -62,6 +63,7 @@ class WalkInfoView: UIView {
                 if index == 0 {
                     // 첫 번째 아이콘은 중심에 배치
                     make.leading.equalToSuperview().offset(24)
+                    make.top.equalToSuperview().offset(20)
                     self.referenceIcon = icon
                 } else {
                     // 이후 아이콘은 첫 번째 아이콘의 centerX에 정렬
@@ -99,7 +101,37 @@ class WalkInfoView: UIView {
             
             lastView = icon // 다음 뷰의 기준점
         }
+        
+        if let lastView = lastView {
+            lastView.snp.makeConstraints { make in
+                make.bottom.equalToSuperview().offset(-20)
+            }
+        }
     }
+    
+    // MARK: - Public Methods
+    func updateDetails(
+        date: String,
+        startTime: String,
+        endTime: String,
+        locationNegotiationYn: String,
+        suppliesProvidedYn: String,
+        preMeetAvailableYn: String
+    ) {
+        // 시작 및 종료 시간이 비어 있을 경우 기본값 설정
+        let formattedStartTime = "".formattedDateAndTime(date: date, time: startTime) ?? "시간 정보 없음"
+        let formattedEndTime = "".formattedDateAndTime(date: date, time: endTime) ?? "시간 정보 없음"
+
+        // 시작 및 종료 시간 레이블 업데이트
+        detailLabels["startDate"]?.text = formattedStartTime
+        detailLabels["endDate"]?.text = formattedEndTime
+
+        // 다른 항목 업데이트
+        detailLabels["만남 장소"]?.text = locationNegotiationYn == "Y" ? "산책자 선택 장소" : "협의 필요"
+        detailLabels["산책 용품"]?.text = suppliesProvidedYn == "Y" ? "제공 가능" : "제공 불가능"
+        detailLabels["사전 만남"]?.text = preMeetAvailableYn == "Y" ? "가능" : "불가능"
+    }
+    
     
     // MARK: - Helpers
     private func createIcon(named name: String, height: CGFloat) -> UIImageView {
@@ -117,22 +149,24 @@ class WalkInfoView: UIView {
     
     private func setupDetailLabel(title: String, relativeTo titleLabel: UILabel) {
         let detailLabel = UILabel()
-        detailLabel.text = detailText(for: title)
+        detailLabel.text = ""
         detailLabel.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         detailLabel.textColor = UIColor.mainBlue
         addSubview(detailLabel)
         
         detailLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(titleLabel.snp.centerY)
+            make.top.equalTo(titleLabel.snp.top)
             make.trailing.equalToSuperview().offset(-24)
         }
+        
+        detailLabels[title] = detailLabel
     }
     
     private func setupScheduleDetails(relativeTo titleLabel: UILabel) {
         let startLabel = createSubtitleLabel(with: "시작")
-        let startDateLabel = createSubtitleLabel(with: "2024.10.25 (금) 16:00", color: .mainBlue)
+        let startDateLabel = createSubtitleLabel(with: "", color: .mainBlue)
         let endLabel = createSubtitleLabel(with: "종료")
-        let endDateLabel = createSubtitleLabel(with: "2024.10.25 (금) 16:30", color: .mainBlue)
+        let endDateLabel = createSubtitleLabel(with: "", color: .mainBlue)
         
         addSubview(startLabel)
         addSubview(startDateLabel)
@@ -160,6 +194,10 @@ class WalkInfoView: UIView {
             make.centerY.equalTo(endLabel.snp.centerY)
         }
         
+        // startDateLabel과 endDateLabel을 detailLabels에 저장
+        detailLabels["startDate"] = startDateLabel
+        detailLabels["endDate"] = endDateLabel
+
         self.endLabel = endLabel // endLabel 참조 저장
     }
     
@@ -171,14 +209,19 @@ class WalkInfoView: UIView {
         return label
     }
     
-    private func detailText(for title: String) -> String? {
-        switch title {
-        case "만남 장소":
-            return "산책자 선택 장소"
-        case "산책 용품", "사전 만남":
-            return "제공 가능"
-        default:
-            return nil
-        }
+}
+
+extension String {
+    func formattedDateAndTime(date: String, time: String) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+
+        let fullDateTimeString = "\(date) \(time)"
+        guard let dateObject = dateFormatter.date(from: fullDateTimeString) else { return nil }
+
+        // 결과 포맷 설정
+        dateFormatter.dateFormat = "yyyy.MM.dd (E) HH:mm"
+        return dateFormatter.string(from: dateObject)
     }
 }

@@ -42,6 +42,12 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             DispatchQueue.main.async {
                 switch result {
                 case .success(let detail):
+                    print("Fetched BoardDetail: \(detail)") // 데이터 전체 확인
+
+                    if detail.startTime.isEmpty || detail.endTime.isEmpty {
+                        print("Warning: Start or End Time is missing!")
+                    }
+
                     self?.dogInfoView.getProfileView().updateProfileView(
                         dogName: detail.dogName,
                         dogSize: detail.dogSize,
@@ -52,16 +58,29 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
                         distance: detail.distance,
                         dogGender: detail.dogGender
                     )
+                    self?.updateUI(with: detail)
+                    
                 case .failure(let error):
-                    print("Error: \(error)")
+                    print("Error fetching BoardDetail: \(error)")
                 }
             }
         }
     }
 
     private func updateUI(with detail: BoardDetail) {
+
+        // 이미지 업데이트
         dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
-        // 추가적으로 필요한 데이터 업데이트
+
+        // WalkInfoView에 데이터 전달
+        dogInfoView.setWalkInfoDelegate(
+            date: detail.date,
+            startTime: detail.startTime,
+            endTime: detail.endTime,
+            locationNegotiationYn: detail.locationNegotiationYn,
+            suppliesProvidedYn: detail.suppliesProvidedYn,
+            preMeetAvailableYn: detail.preMeetAvailableYn
+        )
     }
     
     // MARK: - UI Setup
