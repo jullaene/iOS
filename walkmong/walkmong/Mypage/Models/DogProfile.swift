@@ -1,5 +1,5 @@
 //
-//  DogProfileResponse.swift
+//  DogProfile.swift
 //  walkmong
 //
 //  Created by 신호연 on 11/15/24.
