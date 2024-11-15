@@ -145,12 +145,10 @@ extension CalendarView {
             return nil
         }
         let day = days[indexPath.item]
-        print("Selected day info: \(day)")
 
         // 현재 연도와 월 가져오기
         let currentYear = calendar.component(.year, from: today)
         let currentMonth = calendar.component(.month, from: today)
-        print("Current year: \(currentYear), Current month: \(currentMonth)")
 
         // 선택된 날짜(day.date)를 정수로 변환
         guard let dayInt = Int(day.date) else {
@@ -165,15 +163,12 @@ extension CalendarView {
             return nil
         }
 
-        print("Generated date: \(date)")
-
         // 포맷터 설정
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "MM. dd (EEE)" // "11. 14 (목)" 형식
 
         let formattedDate = formatter.string(from: date)
-        print("Formatted date: \(formattedDate)")
         return formattedDate
     }
 }

@@ -8,16 +8,30 @@
 import UIKit
 import SnapKit
 
+import UIKit
+import SnapKit
+
 class DogProfileViewController: UIViewController {
 
     private let dogProfileView = DogProfileView()
     private let networkManager = NetworkManager()
+    private var dogId: Int?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
-        fetchDogProfile(dogId: 1)
+
+        if let dogId = dogId {
+            fetchDogProfile(dogId: dogId) 
+        } else {
+            print("Error: dogId is nil. Cannot fetch dog profile.")
+        }
+    }
+
+    // MARK: - Configure Method
+    func configure(with dogId: Int) {
+        self.dogId = dogId
     }
 
     private func setupUI() {
@@ -40,14 +54,17 @@ class DogProfileViewController: UIViewController {
     }
 
     private func fetchDogProfile(dogId: Int) {
+        print("Fetching dog profile for dogId: \(dogId)")
+        
         networkManager.fetchDogProfile(dogId: dogId) { [weak self] result in
             switch result {
             case .success(let dogProfile):
+                print("Raw DogProfile Data: \(dogProfile)")
                 DispatchQueue.main.async {
                     self?.updateDogProfileView(with: dogProfile)
                 }
             case .failure(let error):
-                print("Error: \(error.localizedDescription)")
+                print("Error fetching dog profile for dogId \(dogId): \(error.localizedDescription)")
             }
         }
     }

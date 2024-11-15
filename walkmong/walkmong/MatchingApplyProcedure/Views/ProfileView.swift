@@ -130,15 +130,16 @@ class ProfileView: UIView {
     }
     
     func updateProfileView(
-        dogName: String,
-        dogSize: String,
-        breed: String,
-        weight: Double,
-        dogAge: Int,
-        dongAddress: String,
-        distance: Double,
-        dogGender: String 
-    ) {
+            dogName: String,
+            dogSize: String,
+            breed: String,
+            weight: Double,
+            dogAge: Int,
+            dongAddress: String,
+            distance: Double,
+            dogGender: String
+        ) {
+
         // 이름 업데이트
         nameLabel.text = dogName
 
