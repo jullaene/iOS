@@ -6,6 +6,8 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     // MARK: - Properties
     private var matchingData: MatchingData?
     private let dogInfoView = MatchingDogInformationView()
+    private var boardDetail: BoardDetail?
+    private let networkManager = NetworkManager()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -15,6 +17,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         configureProfileDelegate()
         configureMatchingData()
         configureViewDelegate()
+        fetchBoardDetailData(boardId: 1)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -33,6 +36,65 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         matchingData = data
     }
 
+    private func fetchBoardDetailData(boardId: Int) {
+        let networkManager = NetworkManager()
+        networkManager.fetchBoardDetail(boardId: boardId) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let detail):
+
+                    if detail.startTime.isEmpty || detail.endTime.isEmpty {
+                        print("Warning: Start or End Time is missing!")
+                    }
+
+                    self?.dogInfoView.getProfileView().updateProfileView(
+                        dogName: detail.dogName,
+                        dogSize: detail.dogSize,
+                        breed: detail.breed,
+                        weight: detail.weight,
+                        dogAge: detail.dogAge,
+                        dongAddress: detail.dongAddress,
+                        distance: detail.distance,
+                        dogGender: detail.dogGender
+                    )
+                    self?.updateUI(with: detail)
+                    
+                case .failure(let error):
+                    print("Error fetching BoardDetail: \(error)")
+                }
+            }
+        }
+    }
+
+    private func updateUI(with detail: BoardDetail) {
+        dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
+        
+        dogInfoView.setWalkInfoDelegate(
+            date: detail.date,
+            startTime: detail.startTime,
+            endTime: detail.endTime,
+            locationNegotiationYn: detail.locationNegotiationYn,
+            suppliesProvidedYn: detail.suppliesProvidedYn,
+            preMeetAvailableYn: detail.preMeetAvailableYn
+        )
+        
+        dogInfoView.setRelatedInfoDetails(
+            walkNote: detail.walkNote,
+            walkRequest: detail.walkRequest,
+            additionalRequest: detail.additionalRequest
+        )
+        
+        dogInfoView.setOwnerInfoDetails(
+            ownerProfile: detail.ownerProfile,
+            ownerName: detail.ownerName,
+            ownerAge: detail.ownerAge,
+            ownerGender: detail.ownerGender,
+            ownerRate: detail.ownerRate,
+            dongAddress: detail.dongAddress,
+            distance: detail.distance
+        )
+    }
+    
     // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white

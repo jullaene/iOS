@@ -18,7 +18,6 @@ class DogProfileViewController: UIViewController {
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
-        configureDogProfileView()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -45,10 +44,5 @@ class DogProfileViewController: UIViewController {
             showRightCloseButton: false,
             showRightRefreshButton: false
         )
-    }
-
-    private func configureDogProfileView() {
-        let imageNames = ["puppyImage01", "sampleImage"]
-        dogProfileView.configure(with: imageNames)
     }
 }

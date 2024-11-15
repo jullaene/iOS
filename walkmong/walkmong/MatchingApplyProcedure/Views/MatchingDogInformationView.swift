@@ -1,5 +1,6 @@
 import UIKit
 import SnapKit
+import Kingfisher
 
 protocol MatchingDogInformationViewDelegate: AnyObject {
     func applyWalkButtonTapped()
@@ -16,7 +17,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     private let imageScrollView = UIScrollView()
     private let imageContentView = UIView()
     private let pageControl = UIPageControl()
-    private var imageViews: [UIImageView] = []
+    private var imageViews: [UIView] = []
 
     private let profileFrame = ProfileView()
     private let walkInfoFrame = WalkInfoView()
@@ -54,6 +55,44 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         applyWalkButton.isUserInteractionEnabled = true
     }
 
+    func setWalkInfoDelegate(
+        date: String,
+        startTime: String,
+        endTime: String,
+        locationNegotiationYn: String,
+        suppliesProvidedYn: String,
+        preMeetAvailableYn: String
+    ) {
+        walkInfoFrame.updateDetails(
+            date: date,
+            startTime: startTime,
+            endTime: endTime,
+            locationNegotiationYn: locationNegotiationYn,
+            suppliesProvidedYn: suppliesProvidedYn,
+            preMeetAvailableYn: preMeetAvailableYn
+        )
+    }
+    
+    func setOwnerInfoDetails(
+        ownerProfile: String?,
+        ownerName: String,
+        ownerAge: Int,
+        ownerGender: String,
+        ownerRate: Double,
+        dongAddress: String,
+        distance: Double
+    ) {
+        ownerInfoFrame.updateOwnerInfo(
+            ownerProfile: ownerProfile,
+            ownerName: ownerName,
+            ownerAge: ownerAge,
+            ownerGender: ownerGender,
+            ownerRate: ownerRate,
+            dongAddress: dongAddress,
+            distance: distance
+        )
+    }
+    
     @objc private func applyWalkButtonTapped() {
         delegate?.applyWalkButtonTapped()
     }
@@ -79,6 +118,10 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         // Image ScrollView와 PageControl 설정
         setupImageScrollView()
         setupPageControl()
+        
+        DispatchQueue.main.async {
+            self.layoutIfNeeded()
+        }
     }
 
     private func setupImageScrollView() {
@@ -86,15 +129,17 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         imageScrollView.isPagingEnabled = true
         imageScrollView.showsHorizontalScrollIndicator = false
         imageScrollView.delegate = self
+
+        // 스크롤뷰의 높이 비율 설정
         imageScrollView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(imageScrollView.snp.width).multipliedBy(297.66 / 393.0)
+            make.height.equalTo(UIScreen.main.bounds.width * (297.66 / 393.0)) // 비율 적용
         }
 
         imageScrollView.addSubview(imageContentView)
         imageContentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.equalToSuperview()
+            make.height.equalTo(imageScrollView.snp.height)
         }
     }
 
@@ -117,10 +162,22 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         profileFrame.setDelegate(delegate)
     }
 
+    func getProfileView() -> ProfileView {
+        return profileFrame
+    }
+    
+    func setRelatedInfoDetails(walkNote: String, walkRequest: String, additionalRequest: String) {
+        relatedInfoFrame.updateDetails(
+            walkNote: walkNote,
+            walkRequest: walkRequest,
+            additionalRequest: additionalRequest
+        )
+    }
+    
     private func setupFrames() {
         addFramesToContentView([
             (profileFrame, 102, pageControl.snp.bottom, 32),
-            (walkInfoFrame, 226, profileFrame.snp.bottom, 34),
+            (walkInfoFrame, nil, profileFrame.snp.bottom, 34),
             (relatedInfoFrame, nil, walkInfoFrame.snp.bottom, 16),
             (ownerInfoFrame, 172, relatedInfoFrame.snp.bottom, 16)
         ])
@@ -229,51 +286,67 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         return view
     }
 
-    func configureImages(with imageNames: [String]) {
+    func configureImages(with imageUrls: [String?]) {
+        // 기존 이미지 제거
         imageViews.forEach { $0.removeFromSuperview() }
-        imageViews = imageNames.map { createImageView(named: $0) }
-        
-        for (index, imageView) in imageViews.enumerated() {
-            imageContentView.addSubview(imageView)
-            imageView.snp.makeConstraints { make in
+        imageViews = imageUrls.map { createImageView(named: $0) }
+
+        // 이미지 뷰 추가
+        for (index, view) in imageViews.enumerated() {
+            imageContentView.addSubview(view)
+            view.snp.makeConstraints { make in
                 make.top.bottom.equalToSuperview()
-                make.width.equalTo(UIScreen.main.bounds.width)
+                make.width.equalTo(UIScreen.main.bounds.width) // 디바이스 너비와 일치
                 make.leading.equalToSuperview().offset(CGFloat(index) * UIScreen.main.bounds.width)
             }
         }
-        
-        imageContentView.snp.makeConstraints { make in
-            make.width.equalTo(UIScreen.main.bounds.width * CGFloat(imageNames.count))
+
+        // 콘텐츠 뷰의 너비 업데이트
+        imageContentView.snp.remakeConstraints { make in
+            make.edges.equalToSuperview()
+            make.height.equalTo(imageScrollView.snp.height)
+            make.width.equalTo(UIScreen.main.bounds.width * CGFloat(imageUrls.count))
         }
-        
-        pageControl.numberOfPages = imageNames.count
-        
-        // 이미지가 1개면 페이지 컨트롤 숨김 및 레이아웃 변경
-        if imageNames.count <= 1 {
-              pageControl.isHidden = true
-              profileFrame.snp.remakeConstraints { make in
-                  make.top.equalTo(imageScrollView.snp.bottom).offset(32)
-                  make.centerX.equalToSuperview()
-                  make.leading.trailing.equalToSuperview().inset(20)
-                  make.height.equalTo(102)
-              }
-          } else {
-              pageControl.isHidden = false
-              profileFrame.snp.remakeConstraints { make in
-                  make.top.equalTo(pageControl.snp.bottom).offset(32)
-                  make.centerX.equalToSuperview()
-                  make.leading.trailing.equalToSuperview().inset(20)
-                  make.height.equalTo(102)
-              }
-          }
+
+        // 페이지 컨트롤 업데이트
+        pageControl.numberOfPages = imageUrls.count
+
+        // 이미지가 1개인 경우 처리
+        if imageUrls.count <= 1 {
+            pageControl.isHidden = true
+            profileFrame.snp.remakeConstraints { make in
+                make.top.equalTo(imageScrollView.snp.bottom).offset(32)
+                make.centerX.equalToSuperview()
+                make.leading.trailing.equalToSuperview().inset(20)
+                make.height.equalTo(102)
+            }
+        } else {
+            pageControl.isHidden = false
+            profileFrame.snp.remakeConstraints { make in
+                make.top.equalTo(pageControl.snp.bottom).offset(32)
+                make.centerX.equalToSuperview()
+                make.leading.trailing.equalToSuperview().inset(20)
+                make.height.equalTo(102)
+            }
+        }
     }
 
-    private func createImageView(named imageName: String) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: imageName) ?? UIImage(named: "defaultDogImage")
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        return imageView
+    private func createImageView(named imageUrl: String?) -> UIView {
+        let containerView = UIView()
+        containerView.backgroundColor = .white
+
+        if let imageUrl = imageUrl, let url = URL(string: imageUrl) {
+            let imageView = UIImageView()
+            imageView.kf.setImage(with: url)
+            imageView.contentMode = .scaleAspectFill
+            imageView.clipsToBounds = true
+            containerView.addSubview(imageView)
+            imageView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
+        
+        return containerView
     }
     
 }

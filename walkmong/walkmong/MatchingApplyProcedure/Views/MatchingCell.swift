@@ -277,13 +277,21 @@ class MatchingCell: UIView {
         dateLabel.text = "\(data.date) \(data.startTime) ~ \(data.endTime)"
         matchingStatusLabel.text = data.matchingStatus
         
-        // Kingfisher를 활용한 이미지 로드
-        if let imageUrl = URL(string: data.safeDogProfile) {
-            puppyImageView.kf.setImage(with: imageUrl, placeholder: UIImage(named: "placeholderImage"))
-        } else {
-            puppyImageView.image = UIImage(named: "placeholderImage") // 기본 이미지
-        }
-        
+        // URL이 유효한지 확인
+       if !data.safeDogProfile.isEmpty,
+          let imageUrl = URL(string: data.safeDogProfile),
+          data.safeDogProfile.hasPrefix("http://") || data.safeDogProfile.hasPrefix("https://") {
+           // Kingfisher로 네트워크 이미지 로드
+           puppyImageView.kf.setImage(with: imageUrl, placeholder: nil)
+           puppyImageView.isHidden = false
+           puppyImageView.backgroundColor = .clear
+       } else {
+           // null 데이터일 경우 흰색 배경 처리
+           puppyImageView.image = nil
+           puppyImageView.backgroundColor = .white
+           puppyImageView.isHidden = false
+       }
+
         nameLabel.text = data.dogName
         sizeLabel.text = data.translatedDogSize
         postContentLabel.text = data.content

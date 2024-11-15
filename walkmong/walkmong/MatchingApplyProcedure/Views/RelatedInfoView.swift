@@ -19,7 +19,7 @@ class RelatedInfoView: UIView {
     )
     
     private let requestDescriptionLabel = RelatedInfoView.createLabel(
-        text: "30분만 산책시켜주실 분 구합니다. 산책할 때 주의사항은 땅에 있는거 주워먹지 않도록 해주세요!",
+        text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16),
         numberOfLines: 0
@@ -32,7 +32,7 @@ class RelatedInfoView: UIView {
     )
     
     private let referenceDescriptionLabel = RelatedInfoView.createLabel(
-        text: "봄별이의 나이가 많아서 조금 걸음이 느려요",
+        text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
     )
@@ -44,7 +44,7 @@ class RelatedInfoView: UIView {
     )
     
     private let additionalInfoDescriptionLabel = RelatedInfoView.createLabel(
-        text: "없습니다",
+        text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
     )
@@ -102,6 +102,13 @@ class RelatedInfoView: UIView {
         labels.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
         }
+    }
+    
+    // MARK: - Public Methods
+    func updateDetails(walkNote: String, walkRequest: String, additionalRequest: String) {
+        requestDescriptionLabel.text = walkNote
+        referenceDescriptionLabel.text = walkRequest
+        additionalInfoDescriptionLabel.text = additionalRequest
     }
     
     // MARK: - Helper Method

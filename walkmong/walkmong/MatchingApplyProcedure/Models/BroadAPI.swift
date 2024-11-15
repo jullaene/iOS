@@ -5,6 +5,7 @@ import Moya
 enum BoardAPI {
     case getAddressList
     case getBoardList(date: String?, addressId: Int?, distance: String?, dogSize: String?, matchingYn: String?)
+    case getBoardDetail(boardId: Int)
 }
 
 extension BoardAPI: TargetType {
@@ -21,16 +22,21 @@ extension BoardAPI: TargetType {
             return "/api/v1/board/address/list"
         case .getBoardList:
             return "/api/v1/board/list"
+        case .getBoardDetail(let boardId):
+            return "/api/v1/board/detail/\(boardId)"
         }
     }
     
     var method: Moya.Method {
-        return .get
+        switch self {
+        case .getAddressList, .getBoardList, .getBoardDetail:
+            return .get
+        }
     }
     
     var task: Task {
         switch self {
-        case .getAddressList:
+        case .getAddressList, .getBoardDetail:
             return .requestPlain
         case let .getBoardList(date, addressId, distance, dogSize, matchingYn):
             var params: [String: Any] = [:]
