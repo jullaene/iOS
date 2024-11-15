@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 class DogProfileView: UIView, UIScrollViewDelegate {
 
@@ -160,7 +161,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     // MARK: - Private Methods
     private func configureImages(_ imageNames: [String]) {
         imageViews.forEach { $0.removeFromSuperview() }
-        imageViews = imageNames.map { createImageView(named: $0) }
+        imageViews = imageNames.map { createImageView(urlString: $0) }
 
         for (index, imageView) in imageViews.enumerated() {
             imageContentView.addSubview(imageView)
@@ -185,10 +186,10 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         imageScrollView.setContentOffset(CGPoint(x: max(0, targetOffsetX), y: 0), animated: true)
     }
 
-    private func createImageView(named imageName: String) -> UIView {
+    private func createImageView(urlString: String) -> UIView {
         let view = UIView()
         let imageView = UIImageView()
-        imageView.image = UIImage(named: imageName) ?? UIImage(named: "defaultDogImage")
+        imageView.kf.setImage(with: URL(string: urlString), placeholder: UIImage(named: "defaultDogImage"))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = Constants.cornerRadius

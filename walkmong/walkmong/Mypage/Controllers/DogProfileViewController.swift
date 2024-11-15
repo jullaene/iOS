@@ -20,10 +20,12 @@ class DogProfileViewController: UIViewController {
         setupUI()
         
         let networkManager = NetworkManager()
-        networkManager.fetchDogProfile(dogId: 123) { result in
+        networkManager.fetchDogProfile(dogId: 1) { [weak self] result in
             switch result {
             case .success(let dogProfile):
-                print("Fetched Dog Profile: \(dogProfile)")
+                DispatchQueue.main.async {
+                    self?.dogProfileView.configure(with: [dogProfile.dogProfile])
+                }
             case .failure(let error):
                 print("Error: \(error.localizedDescription)")
             }
