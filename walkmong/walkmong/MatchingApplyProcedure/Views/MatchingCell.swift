@@ -16,7 +16,6 @@ class MatchingCell: UIView {
     private let mainView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.cornerRadius = 10
         view.clipsToBounds = true
         return view
     }()
@@ -48,6 +47,7 @@ class MatchingCell: UIView {
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     private let contentFrame = UIView()
@@ -167,21 +167,22 @@ class MatchingCell: UIView {
         mainView.addSubview(bottomFrame)
         bottomFrame.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
-            make.height.equalTo(106)
+            make.height.equalTo(109)
         }
         
         // Puppy Image
         bottomFrame.addSubview(puppyImageView)
         puppyImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(97)
-            make.leading.centerY.equalToSuperview()
+            make.width.height.equalTo(112)
+            make.leading.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
         
         // Content Frame
         bottomFrame.addSubview(contentFrame)
         contentFrame.snp.makeConstraints { make in
             make.leading.equalTo(puppyImageView.snp.trailing).offset(12)
-            make.trailing.equalToSuperview().offset(-16)
+            make.trailing.equalToSuperview()
             make.centerY.equalToSuperview()
             make.height.equalToSuperview()
         }
