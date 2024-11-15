@@ -27,7 +27,7 @@ class NetworkManager {
         request(target: BoardAPI.getBoardDetail(boardId: boardId), completion: completion)
     }
 
-    func fetchDogProfile(dogId: Int, completion: @escaping (Result<DogProfileResponse, Error>) -> Void) {
+    func fetchDogProfile(dogId: Int, completion: @escaping (Result<DogProfile, Error>) -> Void) {
         request(target: DogAPI.getDogProfile(dogId: dogId), completion: completion)
     }
     

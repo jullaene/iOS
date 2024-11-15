@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DogProfileResponse: Decodable {
+struct DogProfile: Decodable {
     let dogId: Int
     let dogName: String
     let dogProfile: String
