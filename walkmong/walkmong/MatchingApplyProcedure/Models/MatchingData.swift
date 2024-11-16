@@ -13,7 +13,7 @@ struct BoardResponse: Codable {
 }
 
 struct MatchingData: Codable {
-    let boardId: Int
+    let boardId: Int?
     let startTime: String
     let endTime: String
     let matchingYn: String
@@ -26,7 +26,7 @@ struct MatchingData: Codable {
     let content: String
     let dongAddress: String
     let distance: Double
-    let createdAt: String
+    let createdAt: String?
 
     // 계산 프로퍼티
     var date: String {
@@ -40,7 +40,9 @@ struct MatchingData: Codable {
     }
 
     var formattedDistance: String {
-        distance >= 1.0 ? "\(String(format: "%.1f", distance))km" : "\(Int(distance * 1000))m"
+        distance < 1000
+            ? "\(Int(distance))m"
+            : "\(String(format: "%.1f", distance / 1000))km"
     }
 
     var safeDogProfile: String {
@@ -57,7 +59,7 @@ struct MatchingData: Codable {
     }
 
     var readableCreatedAt: String {
-        guard let createdDate = MatchingData.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: createdAt) else {
+        guard let createdDate = MatchingData.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: createdAt ?? "2024-11-16 04:30:00.000000") else {
             return "알 수 없음"
         }
         

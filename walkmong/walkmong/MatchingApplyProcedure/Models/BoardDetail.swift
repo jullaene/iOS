@@ -18,7 +18,7 @@ struct BoardDetail: Decodable {
     let dogSize: String
     let dongAddress: String
     let distance: Double
-    let date: String
+    let date: String?
     let startTime: String
     let endTime: String
     let locationNegotiationYn: String
@@ -31,5 +31,5 @@ struct BoardDetail: Decodable {
     let ownerAge: Int
     let ownerGender: String
     let ownerProfile: String?
-    let ownerRate: Double
+    let ownerRate: Double?
 }
