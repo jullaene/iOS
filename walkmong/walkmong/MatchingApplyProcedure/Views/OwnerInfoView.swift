@@ -185,10 +185,10 @@ class OwnerInfoView: UIView {
         ratingLabel.text = String(format: "%.1f", ownerRate)
         
         // 위치
-        if distance >= 1 {
-            locationLabel.text = String(format: "%.1fkm", distance).replacingOccurrences(of: ".0km", with: "km")
+        if distance < 1000 {
+            locationLabel.text = "\(Int(distance))m"
         } else {
-            locationLabel.text = "\(Int(distance * 1000))m"
+            locationLabel.text = String(format: "%.1fkm", distance / 1000).replacingOccurrences(of: ".0km", with: "km")
         }
         locationLabel.text = "\(dongAddress) \(locationLabel.text ?? "")"
     }

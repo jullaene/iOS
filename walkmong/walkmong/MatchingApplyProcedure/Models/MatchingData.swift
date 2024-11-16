@@ -40,7 +40,9 @@ struct MatchingData: Codable {
     }
 
     var formattedDistance: String {
-        distance >= 1.0 ? "\(String(format: "%.1f", distance))km" : "\(Int(distance * 1000))m"
+        distance < 1000
+            ? "\(Int(distance))m"
+            : "\(String(format: "%.1f", distance / 1000))km"
     }
 
     var safeDogProfile: String {
