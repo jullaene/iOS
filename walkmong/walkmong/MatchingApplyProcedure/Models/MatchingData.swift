@@ -26,7 +26,7 @@ struct MatchingData: Codable {
     let content: String
     let dongAddress: String
     let distance: Double
-    let createdAt: String
+    let createdAt: String?
 
     // 계산 프로퍼티
     var date: String {
@@ -57,7 +57,7 @@ struct MatchingData: Codable {
     }
 
     var readableCreatedAt: String {
-        guard let createdDate = MatchingData.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: createdAt) else {
+        guard let createdDate = MatchingData.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: createdAt ?? "2024-11-16 04:30:00.000000") else {
             return "알 수 없음"
         }
         
