@@ -53,15 +53,36 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
                 switch result {
                 case .success(let detail):
                     self?.boardDetail = detail
+                    print("BoardDetail fetched successfully: \(detail)")
                     self?.updateUI(with: detail)
                 case .failure(let error):
                     print("Error fetching BoardDetail for boardId \(boardId): \(error)")
+                    
+                    if case let DecodingError.dataCorrupted(context) = error {
+                        print("Decoding error: \(context.debugDescription)")
+                        print("Coding Path: \(context.codingPath)")
+                    } else if case let DecodingError.keyNotFound(key, context) = error {
+                        print("Key '\(key.stringValue)' not found: \(context.debugDescription)")
+                        print("Coding Path: \(context.codingPath)")
+                    } else if case let DecodingError.typeMismatch(type, context) = error {
+                        print("Type '\(type)' mismatch: \(context.debugDescription)")
+                        print("Coding Path: \(context.codingPath)")
+                    } else if case let DecodingError.valueNotFound(value, context) = error {
+                        print("Value '\(value)' not found: \(context.debugDescription)")
+                        print("Coding Path: \(context.codingPath)")
+                    } else {
+                        print("Unknown decoding error: \(error)")
+                    }
                 }
             }
         }
     }
 
     private func updateUI(with detail: BoardDetail) {
+        print("Updating UI with fetched data:")
+        print("dogProfile: \(detail.dogProfile ?? "defaultImage")")
+        print("ownerProfile: \(detail.ownerProfile ?? "defaultProfileImage")")
+
         dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
 
         // 공개 메소드를 통해 profileFrame 업데이트
@@ -77,7 +98,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         )
         
         dogInfoView.setWalkInfoDelegate(
-            date: detail.date,
+            date: detail.date ?? "00",
             startTime: detail.startTime,
             endTime: detail.endTime,
             locationNegotiationYn: detail.locationNegotiationYn,
@@ -96,7 +117,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             ownerName: detail.ownerName,
             ownerAge: detail.ownerAge,
             ownerGender: detail.ownerGender,
-            ownerRate: detail.ownerRate,
+            ownerRate: detail.ownerRate ?? 1.0,
             dongAddress: detail.dongAddress,
             distance: detail.distance
         )
