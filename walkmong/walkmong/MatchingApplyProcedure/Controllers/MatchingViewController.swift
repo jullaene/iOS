@@ -172,6 +172,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         filterView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(572)
+            make.bottom.equalToSuperview().offset(572)
         }
         self.view.layoutIfNeeded()
         updateDimViewVisibility(isHidden: false)
@@ -186,7 +187,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         guard let filterView = matchingFilterView else { return }
         animateConstraints {
             filterView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview().offset(605)
+                make.bottom.equalToSuperview().offset(572)
             }
         } completion: { _ in
             filterView.removeFromSuperview()
