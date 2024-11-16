@@ -19,7 +19,7 @@ extension BoardAPI: TargetType {
     var path: String {
         switch self {
         case .getAddressList:
-            return "/api/v1/board/address/list"
+            return "/api/v1/address/list"
         case .getBoardList:
             return "/api/v1/board/list"
         case .getBoardDetail(let boardId):
