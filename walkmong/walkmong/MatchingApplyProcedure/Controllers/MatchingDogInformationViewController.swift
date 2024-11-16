@@ -20,7 +20,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         configureViewDelegate()
         
         if let data = matchingData {
-            fetchBoardDetailData(boardId: data.boardId)
+            fetchBoardDetailData(boardId: data.boardId ?? 1)
         } else {
             print("Error: matchingData is nil. Cannot fetch board details.")
         }
@@ -40,7 +40,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     // MARK: - Public Methods
     func configure(with data: MatchingData) {
         self.matchingData = data
-        fetchBoardDetailData(boardId: data.boardId)
+        fetchBoardDetailData(boardId: data.boardId ?? 1)
     }
 
     private func fetchBoardDetailData(boardId: Int) {
