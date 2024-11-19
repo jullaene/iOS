@@ -160,7 +160,6 @@ class MatchingApplyMapAddressModalView: UIView {
     }
     
     func updateButtonState(value: Bool){
-        print(value)
         nextButton.backgroundColor = value ? .gray600 : .gray300
     }
     

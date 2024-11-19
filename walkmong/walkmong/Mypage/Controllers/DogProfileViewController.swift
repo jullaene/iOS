@@ -14,7 +14,7 @@ import SnapKit
 class DogProfileViewController: UIViewController {
 
     private let dogProfileView = DogProfileView()
-    private let networkManager = NetworkManager()
+    private let networkManager = NetworkManager(useMockData: true)
     private var dogId: Int?
 
     override func viewDidLoad() {
