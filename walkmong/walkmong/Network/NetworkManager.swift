@@ -92,10 +92,11 @@ class NetworkManager {
     }
 
     private func mockAddressList() -> [BoardAddress] {
-        return [
-            BoardAddress(addressId: 1, dongAddress: "동네 1"),
-            BoardAddress(addressId: 2, dongAddress: "동네 2")
+        let mockData = [
+            BoardAddress(addressId: 1, dongAddress: "노원구 공릉동"),
+            BoardAddress(addressId: 2, dongAddress: "마포구 공덕동")
         ]
+        return mockData
     }
 
     private func mockBoardDetail() -> BoardDetail {

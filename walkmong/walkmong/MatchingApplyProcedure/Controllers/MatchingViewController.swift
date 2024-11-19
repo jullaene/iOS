@@ -90,20 +90,15 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     }
 
     private func fetchAddressList() {
-        boardProvider.request(.getAddressList) { [weak self] result in
+        networkManager.fetchAddressList { [weak self] result in
             switch result {
-            case .success(let response):
-                do {
-                    let addressResponse = try JSONDecoder().decode(AddressResponse.self, from: response.data)
-                    let locations = addressResponse.data.map { $0.dongAddress }
-                    DispatchQueue.main.async {
-                        self?.dropdownView?.updateLocations(locations: locations)
-                    }
-                } catch {
-                    print("디코딩 실패: \(error)")
+            case .success(let addresses):
+                let locations = addresses.map { $0.dongAddress }
+                DispatchQueue.main.async {
+                    self?.dropdownView?.updateLocations(locations: locations)
                 }
             case .failure(let error):
-                print("API 호출 실패: \(error.localizedDescription)")
+                print("Failed to fetch addresses: \(error)") // 디버깅
             }
         }
     }
