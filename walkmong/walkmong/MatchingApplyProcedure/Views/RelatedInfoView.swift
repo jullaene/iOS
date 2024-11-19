@@ -95,7 +95,7 @@ class RelatedInfoView: UIView {
             labels[i].snp.makeConstraints { make in
                 make.top.equalTo(labels[i - 1].snp.bottom).offset(i % 2 == 0 ? 8 : 24)
                 make.leading.equalToSuperview().offset(24)
-                make.width.equalTo(305)
+                make.trailing.equalToSuperview().offset(-24)
             }
         }
         
@@ -118,24 +118,25 @@ class RelatedInfoView: UIView {
         font: UIFont?,
         lineHeightMultiple: CGFloat = 1.0,
         kern: CGFloat = 0.0,
-        numberOfLines: Int = 1
+        numberOfLines: Int = 0
     ) -> UILabel {
         let label = UILabel()
         label.text = text
         label.textColor = textColor
         label.font = font
         label.numberOfLines = numberOfLines
-        
+        label.lineBreakMode = .byCharWrapping // UILabel의 lineBreakMode 설정
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = lineHeightMultiple
-        
-        label.attributedText = NSAttributedString(
-            string: text,
-            attributes: [
-                .kern: kern,
-                .paragraphStyle: paragraphStyle
-            ]
-        )
+        paragraphStyle.lineBreakMode = .byCharWrapping // NSParagraphStyle의 lineBreakMode 설정
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .kern: kern,
+            .paragraphStyle: paragraphStyle
+        ]
+
+        label.attributedText = NSAttributedString(string: text, attributes: attributes)
         
         return label
     }
