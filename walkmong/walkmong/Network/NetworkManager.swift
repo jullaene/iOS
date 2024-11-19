@@ -104,7 +104,7 @@ class NetworkManager {
     }
 
     private func mockDogProfile() -> DogProfile {
-        return DogProfile(dogId: 1, dogName: "봄별이", dogProfile: "puppyImage01", dogGender: "FEMALE", dogAge: 4, breed: "말티즈", weight: 4, neuteringYn: "N", bite: "가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.", friendly: "가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.", barking: "가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.", rabiesYn: "N")
+        return DogProfile(dogId: 1, dogName: "봄별이", dogProfile: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", dogGender: "FEMALE", dogAge: 4, breed: "말티즈", weight: 4, neuteringYn: "N", bite: "가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.", friendly: "가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.", barking: "가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.가끔물수도 안 물수도 이것도 두 줄로 테스트 하는 게 좋을수도.", rabiesYn: "N")
     }
 }
 
