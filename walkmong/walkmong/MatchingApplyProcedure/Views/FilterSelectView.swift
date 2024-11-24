@@ -6,7 +6,7 @@ class FilterSelectView: UIView {
     // MARK: - Buttons
     public let filterButton = FilterSelectView.createButton(
         backgroundColor: UIColor.gray100,
-        cornerRadius: 18.5,
+        cornerRadius: 16.5,
         image: UIImage(named: "filterIcon")
     )
     
@@ -64,7 +64,7 @@ class FilterSelectView: UIView {
                 
                 if index == 0 {
                     make.width.equalTo(34)
-                    make.height.equalTo(38)
+                    make.height.equalTo(36)
                 } else {
                     make.width.equalTo(index == 3 ? 87 : 60)
                 }
