@@ -49,9 +49,11 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     private func setupUI() {
         self.view.backgroundColor = .white
         matchingView = MatchingView()
+        
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
         }
+        
         self.view.addSubview(matchingView)
         updateUILayout()
         locationSelectView = matchingView.locationSelectView

@@ -25,7 +25,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         font: UIFont(name: "Pretendard-Bold", size: 20),
         textColor: UIColor.mainBlack,
         kern: -0.32,
-        lineHeight: 1.17
+        lineHeight: 0
     )
     private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
     private(set) var calendarView = CalendarView() // 접근 제어자 수정
@@ -179,7 +179,16 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             make.height.equalTo(78)
         }
         
-        filterSelectView.filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        let buttons = [
+            filterSelectView.filterButton,
+            filterSelectView.distanceButton,
+            filterSelectView.breedButton,
+            filterSelectView.matchStatusButton
+        ]
+
+        buttons.forEach { button in
+            button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        }
     }
 
     @objc private func filterButtonTapped() {

@@ -283,8 +283,17 @@ class MatchingFilterView: UIView {
                 make.height.equalTo(38)
             }
             
-            // 동적 크기 조정: 텍스트에 따라 너비 설정
-            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            if #available(iOS 15.0, *) {
+                var config = UIButton.Configuration.filled()
+                config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+                config.baseBackgroundColor = .gray100
+                config.baseForegroundColor = .gray500
+                button.configuration = config
+            } else {
+                button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+                button.backgroundColor = .gray100
+                button.setTitleColor(.gray500, for: .normal)
+            }
         }
     }
     
@@ -367,7 +376,17 @@ class MatchingFilterView: UIView {
             }
             
             // 동적 크기 조정: 텍스트에 따라 너비 설정
-            button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            if #available(iOS 15.0, *) {
+                var config = UIButton.Configuration.filled()
+                config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+                config.baseBackgroundColor = .gray100
+                config.baseForegroundColor = .gray500
+                button.configuration = config
+            } else {
+                button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+                button.backgroundColor = .gray100
+                button.setTitleColor(.gray500, for: .normal)
+            }
         }
     }
     
