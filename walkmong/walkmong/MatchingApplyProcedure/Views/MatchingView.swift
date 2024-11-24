@@ -25,7 +25,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         font: UIFont(name: "Pretendard-Bold", size: 20),
         textColor: UIColor.mainBlack,
         kern: -0.32,
-        lineHeight: 1.17
+        lineHeight: 0
     )
     private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
     private(set) var calendarView = CalendarView() // 접근 제어자 수정
