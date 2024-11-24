@@ -221,7 +221,7 @@ extension String {
         guard let dateObject = dateFormatter.date(from: fullDateTimeString) else { return nil }
 
         // 결과 포맷 설정
-        dateFormatter.dateFormat = "yyyy.MM.dd (E) HH:mm"
+        dateFormatter.dateFormat = "MM.dd (E) HH:mm"
         return dateFormatter.string(from: dateObject)
     }
 }
