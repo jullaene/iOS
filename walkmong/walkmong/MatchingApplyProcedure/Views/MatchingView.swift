@@ -46,6 +46,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     
     // MARK: - Public Methods
     func updateMatchingCells(with data: [MatchingData]) {
+        
         // Clear existing cells
         matchingCells.forEach { $0.removeFromSuperview() }
         matchingCells.removeAll()
@@ -53,7 +54,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         // Add new cells
         for item in data {
             let cell = MatchingCell()
-            cell.configure(with: item) // 데이터만 설정
+            cell.configure(with: item)
             matchingCells.append(cell)
             contentView.addSubview(cell)
         }

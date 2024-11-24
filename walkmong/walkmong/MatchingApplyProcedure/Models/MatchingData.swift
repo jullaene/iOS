@@ -40,11 +40,18 @@ struct MatchingData: Codable {
     }
 
     var formattedDistance: String {
-        distance < 1000
-            ? "\(Int(distance))m"
-            : "\(String(format: "%.1f", distance / 1000))km"
+        if distance < 1000 {
+            return "\(Int(distance))m"
+        } else {
+            let distanceInKm = distance / 1000
+            if distanceInKm == floor(distanceInKm) {
+                return "\(Int(distanceInKm))km"
+            } else {
+                return "\(String(format: "%.1f", distanceInKm))km"
+            }
+        }
     }
-
+    
     var safeDogProfile: String {
         dogProfile ?? "puppyImage01.png"
     }

@@ -172,11 +172,16 @@ class ProfileView: UIView {
         dogInfoLabel.text = "\(sizeText) · \(breed) \(weightText) · \(dogAge)살"
 
         // 위치 정보 업데이트
+        let distanceInMeters = distance < 1000 ? distance : distance / 1000
         let distanceText: String
-        if distance >= 1.0 {
-            distanceText = "\(Int(distance))km"
+        if distance < 1000 {
+            distanceText = "\(Int(distanceInMeters))m"
         } else {
-            distanceText = "\(Int(distance * 1000))m"
+            if floor(distanceInMeters) == distanceInMeters {
+                distanceText = "\(Int(distanceInMeters))km"
+            } else {
+                distanceText = String(format: "%.1fkm", distanceInMeters)
+            }
         }
         locationLabel.text = "\(dongAddress) \(distanceText)"
     }

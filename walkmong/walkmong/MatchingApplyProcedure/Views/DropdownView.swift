@@ -28,6 +28,7 @@ class DropdownView: UIView {
     }
     
     func updateLocations(locations: [String]) {
+
         labels.forEach { $0.removeFromSuperview() }
         labels.removeAll()
 
@@ -57,7 +58,8 @@ class DropdownView: UIView {
     
     private func extractDong(from location: String) -> String? {
         let components = location.split(separator: " ")
-        return components.last.map { String($0) }
+        let dong = components.last.map { String($0) }
+        return dong
     }
     
     private func setupLabel(_ label: UILabel, text: String, isSelected: Bool) {

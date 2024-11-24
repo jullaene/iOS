@@ -7,7 +7,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     private var matchingData: MatchingData?
     private let dogInfoView = MatchingDogInformationView()
     private var boardDetail: BoardDetail?
-    private let networkManager = NetworkManager()
+    private let networkManager = NetworkManager(useMockData: true)
     private var isLoading: Bool = false
 
     // MARK: - Lifecycle
@@ -53,7 +53,6 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
                 switch result {
                 case .success(let detail):
                     self?.boardDetail = detail
-                    print("BoardDetail fetched successfully: \(detail)")
                     self?.updateUI(with: detail)
                 case .failure(let error):
                     print("Error fetching BoardDetail for boardId \(boardId): \(error)")
@@ -79,9 +78,6 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     }
 
     private func updateUI(with detail: BoardDetail) {
-        print("Updating UI with fetched data:")
-        print("dogProfile: \(detail.dogProfile ?? "defaultImage")")
-        print("ownerProfile: \(detail.ownerProfile ?? "defaultProfileImage")")
 
         dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
 
@@ -176,13 +172,11 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
 
     // MARK: - Navigation
     private func navigateToDogProfile() {
-        print("Attempting to navigate to DogProfileViewController")
         guard let boardDetail = boardDetail else {
             print("Error: boardDetail is nil. Cannot navigate to dog profile.")
             return
         }
 
-        print("Navigating to DogProfileViewController with dogId: \(boardDetail.dogId)")
         let dogProfileVC = DogProfileViewController()
         dogProfileVC.configure(with: boardDetail.dogId)
         navigationController?.pushViewController(dogProfileVC, animated: true)

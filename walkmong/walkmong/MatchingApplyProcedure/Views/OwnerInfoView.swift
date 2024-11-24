@@ -188,7 +188,14 @@ class OwnerInfoView: UIView {
         if distance < 1000 {
             locationLabel.text = "\(Int(distance))m"
         } else {
-            locationLabel.text = String(format: "%.1fkm", distance / 1000).replacingOccurrences(of: ".0km", with: "km")
+            let distanceInKm = distance / 1000
+            if distanceInKm == floor(distanceInKm) {
+                // 1.0km와 같은 경우는 정수로만 표시
+                locationLabel.text = "\(Int(distanceInKm))km"
+            } else {
+                // 1.2km와 같은 경우는 소수점 1자리까지 표시
+                locationLabel.text = String(format: "%.1fkm", distanceInKm)
+            }
         }
         locationLabel.text = "\(dongAddress) \(locationLabel.text ?? "")"
     }

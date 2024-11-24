@@ -20,6 +20,8 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     fileprivate var matchingData: [MatchingData] = []
     private var isNavigationBarHidden: Bool = true
     private let boardProvider = MoyaProvider<BoardAPI>()
+    
+    private let networkManager = NetworkManager(useMockData: true)
 
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
@@ -73,47 +75,36 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
 
     // MARK: - Fetch Data
     private func fetchMatchingData() {
-        boardProvider.request(.getBoardList(date: nil, addressId: nil, distance: nil, dogSize: nil, matchingYn: nil)) { [weak self] result in
+        
+        networkManager.fetchBoardList(date: nil, addressId: nil, distance: nil, dogSize: nil, matchingYn: nil) { [weak self] result in
             switch result {
-            case .success(let response):
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let boardResponse = try decoder.decode(BoardResponse.self, from: response.data)
-                    self?.matchingData = boardResponse.data
-                    
-                    DispatchQueue.main.async {
-                        self?.updateMatchingView()
-                    }
-                } catch {
-                    print("디코딩 실패: \(error)")
+            case .success(let data):
+                self?.matchingData = data
+                DispatchQueue.main.async {
+                    self?.updateMatchingView()
                 }
             case .failure(let error):
-                print("API 호출 실패: \(error.localizedDescription)")
+                print("Failed to fetch matching data: \(error)")
             }
         }
     }
 
     private func fetchAddressList() {
-        boardProvider.request(.getAddressList) { [weak self] result in
+        networkManager.fetchAddressList { [weak self] result in
             switch result {
-            case .success(let response):
-                do {
-                    let addressResponse = try JSONDecoder().decode(AddressResponse.self, from: response.data)
-                    let locations = addressResponse.data.map { $0.dongAddress }
-                    DispatchQueue.main.async {
-                        self?.dropdownView?.updateLocations(locations: locations)
-                    }
-                } catch {
-                    print("디코딩 실패: \(error)")
+            case .success(let addresses):
+                let locations = addresses.map { $0.dongAddress }
+                DispatchQueue.main.async {
+                    self?.dropdownView?.updateLocations(locations: locations)
                 }
             case .failure(let error):
-                print("API 호출 실패: \(error.localizedDescription)")
+                print("Failed to fetch addresses: \(error)") // 디버깅
             }
         }
     }
 
     private func updateMatchingView() {
+        
         guard let selectedDate = matchingView.selectedDate else {
             print("No selected date available")
             return
