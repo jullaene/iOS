@@ -91,9 +91,15 @@ class RelatedInfoView: UIView {
             make.width.equalTo(111)
         }
         
+        labels[1].snp.makeConstraints { make in
+            make.top.equalTo(labels[0].snp.bottom).offset(30)
+            make.leading.equalToSuperview().offset(24)
+            make.trailing.equalToSuperview().offset(-24)
+        }
+        
         for i in 1..<labels.count {
             labels[i].snp.makeConstraints { make in
-                make.top.equalTo(labels[i - 1].snp.bottom).offset(i % 2 == 0 ? 8 : 24)
+                make.top.equalTo(labels[i - 1].snp.bottom).offset(i % 2 == 0 ? 8 : 36)
                 make.leading.equalToSuperview().offset(24)
                 make.trailing.equalToSuperview().offset(-24)
             }
@@ -102,6 +108,7 @@ class RelatedInfoView: UIView {
         labels.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
         }
+        
     }
     
     // MARK: - Public Methods
