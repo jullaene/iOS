@@ -15,7 +15,7 @@ class RelatedInfoView: UIView {
     private let requestTitleLabel = RelatedInfoView.createLabel(
         text: "산책 요청 사항",
         textColor: UIColor.gray600,
-        font: UIFont(name: "Pretendard-SemiBold", size: 16)
+        font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
     private let requestDescriptionLabel = RelatedInfoView.createLabel(
@@ -28,7 +28,7 @@ class RelatedInfoView: UIView {
     private let referenceTitleLabel = RelatedInfoView.createLabel(
         text: "산책 참고 사항",
         textColor: UIColor.gray600,
-        font: UIFont(name: "Pretendard-SemiBold", size: 16)
+        font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
     private let referenceDescriptionLabel = RelatedInfoView.createLabel(
@@ -40,7 +40,7 @@ class RelatedInfoView: UIView {
     private let additionalInfoTitleLabel = RelatedInfoView.createLabel(
         text: "추가 안내 사항",
         textColor: UIColor.gray600,
-        font: UIFont(name: "Pretendard-SemiBold", size: 16)
+        font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
     private let additionalInfoDescriptionLabel = RelatedInfoView.createLabel(
