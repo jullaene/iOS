@@ -97,7 +97,7 @@ class RelatedInfoView: UIView {
             make.trailing.equalToSuperview().offset(-24)
         }
         
-        for i in 1..<labels.count {
+        for i in 2..<labels.count {
             labels[i].snp.makeConstraints { make in
                 make.top.equalTo(labels[i - 1].snp.bottom).offset(i % 2 == 0 ? 8 : 36)
                 make.leading.equalToSuperview().offset(24)
