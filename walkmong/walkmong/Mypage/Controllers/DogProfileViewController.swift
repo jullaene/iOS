@@ -54,12 +54,10 @@ class DogProfileViewController: UIViewController {
     }
 
     private func fetchDogProfile(dogId: Int) {
-        print("Fetching dog profile for dogId: \(dogId)")
         
         networkManager.fetchDogProfile(dogId: dogId) { [weak self] result in
             switch result {
             case .success(let dogProfile):
-                print("Raw DogProfile Data: \(dogProfile)")
                 DispatchQueue.main.async {
                     self?.updateDogProfileView(with: dogProfile)
                 }
