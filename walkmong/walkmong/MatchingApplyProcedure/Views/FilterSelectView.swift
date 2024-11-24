@@ -4,13 +4,13 @@ import SnapKit
 class FilterSelectView: UIView {
 
     // MARK: - Buttons
-    public let filterButton = FilterSelectView.createButton(
+    let filterButton = FilterSelectView.createButton(
         backgroundColor: UIColor.gray100,
         cornerRadius: 16.5,
         image: UIImage(named: "filterIcon")
     )
     
-    private let distanceButton = FilterSelectView.createButton(
+    let distanceButton = FilterSelectView.createButton(
         backgroundColor: UIColor.gray600,
         cornerRadius: 18.5,
         title: "거리",

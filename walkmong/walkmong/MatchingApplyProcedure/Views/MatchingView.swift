@@ -179,7 +179,16 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             make.height.equalTo(78)
         }
         
-        filterSelectView.filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        let buttons = [
+            filterSelectView.filterButton,
+            filterSelectView.distanceButton,
+            filterSelectView.breedButton,
+            filterSelectView.matchStatusButton
+        ]
+
+        buttons.forEach { button in
+            button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        }
     }
 
     @objc private func filterButtonTapped() {
