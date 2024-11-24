@@ -68,7 +68,7 @@ class DogProfileViewController: UIViewController {
     }
 
     private func updateDogProfileView(with dogProfile: DogProfile) {
-        dogProfileView.configure(with: [dogProfile.dogProfile])
+        dogProfileView.configureProfileImage(with: [dogProfile.dogProfile])
         dogProfileView.configureBasicInfo(
             dogName: dogProfile.dogName,
             dogGender: dogProfile.dogGender,
