@@ -151,7 +151,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     private func configureMatchingData() {
         if let data = matchingData {
             let dogProfile = data.dogProfile ?? "defaultImage"
-            dogInfoView.configureImages(with: [dogProfile, "sampleImage"])
+            dogInfoView.configureImages(with: [dogProfile])
         }
     }
     
