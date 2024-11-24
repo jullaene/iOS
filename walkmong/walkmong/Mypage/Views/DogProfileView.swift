@@ -78,9 +78,8 @@ class DogProfileView: UIView, UIScrollViewDelegate {
 
         basicInfoFrame.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(Constants.contentStartMargin)
-            $0.centerX.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(212)
+            $0.height.equalTo(252)
         }
 
         socialInfoFrame.snp.makeConstraints {
