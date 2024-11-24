@@ -54,7 +54,7 @@ class FilterSelectView: UIView {
             
             button.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
-                make.height.equalTo(38)
+                make.height.equalTo(36)
                 
                 if let previous = previousButton {
                     make.leading.equalTo(previous.snp.trailing).offset(8)
