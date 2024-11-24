@@ -18,6 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let mainTabBarController = MainTabBarController()
         let navigationController = UINavigationController(rootViewController: mainTabBarController)
         window?.rootViewController = navigationController
+        
+        window?.overrideUserInterfaceStyle = .light  // 라이트모드
         window?.makeKeyAndVisible()
     }
     
