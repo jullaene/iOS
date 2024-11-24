@@ -14,10 +14,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     // MARK: - UI Components
     private let mainScrollView = UIScrollView()
     private let contentView = UIView()
-    private let imageScrollView = UIScrollView()
-    private let imageContentView = UIView()
-    private let pageControl = UIPageControl()
-    private var imageViews: [UIView] = []
+    private let imageView = UIImageView()
 
     private let profileFrame = ProfileView()
     private let walkInfoFrame = WalkInfoView()
@@ -118,46 +115,16 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
         }
-
-        // Image ScrollView와 PageControl 설정
-        setupImageScrollView()
-        setupPageControl()
+        
+        contentView.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(imageView.snp.width).multipliedBy(0.757)
+        }
         
         DispatchQueue.main.async {
             self.layoutIfNeeded()
-        }
-    }
-
-    private func setupImageScrollView() {
-        contentView.addSubview(imageScrollView)
-        imageScrollView.isPagingEnabled = true
-        imageScrollView.showsHorizontalScrollIndicator = false
-        imageScrollView.delegate = self
-
-        // 스크롤뷰의 높이 비율 설정
-        imageScrollView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(UIScreen.main.bounds.width * (297.66 / 393.0)) // 비율 적용
-        }
-
-        imageScrollView.addSubview(imageContentView)
-        imageContentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.height.equalTo(imageScrollView.snp.height)
-        }
-    }
-
-    private func setupPageControl() {
-        contentView.addSubview(pageControl)
-        pageControl.currentPage = 0
-        pageControl.pageIndicatorTintColor = UIColor.mainBlue.withAlphaComponent(0.3)
-        pageControl.currentPageIndicatorTintColor = .mainBlue
-        pageControl.backgroundColor = UIColor(red: 0.749, green: 0.749, blue: 0.749, alpha: 0.44)
-        pageControl.layer.cornerRadius = 12
-        pageControl.snp.makeConstraints { make in
-            make.top.equalTo(imageScrollView.snp.bottom).offset(12.34)
-            make.centerX.equalToSuperview()
-            make.height.equalTo(24)
         }
     }
 
@@ -180,7 +147,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     
     private func setupFrames() {
         addFramesToContentView([
-            (profileFrame, 102, pageControl.snp.bottom, 32),
+            (profileFrame, 102, imageView.snp.bottom, 32),
             (walkInfoFrame, nil, profileFrame.snp.bottom, 34),
             (relatedInfoFrame, nil, walkInfoFrame.snp.bottom, 16),
             (ownerInfoFrame, 172, relatedInfoFrame.snp.bottom, 16)
@@ -276,12 +243,6 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         }
     }
 
-    // MARK: - UIScrollViewDelegate
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let pageIndex = round(scrollView.contentOffset.x / UIScreen.main.bounds.width)
-        pageControl.currentPage = Int(pageIndex)
-    }
-
     // MARK: - Helper Methods
     private static func createRoundedButton(backgroundColor: UIColor, cornerRadius: CGFloat) -> UIView {
         let view = UIView()
@@ -291,47 +252,10 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     }
 
     func configureImages(with imageUrls: [String?]) {
-        // 기존 이미지 제거
-        imageViews.forEach { $0.removeFromSuperview() }
-        imageViews = imageUrls.map { createImageView(named: $0) }
-
-        // 이미지 뷰 추가
-        for (index, view) in imageViews.enumerated() {
-            imageContentView.addSubview(view)
-            view.snp.makeConstraints { make in
-                make.top.bottom.equalToSuperview()
-                make.width.equalTo(UIScreen.main.bounds.width) // 디바이스 너비와 일치
-                make.leading.equalToSuperview().offset(CGFloat(index) * UIScreen.main.bounds.width)
-            }
-        }
-
-        // 콘텐츠 뷰의 너비 업데이트
-        imageContentView.snp.remakeConstraints { make in
-            make.edges.equalToSuperview()
-            make.height.equalTo(imageScrollView.snp.height)
-            make.width.equalTo(UIScreen.main.bounds.width * CGFloat(imageUrls.count))
-        }
-
-        // 페이지 컨트롤 업데이트
-        pageControl.numberOfPages = imageUrls.count
-
-        // 이미지가 1개인 경우 처리
-        if imageUrls.count <= 1 {
-            pageControl.isHidden = true
-            profileFrame.snp.remakeConstraints { make in
-                make.top.equalTo(imageScrollView.snp.bottom).offset(32)
-                make.centerX.equalToSuperview()
-                make.leading.trailing.equalToSuperview().inset(20)
-                make.height.equalTo(102)
-            }
+        if let firstImageUrl = imageUrls.first, let url = URL(string: firstImageUrl ?? "") {
+            imageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
         } else {
-            pageControl.isHidden = false
-            profileFrame.snp.remakeConstraints { make in
-                make.top.equalTo(pageControl.snp.bottom).offset(32)
-                make.centerX.equalToSuperview()
-                make.leading.trailing.equalToSuperview().inset(20)
-                make.height.equalTo(102)
-            }
+            imageView.image = UIImage(named: "placeholder")
         }
     }
 
