@@ -104,7 +104,7 @@ class SocialInfoView: UIView {
         container.backgroundColor = .gray100
         container.layer.cornerRadius = 5
 
-        let titleLabel = createLabel(text: title, font: Constants.titleFont, textColor: .darkGray)
+        let titleLabel = createLabel(text: title, font: Constants.titleFont, textColor: .gray400)
         let descriptionLabel = createLabel(text: description, font: Constants.descriptionFont, textColor: .mainBlue)
         descriptionLabel.numberOfLines = 0
 
