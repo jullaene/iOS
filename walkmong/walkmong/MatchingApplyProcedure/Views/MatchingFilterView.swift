@@ -25,8 +25,8 @@ class MatchingFilterView: UIView {
     private var distanceDots: [UIView] = []
     private var distanceLabels: [UILabel] = []
     
-    private let resetButton = UIButton()
-    private let applyButton = UIButton()
+    private var resetButton = UIButton()
+    private var applyButton = UIButton()
     
     weak var delegate: MatchingFilterViewDelegate?
     
@@ -215,22 +215,48 @@ class MatchingFilterView: UIView {
     }
     
     private func setupMatchingStatusFrame() {
-        setupFilterFrame(
-            label: createLabel(text: "매칭여부", fontSize: 20, color: .mainBlack),
-            container: matchingStatusFrame,
-            buttonTitles: ["매칭중", "매칭확정"],
-            buttons: &matchingButtons,
-            action: #selector(matchingButtonTapped(_:))
-        )
+        let label = createLabel(text: "매칭여부", fontSize: 20, color: .mainBlack)
+        matchingStatusFrame.addSubview(label)
+
+        label.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().offset(16)
+        }
+
+        let buttonContainer = UIView()
+        matchingStatusFrame.addSubview(buttonContainer)
+
+        buttonContainer.snp.makeConstraints { make in
+            make.top.equalTo(label.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(38)
+        }
+
+        let buttonTitles = ["매칭중", "매칭확정"]
+        for title in buttonTitles {
+            let button = UIButton.createStyledButton(style: .light, size: .small2, title: title)
+            button.addTarget(self, action: #selector(matchingButtonTapped(_:)), for: .touchUpInside)
+            buttonContainer.addSubview(button)
+            matchingButtons.append(button)
+        }
+
+        for (index, button) in matchingButtons.enumerated() {
+            button.snp.makeConstraints { make in
+                if index == 0 {
+                    make.leading.equalToSuperview()
+                } else {
+                    make.leading.equalTo(matchingButtons[index - 1].snp.trailing).offset(12)
+                }
+                make.top.bottom.equalToSuperview()
+            }
+        }
     }
-    
     private func setupBreedFrame() {
         let breedLabel = createLabel(text: "견종", fontSize: 20, color: .mainBlack)
         let instructionLabel = UILabel()
         instructionLabel.frame = CGRect(x: 0, y: 0, width: 353, height: 22)
         instructionLabel.textColor = UIColor.mainBlack
         instructionLabel.font = UIFont(name: "Pretendard-Medium", size: 16)
-        
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.17
         instructionLabel.attributedText = NSMutableAttributedString(
@@ -240,38 +266,38 @@ class MatchingFilterView: UIView {
                 NSAttributedString.Key.paragraphStyle: paragraphStyle
             ]
         )
-        
+
         breedFrame.addSubview(breedLabel)
         breedFrame.addSubview(instructionLabel)
-        
+
         breedLabel.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().offset(16)
         }
-        
+
         instructionLabel.snp.makeConstraints { make in
             make.top.equalTo(breedLabel.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().inset(16)
             make.height.equalTo(22)
         }
-        
+
         let buttonContainer = UIView()
         breedFrame.addSubview(buttonContainer)
-        
+
         buttonContainer.snp.makeConstraints { make in
             make.top.equalTo(instructionLabel.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(38)
         }
-        
+
         let buttonTitles = ["소형견", "중형견", "대형견"]
         for title in buttonTitles {
-            let button = createToggleButton(title: title)
+            let button = UIButton.createStyledButton(style: .light, size: .small2, title: title)
             button.addTarget(self, action: #selector(breedButtonTapped(_:)), for: .touchUpInside)
             buttonContainer.addSubview(button)
             breedButtons.append(button)
         }
-        
+
         for (index, button) in breedButtons.enumerated() {
             button.snp.makeConstraints { make in
                 if index == 0 {
@@ -280,43 +306,32 @@ class MatchingFilterView: UIView {
                     make.leading.equalTo(breedButtons[index - 1].snp.trailing).offset(12)
                 }
                 make.top.bottom.equalToSuperview()
-                make.height.equalTo(38)
-            }
-            
-            if #available(iOS 15.0, *) {
-                var config = UIButton.Configuration.filled()
-                config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
-                config.baseBackgroundColor = .gray100
-                config.baseForegroundColor = .gray500
-                button.configuration = config
-            } else {
-                button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-                button.backgroundColor = .gray100
-                button.setTitleColor(.gray500, for: .normal)
             }
         }
     }
     
     private func setupButtonFrame() {
-        configureButton(resetButton, title: "초기화", backgroundColor: .gray100, textColor: .black)
-        configureButton(applyButton, title: "적용하기", backgroundColor: .gray600, textColor: .white)
-        
+        resetButton = UIButton.createStyledButton(style: .light, size: .medium, title: "초기화")
+        applyButton = UIButton.createStyledButton(style: .dark, size: .medium, title: "적용하기")
+
         buttonFrame.addSubview(resetButton)
         buttonFrame.addSubview(applyButton)
-        
+
         resetButton.addTarget(self, action: #selector(resetFilter), for: .touchUpInside)
         applyButton.addTarget(self, action: #selector(applyFilter), for: .touchUpInside)
-        
+
+        // 초기화 버튼 오토레이아웃
         resetButton.snp.makeConstraints { make in
-            make.leading.centerY.equalToSuperview()
+            make.leading.equalToSuperview()
             make.width.equalTo(93)
             make.height.equalTo(54)
         }
-        
+
+        // 적용하기 버튼 오토레이아웃
         applyButton.snp.makeConstraints { make in
-            make.trailing.centerY.equalToSuperview()
-            make.width.equalTo(251)
-            make.height.equalTo(54)
+            make.trailing.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(resetButton.snp.trailing).offset(12)
         }
     }
     
@@ -402,11 +417,22 @@ class MatchingFilterView: UIView {
     }
     
     @objc private func matchingButtonTapped(_ sender: UIButton) {
-        toggleButton(sender)
+        toggleMultipleSelection(sender, buttons: matchingButtons)
+    }
+
+    @objc private func breedButtonTapped(_ sender: UIButton) {
+        toggleMultipleSelection(sender, buttons: breedButtons)
     }
     
-    @objc private func breedButtonTapped(_ sender: UIButton) {
-        toggleButton(sender)
+    private func toggleMultipleSelection(_ button: UIButton, buttons: [UIButton]) {
+        let isSelected = button.tag == 1
+        updateButtonState(button, isSelected: !isSelected)
+    }
+
+    private func updateButtonState(_ button: UIButton, isSelected: Bool) {
+        button.backgroundColor = isSelected ? .gray600 : .gray100
+        button.setTitleColor(isSelected ? .white : .gray500, for: .normal)
+        button.tag = isSelected ? 1 : 0
     }
     
     @objc private func resetFilter() {
@@ -427,24 +453,9 @@ class MatchingFilterView: UIView {
         delegate?.didApplyFilter(selectedBreeds: selectedBreeds, matchingStatus: selectedMatchingStatus)
     }
     
-    private func toggleButton(_ button: UIButton) {
+    private func toggleButton(_ button: UIButton, buttons: [UIButton]) {
         let isSelected = button.tag == 1
-        UIView.animate(withDuration: 0.2) {
-            button.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-        } completion: { _ in
-            UIView.animate(withDuration: 0.2) {
-                button.transform = .identity
-            }
-        }
-        updateButtonState(button, isSelected: !isSelected)
-    }
-    
-    private func updateButtonState(_ button: UIButton, isSelected: Bool) {
-        button.backgroundColor = isSelected ? .mainBlue : .gray100
-        button.setTitleColor(isSelected ? .white : .gray500, for: .normal)
-        button.layer.borderWidth = isSelected ? 2 : 0
-        button.layer.borderColor = isSelected ? UIColor.mainBlue.cgColor : UIColor.clear.cgColor
-        button.tag = isSelected ? 1 : 0
+        buttons.forEach { updateButtonState($0, isSelected: $0 == button && !isSelected) }
     }
     
     private func saveFilterSettings() {
