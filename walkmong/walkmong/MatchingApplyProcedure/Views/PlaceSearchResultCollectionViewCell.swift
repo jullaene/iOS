@@ -9,12 +9,7 @@ import UIKit
 
 final class PlaceSearchResultCollectionViewCell: UICollectionViewCell {
         
-    private let placeSearchResultLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont(name: "Pretendard-Medium", size: 16)
-        label.textColor = .gray500
-        return label
-    }()
+    private let placeSearchResultLabel = MainParagraphLabel(text: "", textColor: .gray500)
     
     override init(frame: CGRect) {
         super.init(frame: frame)

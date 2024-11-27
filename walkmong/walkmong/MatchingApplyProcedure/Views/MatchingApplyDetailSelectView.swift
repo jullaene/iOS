@@ -38,21 +38,9 @@ class MatchingApplyDetailSelectView: UIView {
     
     private let scrollContentView: UIView = UIView()
     
-    private let matchingDetailCheckTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "산책 내용 확인"
-        label.font = UIFont(name: "Pretendard-Bold", size: 24)
-        label.textColor = .gray600
-        return label
-    }()
+    private let matchingDetailCheckTitleLabel = MiddleTitleLabel(text: "산책 내용 확인", textColor: .gray600)
     
-    private let checkDogInformationLabel: UILabel = {
-        let label = UILabel()
-        label.text = "반려견 정보를 확인했나요?"
-        label.font = UIFont(name: "Pretendard-Bold", size: 20)
-        label.textColor = .gray600
-        return label
-    }()
+    private let checkDogInformationLabel = SmallTitleLabel(text: "반려견 정보를 확인했나요?", textColor: .gray600)
     
     private let checkDogInformationNoButton: UIButton = {
         let button = UIButton()
@@ -74,13 +62,7 @@ class MatchingApplyDetailSelectView: UIView {
         return button
     }()
     
-    private let checkDateLabel: UILabel = {
-        let label = UILabel()
-        label.text = "산책 일정에 산책이 가능한가요?"
-        label.font = UIFont(name: "Pretendard-Bold", size: 20)
-        label.textColor = .gray600
-        return label
-    }()
+    private let checkDateLabel = SmallTitleLabel(text: "산책 일정에 산책이 가능한가요?", textColor: .gray600)
     
     private let selectDateBackgroundView: UIView = {
         let view = UIView()
@@ -103,37 +85,13 @@ class MatchingApplyDetailSelectView: UIView {
         return label
     }()
     
-    private let calendarStartLabel: UILabel = {
-        let label = UILabel()
-        label.text = "시작"
-        label.font = UIFont(name: "Pretendard-Regular", size: 12)
-        label.textColor = .gray400
-        return label
-    }()
+    private let calendarStartLabel = CaptionLabel(text: "시작", textColor: .gray400)
     
-    private let calendarEndLabel: UILabel = {
-        let label = UILabel()
-        label.text = "종료"
-        label.font = UIFont(name: "Pretendard-Regular", size: 12)
-        label.textColor = .gray400
-        return label
-    }()
+    private let calendarEndLabel: UILabel = CaptionLabel(text: "종료", textColor: .gray400)
     
-    private let calendarStartDateLabel: UILabel = {
-        let label = UILabel()
-        label.text = "2024.10.25 (금) 16:00"
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        label.textColor = .gray600
-        return label
-    }()
+    private let calendarStartDateLabel = SmallMainHighlightParagraphLabel(text: "2024.10.25 (금) 16:00", textColor: .gray600)
     
-    private let calendarEndDateLabel: UILabel = {
-        let label = UILabel()
-        label.text = "2024.10.25 (금) 16:30"
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        label.textColor = .gray600
-        return label
-    }()
+    private let calendarEndDateLabel = SmallMainHighlightParagraphLabel(text: "2024.10.25 (금) 16:30", textColor: .gray600)
     
     private let checkDateNoButton: UIButton = {
         let button = UIButton()
@@ -155,13 +113,7 @@ class MatchingApplyDetailSelectView: UIView {
         return button
     }()
     
-    private let selectPlaceLabel: UILabel = {
-        let label = UILabel()
-        label.text = "원하는 만남 장소를 선택해주세요."
-        label.font = UIFont(name: "Pretendard-Bold", size: 20)
-        label.textColor = .gray600
-        return label
-    }()
+    private let selectPlaceLabel = SmallTitleLabel(text: "원하는 만남 장소를 선택해주세요.", textColor: .gray600)
     
     private let selectPlaceWarningIcon: UIImageView = {
         let imageView = UIImageView()
@@ -169,22 +121,10 @@ class MatchingApplyDetailSelectView: UIView {
         return imageView
     }()
     
-    private let selectPlaceWarningMessageLabel: UILabel = {
-        let label = UILabel()
-        label.text = "장소 선택 후 반려인과 상의하여 장소를 변경해도 괜찮아요!"
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        label.textColor = .mainBlue
-        return label
-    }()
+    private let selectPlaceWarningMessageLabel = SmallMainHighlightParagraphLabel(text: "장소 선택 후 반려인과 상의하여 장소를 변경해도 괜찮아요!", textColor: .gray600)
     
     //TODO: 선택한 장소에 따라 UI 업데이트
-    private let selectedPlaceLabel: UILabel = {
-        let label = UILabel()
-        label.text = "강남구 학동로 508"
-        label.font = UIFont(name: "Pretendard-Bold", size: 20)
-        label.textColor = .gray
-        return label
-    }()
+    private let selectedPlaceLabel = SmallTitleLabel(text: "강남구 학동로 508", textColor: .gray600)
     
     private let selectPlaceButton: UIButton = {
         let button = UIButton()
@@ -207,13 +147,7 @@ class MatchingApplyDetailSelectView: UIView {
         return imageView
     }()
     
-    private let selectStuffNeededLabel: UILabel = {
-        let label = UILabel()
-        label.text = "산책 용품 제공이 필요한가요?"
-        label.font = UIFont(name: "Pretendard-Bold", size: 20)
-        label.textColor = .gray600
-        return label
-    }()
+    private let selectStuffNeededLabel = SmallTitleLabel(text: "산책 용품 제공이 필요한가요?", textColor: .gray600)
     
     private let poopEnvelopeLabel: UILabel = {
         let label = UILabel()
@@ -299,13 +233,7 @@ class MatchingApplyDetailSelectView: UIView {
         return button
     }()
     
-    private let selectPreMeetingLabel: UILabel = {
-        let label = UILabel()
-        label.text = "사전 만남을 진행하고 싶으신가요?"
-        label.font = UIFont(name: "Pretendard-Bold", size: 20)
-        label.textColor = .gray600
-        return label
-    }()
+    private let selectPreMeetingLabel = SmallTitleLabel(text: "사전 만남을 진행하고 싶으신가요?", textColor: .gray600)
     
     private let selectPreMeetingWarningIcon: UIImageView = {
         let imageView = UIImageView()
@@ -313,13 +241,7 @@ class MatchingApplyDetailSelectView: UIView {
         return imageView
     }()
     
-    private let selectPreMeetingWarningMessageLabel: UILabel = {
-        let label = UILabel()
-        label.text = "산책 진행 전 사전 만남이 필요하면 예를 눌러주세요"
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        label.textColor = .mainBlue
-        return label
-    }()
+    private let selectPreMeetingWarningMessageLabel = SmallMainHighlightParagraphLabel(text: "산책 진행 전 사전 만남이 필요하면 예를 눌러주세요", textColor: .mainBlue)
     
     private let selectPreMeetingNoButton: UIButton = {
         let button = UIButton()

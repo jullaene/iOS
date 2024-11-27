@@ -22,14 +22,7 @@ extension UIViewController {
             make.height.equalTo(52)
         }
         
-        let titleLabel: UILabel = {
-            let label = UILabel()
-            label.text = titleText
-            label.font = UIFont(name: "Pretendard-SemiBold", size: 20)
-            label.textColor = .mainBlack
-            label.textAlignment = .center
-            return label
-        }()
+        let titleLabel = UpperTitleLabel(text: "")
         
         navigationBarView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in

@@ -22,12 +22,7 @@ class MatchingCell: UIView {
     
     // Top Section (Date & Matching Status)
     private let topFrame = UIView()
-    internal let dateLabel: UILabel = { // 접근 제어자 변경
-        let label = UILabel()
-        label.textColor = UIColor.mainBlack
-        label.font = UIFont(name: "Pretendard-Bold", size: 20)
-        return label
-    }()
+    internal let dateLabel = SmallTitleLabel(text: "")
     private let matchingStatusView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 14.5
