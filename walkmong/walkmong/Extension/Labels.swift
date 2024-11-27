@@ -21,7 +21,7 @@ class BaseTitleLabel: UILabel {
 
 class LargeTitleLabel: BaseTitleLabel {
     init(text: String, textColor: UIColor = .mainBlack) {
-        super.init(text: text, font: UIFont(name: "Pretendard-Bold", size: 24)!, textColor: textColor)
+        super.init(text: text, font: UIFont(name: "Pretendard-Bold", size: 28)!, textColor: textColor)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -30,7 +30,7 @@ class LargeTitleLabel: BaseTitleLabel {
 
 class MiddleTitleLabel: BaseTitleLabel {
     init(text: String, textColor: UIColor = .mainBlack) {
-        super.init(text: text, font: UIFont(name: "Pretendard-Bold", size: 20)!, textColor: textColor)
+        super.init(text: text, font: UIFont(name: "Pretendard-Bold", size: 24)!, textColor: textColor)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -39,7 +39,7 @@ class MiddleTitleLabel: BaseTitleLabel {
 
 class SmallTitleLabel: BaseTitleLabel {
     init(text: String, textColor: UIColor = .mainBlack) {
-        super.init(text: text, font: UIFont(name: "Pretendard-Bold", size: 18)!, textColor: textColor)
+        super.init(text: text, font: UIFont(name: "Pretendard-Bold", size: 20)!, textColor: textColor)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
