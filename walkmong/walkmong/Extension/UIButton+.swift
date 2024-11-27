@@ -30,7 +30,7 @@ extension UIButton {
         case .light:
             button.backgroundColor = UIColor.gray100
             if size == .large {
-                button.setTitleColor(.white, for: .normal) // Large Light 버튼의 텍스트는 흰색
+                button.setTitleColor(.white, for: .normal)
             } else {
                 button.setTitleColor(UIColor.gray400, for: .normal)
             }
@@ -63,7 +63,7 @@ extension UIButton {
         
         // 코너 반경 설정
         if size == .small2 {
-            button.layer.cornerRadius = 100
+            button.layer.cornerRadius = 18.5
         } else if style == .rectangular {
             button.layer.cornerRadius = 10
         } else {
