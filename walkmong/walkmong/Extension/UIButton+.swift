@@ -84,8 +84,8 @@ extension UIButton {
             width = 93
             height = 53
         case .small2:
-            width = textWidth + 32
-            height = 38
+            width = style == .rectangular ? 74 : textWidth + 32
+            height = style == .rectangular ? 34 : 38
         }
         
         NSLayoutConstraint.activate([
