@@ -26,10 +26,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         backgroundColor: UIColor.gray100, cornerRadius: 15
     )
     
-    private let applyWalkButton: UIView = MatchingDogInformationView.createRoundedButton(
-        backgroundColor: UIColor.gray600, cornerRadius: 15
-    )
-
+    private let applyWalkButton = UIButton.createStyledButton(type: .large, style: .dark, title: "산책 지원하기")
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)

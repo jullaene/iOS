@@ -4,13 +4,13 @@ import SnapKit
 class FilterSelectView: UIView {
 
     // MARK: - Buttons
-    let filterButton = UIButton.createStyledButton(style: .light, size: .small2, title: "")
+    let filterButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "")
     
-    let distanceButton = UIButton.createStyledButton(style: .dark, size: .small2, title: "거리")
+    let distanceButton = UIButton.createStyledButton(type: .homeFilter, style: .dark, title: "거리")
     
-    let breedButton = UIButton.createStyledButton(style: .light, size: .small2, title: "견종")
+    let breedButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "견종")
     
-    let matchStatusButton = UIButton.createStyledButton(style: .light, size: .small2, title: "매칭여부")
+    let matchStatusButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "매칭여부")
 
     // MARK: - Initializer
     override init(frame: CGRect) {

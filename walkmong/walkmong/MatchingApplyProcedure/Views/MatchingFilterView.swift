@@ -233,7 +233,7 @@ class MatchingFilterView: UIView {
 
         let buttonTitles = ["매칭중", "매칭확정"]
         for title in buttonTitles {
-            let button = UIButton.createStyledButton(style: .light, size: .small2, title: title)
+            let button = UIButton.createStyledButton(type: .smallSelection, style: .light, title: title)
             button.addTarget(self, action: #selector(matchingButtonTapped(_:)), for: .touchUpInside)
             buttonContainer.addSubview(button)
             matchingButtons.append(button)
@@ -292,7 +292,7 @@ class MatchingFilterView: UIView {
 
         let buttonTitles = ["소형견", "중형견", "대형견"]
         for title in buttonTitles {
-            let button = UIButton.createStyledButton(style: .light, size: .small2, title: title)
+            let button = UIButton.createStyledButton(type: .smallSelection, style: .light, title: title)
             button.addTarget(self, action: #selector(breedButtonTapped(_:)), for: .touchUpInside)
             buttonContainer.addSubview(button)
             breedButtons.append(button)
@@ -311,8 +311,10 @@ class MatchingFilterView: UIView {
     }
     
     private func setupButtonFrame() {
-        resetButton = UIButton.createStyledButton(style: .light, size: .medium, title: "초기화")
-        applyButton = UIButton.createStyledButton(style: .dark, size: .medium, title: "적용하기")
+        resetButton = UIButton.createStyledButton(type: .large, style: .light, title: "초기화")
+        resetButton.backgroundColor = .gray100
+        resetButton.setTitleColor(.gray500, for: .normal)
+        applyButton = UIButton.createStyledButton(type: .large, style: .dark, title: "적용하기")
 
         buttonFrame.addSubview(resetButton)
         buttonFrame.addSubview(applyButton)
