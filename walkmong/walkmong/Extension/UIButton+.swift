@@ -25,37 +25,13 @@ extension UIButton {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        // 텍스트 폰트 설정
-        let font: UIFont = {
-            switch type {
-            case .large, .homeFilter:
-                return UIFont(name: "Pretendard-Bold", size: 16)!
-            default:
-                return UIFont(name: "Pretendard-SemiBold", size: 14)!
-            }
-        }()
-        button.titleLabel?.font = font
-        button.titleLabel?.textAlignment = .center
+        // 텍스트 스타일 설정
+        let label = labelForCategory(type: type, text: title, style: style)
+        button.titleLabel?.font = label.font
+        button.setTitleColor(label.textColor, for: .normal)
         
-        // 배경색 및 텍스트 색상 설정
-        switch type {
-        case .large:
-            button.layer.cornerRadius = 15
-            button.backgroundColor = style == .light ? .gray300 : .gray600
-            button.setTitleColor(style == .light ? .white : .gray100, for: .normal)
-        case .largeSelection:
-            button.layer.cornerRadius = 10
-            button.backgroundColor = style == .light ? .gray100 : .mainBlue
-            button.setTitleColor(style == .light ? .gray500 : .gray100, for: .normal)
-        case .smallSelection:
-            button.layer.cornerRadius = 10
-            button.backgroundColor = style == .light ? .gray100 : .mainBlue
-            button.setTitleColor(style == .light ? .gray500 : .white, for: .normal)
-        case .homeFilter:
-            button.layer.cornerRadius = 15
-            button.backgroundColor = style == .light ? .gray100 : .gray600
-            button.setTitleColor(style == .light ? .gray500 : .white, for: .normal)
-        }
+        // 스타일 설정
+        configureStyle(for: button, type: type, style: style)
         
         // 텍스트 설정
         button.setTitle(title, for: .normal)
@@ -70,23 +46,55 @@ extension UIButton {
         case .largeSelection:
             width = 361
             height = 46
-        case .smallSelection:
-            width = 73
-            height = 38
-        case .homeFilter:
-            let textWidth: CGFloat = {
-                let attributes: [NSAttributedString.Key: Any] = [.font: font]
-                return (title as NSString).size(withAttributes: attributes).width
-            }()
-            width = textWidth + 32 // 좌우 패딩 16씩
-            height = font.lineHeight + 16 // 상하 패딩 8씩
+        case .smallSelection, .homeFilter:
+            let textWidth = calculateTextWidth(text: title, font: label.font)
+            width = textWidth + 32
+            height = label.font.lineHeight + 16
         }
+        setButtonSizeConstraints(button: button, width: width, height: height)
         
+        return button
+    }
+    
+    private static func labelForCategory(type: ButtonCategory, text: String, style: ButtonStyle) -> BaseTitleLabel {
+        let textColor: UIColor = style == .light
+            ? (type == .large ? .white : .gray500)
+            : (type == .large ? .gray100 : .white)
+        
+        switch type {
+        case .large, .homeFilter:
+            return MainHighlightParagraphLabel(text: text, textColor: textColor)
+        case .largeSelection, .smallSelection:
+            return MainParagraphLabel(text: text, textColor: textColor)
+        }
+    }
+    
+    private static func calculateTextWidth(text: String, font: UIFont) -> CGFloat {
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        return (text as NSString).size(withAttributes: attributes).width
+    }
+    
+    private static func setButtonSizeConstraints(button: UIButton, width: CGFloat, height: CGFloat) {
         NSLayoutConstraint.activate([
             button.widthAnchor.constraint(equalToConstant: width),
             button.heightAnchor.constraint(equalToConstant: height)
         ])
-        
-        return button
+    }
+    
+    private static func configureStyle(for button: UIButton, type: ButtonCategory, style: ButtonStyle) {
+        switch type {
+        case .large:
+            button.layer.cornerRadius = 15
+            button.backgroundColor = style == .light ? .gray300 : .gray600
+        case .largeSelection:
+            button.layer.cornerRadius = 5
+            button.backgroundColor = style == .light ? .gray100 : .mainBlue
+        case .smallSelection:
+            button.layer.cornerRadius = 18
+            button.backgroundColor = style == .light ? .gray100 : .mainBlue
+        case .homeFilter:
+            button.layer.cornerRadius = 18
+            button.backgroundColor = style == .light ? .gray100 : .gray600
+        }
     }
 }
