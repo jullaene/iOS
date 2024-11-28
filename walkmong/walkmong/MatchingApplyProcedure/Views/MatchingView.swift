@@ -20,7 +20,13 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     private let safeAreaBackgroundView = MatchingView.createBackgroundView(color: UIColor.mainBlue)
     private let bounceBackgroundView = MatchingView.createBackgroundView(color: UIColor.mainBlue, isHidden: true)
     let locationSelectView = UIView()
-    private let locationLabel = SmallTitleLabel(text: "공릉동")
+    private let locationLabel = MatchingView.createLabel(
+        text: "공릉동",
+        font: UIFont(name: "Pretendard-Bold", size: 20),
+        textColor: UIColor.mainBlack,
+        kern: -0.32,
+        lineHeight: 0
+    )
     private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
     private(set) var calendarView = CalendarView() // 접근 제어자 수정
     let filterSelectView = FilterSelectView()
