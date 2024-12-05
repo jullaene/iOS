@@ -18,11 +18,10 @@ class RelatedInfoView: UIView {
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let requestDescriptionLabel = RelatedInfoView.createLabel(
+    private let requestDescriptionLabel = RelatedInfoView.createTextView(
         text: "",
         textColor: UIColor.gray500,
-        font: UIFont(name: "Pretendard-Medium", size: 16),
-        numberOfLines: 0
+        font: UIFont(name: "Pretendard-Medium", size: 16)
     )
     
     private let referenceTitleLabel = RelatedInfoView.createLabel(
@@ -31,7 +30,7 @@ class RelatedInfoView: UIView {
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let referenceDescriptionLabel = RelatedInfoView.createLabel(
+    private let referenceDescriptionLabel = RelatedInfoView.createTextView(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
@@ -43,7 +42,7 @@ class RelatedInfoView: UIView {
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let additionalInfoDescriptionLabel = RelatedInfoView.createLabel(
+    private let additionalInfoDescriptionLabel = RelatedInfoView.createTextView(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
@@ -65,8 +64,8 @@ class RelatedInfoView: UIView {
         backgroundColor = .gray100
         layer.cornerRadius = 20
         
-        // Add all labels to the view
-        let labels = [
+        // Add all labels and textviews to the view
+        let views = [
             titleLabel,
             requestTitleLabel,
             requestDescriptionLabel,
@@ -76,39 +75,38 @@ class RelatedInfoView: UIView {
             additionalInfoDescriptionLabel
         ]
         
-        for label in labels {
-            addSubview(label)
+        for view in views {
+            addSubview(view)
         }
         
         // Setup constraints
-        setupConstraints(labels: labels)
+        setupConstraints(views: views)
     }
     
-    private func setupConstraints(labels: [UILabel]) {
-        labels[0].snp.makeConstraints { make in
+    private func setupConstraints(views: [UIView]) {
+        views[0].snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.leading.equalToSuperview().offset(24)
             make.width.equalTo(111)
         }
         
-        labels[1].snp.makeConstraints { make in
-            make.top.equalTo(labels[0].snp.bottom).offset(30)
+        views[1].snp.makeConstraints { make in
+            make.top.equalTo(views[0].snp.bottom).offset(30)
             make.leading.equalToSuperview().offset(24)
             make.trailing.equalToSuperview().offset(-24)
         }
         
-        for i in 2..<labels.count {
-            labels[i].snp.makeConstraints { make in
-                make.top.equalTo(labels[i - 1].snp.bottom).offset(i % 2 == 0 ? 8 : 36)
+        for i in 2..<views.count {
+            views[i].snp.makeConstraints { make in
+                make.top.equalTo(views[i - 1].snp.bottom).offset(i % 2 == 0 ? 8 : 36)
                 make.leading.equalToSuperview().offset(24)
                 make.trailing.equalToSuperview().offset(-24)
             }
         }
         
-        labels.last?.snp.makeConstraints { make in
+        views.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
         }
-        
     }
     
     // MARK: - Public Methods
@@ -118,7 +116,7 @@ class RelatedInfoView: UIView {
         additionalInfoDescriptionLabel.text = additionalRequest
     }
     
-    // MARK: - Helper Method
+    // MARK: - Helper Methods
     private static func createLabel(
         text: String,
         textColor: UIColor,
@@ -132,11 +130,11 @@ class RelatedInfoView: UIView {
         label.textColor = textColor
         label.font = font
         label.numberOfLines = numberOfLines
-        label.lineBreakMode = .byCharWrapping // UILabel의 lineBreakMode 설정
+        label.lineBreakMode = .byWordWrapping
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = lineHeightMultiple
-        paragraphStyle.lineBreakMode = .byCharWrapping // NSParagraphStyle의 lineBreakMode 설정
+        paragraphStyle.lineBreakMode = .byWordWrapping
 
         let attributes: [NSAttributedString.Key: Any] = [
             .kern: kern,
@@ -146,5 +144,37 @@ class RelatedInfoView: UIView {
         label.attributedText = NSAttributedString(string: text, attributes: attributes)
         
         return label
+    }
+    
+    private static func createTextView(
+        text: String,
+        textColor: UIColor,
+        font: UIFont?,
+        lineHeightMultiple: CGFloat = 1.0,
+        kern: CGFloat = 0.0
+    ) -> UITextView {
+        let textView = UITextView()
+        textView.text = text
+        textView.textColor = textColor
+        textView.font = font
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.backgroundColor = .clear
+        textView.textContainer.lineBreakMode = .byCharWrapping
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        paragraphStyle.lineBreakMode = .byCharWrapping
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .kern: kern,
+            .paragraphStyle: paragraphStyle
+        ]
+
+        textView.attributedText = NSAttributedString(string: text, attributes: attributes)
+        
+        return textView
     }
 }

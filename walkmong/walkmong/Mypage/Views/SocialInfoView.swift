@@ -28,7 +28,7 @@ class SocialInfoView: UIView {
         font: Constants.headerFont,
         textColor: .black
     )
-    private var frames: [(container: UIView, descriptionLabel: UILabel)] = []
+    private var frames: [(container: UIView, descriptionTextView: UITextView)] = []
 
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -86,7 +86,7 @@ class SocialInfoView: UIView {
         let descriptions = [bite, friendly, barking]
         for (index, description) in descriptions.enumerated() {
             guard index < frames.count else { continue }
-            frames[index].descriptionLabel.text = description
+            frames[index].descriptionTextView.text = description
         }
     }
 
@@ -96,32 +96,41 @@ class SocialInfoView: UIView {
         label.text = text
         label.font = font
         label.textColor = textColor
+        label.lineBreakMode = .byCharWrapping // 글자 단위로 줄넘김
         return label
     }
 
-    private func createFrame(title: String, description: String) -> (container: UIView, descriptionLabel: UILabel) {
+    private func createFrame(title: String, description: String) -> (container: UIView, descriptionTextView: UITextView) {
         let container = UIView()
         container.backgroundColor = .gray100
         container.layer.cornerRadius = 5
 
         let titleLabel = createLabel(text: title, font: Constants.titleFont, textColor: .gray400)
-        let descriptionLabel = createLabel(text: description, font: Constants.descriptionFont, textColor: .mainBlue)
-        descriptionLabel.numberOfLines = 0
+        let descriptionTextView = UITextView()
+        descriptionTextView.text = description
+        descriptionTextView.font = Constants.descriptionFont
+        descriptionTextView.textColor = .mainBlue
+        descriptionTextView.isEditable = false
+        descriptionTextView.isScrollEnabled = false
+        descriptionTextView.backgroundColor = .clear
+        descriptionTextView.textContainer.lineBreakMode = .byCharWrapping
+        descriptionTextView.textContainerInset = .zero
+        descriptionTextView.textContainer.lineFragmentPadding = 0
 
         container.addSubview(titleLabel)
-        container.addSubview(descriptionLabel)
+        container.addSubview(descriptionTextView)
 
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(Constants.verticalPadding)
             make.leading.trailing.equalToSuperview().inset(Constants.horizontalPadding)
         }
 
-        descriptionLabel.snp.makeConstraints { make in
+        descriptionTextView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
             make.leading.trailing.equalToSuperview().inset(Constants.horizontalPadding)
             make.bottom.equalToSuperview().offset(-Constants.verticalPadding)
         }
 
-        return (container, descriptionLabel)
+        return (container, descriptionTextView)
     }
 }
