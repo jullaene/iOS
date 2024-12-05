@@ -149,55 +149,12 @@ class OwnerInfoView: UIView {
         dongAddress: String,
         distance: Double
     ) {
-        // 프로필 이미지 처리
-        if let profileUrlString = ownerProfile?.trimmingCharacters(in: .whitespacesAndNewlines),
-           let profileUrl = URL(string: profileUrlString),
-           profileUrl.scheme == "http" || profileUrl.scheme == "https" {
-            // 유효한 URL인 경우 Kingfisher로 로드
-            profileImageView.kf.setImage(with: profileUrl, placeholder: UIImage(named: "profileExample"))
-        } else {
-            // URL이 유효하지 않은 경우 기본 이미지 설정
-            profileImageView.image = UIImage(named: "profileExample")
-        }
-        
-        // 이름
+        profileImageView.setImage(from: ownerProfile, placeholder: "profileExample")
         nameLabel.text = ownerName
-        
-        // 나이
-        let ageGroup = (ownerAge / 10) * 10
-        let ageCategory: String
-        switch ownerAge % 10 {
-        case 0...2:
-            ageCategory = "초반"
-        case 3...6:
-            ageCategory = "중반"
-        case 7...9:
-            ageCategory = "후반"
-        default:
-            ageCategory = ""
-        }
-        ageLabel.text = "\(ageGroup)대 \(ageCategory)"
-        
-        // 성별
+        ageLabel.text = formatAge(ownerAge)
         genderLabel.text = ownerGender == "FEMALE" ? "여성" : "남성"
-        
-        // 평점
         ratingLabel.text = String(format: "%.1f", ownerRate)
-        
-        // 위치
-        if distance < 1000 {
-            locationLabel.text = "\(Int(distance))m"
-        } else {
-            let distanceInKm = distance / 1000
-            if distanceInKm == floor(distanceInKm) {
-                // 1.0km와 같은 경우는 정수로만 표시
-                locationLabel.text = "\(Int(distanceInKm))km"
-            } else {
-                // 1.2km와 같은 경우는 소수점 1자리까지 표시
-                locationLabel.text = String(format: "%.1fkm", distanceInKm)
-            }
-        }
-        locationLabel.text = "\(dongAddress) \(locationLabel.text ?? "")"
+        locationLabel.text = "\(dongAddress) \(formatDistance(distance))"
     }
     
     // MARK: - Helper Methods
@@ -221,5 +178,41 @@ class OwnerInfoView: UIView {
         }
         imageView.contentMode = .scaleAspectFit
         return imageView
+    }
+    
+    private func formatAge(_ age: Int) -> String {
+        let ageGroup = (age / 10) * 10
+        let ageCategory: String
+        switch age % 10 {
+        case 0...2:
+            ageCategory = "초반"
+        case 3...6:
+            ageCategory = "중반"
+        case 7...9:
+            ageCategory = "후반"
+        default:
+            ageCategory = ""
+        }
+        return "\(ageGroup)대 \(ageCategory)"
+    }
+    
+    private func formatDistance(_ distance: Double) -> String {
+        if distance < 1000 {
+            return "\(Int(distance))m"
+        } else {
+            let distanceInKm = distance / 1000
+            return distanceInKm == floor(distanceInKm) ? "\(Int(distanceInKm))km" : String(format: "%.1fkm", distanceInKm)
+        }
+    }
+}
+
+private extension UIImageView {
+    func setImage(from urlString: String?, placeholder: String) {
+        if let urlString = urlString?.trimmingCharacters(in: .whitespacesAndNewlines),
+           let url = URL(string: urlString), url.scheme == "http" || url.scheme == "https" {
+            self.kf.setImage(with: url, placeholder: UIImage(named: placeholder))
+        } else {
+            self.image = UIImage(named: placeholder)
+        }
     }
 }

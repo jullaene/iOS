@@ -19,18 +19,18 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     private let customView: UIView = MatchingView.createBackgroundView(color: UIColor.mainBlue)
     private let safeAreaBackgroundView = MatchingView.createBackgroundView(color: UIColor.mainBlue)
     private let bounceBackgroundView = MatchingView.createBackgroundView(color: UIColor.mainBlue, isHidden: true)
+    
     let locationSelectView = UIView()
     private let locationLabel = MatchingView.createLabel(
-        text: "공릉동",
+        text: "내주소",
         font: UIFont(name: "Pretendard-Bold", size: 20),
-        textColor: UIColor.mainBlack,
-        kern: -0.32,
-        lineHeight: 0
+        textColor: UIColor.mainBlack
     )
     private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
-    private(set) var calendarView = CalendarView() // 접근 제어자 수정
+    private let calendarView = CalendarView()
     let filterSelectView = FilterSelectView()
-    private(set) var matchingCells: [MatchingCell] = []
+    var matchingCells: [MatchingCell] = []
+    
     private let floatingButton = MatchingView.createRoundedView(color: UIColor.mainBlue, cornerRadius: 32)
     private let floatingButtonIcon = MatchingView.createImageView(named: "pencilIcon")
     
@@ -46,32 +46,17 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     
     // MARK: - Public Methods
     func updateMatchingCells(with data: [MatchingData]) {
-        
-        // Clear existing cells
-        matchingCells.forEach { $0.removeFromSuperview() }
-        matchingCells.removeAll()
-        
-        // Add new cells
-        for item in data {
-            let cell = MatchingCell()
-            cell.configure(with: item)
-            matchingCells.append(cell)
-            contentView.addSubview(cell)
-        }
-        
-        // Layout cells
-        for (index, cell) in matchingCells.enumerated() {
-            cell.snp.makeConstraints { make in
-                make.height.equalTo(151)
-                make.centerX.equalToSuperview()
-                make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
-                make.leading.trailing.equalToSuperview().inset(20)
-            }
-        }
-
-        matchingCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-110)
-        }
+        clearMatchingCells()
+        createMatchingCells(from: data)
+        layoutMatchingCells()
+    }
+    
+    func updateLocationLabel(with location: String) {
+        locationLabel.text = location
+    }
+    
+    var selectedDate: String? {
+        return calendarView.selectedDate
     }
     
     // MARK: - Setup Methods
@@ -83,7 +68,6 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         setupLocationSelectView()
         setupCalendarView()
         setupFilterSelectView()
-        setupMatchingCells()
         setupFloatingButton()
     }
     
@@ -107,8 +91,8 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     private func setupScrollView() {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
-        scrollView.delegate = self
         scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.bounces = false
         
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
@@ -133,7 +117,6 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             byRoundingCorners: [.bottomLeft, .bottomRight],
             cornerRadii: CGSize(width: 30, height: 30)
         )
-
         let maskLayer = CAShapeLayer()
         maskLayer.path = path.cgPath
         customView.layer.mask = maskLayer
@@ -179,50 +162,9 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             make.height.equalTo(78)
         }
         
-        let buttons = [
-            filterSelectView.filterButton,
-            filterSelectView.distanceButton,
-            filterSelectView.breedButton,
-            filterSelectView.matchStatusButton
-        ]
-
-        buttons.forEach { button in
-            button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
-        }
+        filterSelectView.filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
 
-    @objc private func filterButtonTapped() {
-        filterButtonAction?()
-    }
-
-    private func bringFilterSelectViewToFront() {
-        if let superview = self.superview {
-            superview.bringSubviewToFront(self)
-            superview.bringSubviewToFront(filterSelectView)
-        }
-    }
-
-    private func setupMatchingCells() {
-        for _ in 0..<4 {
-            let cell = MatchingCell()
-            matchingCells.append(cell)
-            contentView.addSubview(cell)
-        }
-        
-        for (index, cell) in matchingCells.enumerated() {
-            cell.snp.makeConstraints { make in
-                make.width.equalTo(353)
-                make.height.equalTo(151)
-                make.centerX.equalToSuperview()
-                make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
-            }
-        }
-        
-        matchingCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-110)
-        }
-    }
-    
     private func setupFloatingButton() {
         addSubview(floatingButton)
         floatingButton.snp.makeConstraints { make in
@@ -237,14 +179,39 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             make.width.height.equalTo(32)
         }
     }
-}
-
-// MARK: - UIScrollViewDelegate
-extension MatchingView: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y < 0 {
-            scrollView.contentOffset = CGPoint.zero
+    
+    // MARK: - Matching Cells Management
+    private func clearMatchingCells() {
+        matchingCells.forEach { $0.removeFromSuperview() }
+        matchingCells.removeAll()
+    }
+    
+    private func createMatchingCells(from data: [MatchingData]) {
+        data.forEach { item in
+            let cell = MatchingCell()
+            cell.configure(with: item)
+            matchingCells.append(cell)
+            contentView.addSubview(cell)
         }
+    }
+    
+    private func layoutMatchingCells() {
+        for (index, cell) in matchingCells.enumerated() {
+            cell.snp.makeConstraints { make in
+                make.height.equalTo(151)
+                make.centerX.equalToSuperview()
+                make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
+                make.leading.trailing.equalToSuperview().inset(20)
+            }
+        }
+
+        matchingCells.last?.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-110)
+        }
+    }
+
+    @objc private func filterButtonTapped() {
+        filterButtonAction?()
     }
 }
 
@@ -264,7 +231,7 @@ private extension MatchingView {
         return view
     }
     
-    static func createLabel(text: String, font: UIFont?, textColor: UIColor, kern: CGFloat, lineHeight: CGFloat) -> UILabel {
+    static func createLabel(text: String, font: UIFont?, textColor: UIColor, kern: CGFloat = 0, lineHeight: CGFloat = 1.0) -> UILabel {
         let label = UILabel()
         label.text = text
         label.textColor = textColor
@@ -285,17 +252,5 @@ private extension MatchingView {
         imageView.image = UIImage(named: named)
         imageView.contentMode = .scaleAspectFit
         return imageView
-    }
-}
-
-// MARK: - Public Methods
-extension MatchingView {
-    func updateLocationLabel(with location: String) {
-        locationLabel.text = location
-    }
-}
-extension MatchingView {
-    var selectedDate: String? {
-        return calendarView.selectedDate // CalendarView에서 선택된 날짜 반환
     }
 }
