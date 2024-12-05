@@ -18,12 +18,12 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         configureProfileDelegate()
         configureMatchingData()
         configureViewDelegate()
-        
-        if let data = matchingData {
-            fetchBoardDetailData(boardId: data.boardId ?? 1)
-        } else {
+
+        guard let data = matchingData else {
             print("Error: matchingData is nil. Cannot fetch board details.")
+            return
         }
+        fetchBoardDetailData(boardId: data.boardId ?? 1)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,7 +44,6 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     }
 
     private func fetchBoardDetailData(boardId: Int) {
-
         isLoading = true
 
         networkManager.fetchBoardDetail(boardId: boardId) { [weak self] result in
@@ -55,33 +54,15 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
                     self?.boardDetail = detail
                     self?.updateUI(with: detail)
                 case .failure(let error):
-                    print("Error fetching BoardDetail for boardId \(boardId): \(error)")
-                    
-                    if case let DecodingError.dataCorrupted(context) = error {
-                        print("Decoding error: \(context.debugDescription)")
-                        print("Coding Path: \(context.codingPath)")
-                    } else if case let DecodingError.keyNotFound(key, context) = error {
-                        print("Key '\(key.stringValue)' not found: \(context.debugDescription)")
-                        print("Coding Path: \(context.codingPath)")
-                    } else if case let DecodingError.typeMismatch(type, context) = error {
-                        print("Type '\(type)' mismatch: \(context.debugDescription)")
-                        print("Coding Path: \(context.codingPath)")
-                    } else if case let DecodingError.valueNotFound(value, context) = error {
-                        print("Value '\(value)' not found: \(context.debugDescription)")
-                        print("Coding Path: \(context.codingPath)")
-                    } else {
-                        print("Unknown decoding error: \(error)")
-                    }
+                    self?.handleDecodingError(error, boardId: boardId)
                 }
             }
         }
     }
 
     private func updateUI(with detail: BoardDetail) {
-
         dogInfoView.configureImages(with: [detail.dogProfile ?? "defaultImage"])
 
-        // 공개 메소드를 통해 profileFrame 업데이트
         dogInfoView.getProfileFrame().updateProfileView(
             dogName: detail.dogName,
             dogSize: detail.dogSize,
@@ -92,7 +73,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             distance: detail.distance,
             dogGender: detail.dogGender
         )
-        
+
         dogInfoView.setWalkInfoDelegate(
             date: detail.date ?? "00",
             startTime: detail.startTime,
@@ -180,5 +161,29 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         let dogProfileVC = DogProfileViewController()
         dogProfileVC.configure(with: boardDetail.dogId)
         navigationController?.pushViewController(dogProfileVC, animated: true)
+    }
+
+    // MARK: - Error Handling
+    private func handleDecodingError(_ error: Error, boardId: Int) {
+        print("Error fetching BoardDetail for boardId \(boardId): \(error)")
+
+        if let decodingError = error as? DecodingError {
+            switch decodingError {
+            case .dataCorrupted(let context):
+                print("Decoding error: \(context.debugDescription)")
+                print("Coding Path: \(context.codingPath)")
+            case .keyNotFound(let key, let context):
+                print("Key '\(key.stringValue)' not found: \(context.debugDescription)")
+                print("Coding Path: \(context.codingPath)")
+            case .typeMismatch(let type, let context):
+                print("Type '\(type)' mismatch: \(context.debugDescription)")
+                print("Coding Path: \(context.codingPath)")
+            case .valueNotFound(let value, let context):
+                print("Value '\(value)' not found: \(context.debugDescription)")
+                print("Coding Path: \(context.codingPath)")
+            default:
+                print("Unknown decoding error: \(error)")
+            }
+        }
     }
 }
