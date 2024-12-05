@@ -20,6 +20,7 @@ class SocialInfoView: UIView {
         static let headerFont = UIFont(name: "Pretendard-Bold", size: 20)!
         static let headerHeight: CGFloat = 28
         static let headerSpacing: CGFloat = 12
+        static let defaultDescription = "정보 없음"
     }
 
     // MARK: - UI Components
@@ -49,12 +50,12 @@ class SocialInfoView: UIView {
         addSubview(headerLabel)
 
         let framesData = [
-            ("입질 여부", "우리 애는 진짜 안물어요."),
-            ("친화력", "사람은 좋아하는데 다른 강아지 싫어해요."),
-            ("짖음 여부", "거의 안짖어요.")
+            "입질 여부",
+            "친화력",
+            "짖음 여부"
         ]
 
-        frames = framesData.map { createFrame(title: $0.0, description: $0.1) }
+        frames = framesData.map { createFrame(title: $0, description: Constants.defaultDescription) }
         frames.forEach { addSubview($0.container) }
     }
 
@@ -82,8 +83,12 @@ class SocialInfoView: UIView {
     }
 
     // MARK: - Public Methods
-    func configure(bite: String, friendly: String, barking: String) {
-        let descriptions = [bite, friendly, barking]
+    func configure(bite: String?, friendly: String?, barking: String?) {
+        let descriptions = [
+            bite ?? Constants.defaultDescription,
+            friendly ?? Constants.defaultDescription,
+            barking ?? Constants.defaultDescription
+        ]
         for (index, description) in descriptions.enumerated() {
             guard index < frames.count else { continue }
             frames[index].descriptionLabel.text = description
