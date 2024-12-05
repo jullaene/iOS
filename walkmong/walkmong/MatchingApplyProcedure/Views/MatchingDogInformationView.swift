@@ -209,37 +209,15 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     }
 
     private func setupButtonLabel(_ button: UIView, text: String, textColor: UIColor) {
-        if button == walkTalkButton {
-            let label = UILabel()
-            label.text = text
-            label.textColor = textColor
-            label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-            label.textAlignment = .center
+        let label = UILabel()
+        label.text = text
+        label.textColor = textColor
+        label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        label.textAlignment = .center
 
-            let iconImageView = UIImageView()
-            iconImageView.image = UIImage(named: "messageIcon")
-            iconImageView.contentMode = .scaleAspectFit
-            
-            let stackView = UIStackView(arrangedSubviews: [label, iconImageView])
-            stackView.axis = .horizontal
-            stackView.spacing = 8
-            stackView.alignment = .center
-            stackView.distribution = .fill
-            
-            button.addSubview(stackView)
-            stackView.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
-        } else {
-            let label = UILabel()
-            label.text = text
-            label.textColor = textColor
-            label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-            label.textAlignment = .center
-            button.addSubview(label)
-            label.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
+        button.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
 
@@ -252,7 +230,11 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     }
 
     func configureImages(with imageUrls: [String?]) {
-        if let firstImageUrl = imageUrls.first, let url = URL(string: firstImageUrl ?? "") {
+        guard let firstImageUrl = imageUrls.first else {
+            imageView.image = UIImage(named: "placeholder")
+            return
+        }
+        if let url = URL(string: firstImageUrl ?? "") {
             imageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
         } else {
             imageView.image = UIImage(named: "placeholder")
@@ -276,5 +258,4 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         
         return containerView
     }
-    
 }
