@@ -1,10 +1,17 @@
+//
+//  RelatedInfoView.swift
+//  walkmong
+//
+//  Created by 신호연 on 11/12/24.
+//
+
 import UIKit
 import SnapKit
 
 class RelatedInfoView: UIView {
     
     // MARK: - UI Components
-    private let titleLabel = RelatedInfoView.createLabel(
+    private let titleLabel = createLabel(
         text: "산책 관련 정보",
         textColor: UIColor.gray600,
         font: UIFont(name: "Pretendard-Bold", size: 20),
@@ -12,38 +19,38 @@ class RelatedInfoView: UIView {
         kern: -0.32
     )
     
-    private let requestTitleLabel = RelatedInfoView.createLabel(
+    private let requestTitleLabel = createLabel(
         text: "산책 요청 사항",
         textColor: UIColor.gray600,
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let requestDescriptionLabel = RelatedInfoView.createLabel(
+    private let requestDescriptionLabel = createLabel(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16),
         numberOfLines: 0
     )
     
-    private let referenceTitleLabel = RelatedInfoView.createLabel(
+    private let referenceTitleLabel = createLabel(
         text: "산책 참고 사항",
         textColor: UIColor.gray600,
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let referenceDescriptionLabel = RelatedInfoView.createLabel(
+    private let referenceDescriptionLabel = createLabel(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
     )
     
-    private let additionalInfoTitleLabel = RelatedInfoView.createLabel(
+    private let additionalInfoTitleLabel = createLabel(
         text: "추가 안내 사항",
         textColor: UIColor.gray600,
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let additionalInfoDescriptionLabel = RelatedInfoView.createLabel(
+    private let additionalInfoDescriptionLabel = createLabel(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
@@ -76,31 +83,24 @@ class RelatedInfoView: UIView {
             additionalInfoDescriptionLabel
         ]
         
-        for label in labels {
-            addSubview(label)
-        }
+        labels.forEach { addSubview($0) }
         
         // Setup constraints
         setupConstraints(labels: labels)
     }
     
     private func setupConstraints(labels: [UILabel]) {
-        labels[0].snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.leading.equalToSuperview().offset(24)
-            make.width.equalTo(111)
-        }
-        
-        labels[1].snp.makeConstraints { make in
-            make.top.equalTo(labels[0].snp.bottom).offset(30)
-            make.leading.equalToSuperview().offset(24)
-            make.trailing.equalToSuperview().offset(-24)
-        }
-        
-        for i in 2..<labels.count {
-            labels[i].snp.makeConstraints { make in
-                make.top.equalTo(labels[i - 1].snp.bottom).offset(i % 2 == 0 ? 8 : 36)
-                make.leading.equalToSuperview().offset(24)
+        labels.enumerated().forEach { index, label in
+            label.snp.makeConstraints { make in
+                if index == 0 {
+                    // 첫 번째 라벨
+                    make.top.equalToSuperview().offset(20)
+                    make.leading.equalToSuperview().offset(24)
+                } else {
+                    // 그 외 라벨
+                    make.top.equalTo(labels[index - 1].snp.bottom).offset(index % 2 == 1 ? 30 : 8)
+                    make.leading.equalToSuperview().offset(24)
+                }
                 make.trailing.equalToSuperview().offset(-24)
             }
         }
@@ -108,7 +108,6 @@ class RelatedInfoView: UIView {
         labels.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
         }
-        
     }
     
     // MARK: - Public Methods
@@ -132,11 +131,9 @@ class RelatedInfoView: UIView {
         label.textColor = textColor
         label.font = font
         label.numberOfLines = numberOfLines
-        label.lineBreakMode = .byCharWrapping // UILabel의 lineBreakMode 설정
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = lineHeightMultiple
-        paragraphStyle.lineBreakMode = .byCharWrapping // NSParagraphStyle의 lineBreakMode 설정
 
         let attributes: [NSAttributedString.Key: Any] = [
             .kern: kern,
@@ -144,7 +141,6 @@ class RelatedInfoView: UIView {
         ]
 
         label.attributedText = NSAttributedString(string: text, attributes: attributes)
-        
         return label
     }
 }
