@@ -5,32 +5,32 @@ class FilterSelectView: UIView {
 
     // MARK: - Buttons
     let filterButton = FilterSelectView.createButton(
-        backgroundColor: UIColor.gray100,
+        backgroundColor: .gray100,
         cornerRadius: 16.5,
         image: UIImage(named: "filterIcon")
     )
     
     let distanceButton = FilterSelectView.createButton(
-        backgroundColor: UIColor.gray600,
+        backgroundColor: .gray600,
         cornerRadius: 18.5,
         title: "거리",
-        titleColor: UIColor.white,
+        titleColor: .white,
         font: UIFont(name: "Pretendard-SemiBold", size: 16)
     )
     
     let breedButton = FilterSelectView.createButton(
-        backgroundColor: UIColor.gray100,
+        backgroundColor: .gray100,
         cornerRadius: 18.5,
         title: "견종",
-        titleColor: UIColor.gray500,
+        titleColor: .gray500,
         font: UIFont(name: "Pretendard-SemiBold", size: 16)
     )
     
     let matchStatusButton = FilterSelectView.createButton(
-        backgroundColor: UIColor.gray100,
+        backgroundColor: .gray100,
         cornerRadius: 18.5,
         title: "매칭여부",
-        titleColor: UIColor.gray500,
+        titleColor: .gray500,
         font: UIFont(name: "Pretendard-SemiBold", size: 16)
     )
 
@@ -62,12 +62,7 @@ class FilterSelectView: UIView {
                     make.leading.equalToSuperview().offset(16)
                 }
                 
-                if index == 0 {
-                    make.width.equalTo(34)
-                    make.height.equalTo(36)
-                } else {
-                    make.width.equalTo(index == 3 ? 87 : 60)
-                }
+                make.width.equalTo(index == 0 ? 34 : (index == 3 ? 87 : 60))
             }
             
             previousButton = button

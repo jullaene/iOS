@@ -28,20 +28,21 @@ class DropdownView: UIView {
     }
     
     func updateLocations(locations: [String]) {
-
+        // 기존 라벨 제거
         labels.forEach { $0.removeFromSuperview() }
         labels.removeAll()
 
+        // 주소 데이터를 "동" 단위로 포맷팅
         let formattedLocations = locations.compactMap { extractDong(from: $0) }
         self.locations = formattedLocations + ["동네 설정"]
         self.selectedLocation = formattedLocations.first
 
+        // 라벨 생성 및 추가
         for (index, location) in self.locations.enumerated() {
-            let label = UILabel()
-            setupLabel(label, text: location, isSelected: index == 0)
+            let label = createLabel(text: location, isSelected: index == 0)
             addSubview(label)
             labels.append(label)
-            
+
             label.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview().inset(20)
                 make.top.equalToSuperview().offset(20 + (index * 32))
@@ -49,17 +50,23 @@ class DropdownView: UIView {
                     make.bottom.equalToSuperview().offset(-20)
                 }
             }
-            
-            label.isUserInteractionEnabled = true
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLabelTap(_:)))
-            label.addGestureRecognizer(tapGesture)
         }
     }
     
     private func extractDong(from location: String) -> String? {
-        let components = location.split(separator: " ")
-        let dong = components.last.map { String($0) }
-        return dong
+        return location.split(separator: " ").last.map { String($0) }
+    }
+    
+    private func createLabel(text: String, isSelected: Bool) -> UILabel {
+        let label = UILabel()
+        setupLabel(label, text: text, isSelected: isSelected)
+        
+        // 라벨에 탭 제스처 추가
+        label.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleLabelTap(_:)))
+        label.addGestureRecognizer(tapGesture)
+        
+        return label
     }
     
     private func setupLabel(_ label: UILabel, text: String, isSelected: Bool) {
@@ -81,7 +88,8 @@ class DropdownView: UIView {
               let index = labels.firstIndex(of: tappedLabel),
               index < locations.count else { return }
         let selected = locations[index]
-        
+
+        // "동네 설정"은 선택하지 않음
         if selected == "동네 설정" { return }
 
         selectedLocation = selected
@@ -90,6 +98,7 @@ class DropdownView: UIView {
     }
 }
 
+// MARK: - Array Extension for Safe Indexing
 private extension Array {
     subscript(safe index: Int) -> Element? {
         return indices.contains(index) ? self[index] : nil
