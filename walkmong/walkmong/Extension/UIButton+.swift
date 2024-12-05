@@ -97,4 +97,12 @@ extension UIButton {
             button.backgroundColor = style == .light ? .gray100 : .gray600
         }
     }
+    
+    func updateStyle(type: ButtonCategory, style: ButtonStyle) {
+        let label = UIButton.labelForCategory(type: type, text: self.title(for: .normal) ?? "", style: style)
+        self.titleLabel?.font = label.font
+        self.setTitleColor(label.textColor, for: .normal)
+        
+        UIButton.configureStyle(for: self, type: type, style: style)
+    }
 }

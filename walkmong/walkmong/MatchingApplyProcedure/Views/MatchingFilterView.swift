@@ -432,8 +432,8 @@ class MatchingFilterView: UIView {
     }
 
     private func updateButtonState(_ button: UIButton, isSelected: Bool) {
-        button.backgroundColor = isSelected ? .gray600 : .gray100
-        button.setTitleColor(isSelected ? .white : .gray500, for: .normal)
+        let newStyle: UIButton.ButtonStyle = isSelected ? .dark : .light
+        button.updateStyle(type: .smallSelection, style: newStyle)
         button.tag = isSelected ? 1 : 0
     }
     
