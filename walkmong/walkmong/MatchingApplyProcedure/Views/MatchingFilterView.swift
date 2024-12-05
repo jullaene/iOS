@@ -185,7 +185,7 @@ class MatchingFilterView: UIView {
         let newIndex = tappedDot.tag
         updateDistanceSelection(selectedIndex: newIndex)
     }
-    
+
     private func updateDistanceSelection(selectedIndex: Int) {
         selectedDistanceIndex = selectedIndex
         for (index, dot) in distanceDots.enumerated() {
@@ -198,20 +198,51 @@ class MatchingFilterView: UIView {
                     make.size.equalTo(CGSize(width: newSize, height: newSize))
                 }
                 dot.layer.cornerRadius = newSize / 2
-                self.distanceLabels[index].textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
+                if index < self.distanceLabels.count {
+                    self.distanceLabels[index].textColor = isSelected ? UIColor.mainBlue : UIColor.gray300
+                }
                 dot.superview?.layoutIfNeeded()
             })
         }
         saveDistanceSelection()
     }
-    
+
     private func saveDistanceSelection() {
         userDefaults.set(selectedDistanceIndex, forKey: distanceFilterKey)
     }
-    
+
     private func loadDistanceSelection() {
         selectedDistanceIndex = userDefaults.integer(forKey: distanceFilterKey)
         updateDistanceSelection(selectedIndex: selectedDistanceIndex)
+    }
+
+    private func loadFilterSettings() {
+        loadDistanceSelection()
+        let savedMatchingStatus = userDefaults.array(forKey: matchingFilterKey) as? [String] ?? []
+        let savedBreeds = userDefaults.array(forKey: breedFilterKey) as? [String] ?? []
+        for button in matchingButtons {
+            if let title = button.title(for: .normal) {
+                updateButtonState(button, isSelected: savedMatchingStatus.contains(title))
+            }
+        }
+        for button in breedButtons {
+            if let title = button.title(for: .normal) {
+                updateButtonState(button, isSelected: savedBreeds.contains(title))
+            }
+        }
+    }
+
+    @objc private func applyFilter() {
+        saveFilterSettings()
+        let selectedBreeds = breedButtons.compactMap { button -> String? in
+            guard button.tag == 1 else { return nil }
+            return button.title(for: .normal)
+        }
+        let selectedMatchingStatus = matchingButtons.compactMap { button -> String? in
+            guard button.tag == 1 else { return nil }
+            return button.title(for: .normal)
+        }
+        delegate?.didApplyFilter(selectedBreeds: selectedBreeds, matchingStatus: selectedMatchingStatus)
     }
     
     private func setupMatchingStatusFrame() {
@@ -420,13 +451,6 @@ class MatchingFilterView: UIView {
         userDefaults.removeObject(forKey: distanceFilterKey)
     }
     
-    @objc private func applyFilter() {
-        saveFilterSettings()
-        let selectedBreeds = breedButtons.filter { $0.tag == 1 }.compactMap { $0.title(for: .normal) }
-        let selectedMatchingStatus = matchingButtons.filter { $0.tag == 1 }.compactMap { $0.title(for: .normal) }
-        delegate?.didApplyFilter(selectedBreeds: selectedBreeds, matchingStatus: selectedMatchingStatus)
-    }
-    
     private func toggleButton(_ button: UIButton) {
         let isSelected = button.tag == 1
         UIView.animate(withDuration: 0.2) {
@@ -455,11 +479,4 @@ class MatchingFilterView: UIView {
         saveDistanceSelection()
     }
     
-    private func loadFilterSettings() {
-        loadDistanceSelection()
-        let savedMatchingStatus = userDefaults.array(forKey: matchingFilterKey) as? [String] ?? []
-        let savedBreeds = userDefaults.array(forKey: breedFilterKey) as? [String] ?? []
-        matchingButtons.forEach { updateButtonState($0, isSelected: savedMatchingStatus.contains($0.title(for: .normal) ?? "")) }
-        breedButtons.forEach { updateButtonState($0, isSelected: savedBreeds.contains($0.title(for: .normal) ?? "")) }
-    }
 }
