@@ -20,12 +20,7 @@ class ProfileView: UIView {
     // MARK: - UI Components
     private let topFrameView = UIView()
     
-    private let nameLabel = ProfileView.createLabel(
-        text: "",
-        font: UIFont(name: "Pretendard-Bold", size: 28),
-        textColor: UIColor.mainBlack,
-        alignment: .left
-    )
+    private let nameLabel = LargeTitleLabel(text: "")
     
     private let femaleIconView = ProfileView.createImageView(named: "femaleIcon")
     
@@ -47,11 +42,7 @@ class ProfileView: UIView {
     
     private let locationIconView = ProfileView.createImageView(named: "locationIcon")
     
-    private let locationLabel = ProfileView.createLabel(
-        text: "",
-        font: UIFont(name: "Pretendard-Regular", size: 14),
-        textColor: .gray500
-    )
+    private let locationLabel = SmallMainParagraphLabel(text: "", textColor: .gray500)
     
     // MARK: - Initializer
     override init(frame: CGRect) {
