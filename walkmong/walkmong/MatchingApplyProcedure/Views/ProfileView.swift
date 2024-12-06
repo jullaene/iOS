@@ -59,14 +59,10 @@ class ProfileView: UIView {
     
     // MARK: - Setup Methods
     private func setupView() {
-        addSubviews([topFrameView, dogInfoLabel, locationIconView, locationLabel])
+        addSubviews(topFrameView, dogInfoLabel, locationIconView, locationLabel)
         topFrameView.addSubviews(nameLabel, genderIconView, profileButton)
         setupConstraints()
         setupActions()
-    }
-    
-    private func addSubviews(_ subviews: [UIView]) {
-        subviews.forEach { addSubview($0) }
     }
     
     private func setupConstraints() {
