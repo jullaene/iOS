@@ -15,6 +15,15 @@ class WalkReviewCell: UITableViewCell {
     private let circleStackView = WalkReviewCell.makeCircleStackView()
     private let photoFrame = UIView()
     private let reviewTextFrame = UIView()
+    private let reviewTextLabel: MainParagraphLabel = {
+        let label = MainParagraphLabel(
+            text: "초코가 너무 귀여워서 산책하는 내내 행복했습니다. 주인분도 잘 설명해주시고 친절해서 좋았습니다.",
+            textColor: .gray600
+        )
+        label.numberOfLines = 0 // 줄바꿈 허용
+        label.lineBreakMode = .byWordWrapping
+        return label
+    }()
     
     private let leftImageView: UIImageView = {
         let imageView = UIImageView()
@@ -63,7 +72,7 @@ class WalkReviewCell: UITableViewCell {
         contentView.backgroundColor = .white
         
         photoFrame.backgroundColor = .clear
-        reviewTextFrame.backgroundColor = .yellow
+        reviewTextFrame.backgroundColor = .clear
     }
     
     private func addSubviews() {
@@ -73,6 +82,7 @@ class WalkReviewCell: UITableViewCell {
         [leftImageView, rightImageView].forEach {
             photoFrame.addSubview($0)
         }
+        reviewTextFrame.addSubview(reviewTextLabel)
     }
     
     private func resetCircleStackView() {
@@ -131,6 +141,10 @@ class WalkReviewCell: UITableViewCell {
             make.top.equalTo(photoFrame.snp.bottom).offset(spacing)
             make.leading.trailing.equalToSuperview().inset(margin)
             make.bottom.equalToSuperview().offset(-margin)
+        }
+
+        reviewTextLabel.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
     
