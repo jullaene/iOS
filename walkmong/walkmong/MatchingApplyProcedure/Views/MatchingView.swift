@@ -27,6 +27,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         textColor: UIColor.mainBlack
     )
     private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
+    private let alertIcon = MatchingView.createImageView(named: "alertIcon")
     private let calendarView = CalendarView()
     let filterSelectView = FilterSelectView()
     var matchingCells: [MatchingCell] = []
@@ -120,6 +121,12 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         let maskLayer = CAShapeLayer()
         maskLayer.path = path.cgPath
         customView.layer.mask = maskLayer
+        
+        customView.addSubview(alertIcon)
+        alertIcon.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-25)
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(27)
+        }
     }
     
     private func setupLocationSelectView() {

@@ -49,7 +49,7 @@ extension UIButton {
         case .smallSelection, .homeFilter:
             let textWidth = calculateTextWidth(text: title, font: label.font)
             width = textWidth + 32
-            height = label.font.lineHeight + 16
+            height = 38
         }
         setButtonSizeConstraints(button: button, width: width, height: height)
         
@@ -104,5 +104,13 @@ extension UIButton {
         self.setTitleColor(label.textColor, for: .normal)
         
         UIButton.configureStyle(for: self, type: type, style: style)
+    }
+    
+    func removeSizeConstraints() {
+        self.constraints.forEach { constraint in
+            if constraint.firstAttribute == .width || constraint.firstAttribute == .height {
+                self.removeConstraint(constraint)
+            }
+        }
     }
 }
