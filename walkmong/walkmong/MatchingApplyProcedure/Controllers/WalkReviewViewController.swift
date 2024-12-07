@@ -9,24 +9,27 @@ import UIKit
 
 class WalkReviewViewController: UIViewController {
 
+    // MARK: - Properties
+    private let contentView = WalkReviewView()
+
     // MARK: - Lifecycle
+    override func loadView() {
+        view = contentView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        setupNavigationBar()
     }
-    
-    // MARK: - UI Setup
-    private func setupUI() {
-        view.backgroundColor = .white
-        
-        let titleLabel = UILabel()
-        titleLabel.text = "산책 후기"
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
-        titleLabel.textAlignment = .center
-        
-        view.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
+
+    // MARK: - Setup Navigation Bar
+    private func setupNavigationBar() {
+        addCustomNavigationBar(
+            titleText: "산책 후기",
+            showLeftBackButton: true,
+            showLeftCloseButton: false,
+            showRightCloseButton: false,
+            showRightRefreshButton: false
+        )
     }
 }
