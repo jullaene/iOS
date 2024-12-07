@@ -272,7 +272,6 @@ class MatchingCell: UIView {
         
         let components = selectedDate.split(separator: ".")
         guard components.count >= 1, let day = Int(components[0].trimmingCharacters(in: .whitespaces)) else {
-            print("Invalid selectedDate format: \(selectedDate)")
             dateLabel.text = "날짜 변환 오류"
             return
         }
