@@ -16,6 +16,24 @@ class WalkReviewCell: UITableViewCell {
     private let photoFrame = UIView()
     private let reviewTextFrame = UIView()
     
+    private let leftImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "defaultImage")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 5
+        return imageView
+    }()
+    
+    private let rightImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "defaultImage")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 5
+        return imageView
+    }()
+    
     // MARK: - Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -44,13 +62,16 @@ class WalkReviewCell: UITableViewCell {
         backgroundColor = .white
         contentView.backgroundColor = .white
         
-        photoFrame.backgroundColor = .blue
+        photoFrame.backgroundColor = .clear
         reviewTextFrame.backgroundColor = .yellow
     }
     
     private func addSubviews() {
         [profileFrame, circleStackView, photoFrame, reviewTextFrame].forEach {
             contentView.addSubview($0)
+        }
+        [leftImageView, rightImageView].forEach {
+            photoFrame.addSubview($0)
         }
     }
     
@@ -76,6 +97,7 @@ class WalkReviewCell: UITableViewCell {
     private func setupConstraints() {
         let margin: CGFloat = 20
         let spacing: CGFloat = 24
+        let imageSpacing: CGFloat = 8
 
         profileFrame.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(margin)
@@ -92,7 +114,17 @@ class WalkReviewCell: UITableViewCell {
         photoFrame.snp.makeConstraints { make in
             make.top.equalTo(circleStackView.snp.bottom).offset(spacing)
             make.leading.trailing.equalToSuperview().inset(margin)
-            make.height.equalTo(147)
+            make.height.equalTo((UIScreen.main.bounds.width - margin * 2 - imageSpacing) / 2)
+        }
+
+        leftImageView.snp.makeConstraints { make in
+            make.top.leading.bottom.equalToSuperview()
+            make.trailing.equalTo(rightImageView.snp.leading).offset(-imageSpacing)
+            make.width.equalTo(rightImageView)
+        }
+
+        rightImageView.snp.makeConstraints { make in
+            make.top.trailing.bottom.equalToSuperview()
         }
 
         reviewTextFrame.snp.makeConstraints { make in
