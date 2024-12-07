@@ -264,10 +264,45 @@ class MatchingCell: UIView {
     }
     
     func configureDateLabel(selectedDate: String, startTime: String, endTime: String) {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "MM. dd (EEE) HH:mm"
-        dateLabel.text = "\(selectedDate) \(startTime) ~ \(endTime)"
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let currentMonth = Calendar.current.component(.month, from: Date())
+        
+        let components = selectedDate.split(separator: ".")
+        guard components.count >= 1, let day = Int(components[0].trimmingCharacters(in: .whitespaces)) else {
+            print("Invalid selectedDate format: \(selectedDate)")
+            dateLabel.text = "날짜 변환 오류"
+            return
+        }
+        
+        var dateComponents = DateComponents()
+        dateComponents.year = currentYear
+        dateComponents.month = currentMonth
+        dateComponents.day = day
+        
+        guard let datePart = Calendar.current.date(from: dateComponents) else {
+            print("Failed to create date from components: \(dateComponents)")
+            dateLabel.text = "날짜 변환 오류"
+            return
+        }
+        
+        dateFormatter.dateFormat = "MM. dd (EEE)"
+        let formattedDate = dateFormatter.string(from: datePart)
+        
+        dateFormatter.dateFormat = "HH:mm"
+        guard let startTimeDate = dateFormatter.date(from: startTime),
+              let endTimeDate = dateFormatter.date(from: endTime) else {
+            print("Failed to parse startTime or endTime: \(startTime), \(endTime)")
+            dateLabel.text = "시간 변환 오류"
+            return
+        }
+        
+        let formattedStartTime = dateFormatter.string(from: startTimeDate)
+        let formattedEndTime = dateFormatter.string(from: endTimeDate)
+        
+        dateLabel.text = "\(formattedDate) \(formattedStartTime) ~ \(formattedEndTime)"
     }
     
     private func configureMatchingStatus(for status: String) {
