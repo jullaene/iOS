@@ -27,20 +27,17 @@ class FilterSelectView: UIView {
         let buttons = [filterButton, distanceButton, breedButton, matchStatusButton]
         var previousButton: UIView? = nil
         
-        for (index, button) in buttons.enumerated() {
+        for (_, button) in buttons.enumerated() {
             addSubview(button)
             
             button.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
-                make.height.equalTo(36)
                 
                 if let previous = previousButton {
                     make.leading.equalTo(previous.snp.trailing).offset(8)
                 } else {
                     make.leading.equalToSuperview().offset(16)
                 }
-
-                make.width.equalTo(index == 0 ? 34 : (index == 3 ? 87 : 60))
 
             }
             
