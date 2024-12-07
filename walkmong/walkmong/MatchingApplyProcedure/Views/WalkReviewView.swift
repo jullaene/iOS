@@ -13,7 +13,7 @@ class WalkReviewView: UIView {
     // MARK: - Subviews
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let homeFilterButton = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
+    private let filterButton = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -28,14 +28,15 @@ class WalkReviewView: UIView {
 
     // MARK: - Setup
     private func setupView() {
-        backgroundColor = .white
+        backgroundColor = .gray100
 
         // Add scrollView and contentView
         addSubview(scrollView)
         scrollView.addSubview(contentView)
 
         // Add homeFilterButton to contentView
-        contentView.addSubview(homeFilterButton)
+        contentView.addSubview(filterButton)
+        filterButton.backgroundColor = .gray200
     }
 
     private func setupConstraints() {
@@ -49,7 +50,7 @@ class WalkReviewView: UIView {
         }
 
         // Home Filter Button 기본 위치 설정
-        homeFilterButton.snp.makeConstraints { make in
+        filterButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(20)
             make.top.equalToSuperview().offset(20)
         }
@@ -57,7 +58,7 @@ class WalkReviewView: UIView {
 
     // MARK: - Public Methods
     func updateHomeFilterButtonPosition(navigationBarHeight: CGFloat) {
-        homeFilterButton.snp.remakeConstraints { make in
+        filterButton.snp.remakeConstraints { make in
             make.leading.equalToSuperview().offset(20)
             make.top.equalToSuperview().offset(navigationBarHeight + 20)
         }

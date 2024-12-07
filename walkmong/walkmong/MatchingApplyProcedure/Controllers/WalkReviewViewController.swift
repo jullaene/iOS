@@ -30,7 +30,8 @@ class WalkReviewViewController: UIViewController {
             showLeftBackButton: true,
             showLeftCloseButton: false,
             showRightCloseButton: false,
-            showRightRefreshButton: false
+            showRightRefreshButton: false,
+            backgroundColor: .gray100
         )
     }
 
