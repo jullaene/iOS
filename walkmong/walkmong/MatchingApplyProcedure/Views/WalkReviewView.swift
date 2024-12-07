@@ -63,11 +63,12 @@ class WalkReviewView: UIView {
 
     // MARK: - Review Cells
     private func addReviewCells(count: Int) {
-        let cellSpacing: CGFloat = 36
+        let firstCellSpacing: CGFloat = 36
+        let cellSpacing: CGFloat = 24
         let cellMargin: CGFloat = 20
         var previousView: UIView = filterButton
 
-        for _ in 1...count {
+        for index in 1...count {
             let cell = UIView()
             cell.backgroundColor = .white
             cell.layer.cornerRadius = 15
@@ -78,15 +79,18 @@ class WalkReviewView: UIView {
                 make.leading.equalToSuperview().offset(cellMargin)
                 make.trailing.equalToSuperview().offset(-cellMargin)
                 make.height.equalTo(470)
-                make.top.equalTo(previousView.snp.bottom).offset(cellSpacing)
+                if index == 1 {
+                    make.top.equalTo(previousView.snp.bottom).offset(firstCellSpacing) // 첫 셀 간격
+                } else {
+                    make.top.equalTo(previousView.snp.bottom).offset(cellSpacing) // 셀 간 간격
+                }
             }
 
             previousView = cell
         }
 
         reviewCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-20)
+            make.bottom.equalToSuperview().offset(-(safeAreaInsets.bottom + 11)) // 마지막 셀 간격
         }
     }
-
 }
