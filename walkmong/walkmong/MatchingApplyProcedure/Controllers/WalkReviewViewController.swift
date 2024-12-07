@@ -11,6 +11,7 @@ class WalkReviewViewController: UIViewController {
 
     // MARK: - Properties
     private let walkReviewView = WalkReviewView()
+    private let topSafeAreaBackgroundView = UIView() // 상단 safeArea 배경 뷰 추가
 
     // MARK: - Lifecycle
     override func loadView() {
@@ -21,6 +22,7 @@ class WalkReviewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCustomNavigationBar()
+        setupTopSafeAreaBackground() // SafeArea 배경 설정
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,5 +40,20 @@ class WalkReviewViewController: UIViewController {
             showRightRefreshButton: false,
             backgroundColor: .gray100
         )
+    }
+    
+    // MARK: - Setup Top Safe Area Background
+    private func setupTopSafeAreaBackground() {
+        topSafeAreaBackgroundView.backgroundColor = .gray100
+        view.addSubview(topSafeAreaBackgroundView)
+        
+        // Constraints for the background view to cover the top safe area
+        topSafeAreaBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            topSafeAreaBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
+            topSafeAreaBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topSafeAreaBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topSafeAreaBackgroundView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+        ])
     }
 }
