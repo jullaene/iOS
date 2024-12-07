@@ -16,13 +16,7 @@ class MatchingApplyMessageView: UIView {
     weak var delegate: MatchingApplyMessageViewDelegate?
     private var characterCount = 0
         
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "반려인에게 전달할 메세지"
-        label.textColor = .mainBlack
-        label.font = UIFont(name: "Pretendard-Bold", size: 24)
-        return label
-    }()
+    private let titleLabel = MiddleTitleLabel(text: "반려인에게 전달할 메세지")
     
     private let textViewPlaceHolder = "반려견의 보호자에게 전할 말이 있다면 작성해주세요."
     

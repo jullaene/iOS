@@ -5,7 +5,7 @@ class DayCell: UICollectionViewCell {
     static let identifier = "DayCell"
     
     // MARK: - UI Components
-    private let dayOfWeekLabel = DayCell.createLabel(font: "Pretendard-SemiBold", fontSize: 14)
+    private let dayOfWeekLabel = SmallMainHighlightParagraphLabel(text: "")
     private let dayLabel = DayCell.createLabel(font: "Pretendard-Bold", fontSize: 16)
     
     // MARK: - Initializer

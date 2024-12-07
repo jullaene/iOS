@@ -25,11 +25,10 @@ class RelatedInfoView: UIView {
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let requestDescriptionLabel = createLabel(
+    private let requestDescriptionLabel = createTextView(
         text: "",
         textColor: UIColor.gray500,
-        font: UIFont(name: "Pretendard-Medium", size: 16),
-        numberOfLines: 0
+        font: UIFont(name: "Pretendard-Medium", size: 16)
     )
     
     private let referenceTitleLabel = createLabel(
@@ -38,7 +37,7 @@ class RelatedInfoView: UIView {
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let referenceDescriptionLabel = createLabel(
+    private let referenceDescriptionLabel = createTextView(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
@@ -50,7 +49,7 @@ class RelatedInfoView: UIView {
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let additionalInfoDescriptionLabel = createLabel(
+    private let additionalInfoDescriptionLabel = createTextView(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
@@ -72,8 +71,7 @@ class RelatedInfoView: UIView {
         backgroundColor = .gray100
         layer.cornerRadius = 20
         
-        // Add all labels to the view
-        let labels = [
+        let views: [UIView] = [
             titleLabel,
             requestTitleLabel,
             requestDescriptionLabel,
@@ -83,29 +81,30 @@ class RelatedInfoView: UIView {
             additionalInfoDescriptionLabel
         ]
         
-        labels.forEach { addSubview($0) }
-        
-        // Setup constraints
-        setupConstraints(labels: labels)
+        views.forEach { addSubview($0) }
+        setupConstraints(views: views)
     }
     
-    private func setupConstraints(labels: [UILabel]) {
-        labels.enumerated().forEach { index, label in
-            label.snp.makeConstraints { make in
-                if index == 0 {
-                    // 첫 번째 라벨
-                    make.top.equalToSuperview().offset(20)
-                    make.leading.equalToSuperview().offset(24)
-                } else {
-                    // 그 외 라벨
-                    make.top.equalTo(labels[index - 1].snp.bottom).offset(index % 2 == 1 ? 30 : 8)
-                    make.leading.equalToSuperview().offset(24)
-                }
+    private func setupConstraints(views: [UIView]) {
+        views[0].snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.leading.equalToSuperview().offset(24)
+        }
+        
+        views[1].snp.makeConstraints { make in
+            make.top.equalTo(views[0].snp.bottom).offset(30)
+            make.leading.equalToSuperview().offset(24)
+        }
+        
+        for i in 2..<views.count {
+            views[i].snp.makeConstraints { make in
+                make.top.equalTo(views[i - 1].snp.bottom).offset(i % 2 == 0 ? 8 : 36)
+                make.leading.equalToSuperview().offset(24)
                 make.trailing.equalToSuperview().offset(-24)
             }
         }
         
-        labels.last?.snp.makeConstraints { make in
+        views.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
         }
     }
@@ -117,7 +116,7 @@ class RelatedInfoView: UIView {
         additionalInfoDescriptionLabel.text = additionalRequest
     }
     
-    // MARK: - Helper Method
+    // MARK: - Helper Methods
     private static func createLabel(
         text: String,
         textColor: UIColor,
@@ -134,13 +133,41 @@ class RelatedInfoView: UIView {
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        let attributes: [NSAttributedString.Key: Any] = [
+            .kern: kern,
+            .paragraphStyle: paragraphStyle
+        ]
+        label.attributedText = NSAttributedString(string: text, attributes: attributes)
+        return label
+    }
+    
+    private static func createTextView(
+        text: String,
+        textColor: UIColor,
+        font: UIFont?,
+        lineHeightMultiple: CGFloat = 1.0,
+        kern: CGFloat = 0.0
+    ) -> UITextView {
+        let textView = UITextView()
+        textView.text = text
+        textView.textColor = textColor
+        textView.font = font
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.backgroundColor = .clear
+        textView.textContainer.lineBreakMode = .byCharWrapping
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        paragraphStyle.lineBreakMode = .byCharWrapping
 
         let attributes: [NSAttributedString.Key: Any] = [
             .kern: kern,
             .paragraphStyle: paragraphStyle
         ]
-
-        label.attributedText = NSAttributedString(string: text, attributes: attributes)
-        return label
+        textView.attributedText = NSAttributedString(string: text, attributes: attributes)
+        return textView
     }
 }

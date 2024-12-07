@@ -4,35 +4,13 @@ import SnapKit
 class FilterSelectView: UIView {
 
     // MARK: - Buttons
-    let filterButton = FilterSelectView.createButton(
-        backgroundColor: .gray100,
-        cornerRadius: 16.5,
-        image: UIImage(named: "filterIcon")
-    )
+    let filterButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "")
     
-    let distanceButton = FilterSelectView.createButton(
-        backgroundColor: .gray600,
-        cornerRadius: 18.5,
-        title: "거리",
-        titleColor: .white,
-        font: UIFont(name: "Pretendard-SemiBold", size: 16)
-    )
+    let distanceButton = UIButton.createStyledButton(type: .homeFilter, style: .dark, title: "거리")
     
-    let breedButton = FilterSelectView.createButton(
-        backgroundColor: .gray100,
-        cornerRadius: 18.5,
-        title: "견종",
-        titleColor: .gray500,
-        font: UIFont(name: "Pretendard-SemiBold", size: 16)
-    )
+    let breedButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "견종")
     
-    let matchStatusButton = FilterSelectView.createButton(
-        backgroundColor: .gray100,
-        cornerRadius: 18.5,
-        title: "매칭여부",
-        titleColor: .gray500,
-        font: UIFont(name: "Pretendard-SemiBold", size: 16)
-    )
+    let matchStatusButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "매칭여부")
 
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -61,43 +39,18 @@ class FilterSelectView: UIView {
                 } else {
                     make.leading.equalToSuperview().offset(16)
                 }
-                
+
                 make.width.equalTo(index == 0 ? 34 : (index == 3 ? 87 : 60))
+
             }
             
             previousButton = button
         }
-    }
-    
-    // MARK: - Helpers
-    private static func createButton(
-        backgroundColor: UIColor,
-        cornerRadius: CGFloat,
-        title: String? = nil,
-        titleColor: UIColor? = nil,
-        font: UIFont? = nil,
-        image: UIImage? = nil
-    ) -> UIButton {
-        let button = UIButton()
-        button.backgroundColor = backgroundColor
-        button.layer.cornerRadius = cornerRadius
         
-        if let title = title {
-            button.setTitle(title, for: .normal)
+        if let filterIcon = UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate) {
+            filterButton.setImage(filterIcon, for: .normal)
+            filterButton.tintColor = UIColor.gray500 
         }
-        
-        if let titleColor = titleColor {
-            button.setTitleColor(titleColor, for: .normal)
-        }
-        
-        if let font = font {
-            button.titleLabel?.font = font
-        }
-        
-        if let image = image {
-            button.setImage(image, for: .normal)
-        }
-        
-        return button
+        filterButton.layer.cornerRadius = 16.5
     }
 }

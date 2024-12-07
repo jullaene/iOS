@@ -5,59 +5,31 @@ import Kingfisher
 class OwnerInfoView: UIView {
     
     // MARK: - UI Components
-    private let titleLabel = OwnerInfoView.createLabel(
-        text: "반려인 정보",
-        textColor: .gray600,
-        font: UIFont(name: "Pretendard-Bold", size: 20)
-    )
+    private let titleLabel = SmallTitleLabel(text: "반려인 정보", textColor: .gray600)
     
     private let profileImageView = OwnerInfoView.createImageView(
         imageName: "profileExample.png", cornerRadius: 41
     )
     
-    private let nameLabel = OwnerInfoView.createLabel(
-        text: "",
-        textColor: .gray600,
-        font: UIFont(name: "Pretendard-SemiBold", size: 20)
-    )
+    private let nameLabel = UpperTitleLabel(text: "", textColor: .gray600)
     
-    private let ageLabel = OwnerInfoView.createLabel(
-        text: "",
-        textColor: .gray600,
-        font: UIFont(name: "Pretendard-Regular", size: 14)
-    )
+    private let ageLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     
-    private let separatorLabel = OwnerInfoView.createLabel(
-        text: "·",
-        textColor: .gray600,
-        font: UIFont(name: "Pretendard-Regular", size: 14)
-    )
+    private let separatorLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     
-    private let genderLabel = OwnerInfoView.createLabel(
-        text: "",
-        textColor: .gray600,
-        font: UIFont(name: "Pretendard-Regular", size: 14)
-    )
+    private let genderLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     
     private let starIcon = OwnerInfoView.createImageView(
         imageName: "starIcon.svg", tintColor: UIColor.mainBlue
     )
     
-    private let ratingLabel = OwnerInfoView.createLabel(
-        text: "",
-        textColor: .mainBlue,
-        font: UIFont(name: "Pretendard-SemiBold", size: 14)
-    )
+    private let ratingLabel = MainParagraphLabel(text: "", textColor: .mainBlue)
     
     private let locationIcon = OwnerInfoView.createImageView(
         imageName: "locationIconBlue.svg"
     )
     
-    private let locationLabel = OwnerInfoView.createLabel(
-        text: "",
-        textColor: .mainBlue,
-        font: UIFont(name: "Pretendard-SemiBold", size: 14)
-    )
+    private let locationLabel = MainParagraphLabel(text: "", textColor: .mainBlue)
     
     // MARK: - Initializer
     override init(frame: CGRect) {

@@ -19,12 +19,13 @@ class ProfileView: UIView {
 
     // MARK: - UI Components
     private let topFrameView = UIView()
-    private let nameLabel = ProfileView.createLabel(
-        text: "",
-        font: UIFont(name: "Pretendard-Bold", size: 28),
-        textColor: UIColor.mainBlack
-    )
+
     private let genderIconView = ProfileView.createImageView(named: "femaleIcon")
+    
+    private let nameLabel = LargeTitleLabel(text: "")
+    
+    private let femaleIconView = ProfileView.createImageView(named: "femaleIcon")
+   
     private let profileButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor.mainBlue
@@ -40,12 +41,9 @@ class ProfileView: UIView {
         textColor: .gray500
     )
     private let locationIconView = ProfileView.createImageView(named: "locationIcon")
-    private let locationLabel = ProfileView.createLabel(
-        text: "",
-        font: UIFont(name: "Pretendard-Regular", size: 14),
-        textColor: .gray500
-    )
     
+    private let locationLabel = SmallMainParagraphLabel(text: "", textColor: .gray500)
+
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
