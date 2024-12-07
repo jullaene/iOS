@@ -19,6 +19,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     private let profileFrame = ProfileView()
     private let walkInfoFrame = WalkInfoView()
     private let relatedInfoFrame = RelatedInfoView()
+    private let walkReviewFrame = WalkReviewFrame()
     private let ownerInfoFrame = OwnerInfoView()
     private let buttonFrame = UIView()
 
@@ -40,6 +41,10 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         setupView()
         setupFrames()
         setupButtonActions()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
     }
     
     // MARK: - Private Methods
@@ -120,9 +125,6 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.height.equalTo(imageView.snp.width).multipliedBy(0.757)
         }
         
-        DispatchQueue.main.async {
-            self.layoutIfNeeded()
-        }
     }
 
     // MARK: - Public Method
@@ -147,14 +149,14 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             (profileFrame, 102, imageView.snp.bottom, 32),
             (walkInfoFrame, nil, profileFrame.snp.bottom, 34),
             (relatedInfoFrame, nil, walkInfoFrame.snp.bottom, 16),
-            (ownerInfoFrame, 172, relatedInfoFrame.snp.bottom, 16)
+            (walkReviewFrame, 204, relatedInfoFrame.snp.bottom, 16),
+            (ownerInfoFrame, 172, walkReviewFrame.snp.bottom, 16)
         ])
 
         contentView.snp.makeConstraints { make in
             make.bottom.equalTo(ownerInfoFrame.snp.bottom).offset(32)
         }
 
-        // Button Frame
         setupButtonFrame()
     }
 
@@ -181,7 +183,10 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.width.equalToSuperview()
             make.height.equalTo(78)
         }
-
+        
+        walkTalkButton.removeConstraints(applyWalkButton.constraints)
+        applyWalkButton.removeConstraints(applyWalkButton.constraints)
+        
         // 워크톡 버튼
         buttonFrame.addSubview(walkTalkButton)
         walkTalkButton.snp.makeConstraints { make in
