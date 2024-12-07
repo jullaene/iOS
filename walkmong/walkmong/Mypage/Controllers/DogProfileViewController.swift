@@ -8,9 +8,6 @@
 import UIKit
 import SnapKit
 
-import UIKit
-import SnapKit
-
 class DogProfileViewController: UIViewController {
 
     private let dogProfileView = DogProfileView()
@@ -21,12 +18,7 @@ class DogProfileViewController: UIViewController {
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
-
-        if let dogId = dogId {
-            fetchDogProfile(dogId: dogId) 
-        } else {
-            print("Error: dogId is nil. Cannot fetch dog profile.")
-        }
+        fetchDogProfileIfNeeded()
     }
 
     // MARK: - Configure Method
@@ -53,8 +45,15 @@ class DogProfileViewController: UIViewController {
         )
     }
 
+    private func fetchDogProfileIfNeeded() {
+        guard let dogId = dogId else {
+            print("Error: dogId is nil. Cannot fetch dog profile.")
+            return
+        }
+        fetchDogProfile(dogId: dogId)
+    }
+
     private func fetchDogProfile(dogId: Int) {
-        
         networkManager.fetchDogProfile(dogId: dogId) { [weak self] result in
             switch result {
             case .success(let dogProfile):

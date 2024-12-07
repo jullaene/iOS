@@ -108,29 +108,40 @@ class DogProfileView: UIView, UIScrollViewDelegate {
     }
 
     func configureBasicInfo(
-        dogName: String,
-        dogGender: String,
-        dogAge: Int,
-        breed: String,
-        weight: Double,
-        neuteringYn: String
+        dogName: String?,
+        dogGender: String?,
+        dogAge: Int?,
+        breed: String?,
+        weight: Double?,
+        neuteringYn: String?
     ) {
+        let dogName = dogName ?? "이름 없음"
+        let dogGender = dogGender == "FEMALE" ? "여" : "남"
+        let dogAgeString = (dogAge != nil) ? "\(dogAge!)살" : "알 수 없음"
+        let breed = breed ?? "견종 정보 없음"
         let weightString: String
-        if weight < 1 {
-            weightString = "\(Int(weight * 1000))g"
-        } else if weight == floor(weight) {
-            weightString = "\(Int(weight))kg"
+
+        if let weight = weight {
+            if weight < 1 {
+                weightString = "\(Int(weight * 1000))g"
+            } else if weight == floor(weight) {
+                weightString = "\(Int(weight))kg"
+            } else {
+                weightString = "\(weight)kg"
+            }
         } else {
-            weightString = "\(weight)kg"
+            weightString = "알 수 없음"
         }
+
+        let neuteringYn = neuteringYn == "Y" ? "O" : "X"
 
         basicInfoFrame.configure(
             with: dogName,
-            dogGender: dogGender == "FEMALE" ? "여" : "남",
-            dogAge: "\(dogAge)살",
+            dogGender: dogGender,
+            dogAge: dogAgeString,
             breed: breed,
             weight: weightString,
-            neuteringYn: neuteringYn == "Y" ? "O" : "X"
+            neuteringYn: neuteringYn
         )
     }
 

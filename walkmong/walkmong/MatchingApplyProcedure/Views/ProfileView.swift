@@ -19,11 +19,13 @@ class ProfileView: UIView {
 
     // MARK: - UI Components
     private let topFrameView = UIView()
+
+    private let genderIconView = ProfileView.createImageView(named: "femaleIcon")
     
     private let nameLabel = LargeTitleLabel(text: "")
     
     private let femaleIconView = ProfileView.createImageView(named: "femaleIcon")
-    
+   
     private let profileButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor.mainBlue
@@ -33,17 +35,15 @@ class ProfileView: UIView {
         button.setTitleColor(.white, for: .normal)
         return button
     }()
-    
     private let dogInfoLabel = ProfileView.createLabel(
         text: "",
         font: UIFont(name: "Pretendard-Regular", size: 16),
         textColor: .gray500
     )
-    
     private let locationIconView = ProfileView.createImageView(named: "locationIcon")
     
     private let locationLabel = SmallMainParagraphLabel(text: "", textColor: .gray500)
-    
+
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,19 +57,10 @@ class ProfileView: UIView {
     
     // MARK: - Setup Methods
     private func setupView() {
-        addSubviews()
+        addSubviews(topFrameView, dogInfoLabel, locationIconView, locationLabel)
+        topFrameView.addSubviews(nameLabel, genderIconView, profileButton)
         setupConstraints()
         setupActions()
-    }
-    
-    private func addSubviews() {
-        addSubview(topFrameView)
-        topFrameView.addSubview(nameLabel)
-        topFrameView.addSubview(femaleIconView)
-        topFrameView.addSubview(profileButton)
-        addSubview(dogInfoLabel)
-        addSubview(locationIconView)
-        addSubview(locationLabel)
     }
     
     private func setupConstraints() {
@@ -83,7 +74,7 @@ class ProfileView: UIView {
             make.centerY.equalToSuperview()
         }
         
-        femaleIconView.snp.makeConstraints { make in
+        genderIconView.snp.makeConstraints { make in
             make.leading.equalTo(nameLabel.snp.trailing).offset(4)
             make.centerY.equalTo(nameLabel)
             make.size.equalTo(24)
@@ -121,74 +112,33 @@ class ProfileView: UIView {
     }
     
     func updateProfileView(
-            dogName: String,
-            dogSize: String,
-            breed: String,
-            weight: Double,
-            dogAge: Int,
-            dongAddress: String,
-            distance: Double,
-            dogGender: String
-        ) {
-
-        // 이름 업데이트
+        dogName: String,
+        dogSize: String,
+        breed: String,
+        weight: Double,
+        dogAge: Int,
+        dongAddress: String,
+        distance: Double,
+        dogGender: String
+    ) {
         nameLabel.text = dogName
-
-        // 성별 아이콘 업데이트
-        let genderIconName: String
-        switch dogGender.uppercased() {
-        case "FEMALE":
-            genderIconName = "femaleIcon"
-        case "MALE":
-            genderIconName = "maleIcon"
-        default:
-            genderIconName = "defaultIcon"
-        }
-        femaleIconView.image = UIImage(named: genderIconName)
-
-        // 강아지 정보 업데이트
-        let sizeText: String
-        switch dogSize.uppercased() {
-        case "SMALL":
-            sizeText = "소형견"
-        case "MIDDLE":
-            sizeText = "중형견"
-        case "BIG":
-            sizeText = "대형견"
-        default:
-            sizeText = "알 수 없음"
-        }
-
-        let weightText = weight.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(weight))kg" : "\(weight)kg"
-        dogInfoLabel.text = "\(sizeText) · \(breed) \(weightText) · \(dogAge)살"
-
-        // 위치 정보 업데이트
-        let distanceInMeters = distance < 1000 ? distance : distance / 1000
-        let distanceText: String
-        if distance < 1000 {
-            distanceText = "\(Int(distanceInMeters))m"
-        } else {
-            if floor(distanceInMeters) == distanceInMeters {
-                distanceText = "\(Int(distanceInMeters))km"
-            } else {
-                distanceText = String(format: "%.1fkm", distanceInMeters)
-            }
-        }
-        locationLabel.text = "\(dongAddress) \(distanceText)"
+        genderIconView.image = UIImage(named: genderIconName(for: dogGender))
+        dogInfoLabel.text = "\(sizeText(for: dogSize)) · \(breed) \(formattedWeight(weight)) · \(dogAge)살"
+        locationLabel.text = "\(dongAddress) \(formattedDistance(distance))"
     }
     
     // MARK: - Actions
     @objc private func profileButtonTapped() {
-        delegate?.profileButtonTapped()
+        guard let delegate = delegate else { return }
+        delegate.profileButtonTapped()
     }
     
     // MARK: - Helper Methods
-    private static func createLabel(text: String, font: UIFont?, textColor: UIColor, alignment: NSTextAlignment = .left) -> UILabel {
+    private static func createLabel(text: String, font: UIFont?, textColor: UIColor) -> UILabel {
         let label = UILabel()
         label.text = text
         label.font = font
         label.textColor = textColor
-        label.textAlignment = alignment
         return label
     }
     
@@ -197,5 +147,42 @@ class ProfileView: UIView {
         imageView.image = UIImage(named: imageName)
         imageView.contentMode = .scaleAspectFit
         return imageView
+    }
+    
+    private func genderIconName(for gender: String) -> String {
+        switch gender.uppercased() {
+        case "FEMALE":
+            return "femaleIcon"
+        case "MALE":
+            return "maleIcon"
+        default:
+            return "defaultIcon"
+        }
+    }
+    
+    private func sizeText(for size: String) -> String {
+        switch size.uppercased() {
+        case "SMALL":
+            return "소형견"
+        case "MIDDLE":
+            return "중형견"
+        case "BIG":
+            return "대형견"
+        default:
+            return "알 수 없음"
+        }
+    }
+    
+    private func formattedWeight(_ weight: Double) -> String {
+        return weight.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(weight))kg" : "\(weight)kg"
+    }
+    
+    private func formattedDistance(_ distance: Double) -> String {
+        if distance < 1000 {
+            return "\(Int(distance))m"
+        } else {
+            let km = distance / 1000
+            return km.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(km))km" : String(format: "%.1fkm", km)
+        }
     }
 }

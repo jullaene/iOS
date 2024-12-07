@@ -10,9 +10,9 @@ class MatchingCell: UIView {
     
     // MARK: - Properties
     weak var delegate: MatchingCellDelegate?
-    internal var matchingData: MatchingData?
+    var matchingData: MatchingData?
     
-    // Main Container View
+    // MARK: - UI Components
     private let mainView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -20,9 +20,10 @@ class MatchingCell: UIView {
         return view
     }()
     
-    // Top Section (Date & Matching Status)
     private let topFrame = UIView()
+
     internal let dateLabel = SmallTitleLabel(text: "")
+
     private let matchingStatusView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 14.5
@@ -30,24 +31,20 @@ class MatchingCell: UIView {
     }()
     private let matchingStatusLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
+        label.textColor = .gray400
         label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
         return label
     }()
     
-    // Bottom Section
     private let bottomFrame = UIView()
     private let puppyImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
         return imageView
     }()
     private let contentFrame = UIView()
-    
-    // Dog Information
     private let dogInfoFrame = UIView()
     private let nameLabel: UILabel = {
         let label = UILabel()
@@ -55,18 +52,13 @@ class MatchingCell: UIView {
         label.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         return label
     }()
-    private let genderIcon: UIImageView = {
-        let imageView = UIImageView()
-        return imageView
-    }()
+    private let genderIcon: UIImageView = UIImageView()
     private let sizeLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.mainGreen
         label.font = UIFont(name: "Pretendard-SemiBold", size: 14)
         return label
     }()
-    
-    // Post Content
     private let postContentLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.gray500
@@ -76,11 +68,10 @@ class MatchingCell: UIView {
         return label
     }()
     
-    // Location and Time
     private let locationTimeFrame = UIView()
     private let locationIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "locationIcon") // 위치 아이콘 이미지 설정
+        imageView.image = UIImage(named: "locationIcon")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -116,7 +107,7 @@ class MatchingCell: UIView {
         setupTapGesture()
     }
     
-    // MARK: - View Setup
+    // MARK: - Setup Methods
     private func setupView() {
         setupMainView()
         setupTopFrame()
@@ -137,14 +128,12 @@ class MatchingCell: UIView {
             make.height.equalTo(29)
         }
         
-        // Date Label
         topFrame.addSubview(dateLabel)
         dateLabel.snp.makeConstraints { make in
             make.leading.centerY.equalToSuperview()
             make.height.equalTo(28)
         }
         
-        // Matching Status View
         topFrame.addSubview(matchingStatusView)
         matchingStatusView.snp.makeConstraints { make in
             make.trailing.centerY.equalToSuperview()
@@ -165,7 +154,6 @@ class MatchingCell: UIView {
             make.height.equalTo(109)
         }
         
-        // Puppy Image
         bottomFrame.addSubview(puppyImageView)
         puppyImageView.snp.makeConstraints { make in
             make.width.height.equalTo(112)
@@ -173,7 +161,6 @@ class MatchingCell: UIView {
             make.bottom.equalToSuperview()
         }
         
-        // Content Frame
         bottomFrame.addSubview(contentFrame)
         contentFrame.snp.makeConstraints { make in
             make.leading.equalTo(puppyImageView.snp.trailing).offset(12)
@@ -194,21 +181,19 @@ class MatchingCell: UIView {
             make.height.equalTo(25)
         }
         
-        // Dog Info Labels
-        [nameLabel, genderIcon, sizeLabel].forEach {
-            dogInfoFrame.addSubview($0)
-        }
-        
+        dogInfoFrame.addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
             make.leading.centerY.equalToSuperview()
         }
         
+        dogInfoFrame.addSubview(genderIcon)
         genderIcon.snp.makeConstraints { make in
             make.leading.equalTo(nameLabel.snp.trailing).offset(5)
             make.centerY.equalToSuperview()
             make.height.equalTo(16)
         }
         
+        dogInfoFrame.addSubview(sizeLabel)
         sizeLabel.snp.makeConstraints { make in
             make.leading.equalTo(genderIcon.snp.trailing).offset(12)
             make.centerY.equalToSuperview()
@@ -231,26 +216,25 @@ class MatchingCell: UIView {
             make.height.equalTo(21)
         }
         
-        // Location and Time Labels
-        [locationIcon, locationLabel, distanceLabel, timeLabel].forEach {
-            locationTimeFrame.addSubview($0)
-        }
-        
+        locationTimeFrame.addSubview(locationIcon)
         locationIcon.snp.makeConstraints { make in
             make.leading.centerY.equalToSuperview()
             make.width.height.equalTo(14)
         }
         
+        locationTimeFrame.addSubview(locationLabel)
         locationLabel.snp.makeConstraints { make in
             make.leading.equalTo(locationIcon.snp.trailing).offset(4)
             make.centerY.equalToSuperview()
         }
         
+        locationTimeFrame.addSubview(distanceLabel)
         distanceLabel.snp.makeConstraints { make in
             make.leading.equalTo(locationLabel.snp.trailing).offset(4)
             make.centerY.equalToSuperview()
         }
         
+        locationTimeFrame.addSubview(timeLabel)
         timeLabel.snp.makeConstraints { make in
             make.leading.equalTo(distanceLabel.snp.trailing).offset(4)
             make.centerY.equalToSuperview()
@@ -259,35 +243,16 @@ class MatchingCell: UIView {
     
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        self.addGestureRecognizer(tapGesture)
+        addGestureRecognizer(tapGesture)
     }
     
-    // MARK: - Actions
-    @objc private func handleTap() {
-        guard let data = matchingData else { return }
-        delegate?.didSelectMatchingCell(data: data)
-    }
-    
+    // MARK: - Configuration
     func configure(with data: MatchingData) {
         matchingData = data
-        dateLabel.text = "\(data.date) \(data.startTime) ~ \(data.endTime)"
-        matchingStatusLabel.text = data.matchingStatus
+        configureDateLabel(selectedDate: data.date, startTime: data.startTime, endTime: data.endTime)
+        configureMatchingStatus(for: data.matchingYn)
+        configurePuppyImage(with: data.safeDogProfile)
         
-        // URL이 유효한지 확인
-       if !data.safeDogProfile.isEmpty,
-          let imageUrl = URL(string: data.safeDogProfile),
-          data.safeDogProfile.hasPrefix("http://") || data.safeDogProfile.hasPrefix("https://") {
-           // Kingfisher로 네트워크 이미지 로드
-           puppyImageView.kf.setImage(with: imageUrl, placeholder: nil)
-           puppyImageView.isHidden = false
-           puppyImageView.backgroundColor = .clear
-       } else {
-           // null 데이터일 경우 흰색 배경 처리
-           puppyImageView.image = nil
-           puppyImageView.backgroundColor = .white
-           puppyImageView.isHidden = false
-       }
-
         nameLabel.text = data.dogName
         sizeLabel.text = data.translatedDogSize
         postContentLabel.text = data.content
@@ -295,88 +260,43 @@ class MatchingCell: UIView {
         distanceLabel.text = data.formattedDistance
         timeLabel.text = data.readableCreatedAt
         
-        // Gender 아이콘 설정
-        switch data.dogGender {
-        case "FEMALE":
-            genderIcon.image = UIImage(named: "femaleIcon")
-        case "MALE":
-            genderIcon.image = UIImage(named: "maleIcon")
-        default:
-            genderIcon.image = nil
-        }
-        
-        // 매칭 상태에 따른 UI 업데이트
-        updateMatchingStatusUI(for: data.matchingYn)
-    }
-
-    private func updateMatchingStatusUI(for status: String) {
-        if status == "Y" { // 매칭확정 상태
-            matchingStatusView.backgroundColor = .gray100
-            matchingStatusLabel.textColor = .gray400
-            matchingStatusLabel.text = "매칭확정"
-            matchingStatusView.snp.remakeConstraints { make in
-                make.trailing.centerY.equalToSuperview()
-                make.width.equalTo(73) // 매칭확정 상태의 너비
-                make.height.equalTo(29)
-            }
-        } else { // 기본 매칭중 상태
-            matchingStatusView.backgroundColor = .mainGreen
-            matchingStatusLabel.textColor = .white
-            matchingStatusLabel.text = "매칭중"
-            matchingStatusView.snp.remakeConstraints { make in
-                make.trailing.centerY.equalToSuperview()
-                make.width.equalTo(63) // 매칭중 상태의 너비
-                make.height.equalTo(29)
-            }
-        }
+        genderIcon.image = genderIconImage(for: data.dogGender)
     }
     
     func configureDateLabel(selectedDate: String, startTime: String, endTime: String) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        
-        // 현재 연도와 월 가져오기
-        let currentYear = Calendar.current.component(.year, from: Date())
-        let currentMonth = Calendar.current.component(.month, from: Date())
-        
-        // `selectedDate`에서 날짜와 요일 추출
-        let components = selectedDate.split(separator: ".")
-        guard components.count >= 1, let day = Int(components[0].trimmingCharacters(in: .whitespaces)) else {
-            print("Invalid selectedDate format: \(selectedDate)")
-            dateLabel.text = "날짜 변환 오류"
-            return
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "MM. dd (EEE) HH:mm"
+        dateLabel.text = "\(selectedDate) \(startTime) ~ \(endTime)"
+    }
+    
+    private func configureMatchingStatus(for status: String) {
+        let isMatched = (status == "Y")
+        matchingStatusView.backgroundColor = isMatched ? .gray100 : .mainGreen
+        matchingStatusLabel.textColor = isMatched ? .gray400 : .white
+        matchingStatusLabel.text = isMatched ? "매칭확정" : "매칭중"
+    }
+    
+    private func configurePuppyImage(with urlString: String) {
+        if let url = URL(string: urlString) {
+            puppyImageView.kf.setImage(with: url)
+        } else {
+            puppyImageView.image = nil
         }
-        
-        // 날짜 구성
-        var dateComponents = DateComponents()
-        dateComponents.year = currentYear
-        dateComponents.month = currentMonth
-        dateComponents.day = day
-        
-        guard let datePart = Calendar.current.date(from: dateComponents) else {
-            print("Failed to create date from components: \(dateComponents)")
-            dateLabel.text = "날짜 변환 오류"
-            return
+    }
+    
+    private func genderIconImage(for gender: String) -> UIImage? {
+        switch gender {
+        case "FEMALE": return UIImage(named: "femaleIcon")
+        case "MALE": return UIImage(named: "maleIcon")
+        default: return nil
         }
-        
-        // 날짜를 "MM. dd (EEE)" 형식으로 변환
-        dateFormatter.dateFormat = "MM. dd (EEE)"
-        let formattedDate = dateFormatter.string(from: datePart)
-        
-        // 시간만 변환
-        dateFormatter.dateFormat = "HH:mm"
-        guard let startTimeDate = dateFormatter.date(from: startTime),
-              let endTimeDate = dateFormatter.date(from: endTime) else {
-            print("Failed to parse startTime or endTime: \(startTime), \(endTime)")
-            dateLabel.text = "시간 변환 오류"
-            return
+    }
+    
+    // MARK: - Actions
+    @objc private func handleTap() {
+        if let data = matchingData {
+            delegate?.didSelectMatchingCell(data: data)
         }
-        
-        // 변환된 시간 출력
-        let formattedStartTime = dateFormatter.string(from: startTimeDate)
-        let formattedEndTime = dateFormatter.string(from: endTimeDate)
-        
-        // 최종 출력
-        dateLabel.text = "\(formattedDate) \(formattedStartTime) ~ \(formattedEndTime)"
     }
 }
