@@ -10,7 +10,8 @@ import UIKit
 class CircleTagView: UIView {
     private let titleLabel = CaptionLabel(text: "", textColor: .white)
     private let tagLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .white)
-
+    private let stackView = UIStackView()
+    
     init(title: String, tag: String) {
         super.init(frame: .zero)
         setupView()
@@ -26,20 +27,18 @@ class CircleTagView: UIView {
         backgroundColor = .mainBlue
         layer.cornerRadius = 48
         clipsToBounds = true
-        translatesAutoresizingMaskIntoConstraints = false
-        
-        addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(28)
+
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .equalSpacing
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(tagLabel)
+        addSubview(stackView)
+
+        stackView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
-        
-        addSubview(tagLabel)
-        tagLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(titleLabel.snp.bottom).offset(8)
-        }
-        
+
         snp.makeConstraints { make in
             make.width.height.equalTo(96)
         }
