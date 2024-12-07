@@ -24,7 +24,7 @@ class CircleTagView: UIView {
     
     private func setupView() {
         backgroundColor = .mainBlue
-        layer.cornerRadius = 50
+        layer.cornerRadius = 48
         clipsToBounds = true
         translatesAutoresizingMaskIntoConstraints = false
         
@@ -41,7 +41,7 @@ class CircleTagView: UIView {
         }
         
         snp.makeConstraints { make in
-            make.width.height.equalTo(100)
+            make.width.height.equalTo(96)
         }
     }
     

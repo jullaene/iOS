@@ -15,9 +15,9 @@ class WalkReviewCell: UITableViewCell {
     private let circleStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .equalSpacing // 남는 간격을 균등하게 분배
         stackView.alignment = .center
-        stackView.spacing = 8
+        stackView.spacing = 0 // 추가적인 고정 간격 없음
         return stackView
     }()
     private let photoFrame = UIView()
@@ -67,8 +67,9 @@ class WalkReviewCell: UITableViewCell {
 
         circleStackView.snp.makeConstraints { make in
             make.top.equalTo(profileFrame.snp.bottom).offset(spacing)
-            make.leading.trailing.equalToSuperview().inset(margin)
-            make.height.equalTo(116)
+            make.leading.equalToSuperview().offset(margin) // 좌측 마진
+            make.trailing.equalToSuperview().offset(-margin) // 우측 마진
+            make.height.equalTo(96) // CircleTagView의 고정 크기
         }
 
         photoFrame.snp.makeConstraints { make in

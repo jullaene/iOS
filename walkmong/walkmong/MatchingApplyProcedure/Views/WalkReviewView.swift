@@ -24,7 +24,7 @@ class WalkReviewView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
-        setupConstraints(navigationBarHeight: 0)
+        setupConstraints()
         addReviewCells(count: 5)
     }
 
@@ -41,20 +41,22 @@ class WalkReviewView: UIView {
         contentView.addSubview(filterButton)
     }
 
-    private func setupConstraints(navigationBarHeight: CGFloat) {
-        scrollView.snp.remakeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52)
-            make.leading.trailing.bottom.equalToSuperview()
+    // MARK: - Setup Constraints
+    private func setupConstraints() {
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
-        
+
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
         }
 
         filterButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
             make.top.equalToSuperview().offset(20)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().offset(-20)
+            make.height.equalTo(44)
         }
     }
 
