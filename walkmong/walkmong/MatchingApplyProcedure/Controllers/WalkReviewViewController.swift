@@ -20,6 +20,7 @@ class WalkReviewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
+        setupHomeFilterButtonPosition()
     }
 
     // MARK: - Setup Navigation Bar
@@ -31,5 +32,11 @@ class WalkReviewViewController: UIViewController {
             showRightCloseButton: false,
             showRightRefreshButton: false
         )
+    }
+
+    // MARK: - Adjust Button Position
+    private func setupHomeFilterButtonPosition() {
+        guard let navigationBar = navigationController?.navigationBar else { return }
+        contentView.updateHomeFilterButtonPosition(navigationBarHeight: navigationBar.frame.height)
     }
 }

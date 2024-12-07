@@ -11,14 +11,10 @@ import SnapKit
 class WalkReviewView: UIView {
 
     // MARK: - Subviews
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "산책 후기"
-        label.font = UIFont.boldSystemFont(ofSize: 24)
-        label.textAlignment = .center
-        return label
-    }()
-
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    private let homeFilterButton = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,12 +29,37 @@ class WalkReviewView: UIView {
     // MARK: - Setup
     private func setupView() {
         backgroundColor = .white
-        addSubview(titleLabel)
+
+        // Add scrollView and contentView
+        addSubview(scrollView)
+        scrollView.addSubview(contentView)
+
+        // Add homeFilterButton to contentView
+        contentView.addSubview(homeFilterButton)
     }
 
     private func setupConstraints() {
-        titleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview() // ScrollView가 전체 화면을 채우도록 설정
+        }
+
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview() // ScrollView의 내부를 채움
+            make.width.equalToSuperview() // ScrollView의 수평 스크롤 방지
+        }
+
+        // Home Filter Button 기본 위치 설정
+        homeFilterButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(20)
+            make.top.equalToSuperview().offset(20)
+        }
+    }
+
+    // MARK: - Public Methods
+    func updateHomeFilterButtonPosition(navigationBarHeight: CGFloat) {
+        homeFilterButton.snp.remakeConstraints { make in
+            make.leading.equalToSuperview().offset(20)
+            make.top.equalToSuperview().offset(navigationBarHeight + 20)
         }
     }
 }
