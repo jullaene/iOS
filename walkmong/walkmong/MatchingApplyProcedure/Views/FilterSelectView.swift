@@ -5,11 +5,8 @@ class FilterSelectView: UIView {
 
     // MARK: - Buttons
     let filterButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "")
-    
     let distanceButton = UIButton.createStyledButton(type: .homeFilter, style: .dark, title: "거리")
-    
     let breedButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "견종")
-    
     let matchStatusButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "매칭여부")
 
     // MARK: - Initializer
@@ -46,7 +43,7 @@ class FilterSelectView: UIView {
         
         if let filterIcon = UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate) {
             filterButton.setImage(filterIcon, for: .normal)
-            filterButton.tintColor = UIColor.gray500 
+            filterButton.tintColor = UIColor.gray500
         }
         filterButton.layer.cornerRadius = 16.5
     }

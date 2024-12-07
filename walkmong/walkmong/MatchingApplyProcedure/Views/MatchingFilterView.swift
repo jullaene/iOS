@@ -86,8 +86,8 @@ class MatchingFilterView: UIView {
         }
         
         buttonFrame.snp.makeConstraints { make in
-            make.centerX.bottom.equalToSuperview().inset(42)
-            make.width.equalTo(356)
+            make.bottom.equalToSuperview().inset(42)
+            make.width.equalToSuperview()
             make.height.equalTo(54)
         }
     }
@@ -237,7 +237,8 @@ class MatchingFilterView: UIView {
         matchingStatusFrame.addSubview(label)
 
         label.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().offset(16)
+            make.top.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(20)
         }
 
         let buttonContainer = UIView()
@@ -245,7 +246,7 @@ class MatchingFilterView: UIView {
 
         buttonContainer.snp.makeConstraints { make in
             make.top.equalTo(label.snp.bottom).offset(16)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(38)
         }
 
@@ -264,7 +265,6 @@ class MatchingFilterView: UIView {
                 } else {
                     make.leading.equalTo(matchingButtons[index - 1].snp.trailing).offset(12)
                 }
-                make.top.bottom.equalToSuperview()
             }
         }
     }
@@ -289,13 +289,13 @@ class MatchingFilterView: UIView {
         breedFrame.addSubview(instructionLabel)
 
         breedLabel.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().offset(16)
+            make.top.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(20)
         }
 
         instructionLabel.snp.makeConstraints { make in
             make.top.equalTo(breedLabel.snp.bottom).offset(20)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(22)
         }
 
@@ -304,7 +304,7 @@ class MatchingFilterView: UIView {
 
         buttonContainer.snp.makeConstraints { make in
             make.top.equalTo(instructionLabel.snp.bottom).offset(16)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(38)
         }
 
@@ -323,7 +323,6 @@ class MatchingFilterView: UIView {
                 } else {
                     make.leading.equalTo(breedButtons[index - 1].snp.trailing).offset(12)
                 }
-                make.top.bottom.equalToSuperview()
             }
         }
     }
@@ -342,16 +341,14 @@ class MatchingFilterView: UIView {
 
         // 초기화 버튼 오토레이아웃
         resetButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
+            make.leading.equalToSuperview().inset(20)
             make.width.equalTo(93)
-            make.height.equalTo(54)
         }
 
         // 적용하기 버튼 오토레이아웃
         applyButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview()
-            make.centerY.equalToSuperview()
             make.leading.equalTo(resetButton.snp.trailing).offset(12)
+            make.trailing.equalToSuperview().inset(20)
         }
     }
     

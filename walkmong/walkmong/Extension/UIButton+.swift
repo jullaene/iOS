@@ -144,4 +144,12 @@ extension UIButton {
             UIButton.configureStyle(for: self, type: type, style: style)
         }
     }
+    
+    func removeSizeConstraints() {
+        self.constraints.forEach { constraint in
+            if constraint.firstAttribute == .width || constraint.firstAttribute == .height {
+                self.removeConstraint(constraint)
+            }
+        }
+    }
 }
