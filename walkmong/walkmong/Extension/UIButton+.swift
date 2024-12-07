@@ -49,7 +49,7 @@ extension UIButton {
         case .smallSelection, .homeFilter:
             let textWidth = calculateTextWidth(text: title, font: label.font)
             width = textWidth + 32
-            height = label.font.lineHeight + 16
+            height = 38
         }
         setButtonSizeConstraints(button: button, width: width, height: height)
         
