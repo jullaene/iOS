@@ -39,12 +39,9 @@ class FilterSelectView: UIView {
                 } else {
                     make.leading.equalToSuperview().offset(16)
                 }
-                
-                if index == 0 {
-                    make.width.equalTo(34)
-                } else {
-                    make.width.equalTo(index == 3 ? 87 : 60)
-                }
+
+                make.width.equalTo(index == 0 ? 34 : (index == 3 ? 87 : 60))
+
             }
             
             previousButton = button

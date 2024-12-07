@@ -62,7 +62,7 @@ class DayCell: UICollectionViewCell {
     
     private static func createLabel(font: String, fontSize: CGFloat) -> UILabel {
         let label = UILabel()
-        label.font = UIFont(name: font, size: fontSize)
+        label.font = UIFont(name: font, size: fontSize) ?? UIFont.systemFont(ofSize: fontSize, weight: .bold)
         label.textColor = UIColor.mainBlack
         label.textAlignment = .center
         return label

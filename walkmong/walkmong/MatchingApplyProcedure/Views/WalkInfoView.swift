@@ -65,16 +65,18 @@ class WalkInfoView: UIView {
                     make.leading.equalToSuperview().offset(24)
                     make.top.equalToSuperview().offset(20)
                     self.referenceIcon = icon
-                } else {
+                } else if let referenceIcon = referenceIcon {
                     // 이후 아이콘은 첫 번째 아이콘의 centerX에 정렬
-                    make.centerX.equalTo(referenceIcon!)
+                    make.centerX.equalTo(referenceIcon)
                 }
                 
-                if data.title == "만남 장소" {
+                if data.title == "만남 장소", let endLabel = endLabel {
                     // "만남 장소"는 endLabel의 아래로 배치
-                    make.top.equalTo(endLabel!.snp.bottom).offset(24)
+                    make.top.equalTo(endLabel.snp.bottom).offset(24)
+                } else if let lastView = lastView {
+                    make.top.equalTo(lastView.snp.bottom).offset(24)
                 } else {
-                    make.top.equalTo(lastView?.snp.bottom ?? self.snp.top).offset(lastView == nil ? 20 : 24)
+                    make.top.equalToSuperview().offset(20)
                 }
             }
             
@@ -86,9 +88,9 @@ class WalkInfoView: UIView {
                     // 첫 번째 타이틀은 아이콘의 오른쪽에 배치
                     make.left.equalTo(icon.snp.right).offset(8)
                     self.referenceTitleLabel = titleLabel
-                } else {
+                } else if let referenceTitleLabel = referenceTitleLabel {
                     // 이후 타이틀은 첫 번째 타이틀의 leading에 정렬
-                    make.left.equalTo(referenceTitleLabel!)
+                    make.left.equalTo(referenceTitleLabel)
                 }
             }
             
@@ -118,20 +120,16 @@ class WalkInfoView: UIView {
         suppliesProvidedYn: String,
         preMeetAvailableYn: String
     ) {
-        // 시작 및 종료 시간이 비어 있을 경우 기본값 설정
         let formattedStartTime = "".formattedDateAndTime(date: date, time: startTime) ?? "시간 정보 없음"
         let formattedEndTime = "".formattedDateAndTime(date: date, time: endTime) ?? "시간 정보 없음"
 
-        // 시작 및 종료 시간 레이블 업데이트
         detailLabels["startDate"]?.text = formattedStartTime
         detailLabels["endDate"]?.text = formattedEndTime
 
-        // 다른 항목 업데이트
         detailLabels["만남 장소"]?.text = locationNegotiationYn == "Y" ? "산책자 선택 장소" : "협의 필요"
         detailLabels["산책 용품"]?.text = suppliesProvidedYn == "Y" ? "제공 가능" : "제공 불가능"
         detailLabels["사전 만남"]?.text = preMeetAvailableYn == "Y" ? "가능" : "불가능"
     }
-    
     
     // MARK: - Helpers
     private func createIcon(named name: String, height: CGFloat) -> UIImageView {
@@ -194,11 +192,10 @@ class WalkInfoView: UIView {
             make.centerY.equalTo(endLabel.snp.centerY)
         }
         
-        // startDateLabel과 endDateLabel을 detailLabels에 저장
         detailLabels["startDate"] = startDateLabel
         detailLabels["endDate"] = endDateLabel
 
-        self.endLabel = endLabel // endLabel 참조 저장
+        self.endLabel = endLabel
     }
     
     private func createSubtitleLabel(with text: String, color: UIColor = .gray400) -> UILabel {
@@ -208,7 +205,6 @@ class WalkInfoView: UIView {
         label.textColor = color
         return label
     }
-    
 }
 
 extension String {
@@ -220,7 +216,6 @@ extension String {
         let fullDateTimeString = "\(date) \(time)"
         guard let dateObject = dateFormatter.date(from: fullDateTimeString) else { return nil }
 
-        // 결과 포맷 설정
         dateFormatter.dateFormat = "MM.dd (E) HH:mm"
         return dateFormatter.string(from: dateObject)
     }

@@ -1,10 +1,17 @@
+//
+//  RelatedInfoView.swift
+//  walkmong
+//
+//  Created by 신호연 on 11/12/24.
+//
+
 import UIKit
 import SnapKit
 
 class RelatedInfoView: UIView {
     
     // MARK: - UI Components
-    private let titleLabel = RelatedInfoView.createLabel(
+    private let titleLabel = createLabel(
         text: "산책 관련 정보",
         textColor: UIColor.gray600,
         font: UIFont(name: "Pretendard-Bold", size: 20),
@@ -12,37 +19,37 @@ class RelatedInfoView: UIView {
         kern: -0.32
     )
     
-    private let requestTitleLabel = RelatedInfoView.createLabel(
+    private let requestTitleLabel = createLabel(
         text: "산책 요청 사항",
         textColor: UIColor.gray600,
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let requestDescriptionLabel = RelatedInfoView.createTextView(
+    private let requestDescriptionLabel = createTextView(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
     )
     
-    private let referenceTitleLabel = RelatedInfoView.createLabel(
+    private let referenceTitleLabel = createLabel(
         text: "산책 참고 사항",
         textColor: UIColor.gray600,
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let referenceDescriptionLabel = RelatedInfoView.createTextView(
+    private let referenceDescriptionLabel = createTextView(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
     )
     
-    private let additionalInfoTitleLabel = RelatedInfoView.createLabel(
+    private let additionalInfoTitleLabel = createLabel(
         text: "추가 안내 사항",
         textColor: UIColor.gray600,
         font: UIFont(name: "Pretendard-Bold", size: 16)
     )
     
-    private let additionalInfoDescriptionLabel = RelatedInfoView.createTextView(
+    private let additionalInfoDescriptionLabel = createTextView(
         text: "",
         textColor: UIColor.gray500,
         font: UIFont(name: "Pretendard-Medium", size: 16)
@@ -64,8 +71,7 @@ class RelatedInfoView: UIView {
         backgroundColor = .gray100
         layer.cornerRadius = 20
         
-        // Add all labels and textviews to the view
-        let views = [
+        let views: [UIView] = [
             titleLabel,
             requestTitleLabel,
             requestDescriptionLabel,
@@ -75,11 +81,7 @@ class RelatedInfoView: UIView {
             additionalInfoDescriptionLabel
         ]
         
-        for view in views {
-            addSubview(view)
-        }
-        
-        // Setup constraints
+        views.forEach { addSubview($0) }
         setupConstraints(views: views)
     }
     
@@ -87,13 +89,11 @@ class RelatedInfoView: UIView {
         views[0].snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.leading.equalToSuperview().offset(24)
-            make.width.equalTo(111)
         }
         
         views[1].snp.makeConstraints { make in
             make.top.equalTo(views[0].snp.bottom).offset(30)
             make.leading.equalToSuperview().offset(24)
-            make.trailing.equalToSuperview().offset(-24)
         }
         
         for i in 2..<views.count {
@@ -130,19 +130,14 @@ class RelatedInfoView: UIView {
         label.textColor = textColor
         label.font = font
         label.numberOfLines = numberOfLines
-        label.lineBreakMode = .byWordWrapping
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = lineHeightMultiple
-        paragraphStyle.lineBreakMode = .byWordWrapping
-
         let attributes: [NSAttributedString.Key: Any] = [
             .kern: kern,
             .paragraphStyle: paragraphStyle
         ]
-
         label.attributedText = NSAttributedString(string: text, attributes: attributes)
-        
         return label
     }
     
@@ -172,9 +167,7 @@ class RelatedInfoView: UIView {
             .kern: kern,
             .paragraphStyle: paragraphStyle
         ]
-
         textView.attributedText = NSAttributedString(string: text, attributes: attributes)
-        
         return textView
     }
 }

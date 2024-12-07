@@ -120,8 +120,9 @@ class VaccinationView: UIView {
     }
 
     // MARK: - Public Methods
-    func updateVaccinationStatus(rabiesYn: String) {
-        let isVaccinated = rabiesYn == "Y"
+    func updateVaccinationStatus(rabiesYn: String?) {
+        let isVaccinated = (rabiesYn == "Y")
+        
         vaccinationFrame.backgroundColor = isVaccinated
             ? Constants.Colors.completedBackground
             : Constants.Colors.incompleteBackground

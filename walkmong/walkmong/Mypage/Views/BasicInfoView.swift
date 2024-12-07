@@ -132,18 +132,18 @@ class BasicInfoView: UIView {
 
     // MARK: - Public Methods
     func configure(
-        with dogName: String,
-        dogGender: String,
-        dogAge: String,
-        breed: String,
-        weight: String,
-        neuteringYn: String
+        with dogName: String?,
+        dogGender: String?,
+        dogAge: String?,
+        breed: String?,
+        weight: String?,
+        neuteringYn: String?
     ) {
         let contentData = [dogName, dogGender, dogAge, breed, weight, neuteringYn]
 
         for (index, content) in contentData.enumerated() {
             guard index < infoLabels.count else { continue }
-            infoLabels[index].content.text = content
+            infoLabels[index].content.text = content ?? "정보 없음"
         }
     }
 }

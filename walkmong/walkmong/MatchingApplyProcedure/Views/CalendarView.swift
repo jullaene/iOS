@@ -167,8 +167,7 @@ extension CalendarView {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "MM. dd (EEE)" // "11. 14 (목)" 형식
-
-        let formattedDate = formatter.string(from: date)
-        return formattedDate
+        
+        return formatter.string(from: date)
     }
 }

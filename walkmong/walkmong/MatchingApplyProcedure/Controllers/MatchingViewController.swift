@@ -9,7 +9,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     private var matchingFilterView: MatchingFilterView?
     private var locationSelectView: UIView!
     private var matchingView: MatchingView!
-    private var dropdownView: DropdownView! {
+    private var dropdownView: DropdownView? {
         let view = (self.tabBarController as? MainTabBarController)?.dropdownView
         view?.delegate = self
         return view
@@ -17,27 +17,26 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     private var dimView: UIView? {
         return (self.tabBarController as? MainTabBarController)?.dimView
     }
-    fileprivate var matchingData: [MatchingData] = []
+    private var matchingData: [MatchingData] = []
     private var isNavigationBarHidden: Bool = true
     private let boardProvider = MoyaProvider<BoardAPI>()
-    
     private let networkManager = NetworkManager(useMockData: true)
 
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(isNavigationBarHidden, animated: animated)
+        navigationController?.setNavigationBarHidden(isNavigationBarHidden, animated: animated)
         updateUILayout()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.extendedLayoutIncludesOpaqueBars = true
+        extendedLayoutIncludesOpaqueBars = true
         setupUI()
         setupGestures()
         fetchMatchingData()
@@ -47,14 +46,12 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
 
     // MARK: - UI Setup
     private func setupUI() {
-        self.view.backgroundColor = .white
+        view.backgroundColor = .white
         matchingView = MatchingView()
-        
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
         }
-        
-        self.view.addSubview(matchingView)
+        view.addSubview(matchingView)
         updateUILayout()
         locationSelectView = matchingView.locationSelectView
     }
@@ -69,7 +66,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             if isNavigationBarHidden {
                 make.edges.equalToSuperview()
             } else {
-                make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
                 make.leading.trailing.bottom.equalToSuperview()
             }
         }
@@ -77,7 +74,6 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
 
     // MARK: - Fetch Data
     private func fetchMatchingData() {
-        
         networkManager.fetchBoardList(date: nil, addressId: nil, distance: nil, dogSize: nil, matchingYn: nil) { [weak self] result in
             switch result {
             case .success(let data):
@@ -100,18 +96,16 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
                     self?.dropdownView?.updateLocations(locations: locations)
                 }
             case .failure(let error):
-                print("Failed to fetch addresses: \(error)") // 디버깅
+                print("Failed to fetch addresses: \(error)")
             }
         }
     }
 
     private func updateMatchingView() {
-        
         guard let selectedDate = matchingView.selectedDate else {
             print("No selected date available")
             return
         }
-        
         matchingView.updateMatchingCells(with: matchingData)
         for cell in matchingView.matchingCells {
             cell.delegate = self
@@ -124,7 +118,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             }
         }
     }
-    
+
     // MARK: - DropdownView Logic
     @objc private func showDropdownView() {
         guard let dropdownView = dropdownView else { return }
@@ -154,20 +148,19 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         filterView.layer.cornerRadius = 30
         filterView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         filterView.delegate = self
-        self.matchingFilterView = filterView
+        matchingFilterView = filterView
 
-        // iOS 15 이상에서 UIWindowScene을 사용
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            window.addSubview(filterView)
+        if let window = UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene,
+           let rootWindow = window.windows.first {
+            rootWindow.addSubview(filterView)
         }
-        
+
         filterView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(572)
             make.bottom.equalToSuperview().offset(572)
         }
-        self.view.layoutIfNeeded()
+        view.layoutIfNeeded()
         updateDimViewVisibility(isHidden: false)
         animateConstraints {
             filterView.snp.updateConstraints { make in
@@ -213,9 +206,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     }
 
     private func bringViewToFront(_ views: [UIView?]) {
-        views.forEach { view in
-            view?.superview?.bringSubviewToFront(view!)
-        }
+        views.forEach { $0?.superview?.bringSubviewToFront($0!) }
     }
 
     private func animateConstraints(_ animations: @escaping () -> Void, completion: ((Bool) -> Void)? = nil) {
