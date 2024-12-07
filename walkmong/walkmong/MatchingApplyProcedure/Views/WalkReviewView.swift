@@ -13,54 +13,80 @@ class WalkReviewView: UIView {
     // MARK: - Subviews
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let filterButton = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
-    
+    private let filterButton: UIButton = {
+        let button = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
+        button.backgroundColor = .gray200
+        return button
+    }()
+    private var reviewCells: [UIView] = []
+
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
-        setupConstraints()
+        setupConstraints(navigationBarHeight: 0) // 초기값은 0으로 설정
+        addReviewCells(count: 5)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Setup
+    // MARK: - Setup View
     private func setupView() {
         backgroundColor = .gray100
-
+        
         // Add scrollView and contentView
         addSubview(scrollView)
         scrollView.addSubview(contentView)
 
-        // Add homeFilterButton to contentView
+        // Add filterButton
         contentView.addSubview(filterButton)
-        filterButton.backgroundColor = .gray200
     }
 
-    private func setupConstraints() {
-        scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview() // ScrollView가 전체 화면을 채우도록 설정
+    private func setupConstraints(navigationBarHeight: CGFloat) {
+        scrollView.snp.remakeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52) // 커스텀 네비게이션 바 높이를 반영
+            make.leading.trailing.bottom.equalToSuperview()
         }
-
+        
         contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview() // ScrollView의 내부를 채움
-            make.width.equalToSuperview() // ScrollView의 수평 스크롤 방지
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
         }
 
-        // Home Filter Button 기본 위치 설정
         filterButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(20)
             make.top.equalToSuperview().offset(20)
         }
     }
 
-    // MARK: - Public Methods
-    func updateHomeFilterButtonPosition(navigationBarHeight: CGFloat) {
-        filterButton.snp.remakeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
-            make.top.equalToSuperview().offset(navigationBarHeight + 20)
+    // MARK: - Review Cells
+    private func addReviewCells(count: Int) {
+        let cellSpacing: CGFloat = 36
+        let cellMargin: CGFloat = 20
+        var previousView: UIView = filterButton
+
+        for _ in 1...count {
+            let cell = UIView()
+            cell.backgroundColor = .white
+            cell.layer.cornerRadius = 15
+            contentView.addSubview(cell)
+            reviewCells.append(cell)
+
+            cell.snp.makeConstraints { make in
+                make.leading.equalToSuperview().offset(cellMargin)
+                make.trailing.equalToSuperview().offset(-cellMargin)
+                make.height.equalTo(470)
+                make.top.equalTo(previousView.snp.bottom).offset(cellSpacing)
+            }
+
+            previousView = cell
+        }
+
+        reviewCells.last?.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-20)
         }
     }
+
 }
