@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class WalkReviewFrame: UIView {
     private let titleLabel = SmallTitleLabel(text: "산책 후기")
     private let countLabel = MainHighlightParagraphLabel(text: "3개", textColor: .gray600)
@@ -76,7 +77,12 @@ class WalkReviewFrame: UIView {
     }
 
     @objc private func navigateToReviewController() {
-        // TODO: 산책 후기 뷰컨트롤러로 이동
-        print("Navigate to Walk Review Controller")
+        guard let currentVC = self.getViewController() else {
+            print("Error: Cannot find the current view controller.")
+            return
+        }
+
+        let reviewVC = WalkReviewViewController()
+        currentVC.navigationController?.pushViewController(reviewVC, animated: true)
     }
 }
