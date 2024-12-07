@@ -44,7 +44,8 @@ class WalkReviewView: UIView {
     // MARK: - Setup Constraints
     private func setupConstraints() {
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52)
+            make.leading.trailing.bottom.equalToSuperview()
         }
 
         contentView.snp.makeConstraints { make in
@@ -55,8 +56,6 @@ class WalkReviewView: UIView {
         filterButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().offset(-20)
-            make.height.equalTo(44)
         }
     }
 
