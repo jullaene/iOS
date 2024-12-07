@@ -18,13 +18,13 @@ class WalkReviewView: UIView {
         button.backgroundColor = .gray200
         return button
     }()
-    private var reviewCells: [UIView] = []
+    private var reviewCells: [WalkReviewCell] = []
 
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
-        setupConstraints(navigationBarHeight: 0) // 초기값은 0으로 설정
+        setupConstraints(navigationBarHeight: 0)
         addReviewCells(count: 5)
     }
 
@@ -36,17 +36,14 @@ class WalkReviewView: UIView {
     private func setupView() {
         backgroundColor = .gray100
         
-        // Add scrollView and contentView
         addSubview(scrollView)
         scrollView.addSubview(contentView)
-
-        // Add filterButton
         contentView.addSubview(filterButton)
     }
 
     private func setupConstraints(navigationBarHeight: CGFloat) {
         scrollView.snp.remakeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52) // 커스텀 네비게이션 바 높이를 반영
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52)
             make.leading.trailing.bottom.equalToSuperview()
         }
         
@@ -69,9 +66,7 @@ class WalkReviewView: UIView {
         var previousView: UIView = filterButton
 
         for index in 1...count {
-            let cell = UIView()
-            cell.backgroundColor = .white
-            cell.layer.cornerRadius = 15
+            let cell = WalkReviewCell()
             contentView.addSubview(cell)
             reviewCells.append(cell)
 
@@ -80,9 +75,9 @@ class WalkReviewView: UIView {
                 make.trailing.equalToSuperview().offset(-cellMargin)
                 make.height.equalTo(470)
                 if index == 1 {
-                    make.top.equalTo(previousView.snp.bottom).offset(firstCellSpacing) // 첫 셀 간격
+                    make.top.equalTo(previousView.snp.bottom).offset(firstCellSpacing)
                 } else {
-                    make.top.equalTo(previousView.snp.bottom).offset(cellSpacing) // 셀 간 간격
+                    make.top.equalTo(previousView.snp.bottom).offset(cellSpacing)
                 }
             }
 
@@ -90,7 +85,7 @@ class WalkReviewView: UIView {
         }
 
         reviewCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-(safeAreaInsets.bottom + 11)) // 마지막 셀 간격
+            make.bottom.equalToSuperview().offset(-20)
         }
     }
 }

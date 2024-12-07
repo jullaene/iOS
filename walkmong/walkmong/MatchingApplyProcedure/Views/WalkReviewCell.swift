@@ -35,10 +35,12 @@ class WalkReviewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        circleStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        configureCircleItems()
     }
-
+    
     // MARK: - Setup View
     private func setupView() {
         backgroundColor = .white
@@ -84,6 +86,7 @@ class WalkReviewCell: UITableViewCell {
     
     // MARK: - Configure Circle Items
     private func configureCircleItems() {
+        guard circleStackView.arrangedSubviews.isEmpty else { return }
         addCircleItem(title: "사회성", tag: "#낯가림 있어요")
         addCircleItem(title: "활동량", tag: "#활발해요")
         addCircleItem(title: "공격성", tag: "#안짖어요")
