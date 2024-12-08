@@ -164,9 +164,14 @@ class WalkReviewView: UIView {
     }
 
     private func updateFilterButtonTitle(with title: String) {
-        filterButton.subviews.forEach { $0.removeFromSuperview() }
-        UIButton.configureCustomFilter(button: filterButton, style: .light, title: title)
-        filterButton.backgroundColor = .gray200
+        UIView.performWithoutAnimation {
+            filterButton.subviews.forEach { $0.removeFromSuperview() }
+            
+            UIButton.configureCustomFilter(button: filterButton, style: .light, title: title)
+            filterButton.backgroundColor = .gray200
+            
+            filterButton.layoutIfNeeded()
+        }
     }
 
     @objc private func hideFilterView() {
