@@ -9,11 +9,20 @@ import UIKit
 import SnapKit
 
 class WalkReviewCell: UITableViewCell {
-    
+
     // MARK: - Subviews
+    private let roundedContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 15
+        view.clipsToBounds = true
+        return view
+    }()
     private let profileFrame = ProfileFrameView()
-    private let circleStackView = WalkReviewCell.makeCircleStackView()
+    private let circleStackView = UIStackView()
     private let photoFrame = UIView()
+    private let leftImageView = UIImageView()
+    private let rightImageView = UIImageView()
     private let reviewTextFrame = UIView()
     private let reviewTextLabel: MainParagraphLabel = {
         let label = MainParagraphLabel(
@@ -24,137 +33,125 @@ class WalkReviewCell: UITableViewCell {
         label.lineBreakMode = .byWordWrapping
         return label
     }()
-    
-    private let leftImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "defaultImage")
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 5
-        return imageView
-    }()
-    
-    private let rightImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "defaultImage")
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 5
-        return imageView
-    }()
-    
+
     // MARK: - Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureCell()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Lifecycle
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        resetCircleStackView()
-    }
-    
+
     // MARK: - Configuration
     private func configureCell() {
-        configureAppearance()
-        addSubviews()
+        backgroundColor = .clear // 셀 배경 투명
+        contentView.backgroundColor = .clear
+        selectionStyle = .none
+
+        contentView.addSubview(roundedContainer)
+
+        setupSubviews()
         setupConstraints()
-        configureCircleItems()
+        configureCircleStackView()
+        configurePhotoFrame()
     }
-    
-    private func configureAppearance() {
-        backgroundColor = .white
-        contentView.backgroundColor = .white
-        
-        photoFrame.backgroundColor = .clear
-        reviewTextFrame.backgroundColor = .clear
-    }
-    
-    private func addSubviews() {
+
+    private func setupSubviews() {
         [profileFrame, circleStackView, photoFrame, reviewTextFrame].forEach {
-            contentView.addSubview($0)
+            roundedContainer.addSubview($0)
         }
         [leftImageView, rightImageView].forEach {
             photoFrame.addSubview($0)
         }
         reviewTextFrame.addSubview(reviewTextLabel)
+
+        // Configure Circle Stack View
+        circleStackView.axis = .horizontal
+        circleStackView.alignment = .center
+        circleStackView.distribution = .equalSpacing
     }
-    
-    private func resetCircleStackView() {
-        circleStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        configureCircleItems()
-    }
-    
-    private func configureCircleItems() {
-        let circleData = [
-            ("사회성", "#낯가림 있어요"),
-            ("활동량", "#활발해요"),
-            ("공격성", "#안짖어요")
-        ]
-        
-        circleData.forEach { title, tag in
-            let circleView = CircleTagView(title: title, tag: tag)
-            circleStackView.addArrangedSubview(circleView)
-        }
-    }
-    
-    // MARK: - Constraints
+
     private func setupConstraints() {
         let margin: CGFloat = 20
-        let spacing: CGFloat = 24
         let imageSpacing: CGFloat = 8
 
+        // Rounded container constraints
+        roundedContainer.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
         profileFrame.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(margin)
-            make.leading.trailing.equalToSuperview().inset(margin)
+            make.top.leading.trailing.equalToSuperview().inset(margin)
             make.height.equalTo(50)
         }
 
         circleStackView.snp.makeConstraints { make in
-            make.top.equalTo(profileFrame.snp.bottom).offset(spacing)
+            make.top.equalTo(profileFrame.snp.bottom).offset(24)
             make.leading.trailing.equalToSuperview().inset(margin)
-            make.height.equalTo(96)
+            make.height.equalTo(112) // 고정 높이
         }
 
         photoFrame.snp.makeConstraints { make in
-            make.top.equalTo(circleStackView.snp.bottom).offset(spacing)
+            make.top.equalTo(circleStackView.snp.bottom).offset(24)
             make.leading.trailing.equalToSuperview().inset(margin)
-            make.height.equalTo((UIScreen.main.bounds.width - margin * 2 - imageSpacing) / 2)
+            make.height.equalTo((UIScreen.main.bounds.width - margin * 2 - imageSpacing) / 2) // 1:1 비율
         }
 
         leftImageView.snp.makeConstraints { make in
-            make.top.leading.bottom.equalToSuperview()
+            make.top.bottom.leading.equalToSuperview()
             make.trailing.equalTo(rightImageView.snp.leading).offset(-imageSpacing)
-            make.width.equalTo(rightImageView)
+            make.width.equalTo(photoFrame.snp.height) // 1:1 비율
         }
 
         rightImageView.snp.makeConstraints { make in
-            make.top.trailing.bottom.equalToSuperview()
+            make.top.bottom.trailing.equalToSuperview()
+            make.width.equalTo(photoFrame.snp.height) // 1:1 비율
         }
 
         reviewTextFrame.snp.makeConstraints { make in
-            make.top.equalTo(photoFrame.snp.bottom).offset(spacing)
+            make.top.equalTo(photoFrame.snp.bottom).offset(24)
             make.leading.trailing.equalToSuperview().inset(margin)
-            make.bottom.equalToSuperview().offset(-margin)
+            make.bottom.equalToSuperview().offset(-20) // 마지막 제약
         }
 
         reviewTextLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.edges.equalToSuperview() // 텍스트가 프레임에 맞게 확장
         }
     }
-    
-    // MARK: - Factory Methods
-    private static func makeCircleStackView() -> UIStackView {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
-        stackView.alignment = .center
-        stackView.spacing = 0
-        return stackView
+
+    private func configureCircleStackView() {
+        let circleItems = [
+            (title: "사회성", tag: "#낯가림 있어요"),
+            (title: "활동량", tag: "#활발해요"),
+            (title: "공격성", tag: "#안짖어요")
+        ]
+
+        circleItems.forEach { item in
+            let circleView = CircleTagView(title: item.title, tag: item.tag)
+
+            // 크기와 centerY 제약 조건 추가
+            circleView.snp.makeConstraints { make in
+                make.width.height.equalTo(96) // 원 크기 고정
+            }
+            circleStackView.addArrangedSubview(circleView)
+        }
+    }
+
+    private func configurePhotoFrame() {
+        let defaultImage = UIImage(named: "defaultImage")
+
+        // Configure left image
+        leftImageView.image = defaultImage
+        leftImageView.contentMode = .scaleAspectFill
+        leftImageView.clipsToBounds = true
+        leftImageView.layer.cornerRadius = 5
+
+        // Configure right image
+        rightImageView.image = defaultImage
+        rightImageView.contentMode = .scaleAspectFill
+        rightImageView.clipsToBounds = true
+        rightImageView.layer.cornerRadius = 5
     }
 }

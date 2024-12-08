@@ -35,7 +35,6 @@ class WalkReviewView: UIView {
     // MARK: - Setup View
     private func setupView() {
         backgroundColor = .gray100
-        
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(filterButton)
@@ -44,13 +43,13 @@ class WalkReviewView: UIView {
     // MARK: - Setup Constraints
     private func setupConstraints() {
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52)
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52) // 커스텀 네비게이션 바 아래
             make.leading.trailing.bottom.equalToSuperview()
         }
 
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.width.equalToSuperview()
+            make.width.equalTo(scrollView)
         }
 
         filterButton.snp.makeConstraints { make in
@@ -72,9 +71,9 @@ class WalkReviewView: UIView {
             reviewCells.append(cell)
 
             cell.snp.makeConstraints { make in
-                make.leading.equalToSuperview().offset(cellMargin)
-                make.trailing.equalToSuperview().offset(-cellMargin)
-                make.height.equalTo(470)
+                make.leading.equalTo(contentView.snp.leading).offset(cellMargin)
+                make.trailing.equalTo(contentView.snp.trailing).offset(-cellMargin)
+                make.height.equalTo(465)
                 if index == 1 {
                     make.top.equalTo(previousView.snp.bottom).offset(firstCellSpacing)
                 } else {
