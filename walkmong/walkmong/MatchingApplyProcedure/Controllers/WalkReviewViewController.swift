@@ -25,10 +25,10 @@ class WalkReviewViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true // 탭 바 숨기기
+        tabBarController?.tabBar.isHidden = true
     }
 
-    // MARK: - Setup Custom Navigation Bar
+    // MARK: - Setup Methods
     private func setupCustomNavigationBar() {
         addCustomNavigationBar(
             titleText: "산책 후기",
@@ -40,7 +40,6 @@ class WalkReviewViewController: UIViewController {
         )
     }
 
-    // MARK: - Setup Top Safe Area Background
     private func setupTopSafeAreaBackground() {
         let safeAreaBackgroundView = UIView()
         safeAreaBackgroundView.backgroundColor = .gray100

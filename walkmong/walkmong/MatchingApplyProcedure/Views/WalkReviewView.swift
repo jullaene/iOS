@@ -13,12 +13,18 @@ class WalkReviewView: UIView {
     // MARK: - Subviews
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let filterButton: UIButton = {
-        let button = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
-        button.backgroundColor = .gray200
-        return button
-    }()
+    private let filterButton = WalkReviewView.createFilterButton()
     private var reviewCells: [WalkReviewCell] = []
+
+    // MARK: - Constants
+    private enum Layout {
+        static let topOffset: CGFloat = 52
+        static let filterButtonMargin: CGFloat = 20
+        static let firstCellSpacing: CGFloat = 36
+        static let cellSpacing: CGFloat = 24
+        static let cellMargin: CGFloat = 20
+        static let bottomSpacing: CGFloat = 20
+    }
 
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -43,7 +49,7 @@ class WalkReviewView: UIView {
     // MARK: - Setup Constraints
     private func setupConstraints() {
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52) // 커스텀 네비게이션 바 아래
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Layout.topOffset)
             make.leading.trailing.bottom.equalToSuperview()
         }
 
@@ -53,42 +59,37 @@ class WalkReviewView: UIView {
         }
 
         filterButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.leading.equalToSuperview().offset(20)
-        }
-        
-        reviewCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-20) // 마지막 셀 하단 여백
+            make.top.equalToSuperview().offset(Layout.filterButtonMargin)
+            make.leading.equalToSuperview().offset(Layout.filterButtonMargin)
         }
     }
 
-    // MARK: - Review Cells
+    // MARK: - Add Review Cells
     private func addReviewCells(count: Int) {
-        let firstCellSpacing: CGFloat = 36
-        let cellSpacing: CGFloat = 24
-        let cellMargin: CGFloat = 20
         var previousView: UIView = filterButton
 
         for index in 1...count {
-            let cell = WalkReviewCell() // UIView 기반으로 변경
+            let cell = WalkReviewCell()
             contentView.addSubview(cell)
             reviewCells.append(cell)
 
             cell.snp.makeConstraints { make in
-                make.leading.equalTo(contentView.snp.leading).offset(cellMargin)
-                make.trailing.equalTo(contentView.snp.trailing).offset(-cellMargin)
-                if index == 1 {
-                    make.top.equalTo(previousView.snp.bottom).offset(firstCellSpacing)
-                } else {
-                    make.top.equalTo(previousView.snp.bottom).offset(cellSpacing)
-                }
+                make.leading.trailing.equalToSuperview().inset(Layout.cellMargin)
+                make.top.equalTo(previousView.snp.bottom).offset(index == 1 ? Layout.firstCellSpacing : Layout.cellSpacing)
             }
 
             previousView = cell
         }
 
         reviewCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-20)
+            make.bottom.equalToSuperview().offset(-Layout.bottomSpacing)
         }
+    }
+
+    // MARK: - Factory Methods
+    private static func createFilterButton() -> UIButton {
+        let button = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
+        button.backgroundColor = .gray200
+        return button
     }
 }
