@@ -14,8 +14,8 @@ class WalkReviewView: UIView {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     private let filterButton = WalkReviewView.createFilterButton()
-    private var reviewCells: [WalkReviewCell] = []
-    private let filterView = FilterView()
+    private var dimView: UIView?
+    private var filterView: FilterView?
 
     // MARK: - Constants
     private enum Layout {
@@ -25,6 +25,7 @@ class WalkReviewView: UIView {
         static let cellSpacing: CGFloat = 24
         static let cellMargin: CGFloat = 20
         static let bottomSpacing: CGFloat = 20
+        static let filterViewHeight: CGFloat = 178
     }
 
     // MARK: - Initializer
@@ -33,7 +34,6 @@ class WalkReviewView: UIView {
         setupView()
         setupConstraints()
         addReviewCells(count: 5)
-        setupActions()
     }
 
     required init?(coder: NSCoder) {
@@ -46,8 +46,8 @@ class WalkReviewView: UIView {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(filterButton)
-        addSubview(filterView)
-        filterView.isHidden = true
+
+        filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
 
     // MARK: - Setup Constraints
@@ -66,11 +66,6 @@ class WalkReviewView: UIView {
             make.top.equalToSuperview().offset(Layout.filterButtonMargin)
             make.leading.equalToSuperview().offset(Layout.filterButtonMargin)
         }
-
-        filterView.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalToSuperview()
-            make.height.equalTo(safeAreaInsets.bottom + 178)
-        }
     }
 
     // MARK: - Add Review Cells
@@ -80,7 +75,6 @@ class WalkReviewView: UIView {
         for index in 1...count {
             let cell = WalkReviewCell()
             contentView.addSubview(cell)
-            reviewCells.append(cell)
 
             cell.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview().inset(Layout.cellMargin)
@@ -90,21 +84,85 @@ class WalkReviewView: UIView {
             previousView = cell
         }
 
-        reviewCells.last?.snp.makeConstraints { make in
+        previousView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-Layout.bottomSpacing)
         }
     }
 
-    // MARK: - Actions
-    private func setupActions() {
-        filterButton.addTarget(self, action: #selector(toggleFilterView), for: .touchUpInside)
+    // MARK: - Button Action
+    @objc private func filterButtonTapped() {
+        showFilterView()
     }
 
-    @objc private func toggleFilterView() {
-        filterView.isHidden.toggle()
+    // MARK: - Dim View Setup
+    private func setupDimView() {
+        if dimView == nil {
+            dimView = UIView()
+            dimView?.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+            dimView?.alpha = 0 // 초기 상태를 명확히 설정
+            dimView?.isHidden = true
+            addSubview(dimView!)
+
+            dimView?.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideFilterView))
+            dimView?.addGestureRecognizer(tapGesture)
+        }
     }
 
-    // MARK: - Factory Methods
+    // MARK: - Show Filter View
+    private func showFilterView() {
+        setupDimView()
+
+        // Dim View 초기 상태 설정
+        dimView?.isHidden = false
+        dimView?.alpha = 0 // 애니메이션 전에 투명하게 설정
+
+        // 필터 뷰 추가
+        if filterView == nil {
+            filterView = FilterView()
+            filterView?.layer.cornerRadius = 30
+            filterView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            addSubview(filterView!)
+
+            filterView?.snp.makeConstraints { make in
+                make.leading.trailing.equalToSuperview()
+                make.height.equalTo(Layout.filterViewHeight + safeAreaInsets.bottom)
+                // 초기 상태 명확히 설정: 화면 아래로 숨기기
+                make.bottom.equalToSuperview().offset(Layout.filterViewHeight + safeAreaInsets.bottom)
+            }
+
+            // 초기 레이아웃 강제 적용
+            self.layoutIfNeeded()
+        }
+
+        // Dim View와 필터 뷰 애니메이션
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
+            self.dimView?.alpha = 1.0 // Dim 효과 점차 나타나기
+            self.filterView?.snp.updateConstraints { make in
+                make.bottom.equalToSuperview() // 필터 뷰 올라오기
+            }
+            self.layoutIfNeeded()
+        })
+    }
+
+    // MARK: - Hide Filter View
+    @objc private func hideFilterView() {
+        UIView.animate(withDuration: 0.3, animations: { [weak self] in
+            guard let self = self else { return }
+            self.dimView?.alpha = 0.0 // Dim 효과 점차 사라지기
+            self.filterView?.snp.updateConstraints { make in
+                make.bottom.equalToSuperview().offset(Layout.filterViewHeight + self.safeAreaInsets.bottom) // self. 명시
+            }
+            self.layoutIfNeeded()
+        }) { [weak self] _ in
+            self?.dimView?.isHidden = true
+        }
+    }
+
+    // MARK: - Factory Method
     private static func createFilterButton() -> UIButton {
         let button = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
         button.backgroundColor = .gray200
