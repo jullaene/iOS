@@ -103,7 +103,7 @@ extension UIButton {
         }
     }
     
-    private static func configureCustomFilter(button: UIButton, style: ButtonStyle, title: String) {
+    static func configureCustomFilter(button: UIButton, style: ButtonStyle, title: String) {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .center

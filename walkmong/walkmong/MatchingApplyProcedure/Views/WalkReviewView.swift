@@ -149,10 +149,20 @@ class WalkReviewView: UIView {
         filterView = FilterView()
         guard let filterView = filterView else { return }
         
+        filterView.onFilterSelected = { [weak self] selectedText in
+            self?.updateFilterButtonTitle(with: selectedText)
+        }
+        
         addSubview(filterView)
         setupFilterViewConstraints()
         layoutIfNeeded()
         filterView.animateShow(offset: 0, cornerRadius: 30)
+    }
+
+    private func updateFilterButtonTitle(with title: String) {
+        filterButton.subviews.forEach { $0.removeFromSuperview() }
+        UIButton.configureCustomFilter(button: filterButton, style: .light, title: title)
+        filterButton.backgroundColor = .gray200
     }
 
     @objc private func hideFilterView() {
