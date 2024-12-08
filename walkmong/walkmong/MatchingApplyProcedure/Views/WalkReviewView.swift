@@ -31,7 +31,7 @@ class WalkReviewView: UIView {
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupView()
+        setupUI()
         setupConstraints()
         addReviewCells(count: 5)
     }
@@ -40,18 +40,30 @@ class WalkReviewView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Setup View
-    private func setupView() {
+    // MARK: - Setup UI
+    private func setupUI() {
         backgroundColor = .gray100
+        setupScrollView()
+        setupFilterButton()
+    }
+
+    private func setupScrollView() {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubview(filterButton)
+    }
 
+    private func setupFilterButton() {
+        contentView.addSubview(filterButton)
         filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
 
     // MARK: - Setup Constraints
     private func setupConstraints() {
+        setupScrollViewConstraints()
+        setupFilterButtonConstraints()
+    }
+
+    private func setupScrollViewConstraints() {
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Layout.topOffset)
             make.leading.trailing.bottom.equalToSuperview()
@@ -61,7 +73,9 @@ class WalkReviewView: UIView {
             make.edges.equalToSuperview()
             make.width.equalTo(scrollView)
         }
+    }
 
+    private func setupFilterButtonConstraints() {
         filterButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(Layout.filterButtonMargin)
             make.leading.equalToSuperview().offset(Layout.filterButtonMargin)
@@ -75,63 +89,84 @@ class WalkReviewView: UIView {
         for index in 1...count {
             let cell = WalkReviewCell()
             contentView.addSubview(cell)
-
-            cell.snp.makeConstraints { make in
-                make.leading.trailing.equalToSuperview().inset(Layout.cellMargin)
-                make.top.equalTo(previousView.snp.bottom).offset(index == 1 ? Layout.firstCellSpacing : Layout.cellSpacing)
-            }
-
+            setupCellConstraints(cell: cell, previousView: previousView, isFirst: index == 1)
             previousView = cell
         }
 
-        previousView.snp.makeConstraints { make in
+        setupLastCellConstraint(lastView: previousView)
+    }
+
+    private func setupCellConstraints(cell: UIView, previousView: UIView, isFirst: Bool) {
+        cell.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(Layout.cellMargin)
+            make.top.equalTo(previousView.snp.bottom).offset(isFirst ? Layout.firstCellSpacing : Layout.cellSpacing)
+        }
+    }
+
+    private func setupLastCellConstraint(lastView: UIView) {
+        lastView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-Layout.bottomSpacing)
         }
     }
 
-    // MARK: - Button Action
+    // MARK: - Button Actions
     @objc private func filterButtonTapped() {
-        setupDimView()
+        setupDimViewIfNeeded()
         showFilterView()
     }
 
     // MARK: - Dim View Setup
-    private func setupDimView() {
+    private func setupDimViewIfNeeded() {
         if dimView == nil {
             dimView = UIView()
-            dimView?.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-            dimView?.isHidden = true
+            configureDimView()
             addSubview(dimView!)
-
-            dimView?.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
-            }
-
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideFilterView))
-            dimView?.addGestureRecognizer(tapGesture)
+            setupDimViewConstraints()
         }
         dimView?.updateDimViewVisibility(isHidden: false)
     }
 
-    // MARK: - Show Filter View
-    private func showFilterView() {
-        guard filterView == nil else { return }
-        filterView = FilterView()
-        addSubview(filterView!)
+    private func configureDimView() {
+        dimView?.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        dimView?.isHidden = true
+        dimView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideFilterView)))
+    }
 
-        filterView?.snp.makeConstraints { make in
+    private func setupDimViewConstraints() {
+        dimView?.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+
+    // MARK: - Filter View Handling
+    private func showFilterView() {
+        if let filterView = filterView {
+            filterView.isHidden = false
+            filterView.animateShow(offset: 0, cornerRadius: 30)
+            return
+        }
+
+        filterView = FilterView()
+        guard let filterView = filterView else { return }
+        
+        addSubview(filterView)
+        setupFilterViewConstraints()
+        layoutIfNeeded()
+        filterView.animateShow(offset: 0, cornerRadius: 30)
+    }
+
+    @objc private func hideFilterView() {
+        filterView?.animateHide(offset: Layout.filterViewHeight + safeAreaInsets.bottom)
+        dimView?.updateDimViewVisibility(isHidden: true)
+    }
+
+    private func setupFilterViewConstraints() {
+        guard let filterView = filterView else { return }
+        filterView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(Layout.filterViewHeight + safeAreaInsets.bottom)
             make.bottom.equalToSuperview().offset(Layout.filterViewHeight + safeAreaInsets.bottom)
         }
-        layoutIfNeeded()
-        filterView?.animateShow(offset: 0, cornerRadius: 30)
-    }
-
-    // MARK: - Hide Filter View
-    @objc private func hideFilterView() {
-        filterView?.animateHide(offset: Layout.filterViewHeight + safeAreaInsets.bottom)
-        dimView?.updateDimViewVisibility(isHidden: true)
     }
 
     // MARK: - Factory Method

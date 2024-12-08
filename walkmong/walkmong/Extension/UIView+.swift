@@ -27,35 +27,35 @@ extension UIView {
     }
     
     // Show a view with animation
-        func animateShow(withDuration duration: TimeInterval = 0.3, offset: CGFloat = 0, cornerRadius: CGFloat? = nil) {
-            if let cornerRadius = cornerRadius {
-                self.layer.cornerRadius = cornerRadius
-                self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+    func animateShow(withDuration duration: TimeInterval = 0.3, offset: CGFloat = 0, cornerRadius: CGFloat? = nil) {
+        if let cornerRadius = cornerRadius {
+            self.layer.cornerRadius = cornerRadius
+            self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        }
+        self.superview?.layoutIfNeeded()
+        UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: {
+            self.snp.updateConstraints { make in
+                make.bottom.equalToSuperview().offset(offset)
             }
             self.superview?.layoutIfNeeded()
-            UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: {
-                self.snp.updateConstraints { make in
-                    make.bottom.equalToSuperview().offset(offset)
-                }
-                self.superview?.layoutIfNeeded()
-            })
-        }
-
-        // Hide a view with animation
-        func animateHide(withDuration duration: TimeInterval = 0.3, offset: CGFloat) {
-            UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: {
-                self.snp.updateConstraints { make in
-                    make.bottom.equalToSuperview().offset(offset)
-                }
-                self.superview?.layoutIfNeeded()
-            }) { _ in
-                self.removeFromSuperview()
+        })
+    }
+    
+    // Hide a view with animation
+    func animateHide(withDuration duration: TimeInterval = 0.3, offset: CGFloat) {
+        UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: {
+            self.snp.updateConstraints { make in
+                make.bottom.equalToSuperview().offset(offset)
             }
+            self.superview?.layoutIfNeeded()
+        }) { _ in
+            self.isHidden = true // 뷰를 숨기지만 제거하지 않음
         }
-
-        // Update dim view visibility
-        func updateDimViewVisibility(isHidden: Bool, alpha: CGFloat = 0.5) {
-            self.isHidden = isHidden
-            self.alpha = isHidden ? 0 : alpha
-        }
+    }
+    
+    // Update dim view visibility
+    func updateDimViewVisibility(isHidden: Bool, alpha: CGFloat = 0.5) {
+        self.isHidden = isHidden
+        self.alpha = isHidden ? 0 : alpha
+    }
 }
