@@ -68,10 +68,6 @@ class MatchingFilterView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("Active constraints for buttonFrame:")
-        for constraint in buttonFrame.constraints {
-            print(constraint)
-        }
     }
     
     private func setupLayout() {
