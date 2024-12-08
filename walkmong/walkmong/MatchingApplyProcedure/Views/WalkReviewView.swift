@@ -15,6 +15,7 @@ class WalkReviewView: UIView {
     private let contentView = UIView()
     private let filterButton = WalkReviewView.createFilterButton()
     private var reviewCells: [WalkReviewCell] = []
+    private let filterView = FilterView()
 
     // MARK: - Constants
     private enum Layout {
@@ -32,6 +33,7 @@ class WalkReviewView: UIView {
         setupView()
         setupConstraints()
         addReviewCells(count: 5)
+        setupActions()
     }
 
     required init?(coder: NSCoder) {
@@ -44,6 +46,8 @@ class WalkReviewView: UIView {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(filterButton)
+        addSubview(filterView)
+        filterView.isHidden = true
     }
 
     // MARK: - Setup Constraints
@@ -61,6 +65,11 @@ class WalkReviewView: UIView {
         filterButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(Layout.filterButtonMargin)
             make.leading.equalToSuperview().offset(Layout.filterButtonMargin)
+        }
+
+        filterView.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo(safeAreaInsets.bottom + 178)
         }
     }
 
@@ -84,6 +93,15 @@ class WalkReviewView: UIView {
         reviewCells.last?.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-Layout.bottomSpacing)
         }
+    }
+
+    // MARK: - Actions
+    private func setupActions() {
+        filterButton.addTarget(self, action: #selector(toggleFilterView), for: .touchUpInside)
+    }
+
+    @objc private func toggleFilterView() {
+        filterView.isHidden.toggle()
     }
 
     // MARK: - Factory Methods
