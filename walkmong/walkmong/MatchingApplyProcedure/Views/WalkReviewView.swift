@@ -153,6 +153,10 @@ class WalkReviewView: UIView {
             self?.updateFilterButtonTitle(with: selectedText)
         }
         
+        filterView.onHideRequested = { [weak self] in
+            self?.hideFilterView()
+        }
+        
         addSubview(filterView)
         setupFilterViewConstraints()
         layoutIfNeeded()

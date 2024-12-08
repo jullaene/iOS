@@ -15,6 +15,7 @@ class FilterView: UIView {
     private var selectedFilter: String = "최신순"
 
     var onFilterSelected: ((String) -> Void)?
+    var onHideRequested: (() -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -78,5 +79,6 @@ class FilterView: UIView {
         }
 
         onFilterSelected?(selectedFilter)
+        onHideRequested?()
     }
 }
