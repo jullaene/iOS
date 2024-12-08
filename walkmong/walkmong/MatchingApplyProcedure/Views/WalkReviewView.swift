@@ -91,6 +91,7 @@ class WalkReviewView: UIView {
 
     // MARK: - Button Action
     @objc private func filterButtonTapped() {
+        setupDimView()
         showFilterView()
     }
 
@@ -99,7 +100,6 @@ class WalkReviewView: UIView {
         if dimView == nil {
             dimView = UIView()
             dimView?.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-            dimView?.alpha = 0 // 초기 상태를 명확히 설정
             dimView?.isHidden = true
             addSubview(dimView!)
 
@@ -110,56 +110,28 @@ class WalkReviewView: UIView {
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideFilterView))
             dimView?.addGestureRecognizer(tapGesture)
         }
+        dimView?.updateDimViewVisibility(isHidden: false)
     }
 
     // MARK: - Show Filter View
     private func showFilterView() {
-        setupDimView()
+        guard filterView == nil else { return }
+        filterView = FilterView()
+        addSubview(filterView!)
 
-        // Dim View 초기 상태 설정
-        dimView?.isHidden = false
-        dimView?.alpha = 0 // 애니메이션 전에 투명하게 설정
-
-        // 필터 뷰 추가
-        if filterView == nil {
-            filterView = FilterView()
-            filterView?.layer.cornerRadius = 30
-            filterView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            addSubview(filterView!)
-
-            filterView?.snp.makeConstraints { make in
-                make.leading.trailing.equalToSuperview()
-                make.height.equalTo(Layout.filterViewHeight + safeAreaInsets.bottom)
-                // 초기 상태 명확히 설정: 화면 아래로 숨기기
-                make.bottom.equalToSuperview().offset(Layout.filterViewHeight + safeAreaInsets.bottom)
-            }
-
-            // 초기 레이아웃 강제 적용
-            self.layoutIfNeeded()
+        filterView?.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(Layout.filterViewHeight + safeAreaInsets.bottom)
+            make.bottom.equalToSuperview().offset(Layout.filterViewHeight + safeAreaInsets.bottom)
         }
-
-        // Dim View와 필터 뷰 애니메이션
-        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
-            self.dimView?.alpha = 1.0 // Dim 효과 점차 나타나기
-            self.filterView?.snp.updateConstraints { make in
-                make.bottom.equalToSuperview() // 필터 뷰 올라오기
-            }
-            self.layoutIfNeeded()
-        })
+        layoutIfNeeded()
+        filterView?.animateShow(offset: 0, cornerRadius: 30)
     }
 
     // MARK: - Hide Filter View
     @objc private func hideFilterView() {
-        UIView.animate(withDuration: 0.3, animations: { [weak self] in
-            guard let self = self else { return }
-            self.dimView?.alpha = 0.0 // Dim 효과 점차 사라지기
-            self.filterView?.snp.updateConstraints { make in
-                make.bottom.equalToSuperview().offset(Layout.filterViewHeight + self.safeAreaInsets.bottom) // self. 명시
-            }
-            self.layoutIfNeeded()
-        }) { [weak self] _ in
-            self?.dimView?.isHidden = true
-        }
+        filterView?.animateHide(offset: Layout.filterViewHeight + safeAreaInsets.bottom)
+        dimView?.updateDimViewVisibility(isHidden: true)
     }
 
     // MARK: - Factory Method
