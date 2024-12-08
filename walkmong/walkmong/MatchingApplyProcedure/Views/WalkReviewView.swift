@@ -33,13 +33,16 @@ class WalkReviewView: UIView {
         super.init(frame: frame)
         setupUI()
         setupConstraints()
-        addReviewCells(count: 5)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func configure(with models: [DogReviewModel]) {
+        addReviewCells(models: models)
+    }
+    
     // MARK: - Setup UI
     private func setupUI() {
         backgroundColor = .gray100
@@ -83,13 +86,14 @@ class WalkReviewView: UIView {
     }
 
     // MARK: - Add Review Cells
-    private func addReviewCells(count: Int) {
+    private func addReviewCells(models: [DogReviewModel]) {
         var previousView: UIView = filterButton
 
-        for index in 1...count {
+        for model in models {
             let cell = WalkReviewCell()
+            cell.configure(with: model)
             contentView.addSubview(cell)
-            setupCellConstraints(cell: cell, previousView: previousView, isFirst: index == 1)
+            setupCellConstraints(cell: cell, previousView: previousView, isFirst: previousView === filterButton)
             previousView = cell
         }
 

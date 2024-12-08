@@ -2,14 +2,14 @@
 //  ProfileFrameView.swift
 //  walkmong
 //
-//  Created by 신호연 on 12/7/24.
+//  Created by 신호연 on 12/8/24.
 //
 
 import UIKit
 import SnapKit
 
 class ProfileFrameView: UIView {
-    
+
     // MARK: - Subviews
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -18,9 +18,9 @@ class ProfileFrameView: UIView {
         imageView.image = UIImage(named: "defaultImage")
         return imageView
     }()
-    
-    private let reviewerIdLabel = MainHighlightParagraphLabel(text: "산책할래말래", textColor: .gray600)
-    private let walkDateLabel = SmallMainParagraphLabel(text: "2024년 11월 23일 산책 진행", textColor: .gray500)
+
+    private let reviewerIdLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
+    private let walkDateLabel = SmallMainParagraphLabel(text: "", textColor: .gray500)
     
     private let reportLabel: UILabel = {
         let label = UILabel()
@@ -56,6 +56,12 @@ class ProfileFrameView: UIView {
     
     private func addSubviews() {
         [profileImageView, reviewerIdLabel, walkDateLabel, reportLabel, underlineView].forEach { addSubview($0) }
+    }
+
+    func configure(with data: DogReviewModel.ProfileData) {
+        profileImageView.image = data.image ?? UIImage(named: "defaultImage")
+        reviewerIdLabel.text = data.reviewerId
+        walkDateLabel.text = data.walkDate
     }
     
     // MARK: - Constraints
