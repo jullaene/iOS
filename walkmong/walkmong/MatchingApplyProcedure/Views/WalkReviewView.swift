@@ -56,6 +56,10 @@ class WalkReviewView: UIView {
             make.top.equalToSuperview().offset(20)
             make.leading.equalToSuperview().offset(20)
         }
+        
+        reviewCells.last?.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-20) // 마지막 셀 하단 여백
+        }
     }
 
     // MARK: - Review Cells
@@ -66,14 +70,13 @@ class WalkReviewView: UIView {
         var previousView: UIView = filterButton
 
         for index in 1...count {
-            let cell = WalkReviewCell()
+            let cell = WalkReviewCell() // UIView 기반으로 변경
             contentView.addSubview(cell)
             reviewCells.append(cell)
 
             cell.snp.makeConstraints { make in
                 make.leading.equalTo(contentView.snp.leading).offset(cellMargin)
                 make.trailing.equalTo(contentView.snp.trailing).offset(-cellMargin)
-                make.height.equalTo(465)
                 if index == 1 {
                     make.top.equalTo(previousView.snp.bottom).offset(firstCellSpacing)
                 } else {
