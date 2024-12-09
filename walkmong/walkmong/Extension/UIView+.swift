@@ -42,15 +42,19 @@ extension UIView {
     }
     
     // Hide a view with animation
-    func animateHide(withDuration duration: TimeInterval = 0.3, offset: CGFloat) {
-        UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut], animations: {
-            self.snp.updateConstraints { make in
-                make.bottom.equalToSuperview().offset(offset)
-            }
-            self.superview?.layoutIfNeeded()
-        }) { _ in
-            self.isHidden = true // 뷰를 숨기지만 제거하지 않음
-        }
+    func animateHide(withDuration duration: TimeInterval, offset: CGFloat, completion: ((Bool) -> Void)? = nil) {
+        UIView.animate(
+            withDuration: duration,
+            delay: 0,
+            options: [.curveEaseInOut],
+            animations: {
+                self.snp.updateConstraints { make in
+                    make.bottom.equalToSuperview().offset(offset)
+                }
+                self.superview?.layoutIfNeeded()
+            },
+            completion: completion
+        )
     }
     
     // Update dim view visibility

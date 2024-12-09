@@ -179,7 +179,7 @@ class WalkReviewView: UIView {
     }
 
     @objc private func hideFilterView() {
-        filterView?.animateHide(offset: Layout.filterViewHeight + safeAreaInsets.bottom)
+        filterView?.animateHide(withDuration: 0.4, offset: Layout.filterViewHeight + safeAreaInsets.bottom)
         dimView?.updateDimViewVisibility(isHidden: true)
     }
 
