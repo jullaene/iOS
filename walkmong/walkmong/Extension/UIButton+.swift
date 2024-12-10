@@ -54,6 +54,7 @@ extension UIButton {
                 height = 36
             }
             setButtonSizeConstraints(button: button, width: width, height: height)
+
         }
         
         return button
