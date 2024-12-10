@@ -82,7 +82,7 @@ class WalkReviewCell: UIView {
         photoFrame.addSubview(leftImageView)
         leftImageView.snp.remakeConstraints {
             $0.top.leading.bottom.equalToSuperview()
-            $0.width.equalTo(leftImageView.snp.height) // 정사각형 비율 유지
+            $0.width.equalTo(leftImageView.snp.height).priority(.high)
         }
 
         // Right Image View 설정
@@ -91,16 +91,11 @@ class WalkReviewCell: UIView {
         rightImageView.snp.remakeConstraints {
             $0.top.trailing.bottom.equalToSuperview()
             $0.leading.equalTo(leftImageView.snp.trailing).offset(8)
-            $0.width.equalTo(rightImageView.snp.height) // 정사각형 비율 유지
+            $0.width.equalTo(rightImageView.snp.height).priority(.high)
         }
 
         // 한 개만 있을 경우 오른쪽 이미지 숨김 처리
         rightImageView.isHidden = photos.count < 2
-
-        // photoFrame이 항상 roundedContainer에 추가되도록 보장
-        if photoFrame.superview == nil {
-            roundedContainer.addSubview(photoFrame)
-        }
     }
     
     // MARK: - Layout Constraints
