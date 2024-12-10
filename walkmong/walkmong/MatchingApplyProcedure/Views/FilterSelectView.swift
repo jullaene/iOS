@@ -25,6 +25,7 @@ class FilterSelectView: UIView {
         var previousButton: UIView? = nil
         
         for (_, button) in buttons.enumerated() {
+
             addSubview(button)
             
             button.snp.makeConstraints { make in
