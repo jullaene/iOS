@@ -156,7 +156,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         contentView.addSubview(calendarView)
         calendarView.snp.makeConstraints { make in
             make.top.equalTo(locationSelectView.snp.bottom).offset(36)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview()
             make.height.equalTo(97)
         }
     }

@@ -66,6 +66,10 @@ class MatchingFilterView: UIView {
         setupButtonFrame()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+    }
+    
     private func setupLayout() {
         distanceFrame.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
@@ -329,26 +333,32 @@ class MatchingFilterView: UIView {
     
     private func setupButtonFrame() {
         resetButton = UIButton.createStyledButton(type: .large, style: .light, title: "초기화")
+        applyButton = UIButton.createStyledButton(type: .large, style: .dark, title: "적용하기")
+        
         resetButton.backgroundColor = .gray100
         resetButton.setTitleColor(.gray500, for: .normal)
-        applyButton = UIButton.createStyledButton(type: .large, style: .dark, title: "적용하기")
-
+        
+        resetButton.removeSizeConstraints()
+        applyButton.removeSizeConstraints()
+        
         buttonFrame.addSubview(resetButton)
         buttonFrame.addSubview(applyButton)
-
+        
         resetButton.addTarget(self, action: #selector(resetFilter), for: .touchUpInside)
         applyButton.addTarget(self, action: #selector(applyFilter), for: .touchUpInside)
-
-        // 초기화 버튼 오토레이아웃
+        
         resetButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
             make.width.equalTo(93)
+            make.height.equalTo(54)
+            make.centerY.equalToSuperview()
         }
 
-        // 적용하기 버튼 오토레이아웃
         applyButton.snp.makeConstraints { make in
             make.leading.equalTo(resetButton.snp.trailing).offset(12)
             make.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(54)
+            make.centerY.equalToSuperview()
         }
     }
     

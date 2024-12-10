@@ -14,9 +14,13 @@ class BaseTitleLabel: UILabel {
     }
     
     private func setupStyle() {
-        self.addCharacterSpacing(-0.32)
-        self.setLineSpacing(ratio: 1.4)
-    }
+            self.addCharacterSpacing(-0.32)
+            if let text = self.text, text.contains("\n") || numberOfLines > 1 {
+                self.setLineSpacing(ratio: 1.4)
+            } else {
+                self.setLineSpacing(ratio: 0)
+            }
+        }
 }
 
 class LargeTitleLabel: BaseTitleLabel {

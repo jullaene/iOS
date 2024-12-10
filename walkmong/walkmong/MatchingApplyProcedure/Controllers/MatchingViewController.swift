@@ -145,8 +145,6 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         hideDropdownView()
 
         let filterView = MatchingFilterView()
-        filterView.layer.cornerRadius = 30
-        filterView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         filterView.delegate = self
         matchingFilterView = filterView
 
@@ -160,25 +158,20 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             make.height.equalTo(572)
             make.bottom.equalToSuperview().offset(572)
         }
-        view.layoutIfNeeded()
+        
         updateDimViewVisibility(isHidden: false)
-        animateConstraints {
-            filterView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview()
-            }
-        }
+        filterView.animateShow(withDuration: 0.4, offset: 0, cornerRadius: 30)
     }
 
     private func hideMatchingFilterView() {
         guard let filterView = matchingFilterView else { return }
-        animateConstraints {
-            filterView.snp.updateConstraints { make in
-                make.bottom.equalToSuperview().offset(572)
+        
+        filterView.animateHide(withDuration: 0.4, offset: 572) { [weak self] finished in
+            if finished {
+                filterView.removeFromSuperview()
+                self?.matchingFilterView = nil
+                self?.updateDimViewVisibility(isHidden: true)
             }
-        } completion: { _ in
-            filterView.removeFromSuperview()
-            self.matchingFilterView = nil
-            self.updateDimViewVisibility(isHidden: true)
         }
     }
 

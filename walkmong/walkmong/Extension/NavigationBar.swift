@@ -22,13 +22,12 @@ extension UIViewController {
             make.height.equalTo(52)
         }
         
-        let titleLabel = UpperTitleLabel(text: "")
-        
-        navigationBarView.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
+        let titleLabel = UpperTitleLabel(text: titleText ?? "")
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = .black
 
+        navigationBarView.addSubview(titleLabel)
+        
         // Left button 설정
         if showLeftBackButton {
             let backButtonButton: UIButton = {
@@ -43,6 +42,12 @@ extension UIViewController {
                 make.height.width.equalTo(20)
                 make.leading.equalToSuperview().offset(20)
             }
+            
+            // Title 레이블 위치 조정
+            titleLabel.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.centerX.equalToSuperview()
+            }
         } else if showLeftCloseButton {
             let closeBarButton: UIButton = {
                 let button = UIButton()
@@ -54,6 +59,12 @@ extension UIViewController {
                 make.centerY.equalToSuperview()
                 make.height.width.equalTo(40)
                 make.leading.equalToSuperview().offset(20)
+            }
+            
+            // Title 레이블 위치 조정
+            titleLabel.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.centerX.equalToSuperview()
             }
         }
 
