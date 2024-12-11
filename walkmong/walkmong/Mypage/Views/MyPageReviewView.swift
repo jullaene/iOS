@@ -34,6 +34,23 @@ class MyPageReviewView: UIView {
         return view
     }()
     
+    private let ownerReviewTitleLabel: UILabel = {
+        let label = SmallTitleLabel(text: "김철수님의 반려인 후기", textColor: .gray600)
+        return label
+    }()
+    
+    private let participantLabel: UILabel = {
+        let label = SmallMainParagraphLabel(text: "10명 참여", textColor: .gray400)
+        return label
+    }()
+    
+    private let chartView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .green
+        view.layer.cornerRadius = 10
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -49,6 +66,10 @@ class MyPageReviewView: UIView {
         addSubview(keywordView)
         addSubview(ownerReviewTitle)
         addSubview(ownerReviewView)
+        
+        ownerReviewView.addSubview(ownerReviewTitleLabel)
+        ownerReviewView.addSubview(participantLabel)
+        ownerReviewView.addSubview(chartView)
         
         setupConstraints()
     }
@@ -82,10 +103,23 @@ class MyPageReviewView: UIView {
             make.top.equalTo(ownerReviewTitle.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(128)
+            make.bottom.lessThanOrEqualToSuperview().inset(40)
         }
         
-        ownerReviewView.snp.makeConstraints { make in
-            make.bottom.lessThanOrEqualToSuperview().inset(40)
+        ownerReviewTitleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.leading.equalToSuperview().offset(19)
+        }
+        
+        participantLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-19)
+            make.centerY.equalTo(ownerReviewTitleLabel)
+        }
+        
+        chartView.snp.makeConstraints { make in
+            make.top.equalTo(ownerReviewTitleLabel.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(19)
+            make.height.equalTo(44)
         }
     }
 }
