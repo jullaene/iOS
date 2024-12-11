@@ -18,7 +18,7 @@ class MyPageSettingsView: UIView {
     ]
     
     private let itemHeight: CGFloat = 52
-    private let bottomPadding: CGFloat = 174
+    private let bottomPadding: CGFloat = 19
     
     private lazy var stackView: UIStackView = {
         let stack = UIStackView()
@@ -53,11 +53,13 @@ class MyPageSettingsView: UIView {
         }
         
         let spacerView = UIView()
+        spacerView.backgroundColor = .gray100
         addSubview(spacerView)
         spacerView.snp.makeConstraints { make in
             make.top.equalTo(stackView.snp.bottom)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(bottomPadding)
+            make.bottom.equalToSuperview()
         }
     }
     
