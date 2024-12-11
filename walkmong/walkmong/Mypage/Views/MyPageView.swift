@@ -24,6 +24,16 @@ class MyPageView: UIView {
     
     private let profileView = MyPageProfileView()
     
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = false
+        return scrollView
+    }()
+    
+    private let contentView = UIView()
+    private let contentViewSection = MyPageContentViewSection()
+    private let settingsView = MyPageSettingsView()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .mainBlue
@@ -37,7 +47,12 @@ class MyPageView: UIView {
     
     private func setupSubviews() {
         addSubview(navigationBar)
-        addSubview(profileView)
+        addSubview(scrollView)
+        
+        scrollView.addSubview(contentView)
+        contentView.addSubview(profileView)
+        contentView.addSubview(contentViewSection)
+        contentView.addSubview(settingsView)
     }
     
     private func setupConstraints() {
@@ -47,11 +62,32 @@ class MyPageView: UIView {
             make.height.equalTo(52)
         }
         
+        scrollView.snp.makeConstraints { make in
+            make.top.equalTo(navigationBar.snp.bottom)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+        }
+        
         profileView.snp.makeConstraints { make in
-            make.top.equalTo(navigationBar.snp.bottom).offset(16)
+            make.top.equalToSuperview().offset(16)
             make.leading.equalToSuperview().offset(20)
-            make.trailing.lessThanOrEqualToSuperview().offset(-20)
+            make.trailing.equalToSuperview().offset(-20)
             make.height.equalTo(75)
+        }
+        
+        contentViewSection.snp.makeConstraints { make in
+            make.top.equalTo(profileView.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        
+        settingsView.snp.makeConstraints { make in
+            make.top.equalTo(contentViewSection.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-16)
         }
     }
 }
