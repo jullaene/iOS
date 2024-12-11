@@ -22,6 +22,8 @@ class MyPageView: UIView {
         return bar
     }()
     
+    private let profileView = MyPageProfileView()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .mainBlue
@@ -35,6 +37,7 @@ class MyPageView: UIView {
     
     private func setupSubviews() {
         addSubview(navigationBar)
+        addSubview(profileView)
     }
     
     private func setupConstraints() {
@@ -42,6 +45,13 @@ class MyPageView: UIView {
             make.top.equalTo(self.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(52)
+        }
+        
+        profileView.snp.makeConstraints { make in
+            make.top.equalTo(navigationBar.snp.bottom).offset(16)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.lessThanOrEqualToSuperview().offset(-20)
+            make.height.equalTo(75)
         }
     }
 }
