@@ -57,9 +57,8 @@ class MyPageProfileView: UIView {
         }
         
         arrowImageView.snp.makeConstraints { make in
-            make.leading.equalTo(nameLabel.snp.trailing).offset(4)
+            make.leading.equalTo(nameLabel.snp.trailing).offset(8)
             make.centerY.equalToSuperview()
-            make.trailing.equalToSuperview()
             make.width.height.equalTo(20)
         }
     }
