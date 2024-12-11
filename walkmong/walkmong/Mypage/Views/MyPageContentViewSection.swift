@@ -46,7 +46,7 @@ class MyPageContentViewSection: UIView {
         walkInfoView.snp.makeConstraints { make in
             make.top.equalTo(petView.snp.bottom).offset(16)
             make.left.right.equalToSuperview().inset(20)
-            make.height.equalTo(464)
+            make.height.equalTo(463)
         }
         
         reviewView.snp.makeConstraints { make in
