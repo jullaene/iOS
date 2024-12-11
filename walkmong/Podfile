@@ -7,5 +7,6 @@ target 'walkmong' do
 
   # Pods for walkmong
   pod 'NMapsMap'
+  pod 'Charts'
 
 end

@@ -1,20 +1,30 @@
 PODS:
+  - Charts (4.1.0):
+    - Charts/Core (= 4.1.0)
+  - Charts/Core (4.1.0):
+    - SwiftAlgorithms (~> 1.0)
   - NMapsGeometry (1.0.2)
   - NMapsMap (3.18.1):
     - NMapsGeometry
+  - SwiftAlgorithms (1.0.0)
 
 DEPENDENCIES:
+  - Charts
   - NMapsMap
 
 SPEC REPOS:
   trunk:
+    - Charts
     - NMapsGeometry
     - NMapsMap
+    - SwiftAlgorithms
 
 SPEC CHECKSUMS:
+  Charts: ce0768268078eee0336f122c3c4ca248e4e204c5
   NMapsGeometry: 4e02554fa9880ef02ed96b075dc84355d6352479
   NMapsMap: e879088eeee2d1e3b97f0a609076e1824dce2cad
+  SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
 
-PODFILE CHECKSUM: 9494181d9f63ac270566f12cbeddfbadc2d44b4b
+PODFILE CHECKSUM: db7ac2dbedb5a90d8dfe82de2ea9f62647490d90
 
 COCOAPODS: 1.16.2
