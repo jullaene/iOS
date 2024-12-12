@@ -32,7 +32,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     let filterSelectView = FilterSelectView()
     var matchingCells: [MatchingCell] = []
     
-    private let floatingButton = MatchingView.createRoundedView(color: UIColor.mainBlue, cornerRadius: 32)
+    private let floatingButton = UIView.createRoundedView(backgroundColor: .mainBlue, cornerRadius: 32)
     private let floatingButtonIcon = MatchingView.createImageView(named: "pencilIcon")
     
     // MARK: - Initializer
@@ -228,13 +228,6 @@ private extension MatchingView {
         let view = UIView()
         view.backgroundColor = color
         view.isHidden = isHidden
-        return view
-    }
-    
-    static func createRoundedView(color: UIColor, cornerRadius: CGFloat) -> UIView {
-        let view = UIView()
-        view.backgroundColor = color
-        view.layer.cornerRadius = cornerRadius
         return view
     }
     

@@ -9,120 +9,77 @@ import UIKit
 import SnapKit
 
 class MyPageReviewView: UIView {
-    
+
+    // MARK: - Properties
     private let walkerReviewTitle = ReviewTitleView(title: "받은 산책자 후기", count: 5)
     private let ownerReviewTitle = ReviewTitleView(title: "받은 반려인 후기", count: 3)
     
-    private let userRatingView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .gray100
-        view.layer.cornerRadius = 15
-        return view
-    }()
-    
-    private let ratingChartView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .green
-        view.layer.cornerRadius = 10
-        return view
-    }()
-    
-    private let userRatingTitleLabel: UILabel = {
-        let label = SmallTitleLabel(text: "전체 사용자 평가", textColor: .gray600)
-        return label
-    }()
-    
-    private let participantCountLabel: UILabel = {
-        let label = SmallMainParagraphLabel(text: "2명 참여", textColor: .gray400)
-        return label
-    }()
+    // User Rating
+    private let userRatingView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
+    private let ratingChartView = UIView.createRoundedView(backgroundColor: .green, cornerRadius: 10)
+    private let userRatingTitleLabel = SmallTitleLabel(text: "전체 사용자 평가", textColor: .gray600)
+    private let participantCountLabel = SmallMainParagraphLabel(text: "2명 참여", textColor: .gray400)
+    private let starRatingLabel = MainHighlightParagraphLabel(text: "4.9", textColor: .gray600)
+    private let starIcon = UIImageView.createImageView(named: "MyPageStarIcon", contentMode: .scaleAspectFit)
 
-    private let starRatingLabel: UILabel = {
-        let label = MainHighlightParagraphLabel(text: "4.9", textColor: .gray600)
-        return label
-    }()
-
-    private let starIcon: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "MyPageStarIcon"))
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
+    // Keyword
+    private let keywordView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
+    private let keywordTitleLabel = SmallTitleLabel(text: "김철수님의 키워드 TOP 3", textColor: .gray600)
+    private let keywordBubbleContainer = UIView()
+    private let largeBubble = UIView.createRoundedView(backgroundColor: .mainBlue, cornerRadius: 81)
+    private let mediumBubble = UIView.createRoundedView(backgroundColor: .mainGreen, cornerRadius: 64)
+    private let smallBubble = UIView.createRoundedView(backgroundColor: .gray400, cornerRadius: 54.5)
+    private let largeBubbleLabel = SmallTitleLabel.createLabel(text: "# 친절해요", textColor: .white, lineHeightMultiple: 1.17)
+    private let mediumBubbleLabel = SmallTitleLabel.createLabel(text: "# 연락이\n잘 되어요", textColor: .white, fontSize: 16, lineHeightMultiple: 1.17)
+    private let smallBubbleLabel = SmallTitleLabel.createLabel(text: "# 반려견\n훈련이 잘\n되어있어요", textColor: .white, fontSize: 14, lineHeightMultiple: 1.17)
     
-    private let keywordView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .gray100
-        view.layer.cornerRadius = 15
-        return view
-    }()
+    // Owner Review
+    private let ownerReviewView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
+    private let ownerReviewTitleLabel = SmallTitleLabel(text: "김철수님의 반려인 후기", textColor: .gray600)
+    private let participantLabel = SmallMainParagraphLabel(text: "10명 참여", textColor: .gray400)
+    private let chartView = UIView.createRoundedView(backgroundColor: .green, cornerRadius: 10)
     
-    private let keywordTitleLabel: UILabel = {
-        let label = SmallTitleLabel(text: "김철수님의 키워드 TOP 3", textColor: .gray600)
-        return label
-    }()
-    
-    private let ownerReviewView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .gray100
-        view.layer.cornerRadius = 15
-        return view
-    }()
-    
-    private let ownerReviewTitleLabel: UILabel = {
-        let label = SmallTitleLabel(text: "김철수님의 반려인 후기", textColor: .gray600)
-        return label
-    }()
-    
-    private let participantLabel: UILabel = {
-        let label = SmallMainParagraphLabel(text: "10명 참여", textColor: .gray400)
-        return label
-    }()
-    
-    private let chartView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .green
-        view.layer.cornerRadius = 10
-        return view
-    }()
-    
+    // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup Methods
     private func setupView() {
+        // User Rating View
         addSubview(walkerReviewTitle)
-        
         addSubview(userRatingView)
-        userRatingView.addSubview(userRatingTitleLabel)
-        userRatingView.addSubview(participantCountLabel)
-        userRatingView.addSubview(starRatingLabel)
-        userRatingView.addSubview(starIcon)
-        userRatingView.addSubview(ratingChartView)
+        userRatingView.addSubviews(userRatingTitleLabel, participantCountLabel, starRatingLabel, starIcon, ratingChartView)
         
+        // Keyword View
         addSubview(keywordView)
-        keywordView.addSubview(keywordTitleLabel)
+        keywordView.addSubviews(keywordTitleLabel, keywordBubbleContainer)
+        keywordBubbleContainer.addSubviews(mediumBubble, smallBubble, largeBubble)
+        largeBubble.addSubview(largeBubbleLabel)
+        mediumBubble.addSubview(mediumBubbleLabel)
+        smallBubble.addSubview(smallBubbleLabel)
         
+        // Owner Review View
         addSubview(ownerReviewTitle)
         addSubview(ownerReviewView)
-        
-        ownerReviewView.addSubview(ownerReviewTitleLabel)
-        ownerReviewView.addSubview(participantLabel)
-        ownerReviewView.addSubview(chartView)
-        
-        setupConstraints()
+        ownerReviewView.addSubviews(ownerReviewTitleLabel, participantLabel, chartView)
     }
     
     private func setupConstraints() {
+        // Walker Review Title
         walkerReviewTitle.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(34)
         }
         
+        // User Rating
         userRatingView.snp.makeConstraints { make in
             make.top.equalTo(walkerReviewTitle.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
@@ -157,6 +114,7 @@ class MyPageReviewView: UIView {
             make.height.equalTo(244)
         }
         
+        // Keyword View
         keywordView.snp.makeConstraints { make in
             make.top.equalTo(userRatingView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
@@ -168,6 +126,44 @@ class MyPageReviewView: UIView {
             make.leading.equalToSuperview().offset(16)
         }
         
+        keywordBubbleContainer.snp.makeConstraints { make in
+            make.top.equalTo(keywordTitleLabel.snp.bottom).offset(16)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(260)
+            make.height.equalTo(221)
+        }
+
+        largeBubble.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(25)
+            make.leading.equalToSuperview()
+            make.width.height.equalTo(162)
+        }
+
+        mediumBubble.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.width.height.equalTo(128)
+        }
+
+        smallBubble.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-21)
+            make.bottom.equalToSuperview()
+            make.width.height.equalTo(109)
+        }
+
+        largeBubbleLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        mediumBubbleLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        smallBubbleLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        // Owner Review
         ownerReviewTitle.snp.makeConstraints { make in
             make.top.equalTo(keywordView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
@@ -246,5 +242,30 @@ class ReviewTitleView: UIView {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(20)
         }
+    }
+}
+
+extension UIImageView {
+    static func createImageView(named: String, contentMode: UIView.ContentMode) -> UIImageView {
+        let imageView = UIImageView(image: UIImage(named: named))
+        imageView.contentMode = contentMode
+        return imageView
+    }
+}
+
+extension UILabel {
+    static func createLabel(text: String, textColor: UIColor, fontSize: CGFloat? = nil, lineHeightMultiple: CGFloat) -> UILabel {
+        let label = SmallTitleLabel(text: text, textColor: textColor)
+        if let fontSize = fontSize {
+            label.font = label.font.withSize(fontSize)
+        }
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        paragraphStyle.alignment = .center
+        let attributedText = NSMutableAttributedString(string: text)
+        attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: text.count))
+        label.attributedText = attributedText
+        label.numberOfLines = 0
+        return label
     }
 }

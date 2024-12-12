@@ -62,4 +62,12 @@ extension UIView {
         self.isHidden = isHidden
         self.alpha = isHidden ? 0 : alpha
     }
+    
+    static func createRoundedView(backgroundColor: UIColor, cornerRadius: CGFloat) -> UIView {
+        let view = UIView()
+        view.backgroundColor = backgroundColor
+        view.layer.cornerRadius = cornerRadius
+        view.layer.masksToBounds = true
+        return view
+    }
 }
