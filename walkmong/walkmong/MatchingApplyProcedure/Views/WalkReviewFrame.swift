@@ -13,7 +13,12 @@ class WalkReviewFrame: UIView {
     
     private let titleLabel = SmallTitleLabel(text: "산책 후기")
     private let countLabel = MainHighlightParagraphLabel(text: "3개", textColor: .gray600)
-    private let arrowButton = UIButton()
+    private let arrowButton: UIButton = {
+        let button = ExpandableButton(touchAreaPadding: 10)
+        button.setImage(UIImage(named: "arrowIcon"), for: .normal)
+        button.addTarget(self, action: #selector(didTapArrowButton), for: .touchUpInside)
+        return button
+    }()
     private let circleStackView = UIStackView()
     
     // UI Constants
@@ -61,10 +66,6 @@ class WalkReviewFrame: UIView {
         addSubview(countLabel)
         addSubview(arrowButton)
         addSubview(circleStackView)
-        
-        // Configure Arrow Button
-        arrowButton.setImage(UIImage(named: "arrowIcon"), for: .normal)
-        arrowButton.addTarget(self, action: #selector(didTapArrowButton), for: .touchUpInside)
         
         // Configure Circle Stack View
         circleStackView.axis = .horizontal
@@ -130,5 +131,23 @@ class WalkReviewFrame: UIView {
         
         let reviewVC = WalkReviewViewController()
         currentVC.navigationController?.pushViewController(reviewVC, animated: true)
+    }
+}
+
+private class ExpandableButton: UIButton {
+    private let touchAreaPadding: CGFloat
+
+    init(touchAreaPadding: CGFloat) {
+        self.touchAreaPadding = touchAreaPadding
+        super.init(frame: .zero)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        let largerArea = bounds.insetBy(dx: -touchAreaPadding, dy: -touchAreaPadding)
+        return largerArea.contains(point)
     }
 }

@@ -26,7 +26,7 @@ class ProfileFrameView: UIView {
         let label = UILabel()
         label.text = "신고하기"
         label.textColor = UIColor.gray400
-        label.font = UIFont(name: "Pretendard-Light", size: 12)
+        label.font = UIFont(name: "Pretendard-Medium", size: 12)
         label.textAlignment = .center
         return label
     }()
@@ -67,19 +67,21 @@ class ProfileFrameView: UIView {
     // MARK: - Constraints
     private func setupConstraints() {
         profileImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
+            make.leading.top.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(44)
+            make.width.height.equalTo(46)
         }
         
         reviewerIdLabel.snp.makeConstraints { make in
             make.leading.equalTo(profileImageView.snp.trailing).offset(9)
             make.top.equalToSuperview()
+            make.height.equalTo(22)
         }
         
         walkDateLabel.snp.makeConstraints { make in
             make.leading.equalTo(reviewerIdLabel)
             make.bottom.equalToSuperview()
+            make.height.equalTo(20)
         }
         
         reportLabel.snp.makeConstraints { make in

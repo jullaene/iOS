@@ -31,6 +31,7 @@ class CircleTagView: UIView {
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
+        stackView.spacing = 4
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(tagLabel)
         addSubview(stackView)

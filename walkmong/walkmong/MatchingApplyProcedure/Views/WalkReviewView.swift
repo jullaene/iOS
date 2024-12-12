@@ -21,8 +21,8 @@ class WalkReviewView: UIView {
     private enum Layout {
         static let topOffset: CGFloat = 52
         static let filterButtonMargin: CGFloat = 20
-        static let firstCellSpacing: CGFloat = 36
-        static let cellSpacing: CGFloat = 24
+        static let firstCellSpacing: CGFloat = 20
+        static let cellSpacing: CGFloat = 28
         static let cellMargin: CGFloat = 20
         static let bottomSpacing: CGFloat = 20
         static let filterViewHeight: CGFloat = 178

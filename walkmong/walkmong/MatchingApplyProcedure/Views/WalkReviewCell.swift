@@ -107,7 +107,7 @@ class WalkReviewCell: UIView {
 
         profileFrame.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(margin)
-            $0.height.equalTo(50)
+            $0.height.equalTo(44)
         }
 
         circleStackView.snp.makeConstraints {
