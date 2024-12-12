@@ -20,11 +20,37 @@ class MyPageReviewView: UIView {
         return view
     }()
     
+    private let userRatingTitleLabel: UILabel = {
+        let label = SmallTitleLabel(text: "전체 사용자 평가", textColor: .gray600)
+        return label
+    }()
+    
+    private let participantCountLabel: UILabel = {
+        let label = SmallMainParagraphLabel(text: "2명 참여", textColor: .gray400)
+        return label
+    }()
+
+    private let starRatingLabel: UILabel = {
+        let label = MainHighlightParagraphLabel(text: "4.9", textColor: .gray600)
+        return label
+    }()
+
+    private let starIcon: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "MyPageStarIcon"))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
     private let keywordView: UIView = {
         let view = UIView()
         view.backgroundColor = .gray100
         view.layer.cornerRadius = 15
         return view
+    }()
+    
+    private let keywordTitleLabel: UILabel = {
+        let label = SmallTitleLabel(text: "김철수님의 키워드 TOP 3", textColor: .gray600)
+        return label
     }()
     
     private let ownerReviewView: UIView = {
@@ -62,8 +88,16 @@ class MyPageReviewView: UIView {
     
     private func setupView() {
         addSubview(walkerReviewTitle)
+        
         addSubview(userRatingView)
+        userRatingView.addSubview(userRatingTitleLabel)
+        userRatingView.addSubview(participantCountLabel)
+        userRatingView.addSubview(starRatingLabel)
+        userRatingView.addSubview(starIcon)
+        
         addSubview(keywordView)
+        keywordView.addSubview(keywordTitleLabel)
+        
         addSubview(ownerReviewTitle)
         addSubview(ownerReviewView)
         
@@ -87,10 +121,36 @@ class MyPageReviewView: UIView {
             make.height.equalTo(340)
         }
         
+        userRatingTitleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(24)
+            make.leading.equalToSuperview().offset(16)
+        }
+
+        participantCountLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-16)
+            make.centerY.equalTo(userRatingTitleLabel)
+        }
+
+        starRatingLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(participantCountLabel.snp.leading).offset(-11)
+            make.centerY.equalTo(userRatingTitleLabel)
+        }
+
+        starIcon.snp.makeConstraints { make in
+            make.trailing.equalTo(starRatingLabel.snp.leading).offset(-4)
+            make.centerY.equalTo(userRatingTitleLabel)
+            make.width.height.equalTo(20)
+        }
+
         keywordView.snp.makeConstraints { make in
             make.top.equalTo(userRatingView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(305)
+        }
+        
+        keywordTitleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(24)
+            make.leading.equalToSuperview().offset(16)
         }
         
         ownerReviewTitle.snp.makeConstraints { make in
