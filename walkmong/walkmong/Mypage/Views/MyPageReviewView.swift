@@ -20,7 +20,7 @@ class MyPageReviewView: UIView {
     private let userRatingTitleLabel = SmallTitleLabel(text: "전체 사용자 평가", textColor: .gray600)
     private let participantCountLabel = SmallMainParagraphLabel(text: "2명 참여", textColor: .gray400)
     private let starRatingLabel = MainHighlightParagraphLabel(text: "4.9", textColor: .gray600)
-    private let starIcon = UIImageView.createImageView(named: "MyPageStarIcon", contentMode: .scaleAspectFit)
+    private let starIcon = UIImage.createImageView(named: "MyPageStarIcon")
 
     // Keyword
     private let keywordView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
@@ -242,14 +242,6 @@ class ReviewTitleView: UIView {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(20)
         }
-    }
-}
-
-extension UIImageView {
-    static func createImageView(named: String, contentMode: UIView.ContentMode) -> UIImageView {
-        let imageView = UIImageView(image: UIImage(named: named))
-        imageView.contentMode = contentMode
-        return imageView
     }
 }
 

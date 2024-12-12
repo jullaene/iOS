@@ -7,8 +7,9 @@ class OwnerInfoView: UIView {
     // MARK: - UI Components
     private let titleLabel = SmallTitleLabel(text: "반려인 정보", textColor: .gray600)
     
-    private let profileImageView = OwnerInfoView.createImageView(
-        imageName: "profileExample.png", cornerRadius: 41
+    private let profileImageView = UIImage.createImageView(
+        named: "profileExample.png",
+        cornerRadius: 41
     )
     
     private let nameLabel = UpperTitleLabel(text: "", textColor: .gray600)
@@ -19,14 +20,16 @@ class OwnerInfoView: UIView {
     
     private let genderLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     
-    private let starIcon = OwnerInfoView.createImageView(
-        imageName: "starIcon.svg", tintColor: UIColor.mainBlue
+    private let starIcon = UIImage.createImageView(
+        named: "starIcon.png",
+        cornerRadius: 41
     )
     
     private let ratingLabel = MainParagraphLabel(text: "", textColor: .mainBlue)
     
-    private let locationIcon = OwnerInfoView.createImageView(
-        imageName: "locationIconBlue.svg"
+    private let locationIcon = UIImage.createImageView(
+        named: "locationIconBlue.png",
+        cornerRadius: 41
     )
     
     private let locationLabel = MainParagraphLabel(text: "", textColor: .mainBlue)
@@ -136,20 +139,6 @@ class OwnerInfoView: UIView {
         label.textColor = textColor
         label.font = font
         return label
-    }
-    
-    private static func createImageView(imageName: String, cornerRadius: CGFloat = 0, tintColor: UIColor? = nil) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: imageName)
-        if let tintColor = tintColor {
-            imageView.tintColor = tintColor
-        }
-        if cornerRadius > 0 {
-            imageView.layer.cornerRadius = cornerRadius
-            imageView.clipsToBounds = true
-        }
-        imageView.contentMode = .scaleAspectFit
-        return imageView
     }
     
     private func formatAge(_ age: Int) -> String {

@@ -20,11 +20,11 @@ class ProfileView: UIView {
     // MARK: - UI Components
     private let topFrameView = UIView()
 
-    private let genderIconView = ProfileView.createImageView(named: "femaleIcon")
+    private let genderIconView = UIImage.createImageView(named: "femaleIcon")
     
     private let nameLabel = LargeTitleLabel(text: "")
     
-    private let femaleIconView = ProfileView.createImageView(named: "femaleIcon")
+    private let femaleIconView = UIImage.createImageView(named: "femaleIcon")
    
     private let profileButton: UIButton = {
         let button = UIButton()
@@ -40,7 +40,7 @@ class ProfileView: UIView {
         font: UIFont(name: "Pretendard-Regular", size: 16),
         textColor: .gray500
     )
-    private let locationIconView = ProfileView.createImageView(named: "locationIcon")
+    private let locationIconView = UIImage.createImageView(named: "locationIcon")
     
     private let locationLabel = SmallMainParagraphLabel(text: "", textColor: .gray500)
 
@@ -140,13 +140,6 @@ class ProfileView: UIView {
         label.font = font
         label.textColor = textColor
         return label
-    }
-    
-    private static func createImageView(named imageName: String) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: imageName)
-        imageView.contentMode = .scaleAspectFit
-        return imageView
     }
     
     private func genderIconName(for gender: String) -> String {

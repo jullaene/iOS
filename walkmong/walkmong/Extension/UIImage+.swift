@@ -26,4 +26,34 @@ extension UIImage {
 
         return newImage!
     }
+    
+    static func createImageView(
+            named imageName: String? = nil,
+            contentMode: UIView.ContentMode = .scaleAspectFit,
+            cornerRadius: CGFloat = 0,
+            tintColor: UIColor? = nil
+        ) -> UIImageView {
+            let imageView = UIImageView()
+            
+            // 이미지 설정
+            if let imageName = imageName {
+                imageView.image = UIImage(named: imageName)
+            }
+            
+            // 공통 속성
+            imageView.contentMode = contentMode
+            
+            // 코너 라운드 설정
+            if cornerRadius > 0 {
+                imageView.layer.cornerRadius = cornerRadius
+                imageView.clipsToBounds = true
+            }
+            
+            // 틴트 컬러 설정
+            if let tintColor = tintColor {
+                imageView.tintColor = tintColor
+            }
+            
+            return imageView
+        }
 }

@@ -13,8 +13,8 @@ class WalkReviewCell: UIView {
     private let profileFrame = ProfileFrameView()
     private let circleStackView = WalkReviewCell.createCircleStackView()
     private let photoFrame = UIView()
-    private let leftImageView = WalkReviewCell.createImageView()
-    private let rightImageView = WalkReviewCell.createImageView()
+    private let leftImageView = UIImage.createImageView()
+    private let rightImageView = UIImage.createImageView()
     private let reviewTextLabel = WalkReviewCell.createReviewTextLabel()
 
     override init(frame: CGRect) {
@@ -164,14 +164,6 @@ class WalkReviewCell: UIView {
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
         return stackView
-    }
-
-    private static func createImageView() -> UIImageView {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 5
-        return imageView
     }
 
     private static func createReviewTextLabel() -> MainParagraphLabel {

@@ -61,9 +61,7 @@ class VaccinationView: UIView {
         return view
     }()
 
-    private let iconView: UIImageView = {
-        return createImageView(iconName: Constants.Icons.completed)
-    }()
+    private let iconView = UIImage.createImageView(named: Constants.Icons.completed)
 
     private let descriptionLabel: UILabel = {
         return createLabel(
@@ -158,10 +156,4 @@ class VaccinationView: UIView {
         return label
     }
 
-    private static func createImageView(iconName: String) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: iconName)
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }
 }

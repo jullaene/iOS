@@ -26,14 +26,14 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         font: UIFont(name: "Pretendard-Bold", size: 20),
         textColor: UIColor.mainBlack
     )
-    private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
-    private let alertIcon = MatchingView.createImageView(named: "alertIcon")
+    private let selectImageView = UIImage.createImageView(named: "selectdongbtn")
+    private let alertIcon = UIImage.createImageView(named: "alertIcon")
     private let calendarView = CalendarView()
     let filterSelectView = FilterSelectView()
     var matchingCells: [MatchingCell] = []
     
     private let floatingButton = UIView.createRoundedView(backgroundColor: .mainBlue, cornerRadius: 32)
-    private let floatingButtonIcon = MatchingView.createImageView(named: "pencilIcon")
+    private let floatingButtonIcon = UIImage.createImageView(named: "pencilIcon")
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -247,10 +247,4 @@ private extension MatchingView {
         return label
     }
     
-    static func createImageView(named: String) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: named)
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }
 }
