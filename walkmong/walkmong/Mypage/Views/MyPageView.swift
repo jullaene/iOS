@@ -46,7 +46,7 @@ class MyPageView: UIView {
         return view
     }()
     
-    private let contentViewSection = MyPageContentViewSection()
+    let contentViewSection = MyPageContentViewSection()
     private let spacerView: UIView = {
         let view = UIView()
         view.backgroundColor = .gray100

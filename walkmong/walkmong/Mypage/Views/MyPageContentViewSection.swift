@@ -12,7 +12,7 @@ class MyPageContentViewSection: UIView {
     
     private let petView = MyPagePetView()
     private let walkInfoView = MyPageWalkInfoView()
-    private let reviewView = MyPageReviewView()
+    let reviewView = MyPageReviewView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

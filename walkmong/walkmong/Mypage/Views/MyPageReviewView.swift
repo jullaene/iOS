@@ -9,19 +9,19 @@ import UIKit
 import SnapKit
 
 class MyPageReviewView: UIView {
-
+    
     // MARK: - Properties
     private let walkerReviewTitle = ReviewTitleView(title: "받은 산책자 후기", count: 5)
     private let ownerReviewTitle = ReviewTitleView(title: "받은 반려인 후기", count: 3)
     
     // User Rating
     private let userRatingView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
-    private let ratingChartView = UIView.createRoundedView(backgroundColor: .green, cornerRadius: 10)
     private let userRatingTitleLabel = SmallTitleLabel(text: "전체 사용자 평가", textColor: .gray600)
     private let participantCountLabel = SmallMainParagraphLabel(text: "2명 참여", textColor: .gray400)
     private let starRatingLabel = MainHighlightParagraphLabel(text: "4.9", textColor: .gray600)
+    private let radarChart = CustomRadarChartView()
     private let starIcon = UIImage.createImageView(named: "MyPageStarIcon")
-
+    
     // Keyword
     private let keywordView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
     private let keywordTitleLabel = SmallTitleLabel(text: "김철수님의 키워드 TOP 3", textColor: .gray600)
@@ -55,7 +55,7 @@ class MyPageReviewView: UIView {
         // User Rating View
         addSubview(walkerReviewTitle)
         addSubview(userRatingView)
-        userRatingView.addSubviews(userRatingTitleLabel, participantCountLabel, starRatingLabel, starIcon, ratingChartView)
+        userRatingView.addSubviews(userRatingTitleLabel, participantCountLabel, starRatingLabel, starIcon, radarChart)
         
         // Keyword View
         addSubview(keywordView)
@@ -90,24 +90,24 @@ class MyPageReviewView: UIView {
             make.top.equalToSuperview().offset(24)
             make.leading.equalToSuperview().offset(16)
         }
-
+        
         participantCountLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-16)
             make.centerY.equalTo(userRatingTitleLabel)
         }
-
+        
         starRatingLabel.snp.makeConstraints { make in
             make.trailing.equalTo(participantCountLabel.snp.leading).offset(-11)
             make.centerY.equalTo(userRatingTitleLabel)
         }
-
+        
         starIcon.snp.makeConstraints { make in
             make.trailing.equalTo(starRatingLabel.snp.leading).offset(-4)
             make.centerY.equalTo(userRatingTitleLabel)
             make.width.height.equalTo(20)
         }
-
-        ratingChartView.snp.makeConstraints { make in
+        
+        radarChart.snp.makeConstraints { make in
             make.top.equalTo(userRatingTitleLabel.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
             make.width.equalTo(245)
@@ -132,33 +132,33 @@ class MyPageReviewView: UIView {
             make.width.equalTo(260)
             make.height.equalTo(221)
         }
-
+        
         largeBubble.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(25)
             make.leading.equalToSuperview()
             make.width.height.equalTo(162)
         }
-
+        
         mediumBubble.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.trailing.equalToSuperview()
             make.width.height.equalTo(128)
         }
-
+        
         smallBubble.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-21)
             make.bottom.equalToSuperview()
             make.width.height.equalTo(109)
         }
-
+        
         largeBubbleLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
+        
         mediumBubbleLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
+        
         smallBubbleLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
@@ -192,6 +192,11 @@ class MyPageReviewView: UIView {
             make.leading.trailing.equalToSuperview().inset(19)
             make.height.equalTo(44)
         }
+    }
+    
+    // MARK: - Update Methods
+    func updateChartData(scores: [CGFloat]) {
+        radarChart.updateScores(scores)
     }
 }
 
