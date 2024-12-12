@@ -196,25 +196,14 @@ class MyPageReviewView: UIView {
         }
     }
     
-    // Owner Review ChartView 업데이트
     private func setupChartView() {
-        let leftView = UIView()
-        let rightView = UIView()
-        
-        // Left View 설정
-        leftView.backgroundColor = .gray400
-        leftView.layer.cornerRadius = 10
-        leftView.clipsToBounds = true
-        
-        // Right View 설정
-        rightView.backgroundColor = .mainBlue
-        rightView.layer.cornerRadius = 10
-        rightView.clipsToBounds = true
+        let leftView = RoundedView(corners: [.topLeft, .bottomLeft], cornerRadius: 10, backgroundColor: .gray400)
+        let rightView = RoundedView(corners: [.topRight, .bottomRight], cornerRadius: 10, backgroundColor: .mainBlue)
         
         // 텍스트 추가
         let leftLabel = SmallTitleLabel(text: "👍")
         leftLabel.textColor = .white
-        leftLabel.transform = CGAffineTransform(rotationAngle: .pi) // 180도 회전
+        leftLabel.transform = CGAffineTransform(rotationAngle: .pi)
         leftLabel.textAlignment = .center
         
         let rightLabel = SmallTitleLabel(text: "👍 90%")
@@ -225,15 +214,14 @@ class MyPageReviewView: UIView {
         rightView.addSubview(rightLabel)
         chartView.addSubviews(leftView, rightView)
         
-        // Layout
         leftView.snp.makeConstraints { make in
             make.leading.top.bottom.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.1) // 10%
+            make.width.equalToSuperview().multipliedBy(0.1)
         }
         
         rightView.snp.makeConstraints { make in
             make.trailing.top.bottom.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.9) // 90%
+            make.width.equalToSuperview().multipliedBy(0.9)
         }
         
         leftLabel.snp.makeConstraints { make in
@@ -241,7 +229,38 @@ class MyPageReviewView: UIView {
         }
         
         rightLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
+        }
+    }
+
+    // 커스텀 UIView 클래스 정의
+    class RoundedView: UIView {
+        private let corners: UIRectCorner
+        private let cornerRadius: CGFloat
+        
+        init(corners: UIRectCorner, cornerRadius: CGFloat, backgroundColor: UIColor) {
+            self.corners = corners
+            self.cornerRadius = cornerRadius
+            super.init(frame: .zero)
+            self.backgroundColor = backgroundColor
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override func layoutSubviews() {
+            super.layoutSubviews()
+        
+            let path = UIBezierPath(
+                roundedRect: bounds,
+                byRoundingCorners: corners,
+                cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
+            )
+            let mask = CAShapeLayer()
+            mask.path = path.cgPath
+            layer.mask = mask
         }
     }
     
