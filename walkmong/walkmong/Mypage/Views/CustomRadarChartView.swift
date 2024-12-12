@@ -106,7 +106,7 @@ class CustomRadarChartView: UIView {
     }
 
     private func addCustomLabels() {
-        for title in titles {
+        for _ in titles {
             let label = UILabel()
             label.textAlignment = .center
             label.numberOfLines = 2

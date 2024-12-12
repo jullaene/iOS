@@ -19,19 +19,13 @@ class OwnerInfoView: UIView {
     
     private let genderLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     
-    private let starIcon = UIImage.createImageView(
-        named: "starIcon.png",
-        cornerRadius: 41
-    )
+    private let starIcon = UIImage.createImageView(named: "starIcon.png")
     
-    private let ratingLabel = MainParagraphLabel(text: "", textColor: .mainBlue)
+    private let ratingLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainBlue)
     
-    private let locationIcon = UIImage.createImageView(
-        named: "locationIconBlue.png",
-        cornerRadius: 41
-    )
+    private let locationIcon = UIImage.createImageView(named: "locationIconBlue.png")
     
-    private let locationLabel = MainParagraphLabel(text: "", textColor: .mainBlue)
+    private let locationLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainBlue)
     
     // MARK: - Initializer
     override init(frame: CGRect) {
