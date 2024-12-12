@@ -12,7 +12,7 @@ class CustomRadarChartView: UIView {
     private let radarChartView = RadarChartView()
     private let titles = ["신뢰도", "친절함", "의사소통", "시간준수", "책임감"] // 고정된 축 이름
     private let maxScore: CGFloat = 5.0 // 만점
-    private let maxChartLength: CGFloat = 87.75 // 만점일 때의 길이
+    private let maxChartLength: CGFloat = 86 // 만점일 때의 길이
     private var scores: [CGFloat] = [] // 점수 저장
     private var customLabels: [UILabel] = [] // 커스텀 라벨 저장
 
@@ -122,6 +122,7 @@ class CustomRadarChartView: UIView {
 
         let center = radarChartView.center
         let radius = radarChartView.bounds.width / 2.0
+        let offset: CGFloat = 6.0 // 차트와 라벨 간 간격 조정
 
         for (index, label) in customLabels.enumerated() {
             guard titles.indices.contains(index), scores.indices.contains(index) else { continue }
@@ -129,9 +130,9 @@ class CustomRadarChartView: UIView {
             // 각도 계산
             let angle = CGFloat(index) * (2 * .pi / CGFloat(titles.count)) - .pi / 2
 
-            // 라벨 위치 계산
-            let labelCenterX = center.x + radius * cos(angle)
-            let labelCenterY = center.y + radius * sin(angle)
+            // 라벨 위치 계산 (반지름에 오프셋 추가)
+            let labelCenterX = center.x + (radius + offset) * cos(angle)
+            let labelCenterY = center.y + (radius + offset) * sin(angle)
 
             // 축 이름 및 점수 설정
             let score = scores[index]
