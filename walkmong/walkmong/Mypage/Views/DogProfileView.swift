@@ -59,7 +59,7 @@ class DogProfileView: UIView, UIScrollViewDelegate {
         backgroundColor = .white
         addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addMultipleSubviews(profileImageView, basicInfoFrame, socialInfoFrame, vaccinationFrame)
+        contentView.addSubviews(profileImageView, basicInfoFrame, socialInfoFrame, vaccinationFrame)
     }
 
     private func setupConstraints() {
@@ -151,11 +151,5 @@ class DogProfileView: UIView, UIScrollViewDelegate {
 
     func configureVaccinationStatus(rabiesYn: String) {
         vaccinationFrame.updateVaccinationStatus(rabiesYn: rabiesYn)
-    }
-}
-
-extension UIView {
-    func addMultipleSubviews(_ views: UIView...) {
-        views.forEach { addSubview($0) }
     }
 }

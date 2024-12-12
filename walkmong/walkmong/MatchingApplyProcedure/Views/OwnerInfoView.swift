@@ -1,6 +1,5 @@
 import UIKit
 import SnapKit
-import Kingfisher
 
 class OwnerInfoView: UIView {
     
@@ -163,17 +162,6 @@ class OwnerInfoView: UIView {
         } else {
             let distanceInKm = distance / 1000
             return distanceInKm == floor(distanceInKm) ? "\(Int(distanceInKm))km" : String(format: "%.1fkm", distanceInKm)
-        }
-    }
-}
-
-private extension UIImageView {
-    func setImage(from urlString: String?, placeholder: String) {
-        if let urlString = urlString?.trimmingCharacters(in: .whitespacesAndNewlines),
-           let url = URL(string: urlString), url.scheme == "http" || url.scheme == "https" {
-            self.kf.setImage(with: url, placeholder: UIImage(named: placeholder))
-        } else {
-            self.image = UIImage(named: placeholder)
         }
     }
 }
