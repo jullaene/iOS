@@ -69,7 +69,7 @@ class ProfileFrameView: UIView {
         profileImageView.snp.makeConstraints { make in
             make.leading.top.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(44)
+            make.width.height.equalTo(46)
         }
         
         reviewerIdLabel.snp.makeConstraints { make in
