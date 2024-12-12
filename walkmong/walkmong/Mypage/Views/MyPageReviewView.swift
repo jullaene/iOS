@@ -20,6 +20,13 @@ class MyPageReviewView: UIView {
         return view
     }()
     
+    private let ratingChartView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .green
+        view.layer.cornerRadius = 10
+        return view
+    }()
+    
     private let userRatingTitleLabel: UILabel = {
         let label = SmallTitleLabel(text: "전체 사용자 평가", textColor: .gray600)
         return label
@@ -94,6 +101,7 @@ class MyPageReviewView: UIView {
         userRatingView.addSubview(participantCountLabel)
         userRatingView.addSubview(starRatingLabel)
         userRatingView.addSubview(starIcon)
+        userRatingView.addSubview(ratingChartView)
         
         addSubview(keywordView)
         keywordView.addSubview(keywordTitleLabel)
@@ -142,6 +150,13 @@ class MyPageReviewView: UIView {
             make.width.height.equalTo(20)
         }
 
+        ratingChartView.snp.makeConstraints { make in
+            make.top.equalTo(userRatingTitleLabel.snp.bottom).offset(20)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(245)
+            make.height.equalTo(244)
+        }
+        
         keywordView.snp.makeConstraints { make in
             make.top.equalTo(userRatingView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
