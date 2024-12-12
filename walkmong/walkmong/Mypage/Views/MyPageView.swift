@@ -10,6 +10,13 @@ import SnapKit
 
 class MyPageView: UIView {
     
+    // MARK: - Properties
+    private let safeAreaBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .mainBlue
+        return view
+    }()
+    
     private let navigationBar: CustomNavigationBar = {
         let bar = CustomNavigationBar(
             titleText: "마이페이지",
@@ -28,6 +35,8 @@ class MyPageView: UIView {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
         scrollView.backgroundColor = .gray100
+        scrollView.bounces = false
+        scrollView.alwaysBounceVertical = false
         return scrollView
     }()
     
@@ -45,6 +54,7 @@ class MyPageView: UIView {
     }()
     private let settingsView = MyPageSettingsView()
     
+    // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupSubviews()
@@ -55,12 +65,13 @@ class MyPageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup Methods
     private func setupSubviews() {
+        addSubview(safeAreaBackgroundView)
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        let topBackgroundView = UIView()
-        topBackgroundView.backgroundColor = .mainBlue
+        let topBackgroundView = createTopBackgroundView()
         contentView.addSubview(topBackgroundView)
         
         contentView.addSubview(navigationBar)
@@ -76,8 +87,15 @@ class MyPageView: UIView {
     }
     
     private func setupConstraints() {
+        safeAreaBackgroundView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.top)
+        }
+        
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(safeAreaBackgroundView.snp.bottom)
+            make.leading.trailing.bottom.equalToSuperview()
         }
         
         contentView.snp.makeConstraints { make in
@@ -115,5 +133,12 @@ class MyPageView: UIView {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
+    }
+    
+    // MARK: - Helper Methods
+    private func createTopBackgroundView() -> UIView {
+        let topBackgroundView = UIView()
+        topBackgroundView.backgroundColor = .mainBlue
+        return topBackgroundView
     }
 }
