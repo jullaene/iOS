@@ -110,19 +110,22 @@ extension UIButton {
         stackView.alignment = .center
         stackView.spacing = 4
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
+        stackView.isUserInteractionEnabled = false
+
         let textColor: UIColor = style == .light ? .gray500 : .white
         let label = MainHighlightParagraphLabel(text: title, textColor: textColor)
-        
+        label.isUserInteractionEnabled = false
+
         let icon = UIImageView()
         icon.image = UIImage(named: style == .light ? "buttonArrowLight" : "buttonArrowDark")
         icon.translatesAutoresizingMaskIntoConstraints = false
-        
+        icon.isUserInteractionEnabled = false
+
         stackView.addArrangedSubview(label)
         stackView.addArrangedSubview(icon)
-        
+
         button.addSubview(stackView)
-        
+
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
@@ -130,7 +133,7 @@ extension UIButton {
             stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8),
             icon.centerYAnchor.constraint(equalTo: label.centerYAnchor)
         ])
-        
+
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray100 : .gray600
     }
