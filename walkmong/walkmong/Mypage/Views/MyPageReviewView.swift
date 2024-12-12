@@ -37,7 +37,7 @@ class MyPageReviewView: UIView {
     private let ownerReviewView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
     private let ownerReviewTitleLabel = SmallTitleLabel(text: "김철수님의 반려인 후기", textColor: .gray600)
     private let participantLabel = SmallMainParagraphLabel(text: "10명 참여", textColor: .gray400)
-    private let chartView = UIView.createRoundedView(backgroundColor: .green, cornerRadius: 10)
+    private let chartView = UIView.createRoundedView(backgroundColor: .clear, cornerRadius: 10)
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -69,6 +69,8 @@ class MyPageReviewView: UIView {
         addSubview(ownerReviewTitle)
         addSubview(ownerReviewView)
         ownerReviewView.addSubviews(ownerReviewTitleLabel, participantLabel, chartView)
+        
+        setupChartView()
     }
     
     private func setupConstraints() {
@@ -191,6 +193,55 @@ class MyPageReviewView: UIView {
             make.top.equalTo(ownerReviewTitleLabel.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(19)
             make.height.equalTo(44)
+        }
+    }
+    
+    // Owner Review ChartView 업데이트
+    private func setupChartView() {
+        let leftView = UIView()
+        let rightView = UIView()
+        
+        // Left View 설정
+        leftView.backgroundColor = .gray400
+        leftView.layer.cornerRadius = 10
+        leftView.clipsToBounds = true
+        
+        // Right View 설정
+        rightView.backgroundColor = .mainBlue
+        rightView.layer.cornerRadius = 10
+        rightView.clipsToBounds = true
+        
+        // 텍스트 추가
+        let leftLabel = SmallTitleLabel(text: "👍")
+        leftLabel.textColor = .white
+        leftLabel.transform = CGAffineTransform(rotationAngle: .pi) // 180도 회전
+        leftLabel.textAlignment = .center
+        
+        let rightLabel = SmallTitleLabel(text: "👍 90%")
+        rightLabel.textColor = .white
+        rightLabel.textAlignment = .center
+        
+        leftView.addSubview(leftLabel)
+        rightView.addSubview(rightLabel)
+        chartView.addSubviews(leftView, rightView)
+        
+        // Layout
+        leftView.snp.makeConstraints { make in
+            make.leading.top.bottom.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.1) // 10%
+        }
+        
+        rightView.snp.makeConstraints { make in
+            make.trailing.top.bottom.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.9) // 90%
+        }
+        
+        leftLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        rightLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
     
