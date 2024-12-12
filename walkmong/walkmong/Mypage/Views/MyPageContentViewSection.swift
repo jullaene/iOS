@@ -38,7 +38,7 @@ class MyPageContentViewSection: UIView {
     private func setupLayout() {
         petView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(14)
-            make.left.right.equalToSuperview().inset(20)
+            make.left.right.equalToSuperview()
             make.height.greaterThanOrEqualTo(210).priority(.high)
             make.height.lessThanOrEqualTo(242).priority(.high)
         }
