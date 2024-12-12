@@ -26,7 +26,7 @@ class ProfileFrameView: UIView {
         let label = UILabel()
         label.text = "신고하기"
         label.textColor = UIColor.gray400
-        label.font = UIFont(name: "Pretendard-Light", size: 12)
+        label.font = UIFont(name: "Pretendard-Medium", size: 12)
         label.textAlignment = .center
         return label
     }()
