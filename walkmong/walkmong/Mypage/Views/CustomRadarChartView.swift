@@ -9,27 +9,32 @@ import UIKit
 import Charts
 
 class CustomRadarChartView: UIView {
+    // MARK: - Properties
     private let radarChartView = RadarChartView()
     private let titles = ["신뢰도", "친절함", "의사소통", "시간준수", "책임감"]
     private let maxScore: CGFloat = 5.0
-    private let maxChartLength: CGFloat = 86
     private var scores: [CGFloat] = []
     private var customLabels: [UILabel] = []
     private var axisLayer: CAShapeLayer?
 
+    // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .clear
-        setupChartView()
+        configureView()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.backgroundColor = .clear
-        setupChartView()
+        configureView()
     }
 
-    private func setupChartView() {
+    // MARK: - Configuration
+    private func configureView() {
+        backgroundColor = .clear
+        setupRadarChartView()
+    }
+
+    private func setupRadarChartView() {
         addSubview(radarChartView)
         radarChartView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -43,44 +48,40 @@ class CustomRadarChartView: UIView {
         radarChartView.chartDescription.enabled = false
         radarChartView.rotationEnabled = false
         radarChartView.isUserInteractionEnabled = false
-        radarChartView.yAxis.axisMaximum = Double(maxChartLength)
-        radarChartView.yAxis.axisMinimum = 0.0
-        radarChartView.yAxis.drawLabelsEnabled = false
-        radarChartView.xAxis.drawLabelsEnabled = false
         radarChartView.legend.enabled = false
+
+        let yAxis = radarChartView.yAxis
+        yAxis.axisMaximum = Double(maxScore)
+        yAxis.axisMinimum = 0.0
+        yAxis.drawLabelsEnabled = false
+
+        let xAxis = radarChartView.xAxis
+        xAxis.drawLabelsEnabled = false
+
         radarChartView.webLineWidth = 0.5
         radarChartView.innerWebLineWidth = 0.5
-        radarChartView.webColor = .clear // 내부 선 숨김
-        radarChartView.innerWebColor = .clear // 내부 선 숨김
+        radarChartView.webColor = .clear
+        radarChartView.innerWebColor = .clear
     }
 
+    // MARK: - Public Methods
     func updateScores(_ scores: [CGFloat]) {
         guard scores.count == titles.count else {
-            radarChartView.data = RadarChartData()
+            radarChartView.data = nil
             return
         }
 
         self.scores = scores
 
-        let entries = scores.map { score -> RadarChartDataEntry in
-            let normalizedValue = (score / maxScore) * maxChartLength
-            return RadarChartDataEntry(value: Double(normalizedValue))
-        }
+        let normalizedScores = scores.map { min(max($0 / maxScore, 0), 1) * maxScore }
 
+        let entries = normalizedScores.map { RadarChartDataEntry(value: Double($0)) }
         let dataSet = RadarChartDataSet(entries: entries, label: "")
-        dataSet.colors = [UIColor.mainBlue]
-        dataSet.fillColor = .mainBlue
-        dataSet.drawFilledEnabled = true
-        dataSet.fillAlpha = 1.0
-        dataSet.lineWidth = 0
-        dataSet.valueTextColor = .clear
+        configureDataSet(dataSet)
 
         radarChartView.data = RadarChartData(dataSet: dataSet)
-
-        customLabels.forEach { $0.removeFromSuperview() }
-        customLabels = []
-        addCustomLabels()
-        drawAxisLines() // 축 선 다시 그리기
+        updateCustomLabels()
+        drawAxisLines()
     }
 
     override func layoutSubviews() {
@@ -89,13 +90,25 @@ class CustomRadarChartView: UIView {
         drawAxisLines()
     }
 
-    private func addCustomLabels() {
-        for _ in titles {
+    // MARK: - Private Methods
+    private func configureDataSet(_ dataSet: RadarChartDataSet) {
+        dataSet.colors = [.mainBlue]
+        dataSet.fillColor = .mainBlue
+        dataSet.drawFilledEnabled = true
+        dataSet.fillAlpha = 1.0
+        dataSet.lineWidth = 0
+        dataSet.valueTextColor = .clear
+    }
+
+    private func updateCustomLabels() {
+        customLabels.forEach { $0.removeFromSuperview() }
+        customLabels = titles.map { title in
             let label = UILabel()
             label.textAlignment = .center
             label.numberOfLines = 2
+            label.text = title
             addSubview(label)
-            customLabels.append(label)
+            return label
         }
         updateCustomLabelPositions()
     }
@@ -103,39 +116,33 @@ class CustomRadarChartView: UIView {
     private func updateCustomLabelPositions() {
         guard !customLabels.isEmpty else { return }
 
-        let center = radarChartView.center
-        let radius = radarChartView.bounds.width / 2.0
-        let offset: CGFloat = 6.0
+        let chartCenter = CGPoint(x: radarChartView.bounds.midX, y: radarChartView.bounds.midY)
+        let chartRadius = min(radarChartView.bounds.width, radarChartView.bounds.height) / 2.0
+        let offset: CGFloat = 10.0
 
         for (index, label) in customLabels.enumerated() {
-            guard titles.indices.contains(index), scores.indices.contains(index) else { continue }
-
+            guard index < scores.count else { continue }
             let angle = CGFloat(index) * (2 * .pi / CGFloat(titles.count)) - .pi / 2
-            let labelCenterX = center.x + (radius + offset) * cos(angle)
-            let labelCenterY = center.y + (radius + offset) * sin(angle)
-
-            let score = scores[index]
-            label.attributedText = makeCustomAttributedString(title: titles[index], score: score)
+            let labelCenterX = chartCenter.x + (chartRadius + offset) * cos(angle)
+            let labelCenterY = chartCenter.y + (chartRadius + offset) * sin(angle)
+            label.attributedText = makeAttributedText(for: titles[index], score: scores[index])
             label.sizeToFit()
             label.center = CGPoint(x: labelCenterX, y: labelCenterY)
         }
     }
 
-    private func makeCustomAttributedString(title: String, score: CGFloat) -> NSAttributedString {
-        let attributedText = NSMutableAttributedString(
-            string: "\(title)\n",
-            attributes: [
-                .font: UIFont(name: "Pretendard-Medium", size: 12)!,
-                .foregroundColor: UIColor.gray600
-            ]
-        )
-        let scoreText = NSAttributedString(
-            string: String(format: "%.1f", score),
-            attributes: [
-                .font: UIFont(name: "Pretendard-SemiBold", size: 16)!,
-                .foregroundColor: UIColor.mainBlue
-            ]
-        )
+    private func makeAttributedText(for title: String, score: CGFloat) -> NSAttributedString {
+        let titleAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont(name: "Pretendard-Medium", size: 12)!,
+            .foregroundColor: UIColor.gray600
+        ]
+        let scoreAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont(name: "Pretendard-SemiBold", size: 16)!,
+            .foregroundColor: UIColor.mainBlue
+        ]
+
+        let attributedText = NSMutableAttributedString(string: "\(title)\n", attributes: titleAttributes)
+        let scoreText = NSAttributedString(string: String(format: "%.1f", score), attributes: scoreAttributes)
         attributedText.append(scoreText)
         return attributedText
     }
@@ -143,42 +150,57 @@ class CustomRadarChartView: UIView {
     private func drawAxisLines() {
         axisLayer?.removeFromSuperlayer()
 
-        guard let chartData = radarChartView.data, !chartData.dataSets.isEmpty else { return }
+        guard radarChartView.data != nil else { return }
 
-        let chartCenter = radarChartView.centerOffsets // RadarChartView 중심 좌표
-        let factor = radarChartView.factor // 데이터 변환 비율
-        let rotationAngle = radarChartView.rotationAngle // 차트 회전 각도
-        let sliceAngle = 360.0 / Double(titles.count) // 각 데이터 포인트의 각도
+        let chartCenter = radarChartView.center
+        let chartRadius = min(radarChartView.frame.width, radarChartView.frame.height) / 2.0
+        let sliceAngle = 2 * .pi / CGFloat(titles.count)
 
-        let shapeLayer = CAShapeLayer()
-        let path = UIBezierPath()
-
+        let axisPath = UIBezierPath()
         for i in 0..<titles.count {
-            let angle = CGFloat(rotationAngle + Double(i) * sliceAngle).radians // 각도 계산
-            let x = chartCenter.x + CGFloat(cos(angle)) * radarChartView.chartYMax * factor
-            let y = chartCenter.y + CGFloat(sin(angle)) * radarChartView.chartYMax * factor
-            path.move(to: chartCenter)
-            path.addLine(to: CGPoint(x: x, y: y))
+            let angle = CGFloat(i) * sliceAngle - .pi / 2
+            let x = chartCenter.x + chartRadius * cos(angle)
+            let y = chartCenter.y + chartRadius * sin(angle)
+            axisPath.move(to: chartCenter)
+            axisPath.addLine(to: CGPoint(x: x, y: y))
         }
 
-        shapeLayer.path = path.cgPath
-        shapeLayer.strokeColor = UIColor(red: 0.93, green: 0.98, blue: 1, alpha: 0.4).cgColor
-        shapeLayer.lineWidth = 0.5
-        shapeLayer.fillColor = UIColor.clear.cgColor
+        let axisLayer = createLayer(with: axisPath.cgPath, lineWidth: 0.5, color: UIColor(red: 0.93, green: 0.98, blue: 1, alpha: 0.4).cgColor)
+        radarChartView.layer.addSublayer(axisLayer)
+        self.axisLayer = axisLayer
 
-        radarChartView.layer.addSublayer(shapeLayer)
-        axisLayer = shapeLayer
+        let stepPath = UIBezierPath()
+        for step in 1...Int(maxScore) {
+            let stepRadius = chartRadius * CGFloat(step) / maxScore
+            let polygonPath = createPolygonPath(center: chartCenter, radius: stepRadius, sliceAngle: sliceAngle)
+            stepPath.append(polygonPath)
+        }
+
+        let stepLayer = createLayer(with: stepPath.cgPath, lineWidth: 0.5, color: UIColor(red: 0.93, green: 0.98, blue: 1, alpha: 0.4).cgColor, isDashed: true)
+        radarChartView.layer.addSublayer(stepLayer)
     }
-}
 
-extension Double {
-    var radians: CGFloat {
-        return CGFloat(self * .pi / 180.0)
+    private func createPolygonPath(center: CGPoint, radius: CGFloat, sliceAngle: CGFloat) -> UIBezierPath {
+        let path = UIBezierPath()
+        for i in 0..<titles.count {
+            let angle = CGFloat(i) * sliceAngle - .pi / 2
+            let x = center.x + radius * cos(angle)
+            let y = center.y + radius * sin(angle)
+            i == 0 ? path.move(to: CGPoint(x: x, y: y)) : path.addLine(to: CGPoint(x: x, y: y))
+        }
+        path.close()
+        return path
     }
-}
 
-extension CGFloat {
-    var radians: CGFloat {
-        return self * .pi / 180.0
+    private func createLayer(with path: CGPath, lineWidth: CGFloat, color: CGColor, isDashed: Bool = false) -> CAShapeLayer {
+        let layer = CAShapeLayer()
+        layer.path = path
+        layer.strokeColor = color
+        layer.lineWidth = lineWidth
+        layer.fillColor = UIColor.clear.cgColor
+        if isDashed {
+            layer.lineDashPattern = [2, 2]
+        }
+        return layer
     }
 }

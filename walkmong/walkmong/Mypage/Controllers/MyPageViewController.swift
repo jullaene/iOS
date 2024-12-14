@@ -26,6 +26,6 @@ class MyPageViewController: UIViewController {
     }
     
     private func updateReviewData() {
-        myPageView.contentViewSection.reviewView.updateChartData(scores: [5.0, 5.0, 5.0, 4.5, 5.0])
+        myPageView.contentViewSection.reviewView.updateChartData(scores: [5.0, 5.0, 5.0, 5.0, 5.0])
     }
 }
