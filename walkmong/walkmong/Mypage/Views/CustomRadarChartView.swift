@@ -78,8 +78,10 @@ class CustomRadarChartView: UIView {
         let dataSet = RadarChartDataSet(entries: entries, label: "")
         dataSet.colors = [UIColor.mainBlue]
         dataSet.fillColor = .mainBlue
-        dataSet.drawFilledEnabled = true
-        dataSet.fillAlpha = 0.7
+
+        // 채우기 색상 투명도 제거
+        dataSet.drawFilledEnabled = true // 채우기 비활성화
+        dataSet.fillAlpha = 1.0           // 혹시 모를 투명도 설정
 
         // 외곽선 제거
         dataSet.lineWidth = 0
