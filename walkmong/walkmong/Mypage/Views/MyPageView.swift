@@ -17,16 +17,11 @@ class MyPageView: UIView {
         return view
     }()
     
-    private let navigationBar: CustomNavigationBar = {
-        let bar = CustomNavigationBar(
-            titleText: "마이페이지",
-            showLeftBackButton: false,
-            showLeftCloseButton: false,
-            showRightCloseButton: false,
-            showRightRefreshButton: false,
-            backgroundColor: .clear
-        )
-        return bar
+    private let alertIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "alertIcon")
+        return imageView
     }()
     
     private let profileView = MyPageProfileView()
@@ -74,7 +69,7 @@ class MyPageView: UIView {
         let topBackgroundView = createTopBackgroundView()
         contentView.addSubview(topBackgroundView)
         
-        contentView.addSubview(navigationBar)
+        contentView.addSubview(alertIcon)
         contentView.addSubview(profileView)
         contentView.addSubview(contentViewSection)
         contentView.addSubview(spacerView)
@@ -104,14 +99,14 @@ class MyPageView: UIView {
             make.bottom.equalTo(settingsView.snp.bottom)
         }
         
-        navigationBar.snp.makeConstraints { make in
-            make.top.equalTo(contentView)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(52)
+        alertIcon.snp.makeConstraints { make in
+            make.top.equalTo(contentView).offset(16)
+            make.trailing.equalToSuperview().offset(-20)
+            make.width.height.equalTo(24) // 아이콘 크기 설정
         }
         
         profileView.snp.makeConstraints { make in
-            make.top.equalTo(navigationBar.snp.bottom).offset(16)
+            make.top.equalTo(alertIcon.snp.bottom).offset(15)
             make.leading.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().offset(-20)
             make.height.equalTo(75)
