@@ -10,11 +10,12 @@ import Charts
 
 class CustomRadarChartView: UIView {
     private let radarChartView = RadarChartView()
-    private let titles = ["신뢰도", "친절함", "의사소통", "시간준수", "책임감"] // 고정된 축 이름
-    private let maxScore: CGFloat = 5.0 // 만점
-    private let maxChartLength: CGFloat = 86 // 만점일 때의 길이
-    private var scores: [CGFloat] = [] // 점수 저장
-    private var customLabels: [UILabel] = [] // 커스텀 라벨 저장
+    private let titles = ["신뢰도", "친절함", "의사소통", "시간준수", "책임감"]
+    private let maxScore: CGFloat = 5.0
+    private let maxChartLength: CGFloat = 86
+    private var scores: [CGFloat] = []
+    private var customLabels: [UILabel] = []
+    private var axisLayer: CAShapeLayer?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,34 +43,25 @@ class CustomRadarChartView: UIView {
         radarChartView.chartDescription.enabled = false
         radarChartView.rotationEnabled = false
         radarChartView.isUserInteractionEnabled = false
-
-        // Y축 값 설정
         radarChartView.yAxis.axisMaximum = Double(maxChartLength)
         radarChartView.yAxis.axisMinimum = 0.0
         radarChartView.yAxis.drawLabelsEnabled = false
-
-        // X축 값 숨김
         radarChartView.xAxis.drawLabelsEnabled = false
-
-        // 범례 제거
         radarChartView.legend.enabled = false
-
-        // 내부 선 제거
-        radarChartView.webLineWidth = 0
-        radarChartView.innerWebLineWidth = 0
+        radarChartView.webLineWidth = 0.5
+        radarChartView.innerWebLineWidth = 0.5
+        radarChartView.webColor = .clear // 내부 선 숨김
+        radarChartView.innerWebColor = .clear // 내부 선 숨김
     }
 
     func updateScores(_ scores: [CGFloat]) {
         guard scores.count == titles.count else {
-            print("Error: Scores count must match titles count")
-            radarChartView.data = RadarChartData() // 비어 있는 데이터 설정
+            radarChartView.data = RadarChartData()
             return
         }
 
-        // 점수 저장
         self.scores = scores
 
-        // 점수 데이터를 기반으로 RadarChartDataEntry 생성
         let entries = scores.map { score -> RadarChartDataEntry in
             let normalizedValue = (score / maxScore) * maxChartLength
             return RadarChartDataEntry(value: Double(normalizedValue))
@@ -78,33 +70,23 @@ class CustomRadarChartView: UIView {
         let dataSet = RadarChartDataSet(entries: entries, label: "")
         dataSet.colors = [UIColor.mainBlue]
         dataSet.fillColor = .mainBlue
-
-        // 채우기 색상 투명도 제거
-        dataSet.drawFilledEnabled = true // 채우기 비활성화
-        dataSet.fillAlpha = 1.0           // 혹시 모를 투명도 설정
-
-        // 외곽선 제거
+        dataSet.drawFilledEnabled = true
+        dataSet.fillAlpha = 1.0
         dataSet.lineWidth = 0
+        dataSet.valueTextColor = .clear
 
-        // 데이터 값 숨김
-        dataSet.valueFont = UIFont(name: "Pretendard-Medium", size: 12)!
-        dataSet.valueTextColor = .clear // 값 숨김
+        radarChartView.data = RadarChartData(dataSet: dataSet)
 
-        // 데이터 적용
-        let data = RadarChartData(dataSet: dataSet)
-        radarChartView.data = data
-
-        // 기존 라벨 제거
         customLabels.forEach { $0.removeFromSuperview() }
         customLabels = []
-
-        // 새로운 라벨 추가
         addCustomLabels()
+        drawAxisLines() // 축 선 다시 그리기
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         updateCustomLabelPositions()
+        drawAxisLines()
     }
 
     private func addCustomLabels() {
@@ -115,7 +97,6 @@ class CustomRadarChartView: UIView {
             addSubview(label)
             customLabels.append(label)
         }
-
         updateCustomLabelPositions()
     }
 
@@ -124,24 +105,18 @@ class CustomRadarChartView: UIView {
 
         let center = radarChartView.center
         let radius = radarChartView.bounds.width / 2.0
-        let offset: CGFloat = 6.0 // 차트와 라벨 간 간격 조정
+        let offset: CGFloat = 6.0
 
         for (index, label) in customLabels.enumerated() {
             guard titles.indices.contains(index), scores.indices.contains(index) else { continue }
 
-            // 각도 계산
             let angle = CGFloat(index) * (2 * .pi / CGFloat(titles.count)) - .pi / 2
-
-            // 라벨 위치 계산 (반지름에 오프셋 추가)
             let labelCenterX = center.x + (radius + offset) * cos(angle)
             let labelCenterY = center.y + (radius + offset) * sin(angle)
 
-            // 축 이름 및 점수 설정
             let score = scores[index]
             label.attributedText = makeCustomAttributedString(title: titles[index], score: score)
             label.sizeToFit()
-
-            // 라벨 위치 설정
             label.center = CGPoint(x: labelCenterX, y: labelCenterY)
         }
     }
@@ -164,21 +139,46 @@ class CustomRadarChartView: UIView {
         attributedText.append(scoreText)
         return attributedText
     }
+
+    private func drawAxisLines() {
+        axisLayer?.removeFromSuperlayer()
+
+        guard let chartData = radarChartView.data, !chartData.dataSets.isEmpty else { return }
+
+        let chartCenter = radarChartView.centerOffsets // RadarChartView 중심 좌표
+        let factor = radarChartView.factor // 데이터 변환 비율
+        let rotationAngle = radarChartView.rotationAngle // 차트 회전 각도
+        let sliceAngle = 360.0 / Double(titles.count) // 각 데이터 포인트의 각도
+
+        let shapeLayer = CAShapeLayer()
+        let path = UIBezierPath()
+
+        for i in 0..<titles.count {
+            let angle = CGFloat(rotationAngle + Double(i) * sliceAngle).radians // 각도 계산
+            let x = chartCenter.x + CGFloat(cos(angle)) * radarChartView.chartYMax * factor
+            let y = chartCenter.y + CGFloat(sin(angle)) * radarChartView.chartYMax * factor
+            path.move(to: chartCenter)
+            path.addLine(to: CGPoint(x: x, y: y))
+        }
+
+        shapeLayer.path = path.cgPath
+        shapeLayer.strokeColor = UIColor(red: 0.93, green: 0.98, blue: 1, alpha: 0.4).cgColor
+        shapeLayer.lineWidth = 0.5
+        shapeLayer.fillColor = UIColor.clear.cgColor
+
+        radarChartView.layer.addSublayer(shapeLayer)
+        axisLayer = shapeLayer
+    }
 }
 
-extension CustomRadarChartView: AxisValueFormatter {
-    func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-        // 축 이름 유효성 검사
-        guard titles.indices.contains(Int(value)) else { return "" }
-        guard scores.indices.contains(Int(value)) else { return "\(titles[Int(value)])\n0.0" }
+extension Double {
+    var radians: CGFloat {
+        return CGFloat(self * .pi / 180.0)
+    }
+}
 
-        // 해당 점수 가져오기
-        let score = scores[Int(value)]
-
-        // 반환 문자열 (점수는 MainHighlightParagraphLabel 스타일로 적용)
-        return """
-        \(titles[Int(value)])
-        \(String(format: "%.1f", score))
-        """
+extension CGFloat {
+    var radians: CGFloat {
+        return self * .pi / 180.0
     }
 }
