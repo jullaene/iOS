@@ -26,14 +26,14 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         font: UIFont(name: "Pretendard-Bold", size: 20),
         textColor: UIColor.mainBlack
     )
-    private let selectImageView = MatchingView.createImageView(named: "selectdongbtn")
-    private let alertIcon = MatchingView.createImageView(named: "alertIcon")
+    private let selectImageView = UIImage.createImageView(named: "selectdongbtn")
+    private let alertIcon = UIImage.createImageView(named: "alertIcon")
     private let calendarView = CalendarView()
     let filterSelectView = FilterSelectView()
     var matchingCells: [MatchingCell] = []
     
-    private let floatingButton = MatchingView.createRoundedView(color: UIColor.mainBlue, cornerRadius: 32)
-    private let floatingButtonIcon = MatchingView.createImageView(named: "pencilIcon")
+    private let floatingButton = UIView.createRoundedView(backgroundColor: .mainBlue, cornerRadius: 32)
+    private let floatingButtonIcon = UIImage.createImageView(named: "pencilIcon")
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -231,13 +231,6 @@ private extension MatchingView {
         return view
     }
     
-    static func createRoundedView(color: UIColor, cornerRadius: CGFloat) -> UIView {
-        let view = UIView()
-        view.backgroundColor = color
-        view.layer.cornerRadius = cornerRadius
-        return view
-    }
-    
     static func createLabel(text: String, font: UIFont?, textColor: UIColor, kern: CGFloat = 0, lineHeight: CGFloat = 1.0) -> UILabel {
         let label = UILabel()
         label.text = text
@@ -254,10 +247,4 @@ private extension MatchingView {
         return label
     }
     
-    static func createImageView(named: String) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: named)
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }
 }

@@ -1,14 +1,14 @@
 import UIKit
 import SnapKit
-import Kingfisher
 
 class OwnerInfoView: UIView {
     
     // MARK: - UI Components
     private let titleLabel = SmallTitleLabel(text: "반려인 정보", textColor: .gray600)
     
-    private let profileImageView = OwnerInfoView.createImageView(
-        imageName: "profileExample.png", cornerRadius: 41
+    private let profileImageView = UIImage.createImageView(
+        named: "profileExample.png",
+        cornerRadius: 41
     )
     
     private let nameLabel = UpperTitleLabel(text: "", textColor: .gray600)
@@ -19,17 +19,13 @@ class OwnerInfoView: UIView {
     
     private let genderLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     
-    private let starIcon = OwnerInfoView.createImageView(
-        imageName: "starIcon.svg", tintColor: UIColor.mainBlue
-    )
+    private let starIcon = UIImage.createImageView(named: "starIcon.png")
     
-    private let ratingLabel = MainParagraphLabel(text: "", textColor: .mainBlue)
+    private let ratingLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainBlue)
     
-    private let locationIcon = OwnerInfoView.createImageView(
-        imageName: "locationIconBlue.svg"
-    )
+    private let locationIcon = UIImage.createImageView(named: "locationIconBlue.png")
     
-    private let locationLabel = MainParagraphLabel(text: "", textColor: .mainBlue)
+    private let locationLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainBlue)
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -138,20 +134,6 @@ class OwnerInfoView: UIView {
         return label
     }
     
-    private static func createImageView(imageName: String, cornerRadius: CGFloat = 0, tintColor: UIColor? = nil) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: imageName)
-        if let tintColor = tintColor {
-            imageView.tintColor = tintColor
-        }
-        if cornerRadius > 0 {
-            imageView.layer.cornerRadius = cornerRadius
-            imageView.clipsToBounds = true
-        }
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }
-    
     private func formatAge(_ age: Int) -> String {
         let ageGroup = (age / 10) * 10
         let ageCategory: String
@@ -174,17 +156,6 @@ class OwnerInfoView: UIView {
         } else {
             let distanceInKm = distance / 1000
             return distanceInKm == floor(distanceInKm) ? "\(Int(distanceInKm))km" : String(format: "%.1fkm", distanceInKm)
-        }
-    }
-}
-
-private extension UIImageView {
-    func setImage(from urlString: String?, placeholder: String) {
-        if let urlString = urlString?.trimmingCharacters(in: .whitespacesAndNewlines),
-           let url = URL(string: urlString), url.scheme == "http" || url.scheme == "https" {
-            self.kf.setImage(with: url, placeholder: UIImage(named: placeholder))
-        } else {
-            self.image = UIImage(named: placeholder)
         }
     }
 }

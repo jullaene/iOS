@@ -243,21 +243,4 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         }
     }
 
-    private func createImageView(named imageUrl: String?) -> UIView {
-        let containerView = UIView()
-        containerView.backgroundColor = .white
-
-        if let imageUrl = imageUrl, let url = URL(string: imageUrl) {
-            let imageView = UIImageView()
-            imageView.kf.setImage(with: url)
-            imageView.contentMode = .scaleAspectFill
-            imageView.clipsToBounds = true
-            containerView.addSubview(imageView)
-            imageView.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
-            }
-        }
-        
-        return containerView
-    }
 }

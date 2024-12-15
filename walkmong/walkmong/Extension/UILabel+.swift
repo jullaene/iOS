@@ -31,4 +31,19 @@ extension UILabel {
         string.addAttribute(NSAttributedString.Key.kern, value: kernValue, range: NSRange(location: 0, length: string.length - 1))
         attributedText = string
     }
+    
+    static func createLabel(text: String, textColor: UIColor, fontSize: CGFloat? = nil, lineHeightMultiple: CGFloat) -> UILabel {
+        let label = SmallTitleLabel(text: text, textColor: textColor)
+        if let fontSize = fontSize {
+            label.font = label.font.withSize(fontSize)
+        }
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = lineHeightMultiple
+        paragraphStyle.alignment = .center
+        let attributedText = NSMutableAttributedString(string: text)
+        attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: text.count))
+        label.attributedText = attributedText
+        label.numberOfLines = 0
+        return label
+    }
 }
