@@ -100,6 +100,7 @@ class MyPageReportView: UIView {
     }
     
     private func setupSubmitButton() {
+        submitButton.removeSizeConstraints()
         addSubview(submitButton)
         submitButton.snp.makeConstraints { make in
             make.top.equalTo(reportTextView.snp.bottom).offset(36)
