@@ -22,7 +22,7 @@ class MyPageReportViewController: UIViewController {
     }
     
     private func setupSubmitButtonAction() {
-        myPageReportView.submitButton.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
+        myPageReportView.submitButton.addTarget(self, action: #selector(closeViewController), for: .touchUpInside)
     }
     
     private func setupReasonButtonActions() {
@@ -93,14 +93,14 @@ class MyPageReportViewController: UIViewController {
             image: .deleteButton,
             style: .plain,
             target: self,
-            action: #selector(dismissViewController)
+            action: #selector(closeViewController)
         )
         closeBarButtonItem.tintColor = .mainBlack
         navigationItem.rightBarButtonItem = closeBarButtonItem
         
     }
     
-    @objc private func dismissViewController() {
+    @objc private func closeViewController() {
         navigationController?.popViewController(animated: true)
     }
 }
