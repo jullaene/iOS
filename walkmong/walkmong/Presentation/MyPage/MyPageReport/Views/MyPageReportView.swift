@@ -15,11 +15,11 @@ class MyPageReportView: UIView {
     private let titleLabel = MiddleTitleLabel(text: "산책 후기 신고하기", textColor: .black)
     let reportTextView = ReportTextView()
     let charCountLabel = MainParagraphLabel(text: "(0/250)", textColor: .gray400)
-    private let submitButton = UIButton.createStyledButton(type: .large, style: .dark, title: "신고하기")
-    private var reasonButtons: [ReasonButtonView] = []
+    let submitButton = UIButton.createStyledButton(type: .large, style: .dark, title: "신고하기")
+    var reasonButtons: [ReasonButtonView] = []
     
     // 리스트 항목
-    private let reasons = [
+    let reasons = [
         "산책과 관련 없는 내용",
         "음란성, 욕설 등 부적절한 내용",
         "부적절한 홍보 또는 광고",

@@ -11,7 +11,9 @@ import SnapKit
 class ReasonButtonView: UIView {
     private let checkImageView = UIImageView()
     private let reasonLabel: UILabel
-    private var isChecked = false
+    var isChecked = false
+    
+    var onCheckStateChanged: (() -> Void)?
     
     // MARK: - Initializer
     init(text: String) {
@@ -19,7 +21,7 @@ class ReasonButtonView: UIView {
         super.init(frame: .zero)
         
         self.isUserInteractionEnabled = true
-        backgroundColor = .clear // 터치 인식 활성화
+        backgroundColor = .clear
         
         setupView()
         setupGesture()
@@ -51,14 +53,14 @@ class ReasonButtonView: UIView {
     
     private func setupGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleCheck))
-        tapGesture.cancelsTouchesInView = false // 다른 터치 이벤트를 방해하지 않도록 설정
+        tapGesture.cancelsTouchesInView = false
         self.addGestureRecognizer(tapGesture)
     }
     
-    // MARK: - 체크 이미지 토글
     @objc private func toggleCheck() {
         isChecked.toggle()
         updateCheckImage()
+        onCheckStateChanged?()
     }
     
     private func updateCheckImage(force: Bool = false) {

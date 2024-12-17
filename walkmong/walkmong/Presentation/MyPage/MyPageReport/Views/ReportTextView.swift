@@ -10,7 +10,7 @@ import UIKit
 class ReportTextView: UITextView, UITextViewDelegate {
     var didChangeText: ((Int) -> Void)?
     
-    private let placeholderText = "신고 사유에 대해 하실 말씀이 있다면 자세히 말해주세요."
+    let placeholderText = "신고 사유에 대해 하실 말씀이 있다면 자세히 말해주세요."
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
@@ -28,7 +28,7 @@ class ReportTextView: UITextView, UITextViewDelegate {
         self.font = UIFont(name: "Pretendard-Medium", size: 16)
         self.textColor = .gray400
         self.text = placeholderText
-        self.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        self.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 46, right: 12)
     }
     
     // MARK: - UITextViewDelegate
@@ -48,5 +48,11 @@ class ReportTextView: UITextView, UITextViewDelegate {
             textView.text = placeholderText
             textView.textColor = .gray400
         }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let currentText = textView.text ?? ""
+        let newLength = currentText.count + text.count - range.length
+        return newLength <= 250
     }
 }
