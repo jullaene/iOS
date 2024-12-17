@@ -60,12 +60,11 @@ extension UIViewController {
                 make.height.width.equalTo(40)
                 make.leading.equalToSuperview().offset(20)
             }
-            
-            // Title 레이블 위치 조정
-            titleLabel.snp.makeConstraints { make in
-                make.centerY.equalToSuperview()
-                make.centerX.equalToSuperview()
-            }
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.centerX.equalToSuperview()
         }
 
         // Right button 설정
