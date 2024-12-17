@@ -34,8 +34,26 @@ class MyPageReportViewController: UIViewController {
     }
     
     private func configureTextView() {
-        myPageReportView.reportTextView.didChangeText = { [weak self] _ in
+        myPageReportView.reportTextView.didChangeText = { [weak self] count in
+            self?.autoCheckOtherReasonIfNeeded()
             self?.checkSubmitButtonState()
+        }
+    }
+    
+    private func autoCheckOtherReasonIfNeeded() {
+        let otherReasonIndex = myPageReportView.reasons.count - 1
+        let otherReasonButton = myPageReportView.reasonButtons[otherReasonIndex]
+        
+        let textView = myPageReportView.reportTextView
+        let hasContent = textView.text.trimmingCharacters(in: .whitespacesAndNewlines) != "" &&
+                         textView.text != textView.placeholderText
+        
+        if hasContent && !otherReasonButton.isChecked {
+            otherReasonButton.isChecked = true
+            otherReasonButton.updateCheckImage()
+        } else if !hasContent && otherReasonButton.isChecked {
+            otherReasonButton.isChecked = false
+            otherReasonButton.updateCheckImage()
         }
     }
     

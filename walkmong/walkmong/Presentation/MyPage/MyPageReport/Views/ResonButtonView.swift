@@ -63,7 +63,7 @@ class ReasonButtonView: UIView {
         onCheckStateChanged?()
     }
     
-    private func updateCheckImage(force: Bool = false) {
+    func updateCheckImage(force: Bool = false) {
         let imageName = isChecked ? "myPageReportChecked" : "myPageReportUnchecked"
         if let image = UIImage(named: imageName) {
             checkImageView.image = image.withRenderingMode(.alwaysOriginal)
