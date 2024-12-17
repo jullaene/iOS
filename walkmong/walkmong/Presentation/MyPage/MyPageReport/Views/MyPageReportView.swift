@@ -11,9 +11,12 @@ import SnapKit
 class MyPageReportView: UIView {
     
     // MARK: - UI Components
-    private let titleLabel = MiddleTitleLabel(text: "신고 사유를 선택해주세요.", textColor: .gray600)
-    private var navigationBar: UIView?
-    private weak var viewController: UIViewController?
+    private let navigationBar = UIView()
+    private let titleLabel = MiddleTitleLabel(text: "산책 후기 신고하기", textColor: .black)
+    let reportTextView = ReportTextView()
+    let charCountLabel = MainParagraphLabel(text: "(0/250)", textColor: .gray400)
+    private let submitButton = UIButton.createStyledButton(type: .large, style: .dark, title: "신고하기")
+    private var reasonButtons: [ReasonButtonView] = []
     
     // 리스트 항목
     private let reasons = [
@@ -27,79 +30,81 @@ class MyPageReportView: UIView {
         "기타(하단 내용 작성)"
     ]
     
-    private var reasonButtons: [ReasonButtonView] = []
-    
     // MARK: - Initializer
-    init(viewController: UIViewController) {
-        self.viewController = viewController
+    init() {
         super.init(frame: .zero)
-        
-        setupNavigationBar()
-        setupLayout()
-        setupReasonList()
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Layout 설정
-    private func setupLayout() {
-        backgroundColor = .white
-        
-        addSubview(titleLabel)
-        if let navigationBar = navigationBar {
-            titleLabel.snp.makeConstraints { make in
-                make.top.equalTo(navigationBar.snp.bottom).offset(43)
-                make.left.equalToSuperview().offset(21)
-            }
-        }
+    // MARK: - 뷰 설정
+    private func setupView() {
+        self.backgroundColor = .white
+        setupNavigationBar()
+        setupReasonList()
+        setupReportTextView()
+        setupSubmitButton()
     }
     
-    // MARK: - NavigationBar 설정
     private func setupNavigationBar() {
-        guard let viewController = viewController else { return }
-        viewController.addCustomNavigationBar(
-            titleText: "산책 후기 신고하기",
-            showLeftBackButton: false,
-            showLeftCloseButton: false,
-            showRightCloseButton: true,
-            showRightRefreshButton: false
-        )
+        addSubview(navigationBar)
+        navigationBar.backgroundColor = .white
         
-        if let navigationView = viewController.view.subviews.last {
-            navigationBar = navigationView
-            addSubview(navigationBar!)
-            navigationBar?.snp.makeConstraints { make in
-                make.left.right.equalToSuperview()
-                make.top.equalTo(safeAreaLayoutGuide.snp.top)
-                make.height.equalTo(52)
-            }
+        navigationBar.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(52)
+        }
+        
+        navigationBar.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(navigationBar.snp.bottom).offset(31)
+            make.leading.equalToSuperview().inset(20)
         }
     }
     
-    // MARK: - 신고 사유 리스트 설정
     private func setupReasonList() {
         var previousView: UIView = titleLabel
-        var isFirst = true // 첫 번째 뷰 여부를 체크하기 위한 플래그
-
-        for reason in reasons {
+        
+        for (index, reason) in reasons.enumerated() {
             let reasonButton = ReasonButtonView(text: reason)
+            reasonButtons.append(reasonButton)
             addSubview(reasonButton)
             
             reasonButton.snp.makeConstraints { make in
-                if isFirst {
-                    make.top.equalTo(previousView.snp.bottom).offset(32) // 첫 번째만 32 포인트
-                    isFirst = false
-                } else {
-                    make.top.equalTo(previousView.snp.bottom).offset(16) // 나머지는 16 포인트
-                }
-                make.leading.trailing.equalToSuperview().inset(21)
+                make.top.equalTo(previousView.snp.bottom).offset(index == 0 ? 32 : 16)
+                make.leading.trailing.equalToSuperview().inset(20)
                 make.height.equalTo(22)
             }
-            
             previousView = reasonButton
-            reasonButtons.append(reasonButton)
+        }
+    }
+    
+    private func setupReportTextView() {
+        addSubview(reportTextView)
+        reportTextView.snp.makeConstraints { make in
+            make.top.equalTo(reasonButtons.last!.snp.bottom).offset(44)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(169)
+        }
+        
+        addSubview(charCountLabel)
+        charCountLabel.textAlignment = .right
+        charCountLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(reportTextView).offset(-12)
+            make.trailing.equalTo(reportTextView).offset(-12)
+        }
+    }
+    
+    private func setupSubmitButton() {
+        addSubview(submitButton)
+        submitButton.snp.makeConstraints { make in
+            make.top.equalTo(reportTextView.snp.bottom).offset(36)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(54)
         }
     }
 }

@@ -35,18 +35,18 @@ class ReasonButtonView: UIView {
     private func setupView() {
         addSubview(checkImageView)
         addSubview(reasonLabel)
-
+        
         checkImageView.snp.makeConstraints { make in
             make.size.equalTo(CGSize(width: 20, height: 20))
             make.left.centerY.equalToSuperview()
         }
-
+        
         reasonLabel.snp.makeConstraints { make in
             make.left.equalTo(checkImageView.snp.right).offset(8)
             make.centerY.equalToSuperview()
             make.right.lessThanOrEqualToSuperview().offset(-8)
         }
-
+        
     }
     
     private func setupGesture() {
@@ -65,5 +65,6 @@ class ReasonButtonView: UIView {
         let imageName = isChecked ? "myPageReportChecked" : "myPageReportUnchecked"
         if let image = UIImage(named: imageName) {
             checkImageView.image = image.withRenderingMode(.alwaysOriginal)
+        }
     }
 }
