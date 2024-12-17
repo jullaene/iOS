@@ -73,6 +73,7 @@ extension UIViewController {
                 let button = UIButton()
                 button.setImage(.deleteButton, for: .normal)
                 button.tintColor = .mainBlack
+                button.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(closeBarButton)
@@ -105,5 +106,9 @@ extension UIViewController {
 
     @objc private func popViewController() {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func dismissViewController() {
+        self.dismiss(animated: true, completion: nil)
     }
 }

@@ -15,9 +15,14 @@ class MyPageReportViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupNavigationBar()
+        setupSubmitButtonAction()
         setupReasonButtonActions()
         configureTextView()
         checkSubmitButtonState()
+    }
+    
+    private func setupSubmitButtonAction() {
+        myPageReportView.submitButton.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
     }
     
     private func setupReasonButtonActions() {
@@ -41,7 +46,7 @@ class MyPageReportViewController: UIViewController {
         let isOtherReasonSelected = myPageReportView.reasonButtons[otherReasonIndex].isChecked
         
         let isOtherReasonValid = isOtherReasonSelected ? !myPageReportView.reportTextView.text.isEmpty &&
-                                                        myPageReportView.reportTextView.text != myPageReportView.reportTextView.placeholderText : true
+        myPageReportView.reportTextView.text != myPageReportView.reportTextView.placeholderText : true
         
         let canSubmit = isAnyReasonSelected && isOtherReasonValid
         myPageReportView.submitButton.isEnabled = canSubmit
@@ -55,8 +60,9 @@ class MyPageReportViewController: UIViewController {
         myPageReportView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        setupSubmitButtonAction()
     }
-
+    
     private func setupNavigationBar() {
         addCustomNavigationBar(
             titleText: "산책 후기 신고하기",
@@ -65,11 +71,18 @@ class MyPageReportViewController: UIViewController {
             showRightCloseButton: true,
             showRightRefreshButton: false
         )
-        navigationItem.rightBarButtonItem?.action = #selector(dismissViewController)
-        navigationItem.rightBarButtonItem?.target = self
+        let closeBarButtonItem = UIBarButtonItem(
+            image: .deleteButton,
+            style: .plain,
+            target: self,
+            action: #selector(dismissViewController)
+        )
+        closeBarButtonItem.tintColor = .mainBlack
+        navigationItem.rightBarButtonItem = closeBarButtonItem
+        
     }
     
     @objc private func dismissViewController() {
-        self.dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
 }
