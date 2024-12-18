@@ -60,12 +60,11 @@ extension UIViewController {
                 make.height.width.equalTo(40)
                 make.leading.equalToSuperview().offset(20)
             }
-            
-            // Title 레이블 위치 조정
-            titleLabel.snp.makeConstraints { make in
-                make.centerY.equalToSuperview()
-                make.centerX.equalToSuperview()
-            }
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.centerX.equalToSuperview()
         }
 
         // Right button 설정
@@ -74,6 +73,7 @@ extension UIViewController {
                 let button = UIButton()
                 button.setImage(.deleteButton, for: .normal)
                 button.tintColor = .mainBlack
+                button.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(closeBarButton)
@@ -106,5 +106,9 @@ extension UIViewController {
 
     @objc private func popViewController() {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func dismissViewController() {
+        self.dismiss(animated: true, completion: nil)
     }
 }

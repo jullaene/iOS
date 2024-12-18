@@ -28,6 +28,7 @@ class ProfileFrameView: UIView {
         label.textColor = UIColor.gray400
         label.font = UIFont(name: "Pretendard-Medium", size: 12)
         label.textAlignment = .center
+        label.isUserInteractionEnabled = true
         return label
     }()
     
@@ -41,6 +42,7 @@ class ProfileFrameView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
+        setupGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -69,7 +71,7 @@ class ProfileFrameView: UIView {
         profileImageView.snp.makeConstraints { make in
             make.leading.top.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(46)
+            make.width.height.equalTo(44)
         }
         
         reviewerIdLabel.snp.makeConstraints { make in
@@ -95,5 +97,21 @@ class ProfileFrameView: UIView {
             make.width.equalTo(reportLabel)
             make.height.equalTo(0.5)
         }
+    }
+    
+    // MARK: - Gesture Setup
+    private func setupGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(reportLabelTapped))
+        reportLabel.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func reportLabelTapped() {
+        guard let topViewController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+            print("NavigationController not found")
+            return
+        }
+        
+        let reportVC = MyPageReportViewController()
+        topViewController.pushViewController(reportVC, animated: true)
     }
 }
