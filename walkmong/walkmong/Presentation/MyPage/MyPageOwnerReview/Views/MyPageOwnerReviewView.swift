@@ -52,58 +52,19 @@ class MyPageOwnerReviewView: UIView {
         }
         
         dogFilterStackView.snp.makeConstraints { make in
-            make.leading.equalTo(latestFilterButton.snp.trailing).offset(16)
+            make.leading.equalTo(latestFilterButton.snp.trailing).offset(8)
             make.centerY.equalToSuperview()
             make.trailing.lessThanOrEqualToSuperview().offset(-20)
         }
     }
     
     private func addDogFilter(imageURL: String, name: String) {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .gray200
-        button.layer.cornerRadius = 18
-        button.clipsToBounds = true
-
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-
-        if let url = URL(string: imageURL), !imageURL.isEmpty {
-            imageView.kf.setImage(with: url)
-        } else {
-            imageView.backgroundColor = .gray300
-        }
-
-        let label = UILabel()
-        label.text = name
-        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-        label.textColor = .gray500
-
-        // 텍스트 길이 동적 계산
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
-
-        let stackView = UIStackView(arrangedSubviews: [imageView, label])
-        stackView.axis = .horizontal
-        stackView.spacing = 4
-        stackView.alignment = .center
-        stackView.distribution = .fill
-
-        button.addSubview(stackView)
-
-        stackView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.top.bottom.equalToSuperview().inset(8)
-        }
-        button.snp.makeConstraints { make in
-            make.width.greaterThanOrEqualTo(stackView.snp.width).offset(32)
-            make.height.equalTo(36)
-        }
-        imageView.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
-        }
+        let button = UIButton.createStyledButton(
+            type: .homeFilter,
+            style: .profile,
+            title: name,
+            imageUrl: imageURL
+        )
         
         dogFilterStackView.addArrangedSubview(button)
     }

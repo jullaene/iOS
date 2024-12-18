@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 extension UIButton {
     enum ButtonStyle {
@@ -26,22 +27,25 @@ extension UIButton {
         type: ButtonCategory,
         style: ButtonStyle,
         title: String,
-        profileImageName: String? = nil
+        imageUrl: String? = nil  // imageUrl를 옵셔널로 받음
     ) -> UIButton {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        if type == .customFilter {
+        switch type {
+        case .customFilter:
             configureCustomFilter(button: button, style: style, title: title)
-        } else if type == .homeFilter, profileImageName != nil {
-            configureProfileStyle(button: button, style: style, title: title, imageName: profileImageName!)
-        } else {
+        case .homeFilter:
+            if style == .profile {
+                configureProfileStyle(button: button, style: style, title: title, imageUrl: imageUrl ?? "defaultImageName")
+            }
+        default:
             let label = labelForCategory(type: type, text: title, style: style)
             button.titleLabel?.font = label.font
             button.setTitleColor(label.textColor, for: .normal)
             configureStyle(for: button, type: type, style: style)
             button.setTitle(title, for: .normal)
-
+            
             let width: CGFloat
             let height: CGFloat
             switch type {
@@ -161,30 +165,26 @@ extension UIButton {
         }
     }
     
-    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String, imageName: String) {
+    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String, imageUrl: String) {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = 4
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.isUserInteractionEnabled = false
 
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.isUserInteractionEnabled = false
-        if let image = UIImage(named: imageName) {
-            imageView.image = image
-        } else {
-            imageView.backgroundColor = .gray300
-        }
+        imageView.kf.setImage(
+            with: URL(string: imageUrl),
+            placeholder: UIImage(named: "defaultImage"),
+            options: [.transition(.fade(1)), .cacheOriginalImage]
+        )
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
 
-        let textColor: UIColor = style == .light ? .gray500 : .white
-        let label = UILabel()
-        label.text = title
-        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-        label.textColor = textColor
-        label.translatesAutoresizingMaskIntoConstraints = false
+        let textColor: UIColor = .gray500
+        let label = MainHighlightParagraphLabel(text: title, textColor: textColor)
 
         stackView.addArrangedSubview(imageView)
         stackView.addArrangedSubview(label)
@@ -198,9 +198,10 @@ extension UIButton {
 
             imageView.widthAnchor.constraint(equalToConstant: 20),
             imageView.heightAnchor.constraint(equalToConstant: 20),
+            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
         ])
 
         button.layer.cornerRadius = 18
-        button.backgroundColor = style == .light ? .gray100 : .gray600
+        button.backgroundColor = .gray100
     }
 }
