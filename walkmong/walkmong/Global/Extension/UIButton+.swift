@@ -22,19 +22,26 @@ extension UIButton {
         case customFilter
     }
     
-    static func createStyledButton(type: ButtonCategory, style: ButtonStyle, title: String) -> UIButton {
+    static func createStyledButton(
+        type: ButtonCategory,
+        style: ButtonStyle,
+        title: String,
+        profileImageName: String? = nil
+    ) -> UIButton {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         if type == .customFilter {
             configureCustomFilter(button: button, style: style, title: title)
+        } else if type == .homeFilter, profileImageName != nil {
+            configureProfileStyle(button: button, style: style, title: title, imageName: profileImageName!)
         } else {
             let label = labelForCategory(type: type, text: title, style: style)
             button.titleLabel?.font = label.font
             button.setTitleColor(label.textColor, for: .normal)
             configureStyle(for: button, type: type, style: style)
             button.setTitle(title, for: .normal)
-            
+
             let width: CGFloat
             let height: CGFloat
             switch type {
@@ -44,17 +51,14 @@ extension UIButton {
             case .largeSelection:
                 width = 361
                 height = 46
-            case .smallSelection:
+            case .smallSelection, .homeFilter:
                 let textWidth = calculateTextWidth(text: title, font: label.font)
                 width = textWidth + 32
                 height = 36
-            case .homeFilter, .customFilter:
-                let textWidth = calculateTextWidth(text: title, font: label.font)
-                width = textWidth + 32
-                height = 36
+            case .customFilter:
+                return button
             }
             setButtonSizeConstraints(button: button, width: width, height: height)
-
         }
         
         return button
@@ -155,5 +159,48 @@ extension UIButton {
                 self.removeConstraint(constraint)
             }
         }
+    }
+    
+    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String, imageName: String) {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 4
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.isUserInteractionEnabled = false
+
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = false
+        if let image = UIImage(named: imageName) {
+            imageView.image = image
+        } else {
+            imageView.backgroundColor = .gray300
+        }
+
+        let textColor: UIColor = style == .light ? .gray500 : .white
+        let label = UILabel()
+        label.text = title
+        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.textColor = textColor
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        stackView.addArrangedSubview(imageView)
+        stackView.addArrangedSubview(label)
+        button.addSubview(stackView)
+
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
+            stackView.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
+            stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8),
+
+            imageView.widthAnchor.constraint(equalToConstant: 20),
+            imageView.heightAnchor.constraint(equalToConstant: 20),
+        ])
+
+        button.layer.cornerRadius = 18
+        button.backgroundColor = style == .light ? .gray100 : .gray600
     }
 }
