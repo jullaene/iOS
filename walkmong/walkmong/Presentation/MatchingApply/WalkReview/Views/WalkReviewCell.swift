@@ -13,8 +13,6 @@ class WalkReviewCell: UIView {
     private let profileFrame = ProfileFrameView()
     private let circleStackView = WalkReviewCell.createCircleStackView()
     private let photoFrame = UIView()
-    private let leftImageView = UIImage.createImageView()
-    private let rightImageView = UIImage.createImageView()
     private let reviewTextLabel = WalkReviewCell.createReviewTextLabel()
 
     override init(frame: CGRect) {
@@ -34,25 +32,20 @@ class WalkReviewCell: UIView {
     }
 
     private func setupSubviews() {
-        [profileFrame, circleStackView].forEach { roundedContainer.addSubview($0) }
+        [profileFrame, circleStackView, photoFrame, reviewTextLabel].forEach { roundedContainer.addSubview($0) }
     }
 
     func configure(with model: DogReviewModel) {
         profileFrame.configure(with: model.profileData)
+
         configureCircleStackView(with: model.circleTags)
-
-        if !model.photos.isEmpty {
-            configurePhotoFrame(with: model.photos)
-            if photoFrame.superview == nil { roundedContainer.addSubview(photoFrame) }
-        } else {
-            photoFrame.removeFromSuperview()
-        }
-
+        configurePhotoFrame(with: model.photos)
+        
         if let reviewText = model.reviewText?.trimmingCharacters(in: .whitespacesAndNewlines), !reviewText.isEmpty {
             reviewTextLabel.text = reviewText
-            if reviewTextLabel.superview == nil { roundedContainer.addSubview(reviewTextLabel) }
+            reviewTextLabel.isHidden = false
         } else {
-            reviewTextLabel.removeFromSuperview()
+            reviewTextLabel.isHidden = true
         }
 
         setupDynamicConstraints()
@@ -60,44 +53,48 @@ class WalkReviewCell: UIView {
 
     private func configureCircleStackView(with tags: [(String, String)]) {
         circleStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        tags.forEach { title, tag in
-            let circleView = CircleTagView(title: title, tag: tag)
-            circleStackView.addArrangedSubview(circleView)
-            circleView.snp.makeConstraints { $0.size.equalTo(96) }
+        if tags.isEmpty {
+            circleStackView.isHidden = true
+        } else {
+            circleStackView.isHidden = false
+            tags.forEach { title, tag in
+                let circleView = CircleTagView(title: title, tag: tag)
+                circleStackView.addArrangedSubview(circleView)
+                circleView.snp.makeConstraints { $0.size.equalTo(96) }
+            }
         }
     }
 
     private func configurePhotoFrame(with photos: [UIImage]) {
-        [leftImageView, rightImageView].forEach { $0.removeFromSuperview() }
+        photoFrame.subviews.forEach { $0.removeFromSuperview() }
 
-        // 기본 이미지 설정
-        let defaultImage = UIImage(named: "defaultImage") ?? UIImage(systemName: "photo") // 시스템 이미지를 대체로 사용 가능
+        if photos.isEmpty {
+            photoFrame.isHidden = true
+        } else {
+            photoFrame.isHidden = false
+            let defaultImage = UIImage(named: "defaultImage") ?? UIImage(systemName: "photo")
+            let firstImage = photos.indices.contains(0) ? photos[0] : defaultImage
+            let secondImage = photos.indices.contains(1) ? photos[1] : defaultImage
 
-        // 최대 2개의 이미지를 가져오되, 없으면 defaultImage로 대체
-        let firstImage = photos.indices.contains(0) ? photos[0] : defaultImage
-        let secondImage = photos.indices.contains(1) ? photos[1] : defaultImage
+            let leftImageView = UIImageView(image: firstImage)
+            let rightImageView = UIImageView(image: secondImage)
 
-        // Left Image View 설정
-        leftImageView.image = firstImage
-        photoFrame.addSubview(leftImageView)
-        leftImageView.snp.remakeConstraints {
-            $0.top.leading.bottom.equalToSuperview()
-            $0.width.equalTo(leftImageView.snp.height).priority(.high)
+            photoFrame.addSubview(leftImageView)
+            leftImageView.snp.makeConstraints {
+                $0.top.leading.bottom.equalToSuperview()
+                $0.width.equalTo(leftImageView.snp.height)
+            }
+
+            if photos.count > 1 {
+                photoFrame.addSubview(rightImageView)
+                rightImageView.snp.makeConstraints {
+                    $0.top.trailing.bottom.equalToSuperview()
+                    $0.leading.equalTo(leftImageView.snp.trailing).offset(8)
+                    $0.width.equalTo(rightImageView.snp.height)
+                }
+            }
         }
-
-        // Right Image View 설정
-        rightImageView.image = secondImage
-        photoFrame.addSubview(rightImageView)
-        rightImageView.snp.remakeConstraints {
-            $0.top.trailing.bottom.equalToSuperview()
-            $0.leading.equalTo(leftImageView.snp.trailing).offset(8)
-            $0.width.equalTo(rightImageView.snp.height).priority(.high)
-        }
-
-        // 한 개만 있을 경우 오른쪽 이미지 숨김 처리
-        rightImageView.isHidden = photos.count < 2
     }
-    
     // MARK: - Layout Constraints
     private func setupConstraints() {
         let margin: CGFloat = 20
@@ -121,30 +118,41 @@ class WalkReviewCell: UIView {
         let margin: CGFloat = 20
         let spacing: CGFloat = 16
 
-        if photoFrame.superview != nil {
+        profileFrame.snp.remakeConstraints {
+            $0.top.leading.trailing.equalToSuperview().inset(margin)
+            $0.height.equalTo(44)
+        }
+
+        if circleStackView.isHidden {
+            circleStackView.snp.removeConstraints()
+        } else {
+            circleStackView.snp.remakeConstraints {
+                $0.top.equalTo(profileFrame.snp.bottom).offset(spacing)
+                $0.leading.trailing.equalToSuperview().inset(margin)
+                $0.height.equalTo(112)
+            }
+        }
+
+        if photoFrame.isHidden {
+            photoFrame.snp.removeConstraints()
+        } else {
+            let topAnchor = circleStackView.isHidden ? profileFrame.snp.bottom : circleStackView.snp.bottom
             photoFrame.snp.remakeConstraints {
-                $0.top.equalTo(circleStackView.snp.bottom).offset(spacing)
+                $0.top.equalTo(topAnchor).offset(spacing)
                 $0.leading.trailing.equalToSuperview().inset(margin)
                 $0.height.equalTo(photoFrame.snp.width).dividedBy(2)
             }
         }
 
-        if reviewTextLabel.superview != nil {
-            reviewTextLabel.snp.remakeConstraints {
-                if photoFrame.superview != nil {
-                    $0.top.equalTo(photoFrame.snp.bottom).offset(spacing)
-                } else {
-                    $0.top.equalTo(circleStackView.snp.bottom).offset(spacing)
-                }
-                $0.leading.trailing.equalToSuperview().inset(margin)
-                $0.bottom.equalToSuperview().offset(-margin)
-            }
-        } else if photoFrame.superview != nil {
-            photoFrame.snp.makeConstraints {
-                $0.bottom.equalToSuperview().offset(-margin)
-            }
+        if reviewTextLabel.isHidden {
+            reviewTextLabel.snp.removeConstraints()
         } else {
-            circleStackView.snp.makeConstraints {
+            let topAnchor = photoFrame.isHidden
+                ? (circleStackView.isHidden ? profileFrame.snp.bottom : circleStackView.snp.bottom)
+                : photoFrame.snp.bottom
+            reviewTextLabel.snp.remakeConstraints {
+                $0.top.equalTo(topAnchor).offset(spacing)
+                $0.leading.trailing.equalToSuperview().inset(margin)
                 $0.bottom.equalToSuperview().offset(-margin)
             }
         }
