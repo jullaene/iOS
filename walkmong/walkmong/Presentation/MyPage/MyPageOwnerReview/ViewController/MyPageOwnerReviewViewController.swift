@@ -11,6 +11,7 @@ class MyPageOwnerReviewViewController: UIViewController {
     
     // MARK: - Properties
     private let ownerReviewView = MyPageOwnerReviewView()
+    private var dimView: UIView?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -38,4 +39,5 @@ class MyPageOwnerReviewViewController: UIViewController {
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
+    
 }

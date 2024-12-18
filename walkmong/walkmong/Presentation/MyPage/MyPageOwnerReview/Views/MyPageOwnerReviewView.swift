@@ -34,7 +34,7 @@ class MyPageOwnerReviewView: UIView {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        filterContainerView.addSubview(filterButton)
+        filterContainerView.addSubviews(filterButton, dogFilterStackView)
         contentView.addSubview(filterContainerView)
         setupFilterButton()
         
@@ -43,7 +43,6 @@ class MyPageOwnerReviewView: UIView {
         dogFilterStackView.axis = .horizontal
         dogFilterStackView.spacing = 8
         dogFilterStackView.alignment = .center
-        filterContainerView.addSubviews(filterButton, dogFilterStackView)
         
         addDogFilter(imageURL: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", name: "봄별이")
         addDogFilter(imageURL: "", name: "새봄이")
@@ -67,7 +66,7 @@ class MyPageOwnerReviewView: UIView {
         }
         
         filterButton.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
+            make.centerY.equalTo(filterContainerView)
             make.leading.equalToSuperview().offset(20)
         }
         
@@ -105,10 +104,8 @@ class MyPageOwnerReviewView: UIView {
             previousView = reviewCell
         }
         
-        if let lastCell = contentView.subviews.last {
-            lastCell.snp.makeConstraints { make in
-                make.bottom.equalToSuperview().offset(-20)
-            }
+        previousView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-20)
         }
     }
     
@@ -143,16 +140,20 @@ class MyPageOwnerReviewView: UIView {
         filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
     
+    // MARK: - Button Actions
     @objc private func filterButtonTapped() {
         setupDimViewIfNeeded()
         showFilterView()
     }
     
+    // MARK: - Dim View Setup
     private func setupDimViewIfNeeded() {
         if dimView == nil {
             dimView = UIView()
             configureDimView()
-            contentView.addSubview(dimView!)
+            if let window = UIApplication.shared.keyWindow {
+                window.addSubview(dimView!)
+            }
             setupDimViewConstraints()
         }
         dimView?.updateDimViewVisibility(isHidden: false)
@@ -163,13 +164,14 @@ class MyPageOwnerReviewView: UIView {
         dimView?.isHidden = true
         dimView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideFilterView)))
     }
-    
+
     private func setupDimViewConstraints() {
         dimView?.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
     
+    // MARK: - Filter View Handling
     private func showFilterView() {
         if let filterView = filterView {
             filterView.isHidden = false
@@ -188,10 +190,33 @@ class MyPageOwnerReviewView: UIView {
             self?.hideFilterView()
         }
         
-        contentView.addSubview(filterView)
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(filterView)
+        }
+        
         setupFilterViewConstraints()
         layoutIfNeeded()
+        
+        if let dimView = dimView {
+            window?.bringSubviewToFront(dimView)
+            window?.bringSubviewToFront(filterView)
+        }
+        
         filterView.animateShow(offset: 0, cornerRadius: 30)
+    }
+
+    @objc private func hideFilterView() {
+        filterView?.animateHide(withDuration: 0.4, offset: 178 + safeAreaInsets.bottom)
+        dimView?.updateDimViewVisibility(isHidden: true)
+    }
+    
+    private func setupFilterViewConstraints() {
+        guard let filterView = filterView else { return }
+        filterView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(178 + safeAreaInsets.bottom)
+            make.bottom.equalToSuperview().offset(178 + safeAreaInsets.bottom)
+        }
     }
     
     private func updateFilterButtonTitle(with title: String) {
@@ -205,24 +230,11 @@ class MyPageOwnerReviewView: UIView {
         }
     }
     
-    @objc private func hideFilterView() {
-        filterView?.animateHide(withDuration: 0.4, offset: 178 + safeAreaInsets.bottom)
-        dimView?.updateDimViewVisibility(isHidden: true)
-    }
-
-    private func setupFilterViewConstraints() {
-        guard let filterView = filterView else { return }
-        filterView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(178 + safeAreaInsets.bottom)
-            make.bottom.equalToSuperview().offset(178 + safeAreaInsets.bottom)
-        }
-    }
-    
     // MARK: - Factory Method
     private static func createFilterButton() -> UIButton {
         let button = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
         button.backgroundColor = .gray200
         return button
     }
+
 }
