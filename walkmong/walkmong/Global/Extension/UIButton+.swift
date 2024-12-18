@@ -202,6 +202,6 @@ extension UIButton {
         ])
 
         button.layer.cornerRadius = 18
-        button.backgroundColor = .gray100
+        button.backgroundColor = .gray200
     }
 }
