@@ -28,7 +28,6 @@ class MyPageOwnerReviewView: UIView {
     }
     
     private func setupView() {
-        backgroundColor = .white
         
         filterContainerView.addSubview(filterButton)
         addSubview(filterContainerView)

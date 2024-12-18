@@ -25,11 +25,13 @@ class MyPageOwnerReviewViewController: UIViewController {
                                showLeftBackButton: true,
                                showLeftCloseButton: false,
                                showRightCloseButton: false,
-                               showRightRefreshButton: false)
+                               showRightRefreshButton: false,
+                               backgroundColor: .gray100
+        )
     }
     
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .gray100
         view.addSubview(ownerReviewView)
         ownerReviewView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
