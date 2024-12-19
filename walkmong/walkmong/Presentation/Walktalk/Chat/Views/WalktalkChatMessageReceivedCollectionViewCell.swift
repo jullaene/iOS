@@ -32,6 +32,8 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
     private let messageTimeLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .right
+        label.font = UIFont(name: "Pretendard-Medium", size: 12)
+        label.textColor = .gray400
         return label
     }()
     
@@ -46,6 +48,7 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUI() {
+        messageLabel.numberOfLines = 50
         addSubviews(messageView, messageTimeLabel, profileImageView)
         messageView.addSubview(messageLabel)
         
@@ -60,7 +63,7 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
         }
         
         messageTimeLabel.snp.makeConstraints { make in
-            make.trailing.greaterThanOrEqualToSuperview()
+            make.trailing.lessThanOrEqualToSuperview()
             make.bottom.equalToSuperview()
         }
         
@@ -70,5 +73,11 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
             make.top.bottom.equalToSuperview()
         }
 
+    }
+    
+    func setContent(message: String, time: String, profileImage: UIImage){
+        profileImageView.image = .defaultProfile //FIXME: 프로필 이미지 로드 필요
+        messageTimeLabel.text = time
+        messageLabel.text = message
     }
 }

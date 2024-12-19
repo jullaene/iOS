@@ -35,7 +35,8 @@ class WalktalkChatDateHeaderView: UICollectionReusableView {
             make.height.equalTo(26)
         }
         dateLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(10)
+            make.horizontalEdges.equalToSuperview().inset(8)
+            make.centerY.equalToSuperview()
         }
         
     }
@@ -43,4 +44,7 @@ class WalktalkChatDateHeaderView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func setContent(date: String) {
+        dateLabel.text = date
+    }
 }

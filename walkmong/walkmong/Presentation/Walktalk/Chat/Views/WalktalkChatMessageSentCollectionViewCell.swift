@@ -23,6 +23,8 @@ class WalktalkChatMessageSentCollectionViewCell: UICollectionViewCell {
     private let messageTimeLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .right
+        label.font = UIFont(name: "Pretendard-Medium", size: 12)
+        label.textColor = .gray400
         return label
     }()
     
@@ -37,6 +39,7 @@ class WalktalkChatMessageSentCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUI() {
+        messageLabel.numberOfLines = 50
         addSubviews(messageView, messageTimeLabel)
         messageView.addSubview(messageLabel)
         
@@ -56,5 +59,9 @@ class WalktalkChatMessageSentCollectionViewCell: UICollectionViewCell {
             make.top.bottom.equalToSuperview()
         }
 
+    }
+    func setContent(message: String, time: String){
+        messageTimeLabel.text = time
+        messageLabel.text = message
     }
 }
