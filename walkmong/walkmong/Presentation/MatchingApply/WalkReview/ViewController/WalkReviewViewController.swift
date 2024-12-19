@@ -58,7 +58,7 @@ class WalkReviewViewController: UIViewController {
                 profileData: .init(
                     image: nil,
                     reviewerId: "멍멍사랑",
-                    walkDate: "2024년 12월 1일"
+                    walkDate: "2024년 12월 1일 산책 진행"
                 ),
                 circleTags: [("사회성", "#낯가림 있어요"), ("활동량", "#활발해요"), ("공격성", "#안짖어요")],
                 photos: [],
@@ -68,7 +68,7 @@ class WalkReviewViewController: UIViewController {
                 profileData: .init(
                     image: nil,
                     reviewerId: "강아지왕",
-                    walkDate: "2024년 11월 30일"
+                    walkDate: "2024년 11월 30일 산책 진행"
                 ),
                 circleTags: [("사회성", "#친근해요"), ("활동량", "#조용해요"), ("공격성", "#온순해요")],
                 photos: [UIImage(named: "defaultImage")].compactMap { $0 },
@@ -81,7 +81,7 @@ class WalkReviewViewController: UIViewController {
                 profileData: .init(
                     image: UIImage(named: "profile2"),
                     reviewerId: "산책광",
-                    walkDate: "2024년 11월 28일"
+                    walkDate: "2024년 11월 28일 산책 진행"
                 ),
                 circleTags: [("사회성", "#차분해요"), ("활동량", "#산책 즐겨요"), ("공격성", "#안짖어요")],
                 photos: [
@@ -94,7 +94,7 @@ class WalkReviewViewController: UIViewController {
                 profileData: .init(
                     image: nil,
                     reviewerId: "조용조용",
-                    walkDate: "2024년 11월 27일"
+                    walkDate: "2024년 11월 27일 산책 진행"
                 ),
                 circleTags: [("사회성", "#낯가림 있어요"), ("활동량", "#산책 즐겨요"), ("공격성", "#온순해요")],
                 photos: [],
@@ -104,7 +104,7 @@ class WalkReviewViewController: UIViewController {
                 profileData: .init(
                     image: nil,
                     reviewerId: "행복개님",
-                    walkDate: "2024년 11월 25일"
+                    walkDate: "2024년 11월 25일 산책 진행"
                 ),
                 circleTags: [("사회성", "#낯가림 있어요"), ("활동량", "#활발해요"), ("공격성", "#조용해요")],
                 photos: [
