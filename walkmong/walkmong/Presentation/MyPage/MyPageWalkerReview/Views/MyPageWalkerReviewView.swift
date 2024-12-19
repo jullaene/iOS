@@ -156,6 +156,8 @@ final class MyPageWalkerReviewView: UIView {
         filterView = FilterView()
         guard let filterView = filterView else { return }
         
+        filterView.filters = ["최신순", "평점 높은 순", "평점 낮은 순"]
+
         filterView.onFilterSelected = { [weak self] selectedText in
             self?.updateFilterButtonTitle(with: selectedText)
         }
@@ -166,21 +168,38 @@ final class MyPageWalkerReviewView: UIView {
         
         if let window = UIApplication.shared.keyWindow {
             window.addSubview(filterView)
+            setupFilterViewConstraints()
+            layoutIfNeeded()
+            
+            if let dimView = dimView {
+                window.bringSubviewToFront(dimView)
+                window.bringSubviewToFront(filterView)
+            }
+            
+            filterView.animateShow(offset: 0, cornerRadius: 30)
         }
-        
-        setupFilterViewConstraints()
-        layoutIfNeeded()
-        
-        if let dimView = dimView {
-            window?.bringSubviewToFront(dimView)
-            window?.bringSubviewToFront(filterView)
-        }
-        
-        filterView.animateShow(offset: 0, cornerRadius: 30)
     }
 
+    private func setupFilterViewAndHandlers() {
+        guard let filterView = filterView else { return }
+        filterView.onFilterSelected = { [weak self] selectedText in
+            self?.updateFilterButtonTitle(with: selectedText)
+        }
+        filterView.onHideRequested = { [weak self] in
+            self?.hideFilterView()
+        }
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(filterView)
+            if let dimView = dimView {
+                window.bringSubviewToFront(dimView)
+                window.bringSubviewToFront(filterView)
+            }
+        }
+        filterView.animateShow(offset: 0, cornerRadius: 30)
+    }
+    
     @objc private func hideFilterView() {
-        filterView?.animateHide(withDuration: 0.4, offset: 178 + safeAreaInsets.bottom)
+        filterView?.animateHide(withDuration: 0.4, offset: 228 + safeAreaInsets.bottom)
         dimView?.updateDimViewVisibility(isHidden: true)
     }
     
@@ -188,8 +207,8 @@ final class MyPageWalkerReviewView: UIView {
         guard let filterView = filterView else { return }
         filterView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(178 + safeAreaInsets.bottom)
-            make.bottom.equalToSuperview().offset(178 + safeAreaInsets.bottom)
+            make.height.equalTo(228 + safeAreaInsets.bottom)
+            make.bottom.equalToSuperview().offset(228 + safeAreaInsets.bottom)
         }
     }
     
