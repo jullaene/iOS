@@ -71,6 +71,7 @@ class MyPageReviewView: UIView {
         ownerReviewView.addSubviews(ownerReviewTitleLabel, participantLabel, chartView)
         
         setupChartView()
+        setupWalkerReviewTapAction()
         setupOwnerReviewTapAction()
     }
     
@@ -268,6 +269,19 @@ class MyPageReviewView: UIView {
     // MARK: - Update Methods
     func updateChartData(scores: [CGFloat]) {
         radarChart.updateScores(scores)
+    }
+    
+    private func setupWalkerReviewTapAction() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(walkerReviewTitleTapped))
+        walkerReviewTitle.addGestureRecognizer(tapGesture)
+        walkerReviewTitle.isUserInteractionEnabled = true
+    }
+
+    @objc private func walkerReviewTitleTapped() {
+        if let currentViewController = findViewController() {
+            let walkerReviewVC = MyPageWalkerReviewViewController()
+            currentViewController.navigationController?.pushViewController(walkerReviewVC, animated: true)
+        }
     }
     
     private func setupOwnerReviewTapAction() {
