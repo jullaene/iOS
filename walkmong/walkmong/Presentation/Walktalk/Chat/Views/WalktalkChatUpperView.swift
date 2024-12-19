@@ -10,7 +10,7 @@ import SnapKit
 
 class WalktalkChatUpperView: UIView {
 
-    private var currentMatchingState: MatchingState = .matching
+    private var currentMatchingState: MatchingState = .matching //FIXME: 매칭 상태 변수 분리 필요
 
     private let matchingStateFrameView: UIView = {
         let view = UIView()
