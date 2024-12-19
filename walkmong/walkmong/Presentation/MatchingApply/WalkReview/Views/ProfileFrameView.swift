@@ -38,6 +38,15 @@ class ProfileFrameView: UIView {
         return view
     }()
     
+    private let petTagLabel: CaptionLabel = {
+        let label = CaptionLabel(text: "Dog Tag", textColor: .gray600)
+        label.backgroundColor = UIColor.lightBlue
+        label.textAlignment = .center
+        label.layer.cornerRadius = 5
+        label.clipsToBounds = true
+        return label
+    }()
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,7 +66,7 @@ class ProfileFrameView: UIView {
     }
     
     private func addSubviews() {
-        [profileImageView, reviewerIdLabel, walkDateLabel, reportLabel, underlineView].forEach { addSubview($0) }
+        [profileImageView, reviewerIdLabel, walkDateLabel, reportLabel, underlineView, petTagLabel].forEach { addSubview($0) }
     }
 
     func configure(with data: DogReviewModel.ProfileData) {
@@ -96,6 +105,13 @@ class ProfileFrameView: UIView {
             make.centerX.equalTo(reportLabel)
             make.width.equalTo(reportLabel)
             make.height.equalTo(0.5)
+        }
+        
+        petTagLabel.snp.makeConstraints { make in
+            make.leading.equalTo(reviewerIdLabel.snp.trailing).offset(8)
+            make.centerY.equalTo(reviewerIdLabel)
+            make.trailing.equalTo(petTagLabel.snp.leading).offset(petTagLabel.intrinsicContentSize.width + 8)
+            make.height.equalTo(21)
         }
     }
     
