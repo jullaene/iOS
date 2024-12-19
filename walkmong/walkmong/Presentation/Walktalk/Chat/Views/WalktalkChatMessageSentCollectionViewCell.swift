@@ -9,4 +9,52 @@ import UIKit
 
 class WalktalkChatMessageSentCollectionViewCell: UICollectionViewCell {
     
+    private let messageView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .mainBlue
+        view.layer.cornerRadius = 10
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private let messageLabel = MainParagraphLabel(text: "메시지 내용")
+    
+    private let messageTimeLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .right
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = .clear
+        setUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setUI() {
+        addSubviews(messageView, messageTimeLabel)
+        messageView.addSubview(messageLabel)
+        
+        messageLabel.snp.makeConstraints { make in
+            make.verticalEdges.equalToSuperview().inset(8)
+            make.horizontalEdges.equalToSuperview().inset(11)
+        }
+        
+        messageTimeLabel.snp.makeConstraints { make in
+            make.leading.greaterThanOrEqualToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        
+        messageView.snp.makeConstraints { make in
+            make.leading.equalTo(messageTimeLabel.snp.trailing).offset(4)
+            make.trailing.equalToSuperview()
+            make.top.bottom.equalToSuperview()
+        }
+
+    }
 }

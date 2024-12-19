@@ -19,8 +19,11 @@ class WalktalkChatView: UIView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.sectionInset = UIEdgeInsets(top: 32, left: 20, bottom: 16, right: 20)
+        layout.minimumLineSpacing = 32
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .gray100
+        collectionView.register(WalktalkChatDateHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: WalktalkChatDateHeaderView.className)
         collectionView.register(WalktalkChatMessageReceivedCollectionViewCell.self, forCellWithReuseIdentifier: WalktalkChatMessageReceivedCollectionViewCell.className)
         collectionView.register(WalktalkChatMessageSentCollectionViewCell.self, forCellWithReuseIdentifier: WalktalkChatMessageSentCollectionViewCell.className)
         return collectionView
@@ -63,6 +66,7 @@ class WalktalkChatView: UIView {
         addSubViews()
         setConstraints()
         addButtonTargets()
+        configureCollectionView()
     }
     
     required init?(coder: NSCoder) {
@@ -105,9 +109,14 @@ class WalktalkChatView: UIView {
         }
     }
     
-    private func addButtonTargets(){
+    private func addButtonTargets() {
         keyboardSendButton.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
         keyboardPhotoButton.addTarget(self, action: #selector(photoButtonTapped), for: .touchUpInside)
+    }
+    
+    private func configureCollectionView() {
+        walktalkChatCollectionView.delegate = self
+        walktalkChatCollectionView.dataSource = self
     }
     
     @objc private func sendButtonTapped(){
@@ -140,3 +149,31 @@ class WalktalkChatView: UIView {
     }
 }
 
+extension WalktalkChatView: UICollectionViewDelegate {
+    
+}
+
+extension WalktalkChatView: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        <#code#>
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        <#code#>
+    }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let supplementaryView = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: WalktalkChatDateHeaderView.className,
+                for: indexPath
+            ) as! WalktalkChatDateHeaderView
+            //TODO: 헤더 뷰 내용 채우기
+            return supplementaryView
+        }
+    }
+}
