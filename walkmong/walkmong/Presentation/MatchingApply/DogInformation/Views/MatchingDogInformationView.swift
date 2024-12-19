@@ -184,19 +184,11 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.height.equalTo(78)
         }
         
-        walkTalkButton.removeConstraints(applyWalkButton.constraints)
-        applyWalkButton.removeConstraints(applyWalkButton.constraints)
-        
         // 워크톡 버튼
-        buttonFrame.addSubview(walkTalkButton)
-        walkTalkButton.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.leading.equalTo(buttonFrame.snp.leading).offset(20)
-            make.width.equalTo(93)
-            make.height.equalTo(54)
-        }
+        setupWalkTalkButton()
 
         // 산책 지원하기 버튼
+        applyWalkButton.removeConstraints(applyWalkButton.constraints)
         buttonFrame.addSubview(applyWalkButton)
         applyWalkButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -206,8 +198,36 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         }
 
         // 버튼 라벨 설정
-        setupButtonLabel(walkTalkButton, text: "워크톡", textColor: UIColor.gray400)
         setupButtonLabel(applyWalkButton, text: "산책 지원하기", textColor: UIColor.gray100)
+    }
+    
+    private func setupWalkTalkButton() {
+        buttonFrame.addSubview(walkTalkButton)
+        walkTalkButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(buttonFrame.snp.leading).offset(20)
+            make.width.equalTo(93)
+            make.height.equalTo(54)
+        }
+
+        let label = UILabel()
+        label.text = "워크톡"
+        label.textColor = UIColor.gray400
+        label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        
+        let icon = UIImageView()
+        icon.image = UIImage(named: "messageIcon")
+        icon.contentMode = .scaleAspectFit
+
+        let stackView = UIStackView(arrangedSubviews: [label, icon])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 8
+        
+        walkTalkButton.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
 
     private func setupButtonLabel(_ button: UIView, text: String, textColor: UIColor) {
