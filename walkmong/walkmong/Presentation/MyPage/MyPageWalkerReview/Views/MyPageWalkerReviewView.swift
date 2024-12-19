@@ -34,7 +34,7 @@ final class MyPageWalkerReviewView: UIView {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        filterContainerView.addSubview(filterButton)
+        filterContainerView.addSubviews(filterButton, dogFilterStackView)
         contentView.addSubview(filterContainerView)
         setupFilterButton()
         
@@ -68,6 +68,12 @@ final class MyPageWalkerReviewView: UIView {
         filterButton.snp.makeConstraints { make in
             make.centerY.equalTo(filterContainerView)
             make.leading.equalToSuperview().offset(20)
+        }
+        
+        dogFilterStackView.snp.makeConstraints { make in
+            make.leading.equalTo(filterButton.snp.trailing).offset(8)
+            make.centerY.equalTo(filterContainerView)
+            make.trailing.lessThanOrEqualToSuperview().offset(-20)
         }
     }
     
