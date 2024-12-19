@@ -164,44 +164,48 @@ extension UIButton {
         }
     }
     
-    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String, imageUrl: String) {
+    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String, imageUrl: String?) {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = 4
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.kf.setImage(
-            with: URL(string: imageUrl),
-            placeholder: UIImage(named: "defaultImage"),
-            options: [.transition(.fade(1)), .cacheOriginalImage]
-        )
-        imageView.layer.cornerRadius = 10
-        imageView.clipsToBounds = true
-        
-        let textColor: UIColor = .gray500
+
+        if let imageUrl = imageUrl, !imageUrl.isEmpty {
+            let imageView = UIImageView()
+            imageView.contentMode = .scaleAspectFill
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.kf.setImage(
+                with: URL(string: imageUrl),
+                placeholder: UIImage(named: "defaultImage"),
+                options: [.transition(.fade(1)), .cacheOriginalImage]
+            )
+            imageView.layer.cornerRadius = 10
+            imageView.clipsToBounds = true
+
+            stackView.addArrangedSubview(imageView)
+            NSLayoutConstraint.activate([
+                imageView.widthAnchor.constraint(equalToConstant: 20),
+                imageView.heightAnchor.constraint(equalToConstant: 20),
+                imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
+            ])
+        }
+
+        let textColor: UIColor = style == .dark ? .white : .gray500
         let label = MainHighlightParagraphLabel(text: title, textColor: textColor)
-        
-        stackView.addArrangedSubview(imageView)
         stackView.addArrangedSubview(label)
+
         button.addSubview(stackView)
-        
+
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
             stackView.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8),
-            
-            imageView.widthAnchor.constraint(equalToConstant: 20),
-            imageView.heightAnchor.constraint(equalToConstant: 20),
-            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
+            stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
         ])
-        
+
         button.layer.cornerRadius = 18
-        button.backgroundColor = .gray200
+        button.backgroundColor = style == .light ? .gray200 : .gray600
     }
     
     private static func configureHomeFilter(button: UIButton, style: ButtonStyle, title: String) {
