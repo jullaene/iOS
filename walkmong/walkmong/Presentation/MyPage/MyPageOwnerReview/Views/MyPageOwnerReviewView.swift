@@ -84,6 +84,7 @@ class MyPageOwnerReviewView: UIView {
             title: name,
             imageUrl: imageURL
         )
+        button.backgroundColor = .gray200
         
         dogFilterStackView.addArrangedSubview(button)
     }

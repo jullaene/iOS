@@ -27,10 +27,11 @@ extension UIButton {
         type: ButtonCategory,
         style: ButtonStyle,
         title: String,
-        imageUrl: String? = nil  // imageUrl를 옵셔널로 받음
+        imageUrl: String? = nil
     ) -> UIButton {
-        let button = UIButton(type: .system)
+        let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.clipsToBounds = true
         
         switch type {
         case .customFilter:
@@ -38,6 +39,8 @@ extension UIButton {
         case .homeFilter:
             if style == .profile {
                 configureProfileStyle(button: button, style: style, title: title, imageUrl: imageUrl ?? "defaultImageName")
+            } else {
+                configureHomeFilter(button: button, style: style, title: title)
             }
         default:
             let label = labelForCategory(type: type, text: title, style: style)
@@ -45,33 +48,29 @@ extension UIButton {
             button.setTitleColor(label.textColor, for: .normal)
             configureStyle(for: button, type: type, style: style)
             button.setTitle(title, for: .normal)
-            
-            let width: CGFloat
-            let height: CGFloat
-            switch type {
-            case .large:
-                width = 363
-                height = 54
-            case .largeSelection:
-                width = 361
-                height = 46
-            case .smallSelection, .homeFilter:
-                let textWidth = calculateTextWidth(text: title, font: label.font)
-                width = textWidth + 32
-                height = 36
-            case .customFilter:
-                return button
-            }
-            setButtonSizeConstraints(button: button, width: width, height: height)
+            let size = buttonSizeForType(type: type, title: title, label: label)
+            setButtonSizeConstraints(button: button, width: size.width, height: size.height)
         }
+        configureStyle(for: button, type: type, style: style)
         
         return button
     }
     
+    
+    private static func buttonSizeForType(type: ButtonCategory, title: String, label: BaseTitleLabel) -> CGSize {
+        switch type {
+        case .homeFilter:
+            let textWidth = calculateTextWidth(text: title, font: label.font)
+            return CGSize(width: textWidth + 32, height: 36)
+        default:
+            return CGSize(width: label.frame.size.width, height: label.frame.size.height)
+        }
+    }
+    
     private static func labelForCategory(type: ButtonCategory, text: String, style: ButtonStyle) -> BaseTitleLabel {
         let textColor: UIColor = style == .light
-            ? (type == .large ? .white : .gray500)
-            : (type == .large ? .gray100 : .white)
+        ? (type == .large ? .white : .gray500)
+        : (type == .large ? .gray100 : .white)
         
         switch type {
         case .large, .homeFilter, .customFilter:
@@ -106,7 +105,7 @@ extension UIButton {
             button.backgroundColor = style == .light ? .gray100 : .mainBlue
         case .homeFilter:
             button.layer.cornerRadius = 18
-            button.backgroundColor = style == .light ? .gray100 : .gray600
+            button.backgroundColor = style == .dark ? .gray600 : .gray100
         case .customFilter:
             break
         }
@@ -119,21 +118,21 @@ extension UIButton {
         stackView.spacing = 4
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.isUserInteractionEnabled = false
-
+        
         let textColor: UIColor = style == .light ? .gray500 : .white
         let label = MainHighlightParagraphLabel(text: title, textColor: textColor)
         label.isUserInteractionEnabled = false
-
+        
         let icon = UIImageView()
         icon.image = UIImage(named: style == .light ? "buttonArrowLight" : "buttonArrowDark")
         icon.translatesAutoresizingMaskIntoConstraints = false
         icon.isUserInteractionEnabled = false
-
+        
         stackView.addArrangedSubview(label)
         stackView.addArrangedSubview(icon)
-
+        
         button.addSubview(stackView)
-
+        
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
@@ -141,7 +140,7 @@ extension UIButton {
             stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8),
             icon.centerYAnchor.constraint(equalTo: label.centerYAnchor)
         ])
-
+        
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray100 : .gray600
     }
@@ -171,7 +170,7 @@ extension UIButton {
         stackView.alignment = .center
         stackView.spacing = 4
         stackView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -182,26 +181,45 @@ extension UIButton {
         )
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
-
+        
         let textColor: UIColor = .gray500
         let label = MainHighlightParagraphLabel(text: title, textColor: textColor)
-
+        
         stackView.addArrangedSubview(imageView)
         stackView.addArrangedSubview(label)
         button.addSubview(stackView)
-
+        
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
             stackView.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
             stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8),
-
+            
             imageView.widthAnchor.constraint(equalToConstant: 20),
             imageView.heightAnchor.constraint(equalToConstant: 20),
             imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
         ])
-
+        
         button.layer.cornerRadius = 18
         button.backgroundColor = .gray200
+    }
+    
+    private static func configureHomeFilter(button: UIButton, style: ButtonStyle, title: String) {
+        let label = labelForCategory(type: .homeFilter, text: title, style: style)
+        button.titleLabel?.font = label.font
+        button.setTitleColor(label.textColor, for: .normal)
+        button.setTitle(title, for: .normal)
+
+        if title.isEmpty {
+            let icon = UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate)
+            button.setImage(icon, for: .normal)
+            button.tintColor = .gray500
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        } else {
+            button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        }
+
+        button.backgroundColor = style == .light ? .gray100 : .gray600
     }
 }
