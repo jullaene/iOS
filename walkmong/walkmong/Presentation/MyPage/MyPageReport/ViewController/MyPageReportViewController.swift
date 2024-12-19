@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class MyPageReportViewController: UIViewController {
+class MyPageReportViewController: UIViewController, UINavigationControllerDelegate {
     private lazy var myPageReportView = MyPageReportView()
     
     override func viewDidLoad() {
@@ -19,6 +19,11 @@ class MyPageReportViewController: UIViewController {
         setupReasonButtonActions()
         configureTextView()
         checkSubmitButtonState()
+        navigationController?.delegate = self
+    }
+    
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        navigationController.interactivePopGestureRecognizer?.isEnabled = (viewController == self) ? false : true
     }
     
     private func setupSubmitButtonAction() {

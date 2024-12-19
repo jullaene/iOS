@@ -73,7 +73,7 @@ extension UIViewController {
                 let button = UIButton()
                 button.setImage(.deleteButton, for: .normal)
                 button.tintColor = .mainBlack
-                button.addTarget(self, action: #selector(dismissViewController), for: .touchUpInside)
+                button.addTarget(self, action: #selector(self.popViewController), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(closeBarButton)
