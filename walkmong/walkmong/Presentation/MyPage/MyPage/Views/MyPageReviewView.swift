@@ -11,8 +11,8 @@ import SnapKit
 class MyPageReviewView: UIView {
     
     // MARK: - Properties
-    private let walkerReviewTitle = ReviewTitleView(title: "받은 산책자 후기", count: 5)
-    private let ownerReviewTitle = ReviewTitleView(title: "받은 반려인 후기", count: 3)
+    private let walkerReviewTitle = ReviewTitleView(title: "받은 산책자 후기", count: 5, showArrow: true)
+    private let ownerReviewTitle = ReviewTitleView(title: "받은 반려인 후기")
     
     // User Rating
     private let userRatingView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
@@ -311,20 +311,22 @@ class MyPageReviewView: UIView {
 
 class ReviewTitleView: UIView {
     private let titleLabel: MiddleTitleLabel
-    private let countLabel: MainHighlightParagraphLabel = {
-        let label = MainHighlightParagraphLabel(text: "0개", textColor: .gray600)
-        return label
-    }()
-    private let arrowImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "MyPageReviewArrow"))
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
+    private var countLabel: MainHighlightParagraphLabel?
+    private var arrowImageView: UIImageView?
     
-    init(title: String, count: Int) {
+    init(title: String, count: Int? = nil, showArrow: Bool = false) {
         self.titleLabel = MiddleTitleLabel(text: title)
         super.init(frame: .zero)
-        countLabel.text = "\(count)개"
+        
+        if let count = count {
+            countLabel = MainHighlightParagraphLabel(text: "\(count)개", textColor: .gray600)
+        }
+        
+        if showArrow {
+            arrowImageView = UIImageView(image: UIImage(named: "MyPageReviewArrow"))
+            arrowImageView?.contentMode = .scaleAspectFit
+        }
+        
         setupView()
     }
     
@@ -334,8 +336,14 @@ class ReviewTitleView: UIView {
     
     private func setupView() {
         addSubview(titleLabel)
-        addSubview(countLabel)
-        addSubview(arrowImageView)
+        
+        if let countLabel = countLabel {
+            addSubview(countLabel)
+        }
+        
+        if let arrowImageView = arrowImageView {
+            addSubview(arrowImageView)
+        }
         
         setupConstraints()
     }
@@ -346,12 +354,12 @@ class ReviewTitleView: UIView {
             make.centerY.equalToSuperview()
         }
         
-        countLabel.snp.makeConstraints { make in
+        countLabel?.snp.makeConstraints { make in
             make.leading.equalTo(titleLabel.snp.trailing).offset(4)
             make.centerY.equalToSuperview()
         }
         
-        arrowImageView.snp.makeConstraints { make in
+        arrowImageView?.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-4)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(20)
