@@ -13,6 +13,7 @@ class WalktalkChatViewController: UIViewController {
     private let walktalkChatView = WalktalkChatView()
     private let walktalkChatUpperView = WalktalkChatUpperView()
     private let walktalkChatContainerView = UIView()
+    private let currentMatchingState: MatchingState = .matching
 
     private var containerBottomConstraint: Constraint?
 
@@ -32,8 +33,6 @@ class WalktalkChatViewController: UIViewController {
     private func setUI() {
         view.addSubviews(walktalkChatContainerView, walktalkChatUpperView)
         walktalkChatContainerView.addSubview(walktalkChatView)
-        dismissKeyboardOnTap()
-
         walktalkChatUpperView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
             make.horizontalEdges.equalToSuperview()
@@ -41,7 +40,7 @@ class WalktalkChatViewController: UIViewController {
 
         walktalkChatContainerView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(walktalkChatUpperView.snp.bottom)
+            make.top.equalTo(walktalkChatUpperView.snp.top).offset(currentMatchingState == .ended || currentMatchingState == .cancelled ? 88 - 30 : 149 - 30)
             containerBottomConstraint = make.bottom.equalToSuperview().offset(-38).constraint
         }
 
@@ -71,6 +70,7 @@ class WalktalkChatViewController: UIViewController {
 
         // 컨테이너 뷰의 bottom 제약 조건 업데이트
         containerBottomConstraint?.update(offset: -keyboardHeight)
+        walktalkChatView.scrollToBottom()
 
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()

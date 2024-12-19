@@ -18,7 +18,13 @@ class WalktalkChatMessageSentCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private let messageLabel = MainParagraphLabel(text: "메시지 내용")
+    private let messageLabel: MainParagraphLabel = {
+        let label = MainParagraphLabel(text: "메시지 내용")
+        label.numberOfLines = 0
+        label.lineBreakStrategy = .hangulWordPriority
+        label.lineBreakMode = .byWordWrapping
+        return label
+    }()
     
     private let messageTimeLabel: UILabel = {
         let label = UILabel()
@@ -63,5 +69,11 @@ class WalktalkChatMessageSentCollectionViewCell: UICollectionViewCell {
     func setContent(message: String, time: String){
         messageTimeLabel.text = time
         messageLabel.text = message
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        let targetSize = CGSize(width: layoutAttributes.frame.width, height: 0)
+        layoutAttributes.frame.size = contentView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        return layoutAttributes
     }
 }

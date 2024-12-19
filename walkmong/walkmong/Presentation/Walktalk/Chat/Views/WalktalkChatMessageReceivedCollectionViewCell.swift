@@ -27,7 +27,13 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private let messageLabel = MainParagraphLabel(text: "메시지 내용")
+    private let messageLabel: MainParagraphLabel = {
+        let label = MainParagraphLabel(text: "메시지 내용")
+        label.numberOfLines = 0
+        label.lineBreakStrategy = .hangulWordPriority
+        label.lineBreakMode = .byWordWrapping
+        return label
+    }()
     
     private let messageTimeLabel: UILabel = {
         let label = UILabel()
@@ -48,7 +54,6 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUI() {
-        messageLabel.numberOfLines = 50
         addSubviews(messageView, messageTimeLabel, profileImageView)
         messageView.addSubview(messageLabel)
         
@@ -58,26 +63,33 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
             make.top.equalToSuperview()
         }
         messageLabel.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(8)
+            make.top.equalToSuperview().inset(8)
             make.horizontalEdges.equalToSuperview().inset(11)
         }
         
         messageTimeLabel.snp.makeConstraints { make in
             make.trailing.lessThanOrEqualToSuperview()
-            make.bottom.equalToSuperview()
+            make.bottom.equalTo(messageView.snp.bottom)
         }
         
         messageView.snp.makeConstraints { make in
             make.trailing.equalTo(messageTimeLabel.snp.leading).offset(-4)
             make.leading.equalTo(profileImageView.snp.trailing).offset(8)
-            make.top.bottom.equalToSuperview()
+            make.top.equalToSuperview()
+            make.bottom.equalTo(messageLabel.snp.bottom).offset(8)
         }
 
     }
     
-    func setContent(message: String, time: String, profileImage: UIImage){
-        profileImageView.image = .defaultProfile //FIXME: 프로필 이미지 로드 필요
-        messageTimeLabel.text = time
+    func setContent(message: String, time: String, profileImage: UIImage?) {
         messageLabel.text = message
+        messageTimeLabel.text = time
+        profileImageView.image = profileImage ?? .defaultProfile
+    }
+    
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        let targetSize = CGSize(width: layoutAttributes.frame.width, height: 0)
+        layoutAttributes.frame.size = contentView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        return layoutAttributes
     }
 }

@@ -24,10 +24,10 @@ class WalktalkChatView: UIView {
             WalkTalkChatMessageModel(type: "message", text: "좋아요, 몇 시에 갈까요?", id: "0", date: "2024-12-21T09:15:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "오후 2시에 만나요!", id: "1", date: "2024-12-21T10:00:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "네, 알겠습니다.", id: "0", date: "2024-12-21T10:15:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "감사합니다.", id: "1", date: "2024-12-21T10:20:00.000000"),
+            WalkTalkChatMessageModel(type: "message", text: "감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.", id: "1", date: "2024-12-21T10:20:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "안녕하세요!", id: "0", date: "2024-12-19T10:20:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "반갑습니다!", id: "1", date: "2024-12-19T11:00:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "산책 언제 가능하세요?", id: "0", date: "2024-12-20T14:30:00.000000"),
+            WalkTalkChatMessageModel(type: "message", text: "산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?", id: "0", date: "2024-12-20T14:30:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "내일 가능해요!", id: "1", date: "2024-12-20T15:45:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "어디서 만날까요?", id: "0", date: "2024-12-20T16:30:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "카페에서 만나요!", id: "1", date: "2024-12-20T17:10:00.000000")
@@ -99,7 +99,7 @@ class WalktalkChatView: UIView {
     
     private func setConstraints() {
         walktalkChatCollectionView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalToSuperview().inset(30)
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalTo(keyboardFrameView.snp.top)
         }
@@ -163,6 +163,14 @@ class WalktalkChatView: UIView {
         keyboardFrameHeightConstraint?.update(offset: max(newFrameHeight, 58))
         layoutIfNeeded()
     }
+    func scrollToBottom() {
+        let contentHeight = walktalkChatCollectionView.contentSize.height
+        let collectionViewHeight = walktalkChatCollectionView.bounds.size.height
+        let yOffset = max(0, contentHeight - collectionViewHeight + walktalkChatCollectionView.contentInset.bottom)
+
+        walktalkChatCollectionView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
+    }
+
 }
 
 extension WalktalkChatView: UICollectionViewDelegate {
@@ -172,12 +180,14 @@ extension WalktalkChatView: UICollectionViewDelegate {
 extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
     // 셀 크기 설정
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 50)
+        let estimatedFrame = sectionedMessages[indexPath.section].messages[indexPath.row].text.getEstimatedFrame(with: UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16))
+        return CGSize(width: collectionView.bounds.width, height: estimatedFrame.height + 16)
     }
+
 
     // 섹션 여백 설정
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: 0, bottom: 16, right: 0)
+        return UIEdgeInsets(top: section == 0 ? 24 : 16 , left: 0, bottom: 16, right: 0)
     }
 
     // 셀 간 간격 설정
