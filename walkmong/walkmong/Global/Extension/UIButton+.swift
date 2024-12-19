@@ -48,7 +48,14 @@ extension UIButton {
             configureStyle(for: button, type: type, style: style)
             button.setTitle(title, for: .normal)
         }
+        
         configureStyle(for: button, type: type, style: style)
+
+        if type == .smallSelection {
+            let textWidth = calculateTextWidth(text: title, font: button.titleLabel!.font)
+            let buttonWidth = textWidth + 32
+            setButtonSizeConstraints(button: button, width: buttonWidth, height: 36)
+        }
         
         return button
     }
