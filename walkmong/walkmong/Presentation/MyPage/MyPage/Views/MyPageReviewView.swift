@@ -71,6 +71,7 @@ class MyPageReviewView: UIView {
         ownerReviewView.addSubviews(ownerReviewTitleLabel, participantLabel, chartView)
         
         setupChartView()
+        setupOwnerReviewTapAction()
     }
     
     private func setupConstraints() {
@@ -233,7 +234,7 @@ class MyPageReviewView: UIView {
             make.centerY.equalToSuperview()
         }
     }
-
+    
     // 커스텀 UIView 클래스 정의
     class RoundedView: UIView {
         private let corners: UIRectCorner
@@ -252,7 +253,7 @@ class MyPageReviewView: UIView {
         
         override func layoutSubviews() {
             super.layoutSubviews()
-        
+            
             let path = UIBezierPath(
                 roundedRect: bounds,
                 byRoundingCorners: corners,
@@ -267,6 +268,30 @@ class MyPageReviewView: UIView {
     // MARK: - Update Methods
     func updateChartData(scores: [CGFloat]) {
         radarChart.updateScores(scores)
+    }
+    
+    private func setupOwnerReviewTapAction() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ownerReviewTitleTapped))
+        ownerReviewTitle.addGestureRecognizer(tapGesture)
+        ownerReviewTitle.isUserInteractionEnabled = true
+    }
+    
+    @objc private func ownerReviewTitleTapped() {
+        if let currentViewController = findViewController() {
+            let ownerReviewVC = MyPageOwnerReviewViewController()
+            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
+        }
+    }
+    
+    private func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while responder != nil {
+            if let viewController = responder as? UIViewController {
+                return viewController
+            }
+            responder = responder?.next
+        }
+        return nil
     }
 }
 
