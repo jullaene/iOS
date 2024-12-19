@@ -80,21 +80,21 @@ class WalkReviewCell: UIView {
             let rightImageView = UIImageView(image: secondImage)
 
             photoFrame.addSubview(leftImageView)
+            photoFrame.addSubview(rightImageView)
+
             leftImageView.snp.makeConstraints {
                 $0.top.leading.bottom.equalToSuperview()
-                $0.width.equalTo(leftImageView.snp.height)
+                $0.width.equalTo(photoFrame.snp.width).multipliedBy(0.5).offset(-4)
             }
 
-            if photos.count > 1 {
-                photoFrame.addSubview(rightImageView)
-                rightImageView.snp.makeConstraints {
-                    $0.top.trailing.bottom.equalToSuperview()
-                    $0.leading.equalTo(leftImageView.snp.trailing).offset(8)
-                    $0.width.equalTo(rightImageView.snp.height)
-                }
+            rightImageView.snp.makeConstraints {
+                $0.top.trailing.bottom.equalToSuperview()
+                $0.leading.equalTo(leftImageView.snp.trailing).offset(8)
+                $0.width.equalTo(photoFrame.snp.width).multipliedBy(0.5).offset(-4)
             }
         }
     }
+    
     // MARK: - Layout Constraints
     private func setupConstraints() {
         let margin: CGFloat = 20
