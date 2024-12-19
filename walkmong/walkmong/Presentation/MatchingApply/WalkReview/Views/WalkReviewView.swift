@@ -105,7 +105,6 @@ class WalkReviewView: UIView {
             cell.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview().inset(Layout.cellMargin)
                 make.top.equalTo(previousView.snp.bottom).offset(previousView === filterButton ? Layout.firstCellSpacing : Layout.cellSpacing)
-                make.height.equalTo(cell.totalHeight)
             }
             previousView = cell
         }
