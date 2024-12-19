@@ -23,7 +23,7 @@ final class MyPageWalkerReviewViewController: UIViewController {
 
     private func setupNavigationBar() {
         addCustomNavigationBar(
-            titleText: "산책 후기",
+            titleText: "받은 산책자 후기",
             showLeftBackButton: true,
             showLeftCloseButton: false,
             showRightCloseButton: false,
