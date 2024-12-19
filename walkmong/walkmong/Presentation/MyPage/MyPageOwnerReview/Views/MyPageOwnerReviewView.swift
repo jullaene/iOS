@@ -44,8 +44,8 @@ class MyPageOwnerReviewView: UIView {
         dogFilterStackView.spacing = 8
         dogFilterStackView.alignment = .center
         
-        addDogFilter(imageURL: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", name: "봄별이")
-        addDogFilter(imageURL: "", name: "새봄이")
+        addDogFilter(name: "봄별이")
+        addDogFilter(name: "새봄이")
         
         setupDummyReviews()
     }
@@ -77,12 +77,11 @@ class MyPageOwnerReviewView: UIView {
         }
     }
     
-    private func addDogFilter(imageURL: String, name: String) {
+    private func addDogFilter(name: String) {
         let button = UIButton.createStyledButton(
             type: .homeFilter,
             style: .profile,
-            title: name,
-            imageUrl: imageURL
+            title: name
         )
         button.backgroundColor = .gray200
         

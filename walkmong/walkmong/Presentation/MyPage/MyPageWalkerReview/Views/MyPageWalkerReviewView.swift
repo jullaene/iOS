@@ -16,6 +16,7 @@ final class MyPageWalkerReviewView: UIView {
     
     private let filterContainerView = UIView()
     private var filterButton: UIButton = MyPageWalkerReviewView.createFilterButton()
+    private let dogFilterStackView = UIStackView()
     private var filterView: FilterView?
     private var dimView: UIView?
     
@@ -39,8 +40,16 @@ final class MyPageWalkerReviewView: UIView {
         
         filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         
+        dogFilterStackView.axis = .horizontal
+        dogFilterStackView.spacing = 8
+        dogFilterStackView.alignment = .center
+        
+        addDogFilter(name: "봄별이")
+        addDogFilter(name: "새봄이")
+        
         setupDummyReviews()
     }
+    
     private func setupConstraints() {
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -60,6 +69,17 @@ final class MyPageWalkerReviewView: UIView {
             make.centerY.equalTo(filterContainerView)
             make.leading.equalToSuperview().offset(20)
         }
+    }
+    
+    private func addDogFilter(name: String) {
+        let button = UIButton.createStyledButton(
+            type: .homeFilter,
+            style: .profile,
+            title: name
+        )
+        button.backgroundColor = .gray200
+        
+        dogFilterStackView.addArrangedSubview(button)
     }
     
     private func addReviewCells(reviews: [DogReviewModel]) {

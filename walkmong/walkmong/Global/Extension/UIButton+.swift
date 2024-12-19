@@ -26,8 +26,7 @@ extension UIButton {
     static func createStyledButton(
         type: ButtonCategory,
         style: ButtonStyle,
-        title: String,
-        imageUrl: String? = nil
+        title: String
     ) -> UIButton {
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -38,7 +37,7 @@ extension UIButton {
             configureCustomFilter(button: button, style: style, title: title)
         case .homeFilter:
             if style == .profile {
-                configureProfileStyle(button: button, style: style, title: title, imageUrl: imageUrl ?? "defaultImageName")
+                configureProfileStyle(button: button, style: style, title: title)
             } else {
                 configureHomeFilter(button: button, style: style, title: title)
             }
@@ -164,44 +163,17 @@ extension UIButton {
         }
     }
     
-    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String, imageUrl: String?) {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.spacing = 4
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-
-        if let imageUrl = imageUrl, !imageUrl.isEmpty {
-            let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFill
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            imageView.kf.setImage(
-                with: URL(string: imageUrl),
-                placeholder: UIImage(named: "defaultImage"),
-                options: [.transition(.fade(1)), .cacheOriginalImage]
-            )
-            imageView.layer.cornerRadius = 10
-            imageView.clipsToBounds = true
-
-            stackView.addArrangedSubview(imageView)
-            NSLayoutConstraint.activate([
-                imageView.widthAnchor.constraint(equalToConstant: 20),
-                imageView.heightAnchor.constraint(equalToConstant: 20),
-                imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
-            ])
-        }
-
+    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String) {
         let textColor: UIColor = style == .dark ? .white : .gray500
         let label = MainHighlightParagraphLabel(text: title, textColor: textColor)
-        stackView.addArrangedSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
 
-        button.addSubview(stackView)
-
+        button.addSubview(label)
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            stackView.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
+            label.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
+            label.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
+            label.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
+            label.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
         ])
 
         button.layer.cornerRadius = 18
