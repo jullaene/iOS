@@ -298,7 +298,7 @@ class MatchingFilterView: UIView {
         }
 
         instructionLabel.snp.makeConstraints { make in
-            make.top.equalTo(breedLabel.snp.bottom).offset(20)
+            make.top.equalTo(breedLabel.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(22)
         }
