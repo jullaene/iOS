@@ -188,27 +188,34 @@ extension UIButton {
     }
     
     private static func configureHomeFilter(button: UIButton, style: ButtonStyle, title: String) {
-        let label = labelForCategory(type: .homeFilter, text: title, style: style)
-        button.titleLabel?.font = label.font
-        button.setTitleColor(label.textColor, for: .normal)
-        button.setTitle(title, for: .normal)
+        button.subviews.forEach { subview in
+            if subview is UILabel {
+                subview.removeFromSuperview()
+            }
+        }
+
+        let label = MainHighlightParagraphLabel(text: title, textColor: style == .light ? .gray500 : .white)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        button.addSubview(label)
         
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
+            label.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
+            label.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
+            label.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
+        ])
+        
+        button.layer.cornerRadius = 18
+        button.backgroundColor = style == .light ? .gray100 : .gray600
+
         if title.isEmpty {
             let icon = UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate)
             var configuration = UIButton.Configuration.plain()
             configuration.image = icon
-            configuration.baseForegroundColor = UIColor(named: "gray500")
             configuration.imagePlacement = .leading
             configuration.imagePadding = 8
-
-            button.configuration = configuration
-        } else {
-            var configuration = button.configuration ?? UIButton.Configuration.plain()
-            configuration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-
+            configuration.baseForegroundColor = UIColor(named: "gray500")
             button.configuration = configuration
         }
-        
-        button.backgroundColor = style == .light ? .gray100 : .gray600
     }
 }
