@@ -16,7 +16,7 @@ class WalkReviewFrame: UIView {
     private let arrowButton: UIButton = {
         let button = ExpandableButton(touchAreaPadding: 10)
         button.setImage(UIImage(named: "arrowIcon"), for: .normal)
-        button.addTarget(self, action: #selector(didTapArrowButton), for: .touchUpInside)
+        button.addTarget(WalkReviewFrame.self, action: #selector(didTapArrowButton), for: .touchUpInside)
         return button
     }()
     private let circleStackView = UIStackView()

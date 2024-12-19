@@ -151,9 +151,12 @@ final class MyPageWalkerReviewView: UIView {
         if dimView == nil {
             dimView = UIView()
             configureDimView()
-            if let window = UIApplication.shared.keyWindow {
+
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
                 window.addSubview(dimView!)
             }
+
             setupDimViewConstraints()
         }
         dimView?.updateDimViewVisibility(isHidden: false)
@@ -192,16 +195,17 @@ final class MyPageWalkerReviewView: UIView {
             self?.hideFilterView()
         }
         
-        if let window = UIApplication.shared.keyWindow {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
             window.addSubview(filterView)
             setupFilterViewConstraints()
             layoutIfNeeded()
-            
+
             if let dimView = dimView {
                 window.bringSubviewToFront(dimView)
                 window.bringSubviewToFront(filterView)
             }
-            
+
             filterView.animateShow(offset: 0, cornerRadius: 30)
         }
     }
@@ -214,8 +218,10 @@ final class MyPageWalkerReviewView: UIView {
         filterView.onHideRequested = { [weak self] in
             self?.hideFilterView()
         }
-        if let window = UIApplication.shared.keyWindow {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
             window.addSubview(filterView)
+            
             if let dimView = dimView {
                 window.bringSubviewToFront(dimView)
                 window.bringSubviewToFront(filterView)

@@ -106,12 +106,10 @@ class ProfileFrameView: UIView {
     }
     
     @objc private func reportLabelTapped() {
-        guard let topViewController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
-            print("NavigationController not found")
-            return
-        }
-        
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController as? UINavigationController else { return }
+
         let reportVC = MyPageReportViewController()
-        topViewController.pushViewController(reportVC, animated: true)
+        rootViewController.pushViewController(reportVC, animated: true)
     }
 }

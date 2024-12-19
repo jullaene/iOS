@@ -151,9 +151,12 @@ class MyPageOwnerReviewView: UIView {
         if dimView == nil {
             dimView = UIView()
             configureDimView()
-            if let window = UIApplication.shared.keyWindow {
+
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
                 window.addSubview(dimView!)
             }
+
             setupDimViewConstraints()
         }
         dimView?.updateDimViewVisibility(isHidden: false)
@@ -190,7 +193,8 @@ class MyPageOwnerReviewView: UIView {
             self?.hideFilterView()
         }
         
-        if let window = UIApplication.shared.keyWindow {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
             window.addSubview(filterView)
         }
         

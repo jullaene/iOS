@@ -195,12 +195,18 @@ extension UIButton {
         
         if title.isEmpty {
             let icon = UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate)
-            button.setImage(icon, for: .normal)
-            button.tintColor = .gray500
-            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-            button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+            var configuration = UIButton.Configuration.plain()
+            configuration.image = icon
+            configuration.baseForegroundColor = UIColor(named: "gray500")
+            configuration.imagePlacement = .leading
+            configuration.imagePadding = 8
+
+            button.configuration = configuration
         } else {
-            button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+            var configuration = button.configuration ?? UIButton.Configuration.plain()
+            configuration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+
+            button.configuration = configuration
         }
         
         button.backgroundColor = style == .light ? .gray100 : .gray600
