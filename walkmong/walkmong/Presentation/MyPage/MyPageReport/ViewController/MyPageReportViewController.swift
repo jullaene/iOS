@@ -19,6 +19,7 @@ class MyPageReportViewController: UIViewController, UINavigationControllerDelega
         setupReasonButtonActions()
         configureTextView()
         checkSubmitButtonState()
+        setupTapToDismissKeyboard()
         navigationController?.delegate = self
     }
     
@@ -46,36 +47,42 @@ class MyPageReportViewController: UIViewController, UINavigationControllerDelega
     }
     
     private func autoCheckOtherReasonIfNeeded() {
+        guard !myPageReportView.reasonButtons.isEmpty else { return }
         let otherReasonIndex = myPageReportView.reasons.count - 1
-        let otherReasonButton = myPageReportView.reasonButtons[otherReasonIndex]
-        
-        let textView = myPageReportView.reportTextView
-        let hasContent = textView.text.trimmingCharacters(in: .whitespacesAndNewlines) != "" &&
-                         textView.text != textView.placeholderText
-        
-        if hasContent && !otherReasonButton.isChecked {
-            otherReasonButton.isChecked = true
-            otherReasonButton.updateCheckImage()
-        } else if !hasContent && otherReasonButton.isChecked {
-            otherReasonButton.isChecked = false
-            otherReasonButton.updateCheckImage()
+        if otherReasonIndex >= 0 && otherReasonIndex < myPageReportView.reasonButtons.count {
+            let otherReasonButton = myPageReportView.reasonButtons[otherReasonIndex]
+            
+            let textView = myPageReportView.reportTextView
+            let hasContent = textView.text.trimmingCharacters(in: .whitespacesAndNewlines) != "" &&
+            textView.text != textView.placeholderText
+            
+            if hasContent && !otherReasonButton.isChecked {
+                otherReasonButton.isChecked = true
+                otherReasonButton.updateCheckImage()
+            } else if !hasContent && otherReasonButton.isChecked {
+                otherReasonButton.isChecked = false
+                otherReasonButton.updateCheckImage()
+            }
         }
     }
     
     private func checkSubmitButtonState() {
         let isAnyReasonSelected = myPageReportView.reasonButtons.contains { $0.isChecked }
         
+        guard myPageReportView.reasons.count == myPageReportView.reasonButtons.count else { return }
+        
         let otherReasonIndex = myPageReportView.reasons.count - 1
-        let isOtherReasonSelected = myPageReportView.reasonButtons[otherReasonIndex].isChecked
-        
-        let isOtherReasonValid = isOtherReasonSelected ? !myPageReportView.reportTextView.text.isEmpty &&
-        myPageReportView.reportTextView.text != myPageReportView.reportTextView.placeholderText : true
-        
-        let canSubmit = isAnyReasonSelected && isOtherReasonValid
-        myPageReportView.submitButton.isEnabled = canSubmit
-        
-        let buttonStyle: UIButton.ButtonStyle = canSubmit ? .dark : .light
-        myPageReportView.submitButton.updateStyle(type: .large, style: buttonStyle)
+        if otherReasonIndex >= 0 && otherReasonIndex < myPageReportView.reasonButtons.count {
+            let isOtherReasonSelected = myPageReportView.reasonButtons[otherReasonIndex].isChecked
+            let isOtherReasonValid = isOtherReasonSelected ? !myPageReportView.reportTextView.text.isEmpty &&
+            myPageReportView.reportTextView.text != myPageReportView.reportTextView.placeholderText : true
+            
+            let canSubmit = isAnyReasonSelected && isOtherReasonValid
+            myPageReportView.submitButton.isEnabled = canSubmit
+            
+            let buttonStyle: UIButton.ButtonStyle = canSubmit ? .dark : .light
+            myPageReportView.submitButton.updateStyle(type: .large, style: buttonStyle)
+        }
     }
     
     private func setupView() {
@@ -107,5 +114,15 @@ class MyPageReportViewController: UIViewController, UINavigationControllerDelega
     
     @objc private func closeViewController() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    private func setupTapToDismissKeyboard() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hiedKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        myPageReportView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func hiedKeyboard() {
+        view.endEditing(true)
     }
 }

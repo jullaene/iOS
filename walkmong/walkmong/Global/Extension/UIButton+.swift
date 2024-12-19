@@ -48,8 +48,6 @@ extension UIButton {
             button.setTitleColor(label.textColor, for: .normal)
             configureStyle(for: button, type: type, style: style)
             button.setTitle(title, for: .normal)
-            let size = buttonSizeForType(type: type, title: title, label: label)
-            setButtonSizeConstraints(button: button, width: size.width, height: size.height)
         }
         configureStyle(for: button, type: type, style: style)
         
