@@ -15,7 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-        let mainTabBarController = MainTabBarController()
+        let mainTabBarController = WalktalkChatViewController()
         let navigationController = UINavigationController(rootViewController: mainTabBarController)
         window?.rootViewController = navigationController
         
