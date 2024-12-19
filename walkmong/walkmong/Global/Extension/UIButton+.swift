@@ -56,9 +56,11 @@ extension UIButton {
         return button
     }
     
-    
     private static func buttonSizeForType(type: ButtonCategory, title: String, label: BaseTitleLabel) -> CGSize {
         switch type {
+        case .smallSelection:
+            let textWidth = calculateTextWidth(text: title, font: label.font)
+            return CGSize(width: textWidth + 32, height: 36)
         case .homeFilter:
             let textWidth = calculateTextWidth(text: title, font: label.font)
             return CGSize(width: textWidth + 32, height: 36)
@@ -209,7 +211,7 @@ extension UIButton {
         button.titleLabel?.font = label.font
         button.setTitleColor(label.textColor, for: .normal)
         button.setTitle(title, for: .normal)
-
+        
         if title.isEmpty {
             let icon = UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate)
             button.setImage(icon, for: .normal)
@@ -219,7 +221,7 @@ extension UIButton {
         } else {
             button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         }
-
+        
         button.backgroundColor = style == .light ? .gray100 : .gray600
     }
 }
