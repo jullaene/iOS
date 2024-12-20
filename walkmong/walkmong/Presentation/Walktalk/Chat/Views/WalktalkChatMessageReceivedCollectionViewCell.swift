@@ -68,7 +68,8 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
         }
         
         messageTimeLabel.snp.makeConstraints { make in
-            make.trailing.lessThanOrEqualToSuperview()
+            make.trailing.lessThanOrEqualToSuperview().offset(0)
+            make.width.greaterThanOrEqualTo(30)
             make.bottom.equalTo(messageView.snp.bottom)
         }
         
@@ -88,8 +89,28 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
     }
     
     override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
-        let targetSize = CGSize(width: layoutAttributes.frame.width, height: 0)
-        layoutAttributes.frame.size = contentView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-        return layoutAttributes
+        // 레이아웃 속성 복사
+        let attributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+
+        // 가로 너비를 고정
+        let fixedWidth = layoutAttributes.frame.width
+        let targetSize = CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude)
+
+        // Auto Layout 기반 높이 계산
+        let calculatedSize = contentView.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+
+        // 디버깅: 계산된 크기 확인
+        print("IndexPath: \(layoutAttributes.indexPath), Calculated Size: \(calculatedSize)")
+
+        // 고정된 너비와 계산된 높이 설정
+        attributes.frame.size = CGSize(width: fixedWidth, height: calculatedSize.height)
+        return attributes
     }
+
+
+
 }

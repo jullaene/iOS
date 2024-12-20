@@ -21,7 +21,7 @@ class WalktalkChatView: UIView {
         date: "2024-12-23",
         id: "123",
         data: [
-            WalkTalkChatMessageModel(type: "message", text: "좋아요, 몇 시에 갈까요?", id: "0", date: "2024-12-21T09:15:00.000000"),
+            WalkTalkChatMessageModel(type: "message", text: "좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?", id: "0", date: "2024-12-21T09:15:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "오후 2시에 만나요!", id: "1", date: "2024-12-21T10:00:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "네, 알겠습니다.", id: "0", date: "2024-12-21T10:15:00.000000"),
             WalkTalkChatMessageModel(type: "message", text: "감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.", id: "1", date: "2024-12-21T10:20:00.000000"),
@@ -40,6 +40,7 @@ class WalktalkChatView: UIView {
     // MARK: 채팅 UI 구성
     private let walktalkChatCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = .gray100
         collectionView.register(WalktalkChatDateHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: WalktalkChatDateHeaderView.className)
@@ -178,29 +179,51 @@ extension WalktalkChatView: UICollectionViewDelegate {
 }
 
 extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
-    // 셀 크기 설정
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let estimatedFrame = sectionedMessages[indexPath.section].messages[indexPath.row].text.getEstimatedFrame(with: UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16))
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let width = (sectionedMessages[indexPath.section].messages[indexPath.row].id == String(userID)) ? (collectionView.bounds.width - 52 - 4) : (collectionView.bounds.width - 32 - 8 - 52 - 4)
+        let text = sectionedMessages[indexPath.section].messages[indexPath.row].text
+        let font = UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16)
+        let estimatedFrame = text.getEstimatedMessageFrame(width: width, with: font)
+
+        // 디버깅: 텍스트와 계산된 프레임 정보 출력
+        print("IndexPath: \(indexPath), Text: \(text), Estimated Frame: \(estimatedFrame)")
+
         return CGSize(width: collectionView.bounds.width, height: estimatedFrame.height + 16)
     }
 
-
-    // 섹션 여백 설정
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: section == 0 ? 24 : 16 , left: 0, bottom: 16, right: 0)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
+        return UIEdgeInsets(top: section == 0 ? 24 : 16, left: 0, bottom: 16, right: 0)
     }
 
-    // 셀 간 간격 설정
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 16
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        return 32
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 16
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        return 32
     }
 
-    // 헤더 크기 설정
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 26)
     }
 }
