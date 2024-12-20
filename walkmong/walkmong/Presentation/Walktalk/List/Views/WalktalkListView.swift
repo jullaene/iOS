@@ -27,7 +27,7 @@ class WalktalkListView: UIView {
         return collectionView
     }()
     
-    private let walktalkListTapBarCollectionView: UICollectionView = {
+    private let walktalkListTabBarCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
@@ -47,8 +47,8 @@ class WalktalkListView: UIView {
     private func configureCollectionView() {
         walktalkListPageCollectionView.delegate = self
         walktalkListPageCollectionView.dataSource = self
-        walktalkListTapBarCollectionView.delegate = self
-        walktalkListTapBarCollectionView.dataSource = self
+        walktalkListTabBarCollectionView.delegate = self
+        walktalkListTabBarCollectionView.dataSource = self
         walktalkListMatchingStateCollectionView.delegate = self
         walktalkListMatchingStateCollectionView.dataSource = self
     }
@@ -64,7 +64,7 @@ extension WalktalkListView: UICollectionViewDelegateFlowLayout {
         switch collectionView {
         case walktalkListPageCollectionView:
             return CGSize(width: collectionView.bounds.width, height: collectionView.bounds.height)
-        case walktalkListTapBarCollectionView:
+        case walktalkListTabBarCollectionView:
             return CGSize(width: indexPath.row == 0 ? 28 : 41, height: collectionView.bounds.height)
         case walktalkListMatchingStateCollectionView:
             return CGSize(width: indexPath.row == 0 ? 68 : 80, height: collectionView.bounds.height)
@@ -81,7 +81,7 @@ extension WalktalkListView: UICollectionViewDataSource {
         switch collectionView {
         case walktalkListPageCollectionView:
             return 3
-        case walktalkListTapBarCollectionView:
+        case walktalkListTabBarCollectionView:
             return 3
         case walktalkListMatchingStateCollectionView:
             return 4
@@ -99,8 +99,8 @@ extension WalktalkListView: UICollectionViewDataSource {
             cell.setDelegate(delegate: self)
             //TODO: 매칭 페이지 셀 구현
             return cell
-        case walktalkListTapBarCollectionView:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListTapBarCollectionViewCell.className, for: indexPath) as? WalktalkListTapBarCollectionViewCell else { return UICollectionViewCell() }
+        case walktalkListTabBarCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListTabBarCollectionViewCell.className, for: indexPath) as? WalktalkListTabBarCollectionViewCell else { return UICollectionViewCell() }
             //TODO: 매칭 유형 셀 구현
             return cell
         case walktalkListMatchingStateCollectionView:

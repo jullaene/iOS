@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WalktalkListTapBarCollectionViewCell: UICollectionViewCell {
+class WalktalkListTabBarCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
