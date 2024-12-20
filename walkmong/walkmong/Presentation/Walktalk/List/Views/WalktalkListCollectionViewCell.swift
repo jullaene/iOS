@@ -38,7 +38,11 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     
     private let nameLabel = MainHighlightParagraphLabel(text: "반려견 이름", textColor: .gray600)
     
-    private let timeLabel = SmallMainHighlightParagraphLabel(text: "시각", textColor: .gray400)
+    private let timeLabel: SmallMainHighlightParagraphLabel = {
+        let label = SmallMainHighlightParagraphLabel(text: "시각", textColor: .gray400)
+        label.textAlignment = .right
+        return label
+    }()
     
     private let textPreviewLabel = SmallMainHighlightParagraphLabel(text: "대화 내용", textColor: .gray400)
     
@@ -105,7 +109,8 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
             make.trailing.equalTo(walkerIconView.snp.trailing).offset(16)
         }
         timeLabel.snp.makeConstraints { make in
-            
+            make.centerY.equalTo(nameLabel.snp.centerY)
+            make.trailing.equalToSuperview().offset(-24)
         }
         textPreviewLabel.snp.makeConstraints { make in
             make.bottom.equalTo(profileImageView.snp.bottom).offset(-8)
