@@ -285,17 +285,17 @@ class MyPageReviewView: UIView {
     }
     
     private func setupOwnerReviewTapAction() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ownerReviewTitleTapped))
-        ownerReviewTitle.addGestureRecognizer(tapGesture)
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ownerReviewTitleTapped))
+//        ownerReviewTitle.addGestureRecognizer(tapGesture)
         ownerReviewTitle.isUserInteractionEnabled = true
     }
     
-    @objc private func ownerReviewTitleTapped() {
-        if let currentViewController = findViewController() {
-            let ownerReviewVC = MyPageOwnerReviewViewController()
-            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
-        }
-    }
+//    @objc private func ownerReviewTitleTapped() {
+//        if let currentViewController = findViewController() {
+//            let ownerReviewVC = MyPageOwnerReviewViewController()
+//            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
+//        }
+//    }
     
     private func findViewController() -> UIViewController? {
         var responder: UIResponder? = self
