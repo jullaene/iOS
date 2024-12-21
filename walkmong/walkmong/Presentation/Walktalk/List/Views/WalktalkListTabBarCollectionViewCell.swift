@@ -9,8 +9,13 @@ import UIKit
 
 class WalktalkListTabBarCollectionViewCell: UICollectionViewCell {
     
+    private let tabBarLabel = MainHighlightParagraphLabel(text: "탭바 목록")
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        tabBarLabel.snp.makeConstraints{ make in
+            make.center.equalToSuperview()
+        }
     }
     
     
@@ -18,4 +23,11 @@ class WalktalkListTabBarCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func setContent(text: String) {
+        tabBarLabel.text = text
+    }
+    
+    func setSelected(textColor: UIColor) {
+        tabBarLabel.textColor = textColor
+    }
 }

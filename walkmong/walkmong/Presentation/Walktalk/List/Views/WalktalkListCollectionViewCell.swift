@@ -127,4 +127,27 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    func setContent(matchingState: MatchingState, matchingDate: String, DogProfileImage: UIImage, isWalker: Bool, name: String, previewText: String, chatCount: Int, chatTime: String) {
+        switch matchingState {
+        case .matching:
+            matchingStateView.backgroundColor = .lightBlue
+            matchingStateLabel.textColor = .mainBlue
+        case .confirmed:
+            matchingStateView.backgroundColor = .mainBlue
+            matchingStateLabel.textColor = .white
+        case .ended:
+            matchingStateView.backgroundColor = .gray400
+            matchingStateLabel.textColor = .white
+        case .cancelled:
+            matchingStateView.backgroundColor = .gray200
+            matchingStateLabel.textColor = .gray400
+        }
+        dateLabel.text = matchingDate
+        walkerIconView.isHidden = isWalker
+        nameLabel.text = name
+        textPreviewLabel.text = previewText
+        chatCountLabel.text = String(chatCount)
+        timeLabel.text = chatTime
+    }
+    
 }
