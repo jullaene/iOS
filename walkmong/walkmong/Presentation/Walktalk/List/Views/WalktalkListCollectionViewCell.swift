@@ -12,6 +12,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     private let matchingStateView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 14.5
+        view.backgroundColor = .mainBlue
         return view
     }()
 
@@ -59,7 +60,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubviews()
-        
+        setConstraints()
     }
     
     
@@ -106,7 +107,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
         }
         nameLabel.snp.makeConstraints { make in
             make.top.equalTo(profileImageView.snp.top).offset(8)
-            make.trailing.equalTo(walkerIconView.snp.trailing).offset(16)
+            make.leading.equalTo(walkerIconView.snp.trailing).offset(16)
         }
         timeLabel.snp.makeConstraints { make in
             make.centerY.equalTo(nameLabel.snp.centerY)
@@ -114,7 +115,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
         }
         textPreviewLabel.snp.makeConstraints { make in
             make.bottom.equalTo(profileImageView.snp.bottom).offset(-8)
-            make.trailing.equalTo(walkerIconView.snp.trailing).offset(16)
+            make.leading.equalTo(walkerIconView.snp.trailing).offset(16)
         }
         chatCountView.snp.makeConstraints { make in
             make.centerY.equalTo(textPreviewLabel.snp.centerY)
@@ -127,8 +128,8 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setContent(matchingState: MatchingState, matchingDate: String, DogProfileImage: UIImage, isWalker: Bool, name: String, previewText: String, chatCount: Int, chatTime: String) {
-        switch matchingState {
+    func setContent(with datamodel: WalktalkListModel) {
+        switch datamodel.matchingState {
         case .matching:
             matchingStateView.backgroundColor = .lightBlue
             matchingStateLabel.textColor = .mainBlue
@@ -142,12 +143,13 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400
         }
-        dateLabel.text = matchingDate
-        walkerIconView.isHidden = isWalker
-        nameLabel.text = name
-        textPreviewLabel.text = previewText
-        chatCountLabel.text = String(chatCount)
-        timeLabel.text = chatTime
+        dateLabel.text = datamodel.date
+        walkerIconView.isHidden = datamodel.isWalker
+        nameLabel.text = datamodel.name
+        textPreviewLabel.text = datamodel.textPreview
+        chatCountLabel.text = String(datamodel.chatCount)
+        profileImageView.image = .defaultProfile
+        timeLabel.text = datamodel.time
     }
     
 }

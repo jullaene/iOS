@@ -10,6 +10,7 @@ import UIKit
 class WalktalkListPageCollectionViewCell: UICollectionViewCell {
     
     private var selectedMatchingStateIndex: Int?
+    private var walktalkListData: WalktalkListModel?
     
     private let walktalkListCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -23,7 +24,7 @@ class WalktalkListPageCollectionViewCell: UICollectionViewCell {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = .white
-        collectionView.register(WalktalkListCollectionViewCell.self, forCellWithReuseIdentifier: WalktalkListCollectionViewCell.className)
+        collectionView.register(WalktalkListMatchingStateCollectionViewCell.self, forCellWithReuseIdentifier: WalktalkListMatchingStateCollectionViewCell.className)
         return collectionView
     }()
     
@@ -58,6 +59,10 @@ class WalktalkListPageCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    func setContent(with dataModel: WalktalkListModel) {
+        walktalkListCollectionView.reloadData()
+    }
+    
 }
 
 extension WalktalkListPageCollectionViewCell: UICollectionViewDelegateFlowLayout {
@@ -66,6 +71,23 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegateFlowLayout
             return CGSize(width: collectionView.bounds.width, height: 151)
         }else {
             return CGSize(width: indexPath.row == 0 ? 68 : 80, height: 36)
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        if collectionView == walktalkListCollectionView {
+            return 0
+        }else {
+            return 8
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        if collectionView == walktalkListCollectionView {
+            return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        }else {
+            return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
         }
     }
 }
@@ -94,14 +116,9 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == walktalkListCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListCollectionViewCell.className, for: indexPath) as? WalktalkListCollectionViewCell else { return UICollectionViewCell() }
-            cell.setContent(matchingState: <#T##MatchingState#>,
-                            matchingDate: <#T##String#>,
-                            DogProfileImage: <#T##UIImage#>,
-                            isWalker: <#T##Bool#>,
-                            name: <#T##String#>,
-                            previewText: <#T##String#>,
-                            chatCount: <#T##Int#>,
-                            chatTime: <#T##String#>)
+            if let data = walktalkListData {
+                cell.setContent(with: data)
+            }
             return cell
         }else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListMatchingStateCollectionViewCell.className, for: indexPath) as? WalktalkListMatchingStateCollectionViewCell else { return UICollectionViewCell() }

@@ -13,6 +13,7 @@ class WalktalkListTabBarCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        addSubview(tabBarLabel)
         tabBarLabel.snp.makeConstraints{ make in
             make.center.equalToSuperview()
         }

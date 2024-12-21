@@ -8,6 +8,8 @@
 import UIKit
 
 class WalktalkListViewController: UIViewController {
+    
+    private let walktalkListView = WalktalkListView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +22,12 @@ class WalktalkListViewController: UIViewController {
     }
 
     private func setUI() {
+        view.backgroundColor = .white
+        view.addSubview(walktalkListView)
+        walktalkListView.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
+            make.horizontalEdges.bottom.equalToSuperview()
+        }
         addCustomNavigationBar(titleText: "워크톡", showLeftBackButton: false, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
     }
 }
