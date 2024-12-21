@@ -40,10 +40,8 @@ class WalkReviewCell: UIView {
     }
 
     func configure(with model: DogReviewModel) {
-        // 프로필 프레임 설정 (항상 표시됨)
         profileFrame.configure(with: model.profileData)
 
-        // 총평점 뷰 설정
         if let totalRating = model.totalRating {
             totalRatingView.configure(with: totalRating)
             totalRatingView.isHidden = false
@@ -51,7 +49,6 @@ class WalkReviewCell: UIView {
             totalRatingView.isHidden = true
         }
 
-        // CircleTagView 설정
         if let circleTags = model.circleTags, !circleTags.isEmpty {
             configureCircleTagView(with: circleTags)
             circleTagView.isHidden = false
@@ -59,7 +56,6 @@ class WalkReviewCell: UIView {
             circleTagView.isHidden = true
         }
 
-        // 사진 프레임 설정
         if let photos = model.photos, !photos.isEmpty {
             photoFrame.configure(with: photos)
             photoFrame.isHidden = false
@@ -67,7 +63,6 @@ class WalkReviewCell: UIView {
             photoFrame.isHidden = true
         }
 
-        // 리뷰 텍스트 설정
         if let reviewText = model.reviewText?.trimmingCharacters(in: .whitespacesAndNewlines), !reviewText.isEmpty {
             reviewTextLabel.text = reviewText
             reviewTextLabel.isHidden = false
@@ -75,7 +70,6 @@ class WalkReviewCell: UIView {
             reviewTextLabel.isHidden = true
         }
 
-        // 태그 뷰 설정
         if let tags = model.tags, !tags.isEmpty {
             tagView.configure(with: tags)
             tagView.isHidden = false
@@ -83,7 +77,6 @@ class WalkReviewCell: UIView {
             tagView.isHidden = true
         }
 
-        // 동적 제약 조건 재설정
         setupDynamicConstraints()
     }
 
@@ -131,6 +124,10 @@ class WalkReviewCell: UIView {
                 subview.snp.remakeConstraints {
                     $0.top.equalTo(lastView.snp.bottom).offset(spacing)
                     $0.leading.trailing.equalToSuperview().inset(margin)
+
+                    if subview === tagView {
+                        $0.height.equalTo(tagView.snp.height)
+                    }
                 }
                 lastView = subview
             }
@@ -139,6 +136,9 @@ class WalkReviewCell: UIView {
         lastView.snp.makeConstraints {
             $0.bottom.equalToSuperview().offset(-margin)
         }
+
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 
     private static func createRoundedContainer() -> UIView {

@@ -64,7 +64,7 @@ class WalkReviewViewController: UIViewController {
                 photos: [UIImage(named: "defaultImage")].compactMap { $0 },
                 reviewText: "정말 즐거운 산책이었습니다.",
                 totalRating: 4.5, // 총평점
-                tags: ["친절한", "활동적인"] // 태그
+                tags: ["친절한", "활동적적적적인", "친절한", "활동적적적적인", "친절한", "활동적적적적인"] // 태그
             ),
             DogReviewModel(
                 profileData: .init(
@@ -79,7 +79,7 @@ class WalkReviewViewController: UIViewController {
                     다음에도 꼭 다시 함께 하고 싶어요. 정말 최고의 경험이었습니다!
                     """,
                 totalRating: 5.0, // 총평점
-                tags: ["조용한", "훈련된"] // 태그
+                tags: nil // 태그
             ),
             DogReviewModel(
                 profileData: .init(
@@ -128,7 +128,7 @@ class WalkReviewViewController: UIViewController {
                 tags: ["친절한", "조용한"] // 태그
             )
         ]
-
+        
         walkReviewView.configure(with: mockData)
     }
 }

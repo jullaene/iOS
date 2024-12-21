@@ -102,9 +102,12 @@ class WalkReviewView: UIView {
             let cell = WalkReviewCell()
             cell.configure(with: model)
             contentView.addSubview(cell)
+
             cell.snp.makeConstraints { make in
                 make.leading.trailing.equalToSuperview().inset(Layout.cellMargin)
-                make.top.equalTo(previousView.snp.bottom).offset(previousView === filterButton ? Layout.firstCellSpacing : Layout.cellSpacing)
+                make.top.equalTo(previousView.snp.bottom).offset(
+                    previousView === filterButton ? Layout.firstCellSpacing : Layout.cellSpacing
+                )
             }
             previousView = cell
         }
