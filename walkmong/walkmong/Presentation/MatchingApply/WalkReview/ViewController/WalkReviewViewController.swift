@@ -89,7 +89,7 @@ class WalkReviewViewController: UIViewController {
                 ),
                 circleTags: [("사회성", "#차분해요"), ("활동량", "#산책 즐겨요"), ("공격성", "#안짖어요")],
                 photos: [
-                    UIImage(named: "defaultImage"),
+                    UIImage(named: "puppyImage03"),
                     UIImage(named: "defaultImage")
                 ].compactMap { $0 },
                 reviewText: nil,
