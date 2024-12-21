@@ -119,10 +119,12 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
         }
         chatCountView.snp.makeConstraints { make in
             make.centerY.equalTo(textPreviewLabel.snp.centerY)
+            make.height.equalTo(20)
             make.trailing.equalToSuperview().offset(-24)
             make.bottom.equalToSuperview().offset(-32)
         }
         chatCountLabel.snp.makeConstraints { make in
+            make.width.greaterThanOrEqualTo(6)
             make.center.equalToSuperview()
             make.horizontalEdges.equalToSuperview().inset(6)
         }

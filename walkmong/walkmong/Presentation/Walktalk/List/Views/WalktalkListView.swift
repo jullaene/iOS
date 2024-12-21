@@ -12,14 +12,14 @@ class WalktalkListView: UIView {
     private var selectedTabBarIndex: Int = 0
     private var walktalkListDataList: [[WalktalkListModel]] = {
         let profileImage: UIImage = .defaultProfile
-
+        
         let firstSection = [
             WalktalkListModel(matchingState: .matching, date: "11.03 (일) 16:00 ~ 16:30", name: "한글이름 1", textPreview: "오늘 산책 가능해요!", profileImage: profileImage, time: "오후 10:30", chatCount: 5, isWalker: true),
             WalktalkListModel(matchingState: .confirmed, date: "11.03 (일) 16:00 ~ 16:30", name: "한글이름 2", textPreview: "내일 산책은 어때요?", profileImage: profileImage, time: "오후 2:00", chatCount: 3, isWalker: false),
             WalktalkListModel(matchingState: .ended, date: "11.03 (일) 16:00 ~ 16:30", name: "한글이름 3", textPreview: "좋은 산책이었어요!", profileImage: profileImage, time: "오후 6:00", chatCount: 2, isWalker: true),
             WalktalkListModel(matchingState: .cancelled, date: "11.03 (일) 16:00 ~ 16:30", name: "한글이름 4", textPreview: "취소된 산책입니다.", profileImage: profileImage, time: "오후 8:30", chatCount: 1, isWalker: false)
         ]
-
+        
         let secondSection = [
             WalktalkListModel(matchingState: .matching, date: "11.04 (월) 16:00 ~ 16:30", name: "한글이름 5", textPreview: "새로운 산책 요청", profileImage: profileImage, time: "오후 1:00", chatCount: 4, isWalker: true),
             WalktalkListModel(matchingState: .confirmed, date: "11.04 (월) 16:00 ~ 16:30", name: "한글이름 6", textPreview: "확정된 산책입니다.", profileImage: profileImage, time: "오후 11:00", chatCount: 6, isWalker: false),
@@ -32,7 +32,7 @@ class WalktalkListView: UIView {
             WalktalkListModel(matchingState: .matching, date: "11.04 (월) 16:00 ~ 16:30", name: "한글이름 13", textPreview: "새로운 산책 요청", profileImage: profileImage, time: "오후 6:00", chatCount: 3, isWalker: true),
             WalktalkListModel(matchingState: .confirmed, date: "11.04 (월) 16:00 ~ 16:30", name: "한글이름 14", textPreview: "확정된 산책입니다.", profileImage: profileImage, time: "오전 11:30", chatCount: 2, isWalker: false)
         ]
-
+        
         let thirdSection = [
             WalktalkListModel(matchingState: .ended, date: "11.05 (화) 16:00 ~ 16:30", name: "한글이름 15", textPreview: "오늘 너무 좋았어요!", profileImage: profileImage, time: "오후 5:30", chatCount: 0, isWalker: true),
             WalktalkListModel(matchingState: .matching, date: "11.05 (화) 16:00 ~ 16:30", name: "한글이름 16", textPreview: "새로운 산책 요청", profileImage: profileImage, time: "오전 9:30", chatCount: 1, isWalker: false),
@@ -41,10 +41,10 @@ class WalktalkListView: UIView {
             WalktalkListModel(matchingState: .confirmed, date: "11.05 (화) 16:00 ~ 16:30", name: "한글이름 19", textPreview: "확정된 산책입니다.", profileImage: profileImage, time: "오후 6:00", chatCount: 5, isWalker: true),
             WalktalkListModel(matchingState: .ended, date: "11.05 (화) 16:00 ~ 16:30", name: "한글이름 20", textPreview: "좋은 산책이었어요!", profileImage: profileImage, time: "오후 8:00", chatCount: 0, isWalker: false)
         ]
-
+        
         return [firstSection, secondSection, thirdSection]
     }()
-
+    
     
     private let walktalkListPageCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -67,12 +67,27 @@ class WalktalkListView: UIView {
         return collectionView
     }()
     
+    private let sectionLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray200
+        return view
+    }()
+    
+    private let sectionSelectedLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .mainBlue
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .white
         addSubview()
         setConstraints()
         configureCollectionView()
+        DispatchQueue.main.async {
+            self.moveIndicatorBar(targetIndex: self.selectedTabBarIndex)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -80,18 +95,29 @@ class WalktalkListView: UIView {
     }
     
     private func addSubview() {
-        addSubviews(walktalkListPageCollectionView, walktalkListTabBarCollectionView)
+        addSubviews(walktalkListPageCollectionView, walktalkListTabBarCollectionView, sectionLineView, sectionSelectedLineView)
     }
     
     private func setConstraints() {
         walktalkListPageCollectionView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(walktalkListTabBarCollectionView.snp.bottom).offset(12)
+            make.top.equalTo(sectionLineView.snp.bottom).offset(16)
         }
         walktalkListTabBarCollectionView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.top.equalToSuperview().offset(20)
             make.height.equalTo(22)
+        }
+        sectionLineView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(walktalkListTabBarCollectionView.snp.bottom).offset(12)
+            make.height.equalTo(1)
+        }
+        sectionSelectedLineView.snp.makeConstraints { make in
+            make.height.equalTo(4)
+            make.width.equalTo(28)
+            make.bottom.equalTo(walktalkListTabBarCollectionView.snp.bottom).offset(12)
+            make.leading.equalToSuperview().offset(20)
         }
     }
     
@@ -102,13 +128,63 @@ class WalktalkListView: UIView {
         walktalkListTabBarCollectionView.dataSource = self
     }
     
+    private func moveIndicatorBar(targetIndex: Int) {
+        let indexPath = IndexPath(item: targetIndex, section: 0)
+        
+        // 선택된 셀의 레이아웃 속성 가져오기
+        guard let attributes = walktalkListTabBarCollectionView.layoutAttributesForItem(at: indexPath) else {
+            print("Failed to get layout attributes for item at \(indexPath)")
+            return
+        }
+        
+        let cellFrame = attributes.frame
+        
+        // 디버깅용 로그 추가
+        print("Target Index: \(targetIndex), Cell Frame: \(cellFrame)")
+        
+        // SnapKit으로 인디케이터 제약 재설정
+        sectionSelectedLineView.snp.remakeConstraints { make in
+            make.centerX.equalTo(cellFrame.midX)
+            make.width.equalTo(cellFrame.width)
+            make.height.equalTo(4)
+            make.bottom.equalTo(walktalkListTabBarCollectionView.snp.bottom).offset(12)
+        }
+        
+        // 애니메이션 적용
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        }
+    }
+    
+}
+
+extension WalktalkListView: UIScrollViewDelegate {
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        if scrollView == self.walktalkListPageCollectionView {
+            let targetIndex = Int(round(targetContentOffset.pointee.x / scrollView.bounds.width))
+            if selectedTabBarIndex != targetIndex {
+                selectedTabBarIndex = targetIndex
+                moveIndicatorBar(targetIndex: targetIndex)
+                walktalkListTabBarCollectionView.reloadData() // 탭바 UI 업데이트
+            }
+            print(String(selectedTabBarIndex) + " & " + String(targetIndex))
+        }
+    }
 }
 
 extension WalktalkListView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == walktalkListTabBarCollectionView {
+        print(indexPath.row)
+        
+        if collectionView == walktalkListTabBarCollectionView && selectedTabBarIndex != indexPath.row {
             selectedTabBarIndex = indexPath.row
-            collectionView.reloadData()
+            
+            walktalkListPageCollectionView.isPagingEnabled = false
+            walktalkListPageCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            walktalkListPageCollectionView.isPagingEnabled = true
+            
+            moveIndicatorBar(targetIndex: indexPath.row)
+            walktalkListTabBarCollectionView.reloadData() // 이 위치에서 호출
         }
     }
 }
@@ -118,7 +194,7 @@ extension WalktalkListView: UICollectionViewDelegateFlowLayout {
         if collectionView == walktalkListPageCollectionView {
             return CGSize(width: collectionView.bounds.width, height: collectionView.bounds.height)
         }else {
-            return CGSize(width: indexPath.row == 0 ? 28 : 41, height: collectionView.bounds.height)
+            return CGSize(width: indexPath.row == 0 ? 28 : 72, height: collectionView.bounds.height)
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -167,9 +243,9 @@ extension WalktalkListView: UICollectionViewDataSource {
             case 0:
                 cell.setContent(text: "전체")
             case 1:
-                cell.setContent(text: "산책자")
+                cell.setContent(text: "지원한 산책")
             default:
-                cell.setContent(text: "반려인")
+                cell.setContent(text: "의뢰한 산책")
             }
             return cell
         }

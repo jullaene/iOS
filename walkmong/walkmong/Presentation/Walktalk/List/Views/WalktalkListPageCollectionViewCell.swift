@@ -60,6 +60,7 @@ class WalktalkListPageCollectionViewCell: UICollectionViewCell {
     }
     
     func setContent(with dataModel: WalktalkListModel) {
+        self.walktalkListData = dataModel
         walktalkListCollectionView.reloadData()
     }
     
