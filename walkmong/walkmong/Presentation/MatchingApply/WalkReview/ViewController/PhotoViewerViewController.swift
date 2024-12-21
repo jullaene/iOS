@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class PhotoViewerViewController: UIViewController {
     private var photos: [UIImage]
     private var currentIndex: Int
@@ -20,17 +21,11 @@ class PhotoViewerViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = .black
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(PhotoViewerCell.self, forCellWithReuseIdentifier: PhotoViewerCell.identifier)
         return collectionView
-    }()
-
-    private let closeButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("닫기", for: .normal)
-        button.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
-        return button
     }()
 
     init(photos: [UIImage], currentIndex: Int) {
@@ -47,24 +42,47 @@ class PhotoViewerViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black
         setupUI()
+        setupCustomNavigationBar()
         collectionView.scrollToItem(at: IndexPath(item: currentIndex, section: 0), at: .centeredHorizontally, animated: false)
     }
 
     private func setupUI() {
         view.addSubview(collectionView)
-        view.addSubview(closeButton)
-
         collectionView.frame = view.bounds
+    }
 
-        closeButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
-        ])
+    private func setupCustomNavigationBar() {
+        addCustomNavigationBar(
+            titleText: "사진 보기",
+            showLeftBackButton: false,
+            showLeftCloseButton: false,
+            showRightCloseButton: true,
+            showRightRefreshButton: false,
+            backgroundColor: .clear
+        )
+        
+        if let rightCloseButton = navigationItem.rightBarButtonItem?.customView as? UIButton {
+            rightCloseButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
+        }
     }
 
     @objc private func didTapClose() {
-        dismiss(animated: true, completion: nil)
+        print("didTapClose triggered")
+
+        let transition = CATransition()
+        transition.duration = 0.2
+        transition.type = .fade
+        transition.timingFunction = CAMediaTimingFunction(name: .easeOut)
+
+        guard let navigationController = navigationController else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
+
+        navigationController.view.layer.add(transition, forKey: kCATransition)
+        navigationController.popViewController(animated: false)
+
+        print("Transition animation applied")
     }
 }
 
@@ -83,6 +101,14 @@ extension PhotoViewerViewController: UICollectionViewDataSource, UICollectionVie
 class PhotoViewerCell: UICollectionViewCell {
     static let identifier = "PhotoViewerCell"
 
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 4.0
+        scrollView.bouncesZoom = true
+        return scrollView
+    }()
+
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -92,15 +118,29 @@ class PhotoViewerCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(imageView)
-        imageView.frame = contentView.bounds
+        setupUI()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private func setupUI() {
+        contentView.addSubview(scrollView)
+        scrollView.addSubview(imageView)
+
+        scrollView.delegate = self
+        scrollView.frame = contentView.bounds
+        imageView.frame = scrollView.bounds
+    }
+
     func configure(with image: UIImage) {
         imageView.image = image
+    }
+}
+
+extension PhotoViewerCell: UIScrollViewDelegate {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return imageView
     }
 }

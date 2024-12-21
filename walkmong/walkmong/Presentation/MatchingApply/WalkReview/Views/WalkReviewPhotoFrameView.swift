@@ -77,8 +77,14 @@ class WalkReviewPhotoFrameView: UIView {
 
     private func presentPhotoViewer(from viewController: UIViewController, photos: [UIImage], currentIndex: Int) {
         let photoViewer = PhotoViewerViewController(photos: photos, currentIndex: currentIndex)
-        photoViewer.modalPresentationStyle = .fullScreen
-        viewController.present(photoViewer, animated: true)
+
+        let transition = CATransition()
+        transition.duration = 0.4
+        transition.type = .fade
+        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        
+        viewController.navigationController?.view.layer.add(transition, forKey: kCATransition)
+        viewController.navigationController?.pushViewController(photoViewer, animated: false)
     }
 
     private func findParentViewController() -> UIViewController? {
