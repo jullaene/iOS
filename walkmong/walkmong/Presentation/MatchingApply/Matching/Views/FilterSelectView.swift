@@ -46,7 +46,6 @@ class FilterSelectView: UIView {
             filterButton.setImage(filterIcon, for: .normal)
             filterButton.tintColor = UIColor.gray500
         }
-        filterButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
         filterButton.layer.cornerRadius = 16.5
     }
 }

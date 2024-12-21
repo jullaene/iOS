@@ -33,7 +33,7 @@ extension UIViewController {
             let backButtonButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.backButton, for: .normal)
-                button.addTarget(self, action: #selector(popViewController), for: .touchUpInside)
+                button.addTarget(self, action: #selector(self.popViewController), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(backButtonButton)

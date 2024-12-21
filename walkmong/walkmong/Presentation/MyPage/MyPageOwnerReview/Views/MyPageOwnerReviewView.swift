@@ -44,8 +44,8 @@ class MyPageOwnerReviewView: UIView {
         dogFilterStackView.spacing = 8
         dogFilterStackView.alignment = .center
         
-        addDogFilter(name: "봄별이")
-        addDogFilter(name: "새봄이")
+        addDogFilter(imageURL: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", name: "봄별이")
+        addDogFilter(imageURL: "", name: "새봄이")
         
         setupDummyReviews()
     }
@@ -77,11 +77,12 @@ class MyPageOwnerReviewView: UIView {
         }
     }
     
-    private func addDogFilter(name: String) {
+    private func addDogFilter(imageURL: String, name: String) {
         let button = UIButton.createStyledButton(
             type: .homeFilter,
             style: .profile,
-            title: name
+            title: name,
+            imageUrl: imageURL
         )
         button.backgroundColor = .gray200
         
@@ -110,29 +111,29 @@ class MyPageOwnerReviewView: UIView {
     }
     
     private func setupDummyReviews() {
-//        let dummyReviews = [
-//            DogReviewModel(
-//                profileData: DogReviewModel.ProfileData(
-//                    image: nil,
-//                    reviewerId: "reviewer123",
-//                    walkDate: "2024년 12월 1일"
-//                ),
-//                circleTags: [],
-//                photos: [],
-//                reviewText: "연락을 당일에 30분 안보셔서 힘들었어요. 사전 산책 가능하시다고 하시고서는 연락도 안보여서.. 힘들었습니다."
-//            ),
-//            DogReviewModel(
-//                profileData: DogReviewModel.ProfileData(
-//                    image: nil,
-//                    reviewerId: "reviewer456",
-//                    walkDate: "2024년 12월 2일"
-//                ),
-//                circleTags: [],
-//                photos: [],
-//                reviewText: "산책은 즐거웠지만, 강아지 상태에 대한 피드백이 부족했어요."
-//            )
-//        ]
-//        addReviewCells(reviews: dummyReviews)
+        let dummyReviews = [
+            DogReviewModel(
+                profileData: DogReviewModel.ProfileData(
+                    image: nil,
+                    reviewerId: "reviewer123",
+                    walkDate: "2024년 12월 1일"
+                ),
+                circleTags: [],
+                photos: [],
+                reviewText: "연락을 당일에 30분 안보셔서 힘들었어요. 사전 산책 가능하시다고 하시고서는 연락도 안보여서.. 힘들었습니다."
+            ),
+            DogReviewModel(
+                profileData: DogReviewModel.ProfileData(
+                    image: nil,
+                    reviewerId: "reviewer456",
+                    walkDate: "2024년 12월 2일"
+                ),
+                circleTags: [],
+                photos: [],
+                reviewText: "산책은 즐거웠지만, 강아지 상태에 대한 피드백이 부족했어요."
+            )
+        ]
+        addReviewCells(reviews: dummyReviews)
     }
     
     private func setupFilterButton() {
@@ -151,12 +152,9 @@ class MyPageOwnerReviewView: UIView {
         if dimView == nil {
             dimView = UIView()
             configureDimView()
-
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+            if let window = UIApplication.shared.keyWindow {
                 window.addSubview(dimView!)
             }
-
             setupDimViewConstraints()
         }
         dimView?.updateDimViewVisibility(isHidden: false)
@@ -193,8 +191,7 @@ class MyPageOwnerReviewView: UIView {
             self?.hideFilterView()
         }
         
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+        if let window = UIApplication.shared.keyWindow {
             window.addSubview(filterView)
         }
         

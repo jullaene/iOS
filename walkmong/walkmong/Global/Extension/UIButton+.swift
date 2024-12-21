@@ -26,7 +26,8 @@ extension UIButton {
     static func createStyledButton(
         type: ButtonCategory,
         style: ButtonStyle,
-        title: String
+        title: String,
+        imageUrl: String? = nil
     ) -> UIButton {
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -37,7 +38,7 @@ extension UIButton {
             configureCustomFilter(button: button, style: style, title: title)
         case .homeFilter:
             if style == .profile {
-                configureProfileStyle(button: button, style: style, title: title)
+                configureProfileStyle(button: button, style: style, title: title, imageUrl: imageUrl ?? "defaultImageName")
             } else {
                 configureHomeFilter(button: button, style: style, title: title)
             }
@@ -48,14 +49,7 @@ extension UIButton {
             configureStyle(for: button, type: type, style: style)
             button.setTitle(title, for: .normal)
         }
-        
         configureStyle(for: button, type: type, style: style)
-
-        if type == .smallSelection {
-            let textWidth = calculateTextWidth(text: title, font: button.titleLabel!.font)
-            let buttonWidth = textWidth + 32
-            setButtonSizeConstraints(button: button, width: buttonWidth, height: 36)
-        }
         
         return button
     }
@@ -170,52 +164,62 @@ extension UIButton {
         }
     }
     
-    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String) {
-        let textColor: UIColor = style == .dark ? .white : .gray500
+    private static func configureProfileStyle(button: UIButton, style: ButtonStyle, title: String, imageUrl: String) {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 4
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.kf.setImage(
+            with: URL(string: imageUrl),
+            placeholder: UIImage(named: "defaultImage"),
+            options: [.transition(.fade(1)), .cacheOriginalImage]
+        )
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
+        
+        let textColor: UIColor = .gray500
         let label = MainHighlightParagraphLabel(text: title, textColor: textColor)
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        button.addSubview(label)
+        
+        stackView.addArrangedSubview(imageView)
+        stackView.addArrangedSubview(label)
+        button.addSubview(stackView)
+        
         NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
+            stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
+            stackView.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
+            stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8),
+            
+            imageView.widthAnchor.constraint(equalToConstant: 20),
+            imageView.heightAnchor.constraint(equalToConstant: 20),
+            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor)
         ])
-
+        
         button.layer.cornerRadius = 18
-        button.backgroundColor = style == .light ? .gray200 : .gray600
+        button.backgroundColor = .gray200
     }
     
     private static func configureHomeFilter(button: UIButton, style: ButtonStyle, title: String) {
-        button.subviews.forEach { subview in
-            if subview is UILabel {
-                subview.removeFromSuperview()
-            }
-        }
-
-        let label = MainHighlightParagraphLabel(text: title, textColor: style == .light ? .gray500 : .white)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        button.addSubview(label)
+        let label = labelForCategory(type: .homeFilter, text: title, style: style)
+        button.titleLabel?.font = label.font
+        button.setTitleColor(label.textColor, for: .normal)
+        button.setTitle(title, for: .normal)
         
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
-        ])
-        
-        button.layer.cornerRadius = 18
-        button.backgroundColor = style == .light ? .gray100 : .gray600
-
         if title.isEmpty {
             let icon = UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate)
-            var configuration = UIButton.Configuration.plain()
-            configuration.image = icon
-            configuration.imagePlacement = .leading
-            configuration.imagePadding = 8
-            configuration.baseForegroundColor = UIColor(named: "gray500")
-            button.configuration = configuration
+            button.setImage(icon, for: .normal)
+            button.tintColor = .gray500
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        } else {
+            button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         }
+        
+        button.backgroundColor = style == .light ? .gray100 : .gray600
     }
 }
