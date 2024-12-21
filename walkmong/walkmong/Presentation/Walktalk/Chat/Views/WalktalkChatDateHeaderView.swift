@@ -31,7 +31,7 @@ class WalktalkChatDateHeaderView: UICollectionReusableView {
         addSubviews(frameView)
         frameView.addSubview(dateLabel)
         frameView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.bottom.centerX.equalToSuperview()
             make.height.equalTo(26)
         }
         dateLabel.snp.makeConstraints { make in

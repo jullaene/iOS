@@ -184,7 +184,7 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let width = (sectionedMessages[indexPath.section].messages[indexPath.row].id == String(userID)) ? (collectionView.bounds.width - 52 - 4) : (collectionView.bounds.width - 32 - 8 - 52 - 4)
+        let width = (sectionedMessages[indexPath.section].messages[indexPath.row].id == String(userID)) ? (collectionView.bounds.width - 52 - 4 - 22) : (collectionView.bounds.width - 32 - 8 - 52 - 4 - 22)
         let text = sectionedMessages[indexPath.section].messages[indexPath.row].text
         let font = UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16)
         let estimatedFrame = text.getEstimatedMessageFrame(width: width, with: font)
@@ -200,7 +200,7 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        return UIEdgeInsets(top: section == 0 ? 24 : 16, left: 0, bottom: 16, right: 0)
+        return UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
     }
 
     func collectionView(
@@ -224,7 +224,7 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 26)
+        return CGSize(width: collectionView.bounds.width, height: 26 + 24)
     }
 }
 
