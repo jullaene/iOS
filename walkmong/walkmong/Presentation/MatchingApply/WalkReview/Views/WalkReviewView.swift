@@ -48,6 +48,7 @@ class WalkReviewView: UIView {
         backgroundColor = .gray100
         setupScrollView()
         setupFilterButton()
+        setupFilterButtonConstraints()
     }
 
     private func setupScrollView() {
@@ -62,8 +63,16 @@ class WalkReviewView: UIView {
 
     // MARK: - Setup Constraints
     private func setupConstraints() {
-        setupScrollViewConstraints()
-        setupFilterButtonConstraints()
+        scrollView.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Layout.topOffset)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
+
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalTo(scrollView)
+            make.height.equalTo(scrollView.snp.height).priority(.low)
+        }
     }
 
     private func setupScrollViewConstraints() {
@@ -93,11 +102,19 @@ class WalkReviewView: UIView {
             let cell = WalkReviewCell()
             cell.configure(with: model)
             contentView.addSubview(cell)
-            setupCellConstraints(cell: cell, previousView: previousView, isFirst: previousView === filterButton)
+
+            cell.snp.makeConstraints { make in
+                make.leading.trailing.equalToSuperview().inset(Layout.cellMargin)
+                make.top.equalTo(previousView.snp.bottom).offset(
+                    previousView === filterButton ? Layout.firstCellSpacing : Layout.cellSpacing
+                )
+            }
             previousView = cell
         }
 
-        setupLastCellConstraint(lastView: previousView)
+        previousView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-Layout.bottomSpacing)
+        }
     }
 
     private func setupCellConstraints(cell: UIView, previousView: UIView, isFirst: Bool) {

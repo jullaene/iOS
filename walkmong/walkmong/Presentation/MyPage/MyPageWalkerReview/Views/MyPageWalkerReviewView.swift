@@ -1,21 +1,21 @@
 //
-//  MyPageOwnerReviewView.swift
+//  MyPageWalkerReviewView.swift
 //  walkmong
 //
-//  Created by 신호연 on 12/18/24.
+//  Created by 신호연 on 12/19/24.
 //
 
 import UIKit
 import SnapKit
 import Kingfisher
 
-class MyPageOwnerReviewView: UIView {
+final class MyPageWalkerReviewView: UIView {
     
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
     private let filterContainerView = UIView()
-    private var filterButton: UIButton = MyPageOwnerReviewView.createFilterButton()
+    private var filterButton: UIButton = MyPageWalkerReviewView.createFilterButton()
     private let dogFilterStackView = UIStackView()
     private var filterView: FilterView?
     private var dimView: UIView?
@@ -73,7 +73,7 @@ class MyPageOwnerReviewView: UIView {
         dogFilterStackView.snp.makeConstraints { make in
             make.leading.equalTo(filterButton.snp.trailing).offset(8)
             make.centerY.equalTo(filterContainerView)
-            make.trailing.lessThanOrEqualTo(contentView).offset(-20)
+            make.trailing.lessThanOrEqualToSuperview().offset(-20)
         }
     }
     
@@ -185,6 +185,8 @@ class MyPageOwnerReviewView: UIView {
         filterView = FilterView()
         guard let filterView = filterView else { return }
         
+        filterView.filters = ["최신순", "평점 높은 순", "평점 낮은 순"]
+
         filterView.onFilterSelected = { [weak self] selectedText in
             self?.updateFilterButtonTitle(with: selectedText)
         }
@@ -196,21 +198,40 @@ class MyPageOwnerReviewView: UIView {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
             window.addSubview(filterView)
+            setupFilterViewConstraints()
+            layoutIfNeeded()
+
+            if let dimView = dimView {
+                window.bringSubviewToFront(dimView)
+                window.bringSubviewToFront(filterView)
+            }
+
+            filterView.animateShow(offset: 0, cornerRadius: 30)
         }
-        
-        setupFilterViewConstraints()
-        layoutIfNeeded()
-        
-        if let dimView = dimView {
-            window?.bringSubviewToFront(dimView)
-            window?.bringSubviewToFront(filterView)
-        }
-        
-        filterView.animateShow(offset: 0, cornerRadius: 30)
     }
 
+    private func setupFilterViewAndHandlers() {
+        guard let filterView = filterView else { return }
+        filterView.onFilterSelected = { [weak self] selectedText in
+            self?.updateFilterButtonTitle(with: selectedText)
+        }
+        filterView.onHideRequested = { [weak self] in
+            self?.hideFilterView()
+        }
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+            window.addSubview(filterView)
+            
+            if let dimView = dimView {
+                window.bringSubviewToFront(dimView)
+                window.bringSubviewToFront(filterView)
+            }
+        }
+        filterView.animateShow(offset: 0, cornerRadius: 30)
+    }
+    
     @objc private func hideFilterView() {
-        filterView?.animateHide(withDuration: 0.4, offset: 178 + safeAreaInsets.bottom)
+        filterView?.animateHide(withDuration: 0.4, offset: 228 + safeAreaInsets.bottom)
         dimView?.updateDimViewVisibility(isHidden: true)
     }
     
@@ -218,8 +239,8 @@ class MyPageOwnerReviewView: UIView {
         guard let filterView = filterView else { return }
         filterView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(178 + safeAreaInsets.bottom)
-            make.bottom.equalToSuperview().offset(178 + safeAreaInsets.bottom)
+            make.height.equalTo(228 + safeAreaInsets.bottom)
+            make.bottom.equalToSuperview().offset(228 + safeAreaInsets.bottom)
         }
     }
     

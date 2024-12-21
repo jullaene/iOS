@@ -16,7 +16,6 @@ class WalkReviewFrame: UIView {
     private let arrowButton: UIButton = {
         let button = ExpandableButton(touchAreaPadding: 10)
         button.setImage(UIImage(named: "arrowIcon"), for: .normal)
-        button.addTarget(self, action: #selector(didTapArrowButton), for: .touchUpInside)
         return button
     }()
     private let circleStackView = UIStackView()
@@ -40,11 +39,13 @@ class WalkReviewFrame: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
+        setupButtonTargets()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         configureView()
+        setupButtonTargets()
     }
     
     // MARK: - View Configuration
@@ -131,6 +132,10 @@ class WalkReviewFrame: UIView {
         
         let reviewVC = WalkReviewViewController()
         currentVC.navigationController?.pushViewController(reviewVC, animated: true)
+    }
+    
+    private func setupButtonTargets() {
+        arrowButton.addTarget(self, action: #selector(didTapArrowButton), for: .touchUpInside)
     }
 }
 
