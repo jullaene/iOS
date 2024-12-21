@@ -131,6 +131,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     }
     
     func setContent(with datamodel: WalktalkListModel) {
+        matchingStateLabel.text = datamodel.matchingState.rawValue
         switch datamodel.matchingState {
         case .matching:
             matchingStateView.backgroundColor = .lightBlue

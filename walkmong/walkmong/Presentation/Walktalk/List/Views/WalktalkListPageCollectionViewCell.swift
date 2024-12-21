@@ -10,7 +10,7 @@ import UIKit
 class WalktalkListPageCollectionViewCell: UICollectionViewCell {
     
     private var selectedMatchingStateIndex: Int?
-    private var walktalkListData: WalktalkListModel?
+    private var walktalkListData: [WalktalkListModel]?
     
     private let walktalkListCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -59,7 +59,7 @@ class WalktalkListPageCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setContent(with dataModel: WalktalkListModel) {
+    func setContent(with dataModel: [WalktalkListModel]) {
         self.walktalkListData = dataModel
         walktalkListCollectionView.reloadData()
     }
@@ -99,6 +99,7 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
             //TODO: 해당 채팅으로 전환
         }else {
             selectedMatchingStateIndex = indexPath.row
+            //TODO: 매칭 상태 필터링 구현
             collectionView.reloadData()
         }
         
@@ -108,7 +109,11 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
 extension WalktalkListPageCollectionViewCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == walktalkListCollectionView {
-            return 10 //FIXME: 채팅방 목록 개수
+            if let data = walktalkListData {
+                return data.count
+            }else {
+                return 0
+            }
         }else {
             return 4
         }
@@ -118,7 +123,7 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDataSource {
         if collectionView == walktalkListCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListCollectionViewCell.className, for: indexPath) as? WalktalkListCollectionViewCell else { return UICollectionViewCell() }
             if let data = walktalkListData {
-                cell.setContent(with: data)
+                cell.setContent(with: data[indexPath.row])
             }
             return cell
         }else {
