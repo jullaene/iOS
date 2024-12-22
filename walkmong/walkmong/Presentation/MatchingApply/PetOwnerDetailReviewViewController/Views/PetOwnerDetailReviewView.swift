@@ -5,6 +5,13 @@
 //  Created by 신호연 on 12/22/24.
 //
 
+//
+//  PetOwnerDetailReviewView.swift
+//  walkmong
+//
+//  Created by 신호연 on 12/22/24.
+//
+
 import UIKit
 import SnapKit
 
@@ -52,8 +59,21 @@ class PetOwnerDetailReviewView: UIView {
         "🦮 산책을 성실히 해줘요", "👍 반려견을 잘 다뤄요", "💬 답장이 빨라요", "😉 요청 사항을 잘 들어줘요",
         "🎖 믿고 맡길 수 있어요", "😀 안전한 산책을 제공해요", "🧐 전문적으로 느껴져요"
     ])
+    
+    let reviewPhotoView = ReviewPhotoView()
 
-    private let navigationBarHeight: CGFloat = 52
+    private let buttonView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+
+    private let submitButton: UIButton = {
+        let button = UIButton.createStyledButton(type: .large, style: .dark, title: "완료")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.removeConstraints(button.constraints)
+        return button
+    }()
 
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -65,6 +85,14 @@ class PetOwnerDetailReviewView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        scrollView.contentSize = CGSize(width: contentView.frame.width, height: contentView.frame.height)
+        print("ScrollView Frame: \(scrollView.frame)")
+        print("ContentView Frame: \(contentView.frame)")
+        print("ButtonView Frame: \(buttonView.frame)")
+    }
+    
     // MARK: - Setup
     private func setupUI() {
         addSubview(scrollView)
@@ -73,20 +101,25 @@ class PetOwnerDetailReviewView: UIView {
         scrollView.canCancelContentTouches = true
         
         scrollView.addSubview(contentView)
-        contentView.addSubviews(infoContainerView, feedbackTitleLabel, hashtagSelectionLabel, hashtagView)
+        contentView.addSubviews(infoContainerView, feedbackTitleLabel, hashtagSelectionLabel, hashtagView, reviewPhotoView)
         infoContainerView.addSubviews(walkerNameLabel, ratingLabel, ratingStarImageView, ratingValueLabel)
+        addSubview(buttonView)
+        buttonView.addSubview(submitButton)
         setupConstraints()
+        self.layoutIfNeeded()
     }
 
     private func setupConstraints() {
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(navigationBarHeight)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(52)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(buttonView.snp.top)
         }
         
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
+            make.height.greaterThanOrEqualTo(scrollView)
         }
         
         infoContainerView.snp.makeConstraints { make in
@@ -129,8 +162,25 @@ class PetOwnerDetailReviewView: UIView {
         hashtagView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(hashtagSelectionLabel)
             make.top.equalTo(hashtagSelectionLabel.snp.bottom).offset(24)
-            make.bottom.equalToSuperview().offset(-16)
-            make.height.greaterThanOrEqualTo(1)
+        }
+        
+        reviewPhotoView.snp.makeConstraints { make in
+            make.top.equalTo(hashtagView.snp.bottom).offset(52)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalTo(contentView.snp.bottom).offset(-34)
+            make.height.equalTo(364)
+        }
+        
+        buttonView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(77)
+            make.bottom.equalTo(self.safeAreaLayoutGuide.snp.bottom)
+        }
+        
+        submitButton.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.centerY.equalToSuperview()
+            make.height.equalTo(53)
         }
     }
 }
