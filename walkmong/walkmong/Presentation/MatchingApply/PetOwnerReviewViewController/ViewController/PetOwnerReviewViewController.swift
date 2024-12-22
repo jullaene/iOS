@@ -56,5 +56,14 @@ class PetOwnerReviewViewController: UIViewController {
     @objc private func updateButtonStates() {
         let allRated = petOwnerReviewView.areAllRatingsFilled()
         petOwnerReviewView.updateButtonStates(isAllRated: allRated)
+        
+        petOwnerReviewView.detailedReviewButton.addTarget(self, action: #selector(didTapDetailedReviewButton), for: .touchUpInside)
+    }
+
+    @objc private func didTapDetailedReviewButton() {
+        if petOwnerReviewView.areAllRatingsFilled() {
+            let detailReviewVC = PetOwnerDetailReviewViewController()
+            navigationController?.pushViewController(detailReviewVC, animated: true)
+        }
     }
 }

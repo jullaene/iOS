@@ -50,10 +50,11 @@ class PetOwnerReviewView: UIView {
         return view
     }()
     
-    private let detailedReviewButton: UIButton = {
+    let detailedReviewButton: UIButton = {
         let button = UIButton.createStyledButton(type: .large, style: .light, title: "자세한 후기 작성하기")
         button.backgroundColor = .gray100
         button.setTitleColor(.gray400, for: .normal)
+        button.addTarget(self, action: #selector(didTapDetailedReviewButton), for: .touchUpInside)
         return button
     }()
     
@@ -199,5 +200,9 @@ class PetOwnerReviewView: UIView {
             sendReviewButton.backgroundColor = .gray200
             sendReviewButton.setTitleColor(.gray400, for: .normal)
         }
+    }
+    
+    @objc private func didTapDetailedReviewButton() {
+        NotificationCenter.default.post(name: .ratingUpdated, object: nil)
     }
 }

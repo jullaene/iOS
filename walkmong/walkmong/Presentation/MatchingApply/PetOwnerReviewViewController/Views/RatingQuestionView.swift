@@ -109,15 +109,19 @@ class RatingQuestionView: UIView {
     }
 
     @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
-        let touchLocation = gesture.location(in: self)
-
-        // Determine which star corresponds to the touch location
-        for (index, star) in stars.enumerated() {
-            if star.frame.contains(touchLocation) {
-                selectedRating = index + 1
-                NotificationCenter.default.post(name: .ratingUpdated, object: nil)
-                break
+        let velocity = gesture.velocity(in: self)
+        
+        if abs(velocity.x) > abs(velocity.y) {
+            let touchLocation = gesture.location(in: self)
+            for (index, star) in stars.enumerated() {
+                if star.frame.contains(touchLocation) {
+                    selectedRating = index + 1
+                    NotificationCenter.default.post(name: .ratingUpdated, object: nil)
+                    break
+                }
             }
+        } else {
+            self.superview?.next?.touchesBegan([], with: nil)
         }
     }
 
