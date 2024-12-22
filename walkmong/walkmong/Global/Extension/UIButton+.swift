@@ -120,7 +120,7 @@ extension UIButton {
         case .customFilter:
             break
         case .tag:
-            button.layer.cornerRadius = 16
+            button.layer.cornerRadius = 15
             button.backgroundColor = style == .light ? .gray200 : .mainBlue
         }
     }
@@ -240,6 +240,6 @@ extension UIButton {
         let buttonWidth = textWidth + 18
         setButtonSizeConstraints(button: button, width: buttonWidth, height: 32)
         
-        button.layer.cornerRadius = 16
+        button.layer.cornerRadius = 15
     }
 }

@@ -7,8 +7,6 @@
 
 import UIKit
 
-import UIKit
-
 class PetOwnerDetailReviewViewController: UIViewController {
     private let detailReviewView = PetOwnerDetailReviewView()
     

@@ -47,7 +47,7 @@ class PetOwnerDetailReviewView: UIView {
         return MainParagraphLabel(text: "해시태그를 최대 3가지 골라주세요", textColor: .mainBlack)
     }()
     
-    private let hashtagView = HashtagView(hashtags: [
+    private let hashtagView = DetailReviewHashtagView(hashtags: [
         "🐶 반려견이 좋아해요", "🤩 매너가 좋아요", "😊 꼼꼼해요", "🗓 일정 조정을 잘 해줘요",
         "🦮 산책을 성실히 해줘요", "👍 반려견을 잘 다뤄요", "💬 답장이 빨라요", "😉 요청 사항을 잘 들어줘요",
         "🎖 믿고 맡길 수 있어요", "😀 안전한 산책을 제공해요", "🧐 전문적으로 느껴져요"
@@ -68,6 +68,10 @@ class PetOwnerDetailReviewView: UIView {
     // MARK: - Setup
     private func setupUI() {
         addSubview(scrollView)
+        
+        scrollView.delaysContentTouches = false
+        scrollView.canCancelContentTouches = true
+        
         scrollView.addSubview(contentView)
         contentView.addSubviews(infoContainerView, feedbackTitleLabel, hashtagSelectionLabel, hashtagView)
         infoContainerView.addSubviews(walkerNameLabel, ratingLabel, ratingStarImageView, ratingValueLabel)
@@ -125,6 +129,8 @@ class PetOwnerDetailReviewView: UIView {
         hashtagView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(hashtagSelectionLabel)
             make.top.equalTo(hashtagSelectionLabel.snp.bottom).offset(24)
+            make.bottom.equalToSuperview().offset(-16)
+            make.height.greaterThanOrEqualTo(1)
         }
     }
 }
