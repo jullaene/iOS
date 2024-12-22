@@ -1,27 +1,34 @@
-//
-//  AlertView.swift
-//  walkmong
-//
-//  Created by 신호연 on 12/22/24.
-//
-
 import UIKit
 import SnapKit
 
 class AlertView: UIView {
     
+    // MARK: - UI Components
+    let tableView = UITableView()
+    
+    // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupView()
+        fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup Methods
     private func setupView() {
-        self.backgroundColor = .white
-        // 추가적인 UI 구성 요소가 있으면 여기에 추가
+        backgroundColor = .white
+        setupTableView()
+    }
+    
+    private func setupTableView() {
+        tableView.separatorStyle = .none
+        addSubview(tableView)
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(52+18)
+            make.left.right.bottom.equalToSuperview()
+        }
     }
 }
