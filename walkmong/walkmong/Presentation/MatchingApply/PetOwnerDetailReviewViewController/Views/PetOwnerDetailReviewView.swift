@@ -5,17 +5,13 @@
 //  Created by 신호연 on 12/22/24.
 //
 
-//
-//  PetOwnerDetailReviewView.swift
-//  walkmong
-//
-//  Created by 신호연 on 12/22/24.
-//
-
 import UIKit
 import SnapKit
 
 class PetOwnerDetailReviewView: UIView {
+    // MARK: - 서버 해시태그 매핑
+    private let hashtags: [Hashtag] = Hashtag.allCases // enum Hashtag 사용
+
     // MARK: - UI Elements
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -54,12 +50,8 @@ class PetOwnerDetailReviewView: UIView {
         return MainParagraphLabel(text: "해시태그를 최대 3가지 골라주세요", textColor: .mainBlack)
     }()
     
-    private let hashtagView = DetailReviewHashtagView(hashtags: [
-        "🐶 반려견이 좋아해요", "🤩 매너가 좋아요", "😊 꼼꼼해요", "🗓 일정 조정을 잘 해줘요",
-        "🦮 산책을 성실히 해줘요", "👍 반려견을 잘 다뤄요", "💬 답장이 빨라요", "😉 요청 사항을 잘 들어줘요",
-        "🎖 믿고 맡길 수 있어요", "😀 안전한 산책을 제공해요", "🧐 전문적으로 느껴져요"
-    ])
-    
+    let hashtagView: DetailReviewHashtagView
+
     let reviewPhotoView = ReviewPhotoView()
 
     private let buttonView: UIView = {
@@ -68,7 +60,7 @@ class PetOwnerDetailReviewView: UIView {
         return view
     }()
 
-    private let submitButton: UIButton = {
+    let submitButton: UIButton = {
         let button = UIButton.createStyledButton(type: .large, style: .dark, title: "완료")
         button.translatesAutoresizingMaskIntoConstraints = false
         button.removeConstraints(button.constraints)
@@ -77,6 +69,8 @@ class PetOwnerDetailReviewView: UIView {
 
     // MARK: - Initializer
     override init(frame: CGRect) {
+        // DetailReviewHashtagView에 해시태그의 displayName 전달
+        self.hashtagView = DetailReviewHashtagView(hashtags: Hashtag.allCases.map { $0.displayName })
         super.init(frame: frame)
         setupUI()
     }
@@ -88,9 +82,6 @@ class PetOwnerDetailReviewView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         scrollView.contentSize = CGSize(width: contentView.frame.width, height: contentView.frame.height)
-        print("ScrollView Frame: \(scrollView.frame)")
-        print("ContentView Frame: \(contentView.frame)")
-        print("ButtonView Frame: \(buttonView.frame)")
     }
     
     // MARK: - Setup
@@ -182,5 +173,13 @@ class PetOwnerDetailReviewView: UIView {
             make.centerY.equalToSuperview()
             make.height.equalTo(53)
         }
+    }
+
+    // MARK: - 해시태그 서버 포맷 변환
+    func getServerFormattedHashtags() -> [String] {
+        let selectedHashtags = hashtagView.getSelectedHashtags()
+        return hashtags
+            .filter { selectedHashtags.contains($0.displayName) }
+            .map { $0.rawValue }
     }
 }

@@ -10,7 +10,7 @@ import UIKit
 class DetailReviewHashtagView: UIView {
     private let buttonSpacing: CGFloat = 8
     private let rowSpacing: CGFloat = 16
-    private var hashtagButtons: [UIButton] = []
+    var hashtagButtons: [UIButton] = []
 
     init(hashtags: [String]) {
         super.init(frame: .zero)
@@ -79,5 +79,11 @@ class DetailReviewHashtagView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let isInside = super.point(inside: point, with: event)
         return isInside
+    }
+
+    func getSelectedHashtags() -> [String] {
+        return hashtagButtons
+            .filter { $0.backgroundColor == UIColor.mainBlue }
+            .compactMap { $0.title(for: .normal) }
     }
 }

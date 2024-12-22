@@ -41,7 +41,7 @@ class ReviewPhotoView: UIView {
         )
     }()
     
-    private lazy var reviewTextView: UITextView = {
+    lazy var reviewTextView: UITextView = {
         let textView = UITextView()
         textView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         textView.textColor = .gray500

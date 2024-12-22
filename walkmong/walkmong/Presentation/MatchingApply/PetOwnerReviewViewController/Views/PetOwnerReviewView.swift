@@ -58,7 +58,7 @@ class PetOwnerReviewView: UIView {
         return button
     }()
     
-    private let sendReviewButton: UIButton = {
+    let sendReviewButton: UIButton = {
         let button = UIButton.createStyledButton(type: .large, style: .light, title: "산책 후기 보내기")
         button.backgroundColor = .gray200
         button.setTitleColor(.gray400, for: .normal)
