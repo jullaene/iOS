@@ -127,6 +127,10 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             make.trailing.equalToSuperview().offset(-25)
             make.top.equalTo(customView.snp.top).offset(27)
         }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(alertIconTapped))
+        alertIcon.isUserInteractionEnabled = true
+        alertIcon.addGestureRecognizer(tapGesture)
     }
     
     private func setupLocationSelectView() {
@@ -219,6 +223,24 @@ class MatchingView: UIView, MatchingViewLocationProvider {
 
     @objc private func filterButtonTapped() {
         filterButtonAction?()
+    }
+    
+    @objc private func alertIconTapped() {
+        if let viewController = findViewController() {
+            let alertVC = AlertViewController()
+            viewController.navigationController?.pushViewController(alertVC, animated: true)
+        }
+    }
+    
+    private func findViewController() -> UIViewController? {
+        var nextResponder: UIResponder? = self
+        while let responder = nextResponder {
+            if let viewController = responder as? UIViewController {
+                return viewController
+            }
+            nextResponder = responder.next
+        }
+        return nil
     }
 }
 

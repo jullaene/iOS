@@ -79,6 +79,10 @@ class MyPageView: UIView {
             make.top.leading.trailing.equalToSuperview()
             make.bottom.equalTo(contentViewSection.snp.top)
         }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(alertIconTapped))
+        alertIcon.isUserInteractionEnabled = true
+        alertIcon.addGestureRecognizer(tapGesture)
     }
     
     private func setupConstraints() {
@@ -102,7 +106,7 @@ class MyPageView: UIView {
         alertIcon.snp.makeConstraints { make in
             make.top.equalTo(contentView).offset(16)
             make.trailing.equalToSuperview().offset(-20)
-            make.width.height.equalTo(24) // 아이콘 크기 설정
+            make.width.height.equalTo(24)
         }
         
         profileView.snp.makeConstraints { make in
@@ -135,5 +139,23 @@ class MyPageView: UIView {
         let topBackgroundView = UIView()
         topBackgroundView.backgroundColor = .mainBlue
         return topBackgroundView
+    }
+    
+    @objc private func alertIconTapped() {
+        if let viewController = findViewController() {
+            let alertVC = AlertViewController()
+            viewController.navigationController?.pushViewController(alertVC, animated: true)
+        }
+    }
+
+    private func findViewController() -> UIViewController? {
+        var nextResponder: UIResponder? = self
+        while let responder = nextResponder {
+            if let viewController = responder as? UIViewController {
+                return viewController
+            }
+            nextResponder = responder.next
+        }
+        return nil
     }
 }
