@@ -13,14 +13,14 @@ struct WalkTalkChatLogModel{
     let dogName: String
     let date: String
     let id: String
-    let data: [WalkTalkChatMessageModel]
+    let data: [WalkTalkChatMessageModel?]?
 }
 
-struct WalkTalkChatMessageModel: Codable{
-    let type: String
-    let text: String
-    let id: String
-    let date: String
+struct WalkTalkChatMessageModel: Codable {
+    let type: String?
+    let text: String?
+    let id: String?
+    let date: String?
 }
 
 extension WalkTalkChatLogModel {
@@ -51,24 +51,30 @@ extension WalkTalkChatLogModel {
     
     // 섹션화된 데이터 반환
     func sectionedChatMessages() -> [(sectionTitle: String, messages: [WalkTalkChatMessageModel])] {
-        // 1. 메시지 정렬
-        let sortedMessages = data.sorted { lhs, rhs in
-            guard let lhsDate = WalkTalkChatLogModel.dateFormatter.date(from: lhs.date),
-                  let rhsDate = WalkTalkChatLogModel.dateFormatter.date(from: rhs.date) else {
+        // 1. 메시지가 nil이 아닌 경우만 필터링
+        guard let data = data else { return [] }
+        let filteredMessages = data.compactMap { $0 }
+        
+        // 2. 메시지 정렬
+        let sortedMessages = filteredMessages.sorted { lhs, rhs in
+            guard let lhsDateStr = lhs.date, let rhsDateStr = rhs.date,
+                  let lhsDate = WalkTalkChatLogModel.dateFormatter.date(from: lhsDateStr),
+                  let rhsDate = WalkTalkChatLogModel.dateFormatter.date(from: rhsDateStr) else {
                 return false
             }
             return lhsDate < rhsDate
         }
         
-        // 2. 메시지를 날짜별로 그룹화
+        // 3. 메시지를 날짜별로 그룹화
         let groupedMessages = Dictionary(grouping: sortedMessages) { message -> String in
-            guard let date = WalkTalkChatLogModel.dateFormatter.date(from: message.date) else {
+            guard let dateStr = message.date,
+                  let date = WalkTalkChatLogModel.dateFormatter.date(from: dateStr) else {
                 return "Unknown Date"
             }
             return WalkTalkChatLogModel.outputDateFormatter.string(from: date) // "yyyy년 M월 d일"
         }
         
-        // 3. 섹션화된 데이터 생성
+        // 4. 섹션화된 데이터 생성
         let sectionedMessages = groupedMessages.map { (key, value) -> (String, [WalkTalkChatMessageModel]) in
             (key, value)
         }.sorted { lhs, rhs in
@@ -77,6 +83,7 @@ extension WalkTalkChatLogModel {
         
         return sectionedMessages
     }
+    
     func formattedTime() -> String {
         guard let date = WalkTalkChatLogModel.dateFormatter.date(from: self.date) else {
             return self.date
