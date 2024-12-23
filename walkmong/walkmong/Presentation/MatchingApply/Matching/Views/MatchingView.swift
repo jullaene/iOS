@@ -125,7 +125,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         customView.addSubview(alertIcon)
         alertIcon.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-25)
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(27)
+            make.top.equalTo(customView.snp.top).offset(27)
         }
     }
     

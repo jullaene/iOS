@@ -25,15 +25,14 @@ extension UIViewController {
         let titleLabel = UpperTitleLabel(text: titleText ?? "")
         titleLabel.textAlignment = .center
         titleLabel.textColor = .black
-
+        
         navigationBarView.addSubview(titleLabel)
         
-        // Left button 설정
         if showLeftBackButton {
             let backButtonButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.backButton, for: .normal)
-                button.addTarget(self, action: #selector(self.popViewController), for: .touchUpInside)
+                button.addTarget(self, action: #selector(popViewController), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(backButtonButton)
@@ -43,7 +42,6 @@ extension UIViewController {
                 make.leading.equalToSuperview().offset(20)
             }
             
-            // Title 레이블 위치 조정
             titleLabel.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.centerX.equalToSuperview()
@@ -60,20 +58,19 @@ extension UIViewController {
                 make.height.width.equalTo(40)
                 make.leading.equalToSuperview().offset(20)
             }
-            
-            // Title 레이블 위치 조정
-            titleLabel.snp.makeConstraints { make in
-                make.centerY.equalToSuperview()
-                make.centerX.equalToSuperview()
-            }
         }
-
-        // Right button 설정
+        
+        titleLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.centerX.equalToSuperview()
+        }
+        
         if showRightCloseButton {
             let closeBarButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.deleteButton, for: .normal)
                 button.tintColor = .mainBlack
+                button.addTarget(self, action: #selector(self.popViewController), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(closeBarButton)
@@ -96,15 +93,40 @@ extension UIViewController {
                 make.trailing.equalToSuperview().offset(-20)
             }
         }
-
-        // Enable Swipe Back Gesture
+        
         if let navigationController = self.navigationController {
             navigationController.interactivePopGestureRecognizer?.delegate = nil
             navigationController.interactivePopGestureRecognizer?.isEnabled = true
         }
     }
-
+    
+    // MARK: - Button Handlers with Effects
+    @objc private func handleBackButtonTapped() {
+        triggerCustomTransition(type: .push, direction: .fromLeft)
+        popViewController()
+    }
+    
+    @objc private func handleCloseButtonTapped() {
+        triggerCustomTransition(type: .fade, direction: nil)
+        popViewController()
+    }
+    
+    @objc private func handleRefreshButtonTapped() {
+        print("Refresh button tapped")
+    }
+    
     @objc private func popViewController() {
-        self.navigationController?.popViewController(animated: true)
+        self.navigationController?.popViewController(animated: false)
+    }
+    
+    // MARK: - Custom Transition Effects
+    private func triggerCustomTransition(type: CATransitionType, direction: CATransitionSubtype?) {
+        let transition = CATransition()
+        transition.duration = 0.3
+        transition.type = type
+        transition.subtype = direction
+        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        
+        self.navigationController?.view.layer.add(transition, forKey: kCATransition)
     }
 }

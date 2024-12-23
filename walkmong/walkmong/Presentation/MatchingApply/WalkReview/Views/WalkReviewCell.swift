@@ -11,11 +11,11 @@ import SnapKit
 class WalkReviewCell: UIView {
     private let roundedContainer = WalkReviewCell.createRoundedContainer()
     private let profileFrame = ProfileFrameView()
-    private let circleStackView = WalkReviewCell.createCircleStackView()
-    private let photoFrame = UIView()
-    private let leftImageView = UIImage.createImageView()
-    private let rightImageView = UIImage.createImageView()
+    private let totalRatingView = WalkReviewTotalRatingView()
+    private let circleTagView = WalkReviewCell.createCircleStackView()
+    private let photoFrame = WalkReviewPhotoFrameView()
     private let reviewTextLabel = WalkReviewCell.createReviewTextLabel()
+    private let tagView = WalkReviewTagView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,74 +34,69 @@ class WalkReviewCell: UIView {
     }
 
     private func setupSubviews() {
-        [profileFrame, circleStackView].forEach { roundedContainer.addSubview($0) }
+        [profileFrame, totalRatingView, circleTagView, photoFrame, reviewTextLabel, tagView].forEach {
+            roundedContainer.addSubview($0)
+        }
     }
 
     func configure(with model: DogReviewModel) {
         profileFrame.configure(with: model.profileData)
-        configureCircleStackView(with: model.circleTags)
 
-        if !model.photos.isEmpty {
-            configurePhotoFrame(with: model.photos)
-            if photoFrame.superview == nil { roundedContainer.addSubview(photoFrame) }
+        if let totalRating = model.totalRating {
+            totalRatingView.configure(with: totalRating)
+            totalRatingView.isHidden = false
         } else {
-            photoFrame.removeFromSuperview()
+            totalRatingView.isHidden = true
+        }
+
+        if let circleTags = model.circleTags, !circleTags.isEmpty {
+            configureCircleTagView(with: circleTags)
+            circleTagView.isHidden = false
+        } else {
+            circleTagView.isHidden = true
+        }
+
+        if let photos = model.photos, !photos.isEmpty {
+            photoFrame.configure(with: photos)
+            photoFrame.isHidden = false
+        } else {
+            photoFrame.isHidden = true
         }
 
         if let reviewText = model.reviewText?.trimmingCharacters(in: .whitespacesAndNewlines), !reviewText.isEmpty {
             reviewTextLabel.text = reviewText
-            if reviewTextLabel.superview == nil { roundedContainer.addSubview(reviewTextLabel) }
+            reviewTextLabel.isHidden = false
         } else {
-            reviewTextLabel.removeFromSuperview()
+            reviewTextLabel.isHidden = true
+        }
+
+        if let tags = model.tags, !tags.isEmpty {
+            tagView.configure(with: tags)
+            tagView.isHidden = false
+        } else {
+            tagView.isHidden = true
         }
 
         setupDynamicConstraints()
     }
 
-    private func configureCircleStackView(with tags: [(String, String)]) {
-        circleStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        tags.forEach { title, tag in
-            let circleView = CircleTagView(title: title, tag: tag)
-            circleStackView.addArrangedSubview(circleView)
-            circleView.snp.makeConstraints { $0.size.equalTo(96) }
+    private func configureCircleTagView(with tags: [(String, String)]) {
+        circleTagView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        if tags.isEmpty {
+            circleTagView.isHidden = true
+        } else {
+            circleTagView.isHidden = false
+            tags.forEach { title, tag in
+                let circleView = CircleTagView(title: title, tag: tag)
+                circleTagView.addArrangedSubview(circleView)
+                circleView.snp.makeConstraints { $0.size.equalTo(96) }
+            }
         }
     }
 
-    private func configurePhotoFrame(with photos: [UIImage]) {
-        [leftImageView, rightImageView].forEach { $0.removeFromSuperview() }
-
-        // 기본 이미지 설정
-        let defaultImage = UIImage(named: "defaultImage") ?? UIImage(systemName: "photo") // 시스템 이미지를 대체로 사용 가능
-
-        // 최대 2개의 이미지를 가져오되, 없으면 defaultImage로 대체
-        let firstImage = photos.indices.contains(0) ? photos[0] : defaultImage
-        let secondImage = photos.indices.contains(1) ? photos[1] : defaultImage
-
-        // Left Image View 설정
-        leftImageView.image = firstImage
-        photoFrame.addSubview(leftImageView)
-        leftImageView.snp.remakeConstraints {
-            $0.top.leading.bottom.equalToSuperview()
-            $0.width.equalTo(leftImageView.snp.height).priority(.high)
-        }
-
-        // Right Image View 설정
-        rightImageView.image = secondImage
-        photoFrame.addSubview(rightImageView)
-        rightImageView.snp.remakeConstraints {
-            $0.top.trailing.bottom.equalToSuperview()
-            $0.leading.equalTo(leftImageView.snp.trailing).offset(8)
-            $0.width.equalTo(rightImageView.snp.height).priority(.high)
-        }
-
-        // 한 개만 있을 경우 오른쪽 이미지 숨김 처리
-        rightImageView.isHidden = photos.count < 2
-    }
-    
-    // MARK: - Layout Constraints
     private func setupConstraints() {
         let margin: CGFloat = 20
-        let spacing: CGFloat = 24
+        let spacing: CGFloat = 16
 
         roundedContainer.snp.makeConstraints { $0.edges.equalToSuperview() }
 
@@ -110,44 +105,40 @@ class WalkReviewCell: UIView {
             $0.height.equalTo(44)
         }
 
-        circleStackView.snp.makeConstraints {
+        totalRatingView.snp.makeConstraints {
             $0.top.equalTo(profileFrame.snp.bottom).offset(spacing)
             $0.leading.trailing.equalToSuperview().inset(margin)
-            $0.height.equalTo(112)
         }
     }
-    
+
     private func setupDynamicConstraints() {
         let margin: CGFloat = 20
         let spacing: CGFloat = 16
 
-        if photoFrame.superview != nil {
-            photoFrame.snp.remakeConstraints {
-                $0.top.equalTo(circleStackView.snp.bottom).offset(spacing)
-                $0.leading.trailing.equalToSuperview().inset(margin)
-                $0.height.equalTo(photoFrame.snp.width).dividedBy(2)
+        var lastView: UIView = totalRatingView
+
+        [circleTagView, photoFrame, reviewTextLabel, tagView].forEach { subview in
+            if subview.isHidden {
+                subview.snp.removeConstraints()
+            } else {
+                subview.snp.remakeConstraints {
+                    $0.top.equalTo(lastView.snp.bottom).offset(spacing)
+                    $0.leading.trailing.equalToSuperview().inset(margin)
+
+                    if subview === tagView {
+                        $0.height.equalTo(tagView.snp.height)
+                    }
+                }
+                lastView = subview
             }
         }
 
-        if reviewTextLabel.superview != nil {
-            reviewTextLabel.snp.remakeConstraints {
-                if photoFrame.superview != nil {
-                    $0.top.equalTo(photoFrame.snp.bottom).offset(spacing)
-                } else {
-                    $0.top.equalTo(circleStackView.snp.bottom).offset(spacing)
-                }
-                $0.leading.trailing.equalToSuperview().inset(margin)
-                $0.bottom.equalToSuperview().offset(-margin)
-            }
-        } else if photoFrame.superview != nil {
-            photoFrame.snp.makeConstraints {
-                $0.bottom.equalToSuperview().offset(-margin)
-            }
-        } else {
-            circleStackView.snp.makeConstraints {
-                $0.bottom.equalToSuperview().offset(-margin)
-            }
+        lastView.snp.makeConstraints {
+            $0.bottom.equalToSuperview().offset(-margin)
         }
+
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 
     private static func createRoundedContainer() -> UIView {

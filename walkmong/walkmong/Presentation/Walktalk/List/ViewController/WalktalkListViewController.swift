@@ -8,22 +8,26 @@
 import UIKit
 
 class WalktalkListViewController: UIViewController {
+    
+    private let walktalkListView = WalktalkListView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setUI()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
     }
-    */
 
+    private func setUI() {
+        view.backgroundColor = .white
+        view.addSubview(walktalkListView)
+        walktalkListView.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
+            make.horizontalEdges.bottom.equalToSuperview()
+        }
+        addCustomNavigationBar(titleText: "워크톡", showLeftBackButton: false, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
+    }
 }

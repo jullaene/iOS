@@ -28,6 +28,7 @@ class ProfileFrameView: UIView {
         label.textColor = UIColor.gray400
         label.font = UIFont(name: "Pretendard-Medium", size: 12)
         label.textAlignment = .center
+        label.isUserInteractionEnabled = true
         return label
     }()
     
@@ -37,10 +38,20 @@ class ProfileFrameView: UIView {
         return view
     }()
     
+//    private let petTagLabel: CaptionLabel = {
+//        let label = CaptionLabel(text: "Dog Tag", textColor: .gray600)
+//        label.backgroundColor = UIColor.lightBlue
+//        label.textAlignment = .center
+//        label.layer.cornerRadius = 5
+//        label.clipsToBounds = true
+//        return label
+//    }()
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
+        setupGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -68,8 +79,7 @@ class ProfileFrameView: UIView {
     private func setupConstraints() {
         profileImageView.snp.makeConstraints { make in
             make.leading.top.equalToSuperview()
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(46)
+            make.width.height.equalTo(44)
         }
         
         reviewerIdLabel.snp.makeConstraints { make in
@@ -95,5 +105,26 @@ class ProfileFrameView: UIView {
             make.width.equalTo(reportLabel)
             make.height.equalTo(0.5)
         }
+        
+//        petTagLabel.snp.makeConstraints { make in
+//            make.leading.equalTo(reviewerIdLabel.snp.trailing).offset(8)
+//            make.centerY.equalTo(reviewerIdLabel)
+//            make.trailing.equalTo(petTagLabel.snp.leading).offset(petTagLabel.intrinsicContentSize.width + 8)
+//            make.height.equalTo(21)
+//        }
+    }
+    
+    // MARK: - Gesture Setup
+    private func setupGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(reportLabelTapped))
+        reportLabel.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func reportLabelTapped() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController as? UINavigationController else { return }
+
+        let reportVC = MyPageReportViewController()
+        rootViewController.pushViewController(reportVC, animated: true)
     }
 }
