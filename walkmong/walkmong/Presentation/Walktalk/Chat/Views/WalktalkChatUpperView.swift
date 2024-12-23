@@ -178,8 +178,8 @@ class WalktalkChatUpperView: UIView {
         switch currentMatchingState {
         case .matching:
             matchingStateFirstButton.setTitle("매칭 확정하기", for: .normal)
-            matchingStateView.backgroundColor = .mainGreen
-            matchingStateLabel.textColor = .white
+            matchingStateView.backgroundColor = .lightBlue
+            matchingStateLabel.textColor = .mainBlue
         case .confirmed:
             matchingStateFirstButton.setTitle("사전만남 설정", for: .normal)
             matchingStateView.backgroundColor = .mainBlue
