@@ -10,6 +10,7 @@ import Moya
 
 enum DogAPI {
     case getDogProfile(dogId: Int)
+    case getDogList
 }
 
 extension DogAPI: TargetType {
@@ -24,19 +25,21 @@ extension DogAPI: TargetType {
         switch self {
         case .getDogProfile(let dogId):
             return "/api/v1/dog/profile/\(dogId)"
+        case .getDogList:
+            return "/api/v1/dog/list"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .getDogProfile:
+        case .getDogProfile, .getDogList:
             return .get
         }
     }
-    
+
     var task: Task {
         switch self {
-        case .getDogProfile:
+        case .getDogProfile, .getDogList:
             return .requestPlain
         }
     }
