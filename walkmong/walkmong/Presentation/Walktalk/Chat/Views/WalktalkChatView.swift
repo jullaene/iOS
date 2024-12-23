@@ -20,18 +20,26 @@ class WalktalkChatView: UIView {
         dogName: "Buddy",
         date: "2024-12-23",
         id: "123",
-        data: [
-            WalkTalkChatMessageModel(type: "message", text: "좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?", id: "0", date: "2024-12-21T09:15:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "오후 2시에 만나요!요요요요요요요요요요요요요요요요요요요요요요요요요요요요요요요요요요요요", id: "1", date: "2024-12-21T10:00:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "네, 알겠습니다.좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?", id: "0", date: "2024-12-21T10:15:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.", id: "1", date: "2024-12-21T10:20:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "안녕하세요!", id: "0", date: "2024-12-19T10:20:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?", id: "1", date: "2024-12-19T11:00:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?", id: "0", date: "2024-12-20T14:30:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "내일 가능해요!", id: "1", date: "2024-12-20T15:45:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "어디서 만날까요?", id: "0", date: "2024-12-20T16:30:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "카페에서 만나요!", id: "1", date: "2024-12-20T17:10:00.000000")
-        ]
+        data:
+            [
+                WalkTalkChatMessageModel(type: "message", text: "좋아요, 그럼 우리가 만날 시간은 언제가 좋을까요? 제 생각에는 오후 3시 정도가 좋을 것 같습니다. 혹시 다른 시간이 더 괜찮으신가요?", id: "0", date: "2024-12-21T09:15:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "오후 2시에 만나는 게 좋을 것 같아요! 그 시간에 맞춰서 준비할게요. 어디서 만날까요?", id: "1", date: "2024-12-21T10:00:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "알겠습니다. 오후 2시에 만나는 걸로 할게요. 그럼, 카페에서 만날까요?", id: "0", date: "2024-12-21T10:15:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "감사합니다! 그럼 일정을 확인해보고 다시 연락드릴게요. 만나서 반가울 것 같아요!", id: "1", date: "2024-12-21T10:20:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "안녕하세요! 오랜만에 연락드리네요. 요즘 어떻게 지내세요?", id: "0", date: "2024-12-19T10:20:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "좋아요, 그럼 제가 준비할게요. 언제 시간이 괜찮으세요?", id: "1", date: "2024-12-19T11:00:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "산책을 언제가 좋으신가요? 저는 오늘 오후 3시쯤 시간이 되는데, 괜찮으세요?", id: "0", date: "2024-12-20T14:30:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "내일 오후에 시간 괜찮아요! 그때 만나면 좋겠어요.", id: "1", date: "2024-12-20T15:45:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "네, 알겠습니다! 내일 오후 2시에 만나면 될까요? 장소는 어떻게 할까요?", id: "0", date: "2024-12-20T16:30:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "카페에서 만나요! 제가 자주 가는 곳이 있는데, 그곳이 괜찮으시면 거기로 갈게요.", id: "1", date: "2024-12-20T17:10:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "알겠어요! 그럼 내일 2시에 카페에서 만나요. 기대되네요!", id: "0", date: "2024-12-20T17:40:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "네, 알겠습니다.", id: "1", date: "2024-12-20T18:00:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "감사합니다! 내일 만날 때까지 준비할게요. 좋은 하루 되세요!", id: "0", date: "2024-12-20T18:30:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "알겠어요, 감사합니다!", id: "0", date: "2024-12-19T15:30:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "네, 내일 봐요!", id: "1", date: "2024-12-19T16:00:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "안녕하세요!", id: "0", date: "2024-12-19T10:00:00.000000"),
+                WalkTalkChatMessageModel(type: "message", text: "반가워요!", id: "1", date: "2024-12-19T10:05:00.000000")
+            ]
     )
     
     // 섹션화된 데이터 가져오기
@@ -89,6 +97,12 @@ class WalktalkChatView: UIView {
         configureCollectionView()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        walktalkChatCollectionView.layoutIfNeeded()
+        scrollToBottom()
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -122,10 +136,12 @@ class WalktalkChatView: UIView {
         }
         
         keyboardInputTextView.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(8)
+            make.top.equalToSuperview().offset(8)
+            make.bottom.equalToSuperview().offset(-8)
             make.leading.equalTo(keyboardPhotoButton.snp.trailing).offset(9)
             make.trailing.equalTo(keyboardSendButton.snp.leading).offset(-9)
-            keyboardInputTextViewHeightConstraint = make.height.equalTo(42).constraint
+            // 고정된 높이 제거, 동적 높이로 대체
+            keyboardInputTextViewHeightConstraint = make.height.greaterThanOrEqualTo(42).constraint
         }
     }
     
@@ -168,10 +184,10 @@ class WalktalkChatView: UIView {
         let contentHeight = walktalkChatCollectionView.contentSize.height
         let collectionViewHeight = walktalkChatCollectionView.bounds.size.height
         let yOffset = max(0, contentHeight - collectionViewHeight + walktalkChatCollectionView.contentInset.bottom)
-
+        
         walktalkChatCollectionView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
     }
-
+    
 }
 
 extension WalktalkChatView: UICollectionViewDelegate {
@@ -185,14 +201,14 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         let width = (sectionedMessages[indexPath.section].messages[indexPath.row].id == String(userID)) ?
-            (collectionView.bounds.width - 56 - 4 - 16) :
-            (collectionView.bounds.width - 32 - 8 - 16 - 56 - 4)
+        (collectionView.bounds.width - 56 - 4 - 16) :
+        (collectionView.bounds.width - 32 - 8 - 16 - 56 - 4)
         let text = sectionedMessages[indexPath.section].messages[indexPath.row].text
         let font = UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16)
         let estimatedFrame = text.getEstimatedMessageFrame(width: width, with: font, lineBreakStrategy: .hangulWordPriority)
         return CGSize(width: collectionView.bounds.width, height: estimatedFrame.height + 32)
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -200,7 +216,7 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
     ) -> UIEdgeInsets {
         return UIEdgeInsets(top: 32, left: 0, bottom: 0, right: 0)
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -208,7 +224,7 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return 16
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -216,7 +232,7 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return 16
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -244,7 +260,7 @@ extension WalktalkChatView: UICollectionViewDataSource {
         } else {
             timeFormatted = message.date // 포맷 실패 시 원본 날짜 사용
         }
-
+        
         if message.id == String(userID) {
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: WalktalkChatMessageSentCollectionViewCell.className,
