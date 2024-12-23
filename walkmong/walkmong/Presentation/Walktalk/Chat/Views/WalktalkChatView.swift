@@ -185,8 +185,8 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         let width = (sectionedMessages[indexPath.section].messages[indexPath.row].id == String(userID)) ?
-            (collectionView.bounds.width - 52 - 4 - 16) :
-            (collectionView.bounds.width - 32 - 8 - 16 - 52 - 4)
+            (collectionView.bounds.width - 56 - 4 - 16) :
+            (collectionView.bounds.width - 32 - 8 - 16 - 56 - 4)
         let text = sectionedMessages[indexPath.section].messages[indexPath.row].text
         let font = UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16)
         let estimatedFrame = text.getEstimatedMessageFrame(width: width, with: font, lineBreakStrategy: .hangulWordPriority)
