@@ -9,7 +9,13 @@ import UIKit
 import SnapKit
 import Kingfisher
 
+protocol MyPagePetViewDelegate: AnyObject {
+    func didSelectPet(dogId: Int)
+}
+
 class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    weak var delegate: MyPagePetViewDelegate?
+    
     private let titleView = UIView()
     private let titleLabel = SmallTitleLabel(text: "내 반려견", textColor: .gray600)
     private let editButton = UIButton()
@@ -109,15 +115,16 @@ class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         NetworkManager().fetchDogList { [weak self] result in
             switch result {
             case .success(let petModels):
-                self?.petProfiles = petModels.map { model in
+                self?.petProfiles = petModels.map { petModel in
                     PetProfile(
-                        imageURL: model.dogProfile,
-                        name: model.dogName,
-                        details: "\(model.breed) · \(model.weight)kg"
+                        dogId: petModel.dogId,
+                        imageURL: petModel.dogProfile,
+                        name: petModel.dogName,
+                        details: "\(petModel.breed) · \(petModel.weight)kg"
                     )
                 }
                 DispatchQueue.main.async {
-                    self?.pageControl.numberOfPages = self?.petProfiles.count ?? 0 + 1
+                    self?.pageControl.numberOfPages = self?.petProfiles.count ?? 0
                     self?.collectionView.reloadData()
                 }
             case .failure(let error):
@@ -151,15 +158,14 @@ class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         return CGSize(width: width, height: 94)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item < petProfiles.count else { return }
+        let selectedPet = petProfiles[indexPath.item]
+        delegate?.didSelectPet(dogId: selectedPet.dogId)
+    }
+    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let page = Int((scrollView.contentOffset.x + 20) / scrollView.frame.width)
         pageControl.currentPage = page
     }
-}
-
-// MARK: - PetProfile Model
-struct PetProfile {
-    let imageURL: String?
-    let name: String
-    let details: String
 }

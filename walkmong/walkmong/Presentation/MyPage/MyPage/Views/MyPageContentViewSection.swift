@@ -10,7 +10,7 @@ import SnapKit
 
 class MyPageContentViewSection: UIView {
     
-    private let petView = MyPagePetView()
+    let petView = MyPagePetView()
     private let walkInfoView = MyPageWalkInfoView()
     let reviewView = MyPageReviewView()
     

@@ -13,3 +13,10 @@ struct MyPagePetModel: Decodable {
     let breed: String
     let weight: Double
 }
+
+struct PetProfile {
+    let dogId: Int
+    let imageURL: String?
+    let name: String
+    let details: String
+}
