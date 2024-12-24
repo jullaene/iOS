@@ -55,14 +55,15 @@ class WalktalkChatMessageSentCollectionViewCell: UICollectionViewCell {
         
         messageTimeLabel.snp.makeConstraints { make in
             make.leading.greaterThanOrEqualToSuperview().offset(0)
-            make.width.greaterThanOrEqualTo(50)
-            make.bottom.equalToSuperview()
+            make.width.greaterThanOrEqualTo(56)
+            make.bottom.equalTo(messageView.snp.bottom)
         }
         
         messageView.snp.makeConstraints { make in
             make.leading.equalTo(messageTimeLabel.snp.trailing).offset(4)
             make.trailing.equalToSuperview()
-            make.top.bottom.equalToSuperview()
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-16)
         }
 
     }

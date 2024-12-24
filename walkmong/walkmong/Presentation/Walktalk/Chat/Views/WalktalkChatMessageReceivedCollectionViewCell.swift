@@ -69,7 +69,7 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
         
         messageTimeLabel.snp.makeConstraints { make in
             make.trailing.lessThanOrEqualToSuperview().offset(0)
-            make.width.greaterThanOrEqualTo(30)
+            make.width.greaterThanOrEqualTo(52)
             make.bottom.equalTo(messageView.snp.bottom)
         }
         
@@ -77,7 +77,7 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
             make.trailing.equalTo(messageTimeLabel.snp.leading).offset(-4)
             make.leading.equalTo(profileImageView.snp.trailing).offset(8)
             make.top.equalToSuperview()
-            make.bottom.equalTo(messageLabel.snp.bottom).offset(8)
+            make.bottom.equalToSuperview().offset(-16)
         }
 
     }

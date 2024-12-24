@@ -20,21 +20,9 @@ class WalktalkChatView: UIView {
         dogName: "Buddy",
         date: "2024-12-23",
         id: "123",
-        data: [
-            WalkTalkChatMessageModel(type: "message", text: "좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?좋아요, 몇 시에 갈까요?", id: "0", date: "2024-12-21T09:15:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "오후 2시에 만나요!", id: "1", date: "2024-12-21T10:00:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "네, 알겠습니다.", id: "0", date: "2024-12-21T10:15:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.감사합니다.", id: "1", date: "2024-12-21T10:20:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "안녕하세요!", id: "0", date: "2024-12-19T10:20:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "반갑습니다!", id: "1", date: "2024-12-19T11:00:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?\n산책 언제 가능하세요?", id: "0", date: "2024-12-20T14:30:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "내일 가능해요!", id: "1", date: "2024-12-20T15:45:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "어디서 만날까요?", id: "0", date: "2024-12-20T16:30:00.000000"),
-            WalkTalkChatMessageModel(type: "message", text: "카페에서 만나요!", id: "1", date: "2024-12-20T17:10:00.000000")
-        ]
+        data: []
     )
     
-    // 섹션화된 데이터 가져오기
     lazy var sectionedMessages = chatLog.sectionedChatMessages()
     
     // MARK: 채팅 UI 구성
@@ -89,6 +77,12 @@ class WalktalkChatView: UIView {
         configureCollectionView()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        walktalkChatCollectionView.layoutIfNeeded()
+        scrollToBottom()
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -122,10 +116,11 @@ class WalktalkChatView: UIView {
         }
         
         keyboardInputTextView.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(8)
+            make.top.equalToSuperview().offset(8)
+            make.bottom.equalToSuperview().offset(-8)
             make.leading.equalTo(keyboardPhotoButton.snp.trailing).offset(9)
             make.trailing.equalTo(keyboardSendButton.snp.leading).offset(-9)
-            keyboardInputTextViewHeightConstraint = make.height.equalTo(42).constraint
+            keyboardInputTextViewHeightConstraint = make.height.greaterThanOrEqualTo(42).constraint
         }
     }
     
@@ -140,11 +135,11 @@ class WalktalkChatView: UIView {
     }
     
     @objc private func sendButtonTapped(){
-        // 메시지 전송
+        //TODO: 메시지 전송
     }
     
     @objc private func photoButtonTapped() {
-        // 앨범/카메라 탭 노출
+        //TODO: 앨범/카메라 탭 노출
     }
     
     func setupTextViewDelegate(delegate: UITextViewDelegate) {
@@ -168,10 +163,10 @@ class WalktalkChatView: UIView {
         let contentHeight = walktalkChatCollectionView.contentSize.height
         let collectionViewHeight = walktalkChatCollectionView.bounds.size.height
         let yOffset = max(0, contentHeight - collectionViewHeight + walktalkChatCollectionView.contentInset.bottom)
-
+        
         walktalkChatCollectionView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
     }
-
+    
 }
 
 extension WalktalkChatView: UICollectionViewDelegate {
@@ -184,47 +179,45 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let width = (sectionedMessages[indexPath.section].messages[indexPath.row].id == String(userID)) ? (collectionView.bounds.width - 52 - 4) : (collectionView.bounds.width - 32 - 8 - 52 - 4)
+        let width = (sectionedMessages[indexPath.section].messages[indexPath.row].id == String(userID)) ?
+        (collectionView.bounds.width - 56 - 4 - 16) :
+        (collectionView.bounds.width - 32 - 8 - 16 - 56 - 4)
         let text = sectionedMessages[indexPath.section].messages[indexPath.row].text
         let font = UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16)
-        let estimatedFrame = text.getEstimatedMessageFrame(width: width, with: font)
-
-        // 디버깅: 텍스트와 계산된 프레임 정보 출력
-        print("IndexPath: \(indexPath), Text: \(text), Estimated Frame: \(estimatedFrame)")
-
-        return CGSize(width: collectionView.bounds.width, height: estimatedFrame.height + 16)
+        let estimatedFrame = text?.getEstimatedMessageFrame(width: width, with: font, lineBreakStrategy: .hangulWordPriority)
+        return CGSize(width: collectionView.bounds.width, height: (estimatedFrame?.height ?? 0) + 32)
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        return UIEdgeInsets(top: section == 0 ? 24 : 16, left: 0, bottom: 16, right: 0)
+        return UIEdgeInsets(top: 32, left: 0, bottom: 0, right: 0)
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat {
-        return 32
+        return 16
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat {
-        return 32
+        return 16
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 26)
+        return CGSize(width: collectionView.bounds.width, height: 26 + 24)
     }
 }
 
@@ -240,26 +233,34 @@ extension WalktalkChatView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let message = sectionedMessages[indexPath.section].messages[indexPath.row]
         
-        let timeFormatted: String
-        if let date = WalkTalkChatLogModel.dateFormatter.date(from: message.date) {
-            timeFormatted = WalkTalkChatLogModel.outputTimeFormatter.string(from: date) // "오전/오후 h:mm"
-        } else {
-            timeFormatted = message.date // 포맷 실패 시 원본 날짜 사용
+        guard let dateString = message.date,
+              let textString = message.text else {
+            return UICollectionViewCell()
         }
-
+        
+        let timeFormatted = WalkTalkChatLogModel.dateFormatter.date(from: dateString)
+            .flatMap { WalkTalkChatLogModel.outputTimeFormatter.string(from: $0) }
+            ?? dateString
+        
         if message.id == String(userID) {
+            //MARK: 보낸 메시지 셀
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: WalktalkChatMessageSentCollectionViewCell.className,
                 for: indexPath
-            ) as? WalktalkChatMessageSentCollectionViewCell else { return UICollectionViewCell() }
-            cell.setContent(message: message.text, time: timeFormatted)
+            ) as? WalktalkChatMessageSentCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.setContent(message: textString, time: timeFormatted)
             return cell
         } else {
+            //MARK: 받은 메시지 셀
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: WalktalkChatMessageReceivedCollectionViewCell.className,
                 for: indexPath
-            ) as? WalktalkChatMessageReceivedCollectionViewCell else { return UICollectionViewCell() }
-            cell.setContent(message: message.text, time: timeFormatted, profileImage: .defaultProfile)
+            ) as? WalktalkChatMessageReceivedCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.setContent(message: textString, time: timeFormatted, profileImage: .defaultProfile)
             return cell
         }
     }
