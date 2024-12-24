@@ -43,6 +43,19 @@ class PhotoViewerViewController: UIViewController {
         view.backgroundColor = .black
         setupUI()
         setupCustomNavigationBar()
+        
+        if let navigationBarView = view.subviews.first(where: { $0 is UIView && $0.subviews.contains(where: { $0 is UILabel }) }) {
+            navigationBarView.subviews.compactMap { $0 as? UILabel }.forEach { $0.removeFromSuperview() }
+            
+            let titleLabel = MainParagraphLabel(text: "사진 보기", textColor: .white)
+            titleLabel.textAlignment = .center
+            navigationBarView.addSubview(titleLabel)
+            
+            titleLabel.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+        }
+        
         collectionView.scrollToItem(at: IndexPath(item: currentIndex, section: 0), at: .centeredHorizontally, animated: false)
     }
 
