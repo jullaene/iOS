@@ -94,7 +94,6 @@ class PhotoViewerViewController: UIViewController {
     }
 
     @objc private func didTapClose() {
-        print("didTapClose triggered")
 
         let transition = CATransition()
         transition.duration = 0.2
@@ -109,7 +108,6 @@ class PhotoViewerViewController: UIViewController {
         navigationController.view.layer.add(transition, forKey: kCATransition)
         navigationController.popViewController(animated: false)
 
-        print("Transition animation applied")
     }
 }
 
