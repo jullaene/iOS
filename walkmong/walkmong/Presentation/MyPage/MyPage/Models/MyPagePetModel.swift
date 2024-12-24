@@ -9,6 +9,7 @@ struct MyPagePetModel: Decodable {
     let dogId: Int
     let dogName: String
     let dogProfile: String
+    let dogSize: String
     let dogGender: String
     let breed: String
     let weight: Double
@@ -19,4 +20,5 @@ struct PetProfile {
     let imageURL: String?
     let name: String
     let details: String
+    let gender: String
 }

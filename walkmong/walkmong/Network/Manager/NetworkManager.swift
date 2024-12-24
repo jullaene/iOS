@@ -91,8 +91,8 @@ class NetworkManager {
     
     private func mockDogList() -> [MyPagePetModel] {
         return [
-            MyPagePetModel(dogId: 1, dogName: "봄별이", dogProfile: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", dogGender: "FEMALE", breed: "푸들", weight: 4.5),
-            MyPagePetModel(dogId: 2, dogName: "바다", dogProfile: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", dogGender: "MALE", breed: "시츄", weight: 5.2)
+            MyPagePetModel(dogId: 1, dogName: "봄별이", dogProfile: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", dogSize: "SMALL", dogGender: "FEMALE", breed: "푸들", weight: 4.5),
+            MyPagePetModel(dogId: 2, dogName: "바다", dogProfile: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", dogSize: "MIDDLE", dogGender: "MALE", breed: "시츄", weight: 5.2)
         ]
     }
     
