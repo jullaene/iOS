@@ -170,6 +170,9 @@ class MatchingCell: UIView {
     
     private func setupPostContent() {
         contentFrame.addSubview(postContentLabel)
+        postContentLabel.lineBreakStrategy = .pushOut
+        postContentLabel.lineBreakMode = .byTruncatingTail
+        postContentLabel.numberOfLines = 2
         postContentLabel.snp.makeConstraints { make in
             make.top.equalTo(dogInfoFrame.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview()
