@@ -27,7 +27,9 @@ class PhotoViewerViewController: UIViewController {
         collectionView.register(PhotoViewerCell.self, forCellWithReuseIdentifier: PhotoViewerCell.identifier)
         return collectionView
     }()
-
+    
+    let titleLabel = MainParagraphLabel(text: "", textColor: .white)
+    
     init(photos: [UIImage], currentIndex: Int) {
         self.photos = photos
         self.currentIndex = currentIndex
@@ -43,18 +45,7 @@ class PhotoViewerViewController: UIViewController {
         view.backgroundColor = .black
         setupUI()
         setupCustomNavigationBar()
-        
-        if let navigationBarView = view.subviews.first(where: { $0 is UIView && $0.subviews.contains(where: { $0 is UILabel }) }) {
-            navigationBarView.subviews.compactMap { $0 as? UILabel }.forEach { $0.removeFromSuperview() }
-            
-            let titleLabel = MainParagraphLabel(text: "사진 보기", textColor: .white)
-            titleLabel.textAlignment = .center
-            navigationBarView.addSubview(titleLabel)
-            
-            titleLabel.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
-        }
+        updateTitleLabel()
         
         collectionView.scrollToItem(at: IndexPath(item: currentIndex, section: 0), at: .centeredHorizontally, animated: false)
     }
@@ -66,7 +57,7 @@ class PhotoViewerViewController: UIViewController {
 
     private func setupCustomNavigationBar() {
         addCustomNavigationBar(
-            titleText: "사진 보기",
+            titleText: "",
             showLeftBackButton: false,
             showLeftCloseButton: false,
             showRightCloseButton: true,
@@ -74,9 +65,22 @@ class PhotoViewerViewController: UIViewController {
             backgroundColor: .clear
         )
         
+        if let navigationBarView = view.subviews.first(where: { $0 is UIView && $0.subviews.contains(where: { $0 is UILabel }) }) {
+            navigationBarView.subviews.compactMap { $0 as? UILabel }.forEach { $0.removeFromSuperview() }
+            navigationBarView.addSubview(titleLabel)
+            
+            titleLabel.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+        }
+        
         if let rightCloseButton = navigationItem.rightBarButtonItem?.customView as? UIButton {
             rightCloseButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
         }
+    }
+    
+    private func updateTitleLabel() {
+        titleLabel.text = "\(currentIndex + 1)/\(photos.count)"
     }
 
     @objc private func didTapClose() {
@@ -99,7 +103,7 @@ class PhotoViewerViewController: UIViewController {
     }
 }
 
-extension PhotoViewerViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension PhotoViewerViewController: UICollectionViewDataSource, UICollectionViewDelegate, UIScrollViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return photos.count
     }
@@ -108,6 +112,12 @@ extension PhotoViewerViewController: UICollectionViewDataSource, UICollectionVie
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoViewerCell.identifier, for: indexPath) as! PhotoViewerCell
         cell.configure(with: photos[indexPath.item])
         return cell
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let pageIndex = Int(scrollView.contentOffset.x / scrollView.frame.width)
+        currentIndex = pageIndex
+        updateTitleLabel()
     }
 }
 
