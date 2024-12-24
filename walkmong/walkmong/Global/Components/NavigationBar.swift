@@ -38,8 +38,8 @@ extension UIViewController {
             navigationBarView.addSubview(backButtonButton)
             backButtonButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
-                make.height.width.equalTo(20)
-                make.leading.equalToSuperview().offset(20)
+                make.height.width.equalTo(28)
+                make.leading.equalToSuperview().offset(16)
             }
             
             titleLabel.snp.makeConstraints { make in
@@ -56,7 +56,7 @@ extension UIViewController {
             closeBarButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.height.width.equalTo(40)
-                make.leading.equalToSuperview().offset(20)
+                make.leading.equalToSuperview().offset(16)
             }
         }
         
@@ -76,8 +76,8 @@ extension UIViewController {
             navigationBarView.addSubview(closeBarButton)
             closeBarButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
-                make.height.width.equalTo(40)
-                make.trailing.equalToSuperview().offset(-20)
+                make.height.width.equalTo(24)
+                make.trailing.equalToSuperview().offset(-16)
             }
         } else if showRightRefreshButton {
             let refreshBarButton: UIButton = {
@@ -90,7 +90,7 @@ extension UIViewController {
             refreshBarButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.height.width.equalTo(40)
-                make.trailing.equalToSuperview().offset(-20)
+                make.trailing.equalToSuperview().offset(-16)
             }
         }
         

@@ -56,26 +56,36 @@ class PhotoViewerViewController: UIViewController {
     }
 
     private func setupCustomNavigationBar() {
-        addCustomNavigationBar(
-            titleText: "",
-            showLeftBackButton: false,
-            showLeftCloseButton: false,
-            showRightCloseButton: true,
-            showRightRefreshButton: false,
-            backgroundColor: .clear
-        )
-        
-        if let navigationBarView = view.subviews.first(where: { $0 is UIView && $0.subviews.contains(where: { $0 is UILabel }) }) {
-            navigationBarView.subviews.compactMap { $0 as? UILabel }.forEach { $0.removeFromSuperview() }
-            navigationBarView.addSubview(titleLabel)
-            
-            titleLabel.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
+        navigationController?.setNavigationBarHidden(true, animated: false)
+
+        let navigationBarView = UIView()
+        navigationBarView.backgroundColor = .clear
+        view.addSubview(navigationBarView)
+
+        navigationBarView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(52)
         }
         
-        if let rightCloseButton = navigationItem.rightBarButtonItem?.customView as? UIButton {
-            rightCloseButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
+        titleLabel.text = "\(currentIndex + 1)/\(photos.count)"
+        titleLabel.textAlignment = .center
+        navigationBarView.addSubview(titleLabel)
+
+        titleLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        let closeButton = UIButton()
+        closeButton.setImage(.deleteButton.withRenderingMode(.alwaysTemplate), for: .normal)
+        closeButton.tintColor = .white
+        closeButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
+        navigationBarView.addSubview(closeButton)
+
+        closeButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.trailing.equalToSuperview().offset(-16)
+            make.width.height.equalTo(24)
         }
     }
     
