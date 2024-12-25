@@ -50,6 +50,14 @@ class NetworkManager {
         }
     }
     
+    func fetchDogList(completion: @escaping (Result<[MyPagePetModel], Error>) -> Void) {
+        if useMockData {
+            completion(.success(mockDogList()))
+        } else {
+            request(target: DogAPI.getDogList, completion: completion)
+        }
+    }
+    
     // 실제 네트워크 요청 처리
     private func request<T: Decodable>(target: TargetType, completion: @escaping (Result<T, Error>) -> Void) {
         provider.request(MultiTarget(target)) { result in
@@ -80,6 +88,14 @@ class NetworkManager {
     }()
     
     // Mock 데이터
+    
+    private func mockDogList() -> [MyPagePetModel] {
+        return [
+            MyPagePetModel(dogId: 1, dogName: "봄별이", dogProfile: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", dogGender: "FEMALE", breed: "푸들", weight: 4.5),
+            MyPagePetModel(dogId: 2, dogName: "바다", dogProfile: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", dogGender: "MALE", breed: "시츄", weight: 5.2)
+        ]
+    }
+    
     private func mockBoardList() -> [MatchingData] {
         return [
             MatchingData(boardId: 1, startTime: "12:34", endTime: "12:50", matchingYn: "Y", dogName: "Dog1", dogProfile: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg", dogGender: "FEMALE", breed: "말티즈", weight: 2, dogSize: "SMALL", content: "테스트메시지가 두 줄은 넘어야 확인할수 있죠.테스트메시지가 두 줄은 넘어야 확인할수 있죠.테스트메시지가 두 줄은 넘어야 확인할수 있죠.테스트메시지가 두 줄은 넘어야 확인할수 있죠.테스트메시지가 두 줄은 넘어야 확인할수 있죠.", dongAddress: "노원구 공릉동", distance: 1000, createdAt: "2024-11-11 14:30:00.000000"),

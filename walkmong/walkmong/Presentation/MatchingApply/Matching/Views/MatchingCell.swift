@@ -29,12 +29,7 @@ class MatchingCell: UIView {
         view.layer.cornerRadius = 14.5
         return view
     }()
-    private let matchingStatusLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .gray400
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
-        return label
-    }()
+    private let matchingStatusLabel = CaptionLabel(text: "", textColor: .gray400)
     
     private let bottomFrame = UIView()
     private let puppyImageView: UIImageView = {
@@ -53,20 +48,8 @@ class MatchingCell: UIView {
         return label
     }()
     private let genderIcon: UIImageView = UIImageView()
-    private let sizeLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.mainGreen
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        return label
-    }()
-    private let postContentLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.gray500
-        label.font = UIFont(name: "Pretendard-Regular", size: 14)
-        label.numberOfLines = 0
-        label.lineBreakMode = .byCharWrapping
-        return label
-    }()
+    private let sizeLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainGreen)
+    private let postContentLabel = SmallMainParagraphLabel(text: "", textColor: .gray500)
     
     private let locationTimeFrame = UIView()
     private let locationIcon: UIImageView = {
@@ -75,24 +58,9 @@ class MatchingCell: UIView {
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    private let locationLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.gray500
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
-        return label
-    }()
-    private let distanceLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.gray500
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
-        return label
-    }()
-    private let timeLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.gray500
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 12)
-        return label
-    }()
+    private let locationLabel = CaptionLabel(text: "", textColor: .gray500)
+    private let distanceLabel = CaptionLabel(text: "", textColor: .gray500)
+    private let timeLabel = CaptionLabel(text: "", textColor: .gray500)
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -202,6 +170,9 @@ class MatchingCell: UIView {
     
     private func setupPostContent() {
         contentFrame.addSubview(postContentLabel)
+        postContentLabel.lineBreakStrategy = .pushOut
+        postContentLabel.lineBreakMode = .byTruncatingTail
+        postContentLabel.numberOfLines = 2
         postContentLabel.snp.makeConstraints { make in
             make.top.equalTo(dogInfoFrame.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview()

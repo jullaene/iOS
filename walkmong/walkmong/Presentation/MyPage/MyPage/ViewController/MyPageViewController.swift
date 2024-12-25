@@ -18,6 +18,7 @@ class MyPageViewController: UIViewController {
         myPageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        myPageView.contentViewSection.petView.delegate = self
     }
     
     override func viewDidLoad() {
@@ -27,5 +28,13 @@ class MyPageViewController: UIViewController {
     
     private func updateReviewData() {
         myPageView.contentViewSection.reviewView.updateChartData(scores: [5.0, 5.0, 5.0, 5.0, 5.0])
+    }
+}
+
+extension MyPageViewController: MyPagePetViewDelegate {
+    func didSelectPet(dogId: Int) {
+        let dogProfileVC = DogProfileViewController()
+        dogProfileVC.configure(with: dogId)
+        navigationController?.pushViewController(dogProfileVC, animated: true)
     }
 }

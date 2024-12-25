@@ -9,7 +9,13 @@ import UIKit
 import SnapKit
 import Kingfisher
 
+protocol MyPagePetViewDelegate: AnyObject {
+    func didSelectPet(dogId: Int)
+}
+
 class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    weak var delegate: MyPagePetViewDelegate?
+    
     private let titleView = UIView()
     private let titleLabel = SmallTitleLabel(text: "내 반려견", textColor: .gray600)
     private let editButton = UIButton()
@@ -23,7 +29,7 @@ class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     override init(frame: CGRect) {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 20
+        layout.minimumLineSpacing = 40
         layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         super.init(frame: frame)
@@ -106,14 +112,25 @@ class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     private func setupData() {
-        petProfiles = [
-            PetProfile(imageURL: "https://www.fitpetmall.com/wp-content/uploads/2022/11/shutterstock_196467692-1024x819.jpg",
-                       name: "봄별이",
-                       details: "소형견 · 푸들 · 4kg")
-        ]
-        
-        pageControl.numberOfPages = petProfiles.count + 1
-        collectionView.reloadData()
+        NetworkManager().fetchDogList { [weak self] result in
+            switch result {
+            case .success(let petModels):
+                self?.petProfiles = petModels.map { petModel in
+                    PetProfile(
+                        dogId: petModel.dogId,
+                        imageURL: petModel.dogProfile,
+                        name: petModel.dogName,
+                        details: "\(petModel.breed) · \(petModel.weight)kg"
+                    )
+                }
+                DispatchQueue.main.async {
+                    self?.pageControl.numberOfPages = self?.petProfiles.count ?? 0
+                    self?.collectionView.reloadData()
+                }
+            case .failure(let error):
+                print("Error fetching dog list: \(error)")
+            }
+        }
     }
     
     // MARK: UICollectionViewDataSource
@@ -141,15 +158,14 @@ class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         return CGSize(width: width, height: 94)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item < petProfiles.count else { return }
+        let selectedPet = petProfiles[indexPath.item]
+        delegate?.didSelectPet(dogId: selectedPet.dogId)
+    }
+    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let page = Int((scrollView.contentOffset.x + 20) / scrollView.frame.width)
         pageControl.currentPage = page
     }
-}
-
-// MARK: - PetProfile Model
-struct PetProfile {
-    let imageURL: String?
-    let name: String
-    let details: String
 }
