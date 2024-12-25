@@ -66,12 +66,13 @@ class WalkReviewView: UIView {
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Layout.topOffset)
             make.leading.trailing.bottom.equalToSuperview()
+            make.height.greaterThanOrEqualToSuperview().priority(.low)
         }
 
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalTo(scrollView)
-            make.height.equalTo(scrollView.snp.height).priority(.low)
+            make.height.greaterThanOrEqualTo(1).priority(.low)
         }
     }
 
@@ -83,7 +84,8 @@ class WalkReviewView: UIView {
 
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.width.equalTo(scrollView)
+            make.height.greaterThanOrEqualTo(100)
+            make.height.equalTo(UIView.noIntrinsicMetric).priority(.low)
         }
     }
 

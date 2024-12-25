@@ -98,7 +98,11 @@ class WalkReviewCell: UIView {
         let margin: CGFloat = 20
         let spacing: CGFloat = 16
 
-        roundedContainer.snp.makeConstraints { $0.edges.equalToSuperview() }
+        roundedContainer.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.greaterThanOrEqualTo(100).priority(.medium)
+            $0.height.equalTo(UIView.noIntrinsicMetric).priority(.low)
+        }
 
         profileFrame.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(margin)
@@ -108,6 +112,7 @@ class WalkReviewCell: UIView {
         totalRatingView.snp.makeConstraints {
             $0.top.equalTo(profileFrame.snp.bottom).offset(spacing)
             $0.leading.trailing.equalToSuperview().inset(margin)
+            $0.height.greaterThanOrEqualTo(44)
         }
     }
 
@@ -126,7 +131,7 @@ class WalkReviewCell: UIView {
                     $0.leading.trailing.equalToSuperview().inset(margin)
 
                     if subview === tagView {
-                        $0.height.equalTo(tagView.snp.height)
+                        $0.bottom.equalToSuperview().offset(-margin).priority(.low)
                     }
                 }
                 lastView = subview
