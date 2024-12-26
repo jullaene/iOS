@@ -125,13 +125,16 @@ class CustomRadarChartView: UIView {
 
         let chartCenter = CGPoint(x: radarChartView.bounds.midX, y: radarChartView.bounds.midY)
         let chartRadius = min(radarChartView.bounds.width, radarChartView.bounds.height) / 2.0
-        let offset: CGFloat = 10.0
+        let maxDistance: CGFloat = 86.0
+        let datasetOffset: CGFloat = -10.0
+        let baseRadius = chartRadius - maxDistance + datasetOffset
 
         for (index, label) in customLabels.enumerated() {
             guard index < scores.count else { continue }
+
             let angle = CGFloat(index) * (2 * .pi / CGFloat(titles.count)) - .pi / 2
-            let labelCenterX = chartCenter.x + (chartRadius + offset) * cos(angle)
-            let labelCenterY = chartCenter.y + (chartRadius + offset) * sin(angle)
+            let labelCenterX = chartCenter.x + (baseRadius + maxDistance) * cos(angle)
+            let labelCenterY = chartCenter.y + (baseRadius + maxDistance) * sin(angle)
             label.attributedText = makeAttributedText(for: titles[index], score: scores[index])
             label.sizeToFit()
             label.center = CGPoint(x: labelCenterX, y: labelCenterY)
