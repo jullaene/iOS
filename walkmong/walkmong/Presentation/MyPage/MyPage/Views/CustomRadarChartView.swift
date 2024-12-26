@@ -8,6 +8,17 @@
 import UIKit
 import Charts
 
+class CustomRadarChartRenderer: RadarChartRenderer {
+    override func drawData(context: CGContext) {
+        super.drawData(context: context)
+        super.drawWeb(context: context)
+    }
+
+    override func drawWeb(context: CGContext) {
+        super.drawWeb(context: context)
+    }
+}
+
 class CustomRadarChartView: UIView {
     // MARK: - Properties
     private let radarChartView = RadarChartView()
@@ -50,6 +61,8 @@ class CustomRadarChartView: UIView {
         radarChartView.isUserInteractionEnabled = false
         radarChartView.legend.enabled = false
 
+        radarChartView.renderer = CustomRadarChartRenderer(chart: radarChartView, animator: radarChartView.chartAnimator, viewPortHandler: radarChartView.viewPortHandler)
+
         let yAxis = radarChartView.yAxis
         yAxis.axisMaximum = Double(maxScore)
         yAxis.axisMinimum = 0.0
@@ -60,8 +73,8 @@ class CustomRadarChartView: UIView {
 
         radarChartView.webLineWidth = 0.5
         radarChartView.innerWebLineWidth = 0.5
-        radarChartView.webColor = .clear
-        radarChartView.innerWebColor = .clear
+        radarChartView.webColor = UIColor(hexCode: "EEF9FF", alpha: 0.4)
+        radarChartView.innerWebColor = UIColor(hexCode: "EEF9FF", alpha: 0.4)
     }
 
     // MARK: - Public Methods
@@ -73,9 +86,16 @@ class CustomRadarChartView: UIView {
 
         self.scores = scores
 
-        let normalizedScores = scores.map { min(max($0 / maxScore, 0), 1) * maxScore }
+        let normalizedScores = scores.map {
+            min(max($0, 0), maxScore)
+        }
 
         let entries = normalizedScores.map { RadarChartDataEntry(value: Double($0)) }
+        guard !entries.isEmpty else {
+            radarChartView.data = nil
+            return
+        }
+
         let dataSet = RadarChartDataSet(entries: entries, label: "")
         configureDataSet(dataSet)
 
@@ -165,19 +185,12 @@ class CustomRadarChartView: UIView {
             axisPath.addLine(to: CGPoint(x: x, y: y))
         }
 
-        let axisLayer = createLayer(with: axisPath.cgPath, lineWidth: 0.5, color: UIColor(red: 0.93, green: 0.98, blue: 1, alpha: 0.4).cgColor)
-        radarChartView.layer.addSublayer(axisLayer)
-        self.axisLayer = axisLayer
-
         let stepPath = UIBezierPath()
         for step in 1...Int(maxScore) {
             let stepRadius = chartRadius * CGFloat(step) / maxScore
             let polygonPath = createPolygonPath(center: chartCenter, radius: stepRadius, sliceAngle: sliceAngle)
             stepPath.append(polygonPath)
         }
-
-        let stepLayer = createLayer(with: stepPath.cgPath, lineWidth: 0.5, color: UIColor(red: 0.93, green: 0.98, blue: 1, alpha: 0.4).cgColor, isDashed: true)
-        radarChartView.layer.addSublayer(stepLayer)
     }
 
     private func createPolygonPath(center: CGPoint, radius: CGFloat, sliceAngle: CGFloat) -> UIBezierPath {
