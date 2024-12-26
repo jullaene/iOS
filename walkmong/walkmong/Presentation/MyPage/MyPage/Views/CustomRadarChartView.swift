@@ -8,17 +8,6 @@
 import UIKit
 import Charts
 
-class CustomRadarChartRenderer: RadarChartRenderer {
-    override func drawData(context: CGContext) {
-        super.drawData(context: context)
-        super.drawWeb(context: context)
-    }
-
-    override func drawWeb(context: CGContext) {
-        super.drawWeb(context: context)
-    }
-}
-
 class CustomRadarChartView: UIView {
     // MARK: - Properties
     private let radarChartView = RadarChartView()
@@ -101,13 +90,11 @@ class CustomRadarChartView: UIView {
 
         radarChartView.data = RadarChartData(dataSet: dataSet)
         updateCustomLabels()
-        drawAxisLines()
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         updateCustomLabelPositions()
-        drawAxisLines()
     }
 
     // MARK: - Private Methods
@@ -167,53 +154,15 @@ class CustomRadarChartView: UIView {
         return attributedText
     }
 
-    private func drawAxisLines() {
-        axisLayer?.removeFromSuperlayer()
+}
 
-        guard radarChartView.data != nil else { return }
-
-        let chartCenter = radarChartView.center
-        let chartRadius = min(radarChartView.frame.width, radarChartView.frame.height) / 2.0
-        let sliceAngle = 2 * .pi / CGFloat(titles.count)
-
-        let axisPath = UIBezierPath()
-        for i in 0..<titles.count {
-            let angle = CGFloat(i) * sliceAngle - .pi / 2
-            let x = chartCenter.x + chartRadius * cos(angle)
-            let y = chartCenter.y + chartRadius * sin(angle)
-            axisPath.move(to: chartCenter)
-            axisPath.addLine(to: CGPoint(x: x, y: y))
-        }
-
-        let stepPath = UIBezierPath()
-        for step in 1...Int(maxScore) {
-            let stepRadius = chartRadius * CGFloat(step) / maxScore
-            let polygonPath = createPolygonPath(center: chartCenter, radius: stepRadius, sliceAngle: sliceAngle)
-            stepPath.append(polygonPath)
-        }
+class CustomRadarChartRenderer: RadarChartRenderer {
+    override func drawData(context: CGContext) {
+        super.drawData(context: context)
+        super.drawWeb(context: context)
     }
 
-    private func createPolygonPath(center: CGPoint, radius: CGFloat, sliceAngle: CGFloat) -> UIBezierPath {
-        let path = UIBezierPath()
-        for i in 0..<titles.count {
-            let angle = CGFloat(i) * sliceAngle - .pi / 2
-            let x = center.x + radius * cos(angle)
-            let y = center.y + radius * sin(angle)
-            i == 0 ? path.move(to: CGPoint(x: x, y: y)) : path.addLine(to: CGPoint(x: x, y: y))
-        }
-        path.close()
-        return path
-    }
-
-    private func createLayer(with path: CGPath, lineWidth: CGFloat, color: CGColor, isDashed: Bool = false) -> CAShapeLayer {
-        let layer = CAShapeLayer()
-        layer.path = path
-        layer.strokeColor = color
-        layer.lineWidth = lineWidth
-        layer.fillColor = UIColor.clear.cgColor
-        if isDashed {
-            layer.lineDashPattern = [2, 2]
-        }
-        return layer
+    override func drawWeb(context: CGContext) {
+        super.drawWeb(context: context)
     }
 }
