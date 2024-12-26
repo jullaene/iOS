@@ -46,7 +46,7 @@ class WalkReviewPhotoFrameView: UIView {
             leftImageView.snp.makeConstraints {
                 $0.top.leading.bottom.equalToSuperview()
                 $0.width.equalToSuperview().multipliedBy(0.5).offset(-4)
-                $0.height.equalTo(leftImageView.snp.width).multipliedBy(1).priority(.required)
+                $0.height.equalTo(leftImageView.snp.width)
             }
 
             if let secondImage = secondImage {
@@ -61,7 +61,7 @@ class WalkReviewPhotoFrameView: UIView {
                     $0.top.trailing.bottom.equalToSuperview()
                     $0.leading.equalTo(leftImageView.snp.trailing).offset(8)
                     $0.width.equalToSuperview().multipliedBy(0.5).offset(-4)
-                    $0.height.equalTo(leftImageView.snp.width).multipliedBy(1).priority(.required)
+                    $0.height.equalTo(rightImageView.snp.width)
                 }
             }
         }
