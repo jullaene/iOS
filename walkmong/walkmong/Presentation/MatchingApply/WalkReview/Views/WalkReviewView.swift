@@ -31,6 +31,7 @@ class WalkReviewView: UIView {
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.frame = UIScreen.main.bounds
         setupUI()
         setupConstraints()
     }
@@ -66,26 +67,11 @@ class WalkReviewView: UIView {
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Layout.topOffset)
             make.leading.trailing.bottom.equalToSuperview()
-            make.height.greaterThanOrEqualToSuperview().priority(.low)
         }
 
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.width.equalTo(scrollView)
-            make.height.greaterThanOrEqualTo(1).priority(.low)
-        }
-    }
-
-    private func setupScrollViewConstraints() {
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Layout.topOffset)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-
-        contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.height.greaterThanOrEqualTo(100)
-            make.height.equalTo(UIView.noIntrinsicMetric).priority(.low)
+            make.width.equalToSuperview()
         }
     }
 
@@ -117,6 +103,9 @@ class WalkReviewView: UIView {
         previousView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-Layout.bottomSpacing)
         }
+        
+        contentView.setNeedsLayout()
+        contentView.layoutIfNeeded()
     }
 
     private func setupCellConstraints(cell: UIView, previousView: UIView, isFirst: Bool) {

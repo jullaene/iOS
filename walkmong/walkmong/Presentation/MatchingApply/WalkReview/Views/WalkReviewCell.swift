@@ -101,7 +101,6 @@ class WalkReviewCell: UIView {
         roundedContainer.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.greaterThanOrEqualTo(100).priority(.medium)
-            $0.height.equalTo(UIView.noIntrinsicMetric).priority(.low)
         }
 
         profileFrame.snp.makeConstraints {
