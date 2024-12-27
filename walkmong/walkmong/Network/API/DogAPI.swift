@@ -13,13 +13,7 @@ enum DogAPI {
     case getDogList
 }
 
-extension DogAPI: TargetType {
-    var baseURL: URL {
-        guard let url = SecretManager.shared.getValue(forKey: "BASE_URL") else {
-            fatalError("BASE_URL이 설정되지 않았습니다!")
-        }
-        return URL(string: url)!
-    }
+extension DogAPI: APIEndpoint {
     
     var path: String {
         switch self {
@@ -42,14 +36,5 @@ extension DogAPI: TargetType {
         case .getDogProfile, .getDogList:
             return .requestPlain
         }
-    }
-    
-    var headers: [String: String]? {
-        guard let token = SecretManager.shared.getValue(forKey: "API_TOKEN") else {
-            return nil
-        }
-        return [
-            "Authorization": "Bearer \(token)"
-        ]
     }
 }
