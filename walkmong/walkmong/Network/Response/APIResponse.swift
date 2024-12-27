@@ -7,8 +7,13 @@
 
 import Foundation
 
-struct APIResponse<T: Decodable>: Decodable {
+struct APIResponse<DTO: Decodable>: Decodable {
     let message: String
     let statusCode: Int
-    let data: T
+    let data: DTO
+}
+
+// Custom error for unknown cases
+enum WalkmongError: Error {
+    case unknownError
 }
