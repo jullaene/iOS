@@ -115,7 +115,8 @@ final class CustomAlertView: UIView {
     private func setConstraints() {
         
         frameView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.center.equalToSuperview()
+            make.width.equalTo(270)
         }
         
         titleLabel.snp.makeConstraints { make in
@@ -132,6 +133,14 @@ final class CustomAlertView: UIView {
         
         if customButtonState == .doubleButton {
             leftButton.snp.makeConstraints { make in
+                if customTitleState == .useTitleAndSubTitle {
+                    subTitleLabel.snp.makeConstraints { make in
+                        make.centerX.equalToSuperview()
+                        make.top.equalTo(titleLabel.snp.bottom).offset(4)
+                    }
+                }else {
+                    make.top.equalToSuperview().offset(15)
+                }
                 make.leading.equalToSuperview().offset(16)
                 make.bottom.equalToSuperview().offset(-12)
                 make.height.equalTo(44)
@@ -145,6 +154,14 @@ final class CustomAlertView: UIView {
             }
         }else {
             singleButton.snp.makeConstraints { make in
+                if customTitleState == .useTitleAndSubTitle {
+                    subTitleLabel.snp.makeConstraints { make in
+                        make.centerX.equalToSuperview()
+                        make.top.equalTo(titleLabel.snp.bottom).offset(4)
+                    }
+                }else {
+                    make.top.equalToSuperview().offset(15)
+                }
                 make.height.equalTo(44)
                 make.bottom.equalToSuperview().offset(-12)
                 make.horizontalEdges.equalToSuperview().inset(16)
@@ -194,4 +211,21 @@ final class CustomAlertView: UIView {
     @objc private func rightButtonTapped() {
         rightButtonAction?()
     }
+    
+    public func showCustomAlertView(on viewController: UIViewController) {
+        guard let windowScene = viewController.view.window?.windowScene else { return }
+        guard let window = windowScene.windows.first(where: { $0.isKeyWindow }) else { return }
+
+        self.frame = window.bounds
+        window.addSubview(self)
+
+        self.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        })
+    }
+    
 }
