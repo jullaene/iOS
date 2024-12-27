@@ -12,7 +12,7 @@ class PetProfileCell: UICollectionViewCell {
     private let petNameLabel = UpperTitleLabel(text: "")
     private let petDetailsLabel = SmallMainParagraphLabel(text: "")
     private let profileButton = UIButton()
-    private let femaleIcon = UIImageView()
+    private let genderIcon = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,9 +44,9 @@ class PetProfileCell: UICollectionViewCell {
             make.top.equalToSuperview().offset(16)
         }
         
-        femaleIcon.image = UIImage(named: "femaleIcon")
-        contentView.addSubview(femaleIcon)
-        femaleIcon.snp.makeConstraints { make in
+        genderIcon.image = UIImage(named: "femaleIcon")
+        contentView.addSubview(genderIcon)
+        genderIcon.snp.makeConstraints { make in
             make.height.equalTo(16)
             make.leading.equalTo(petNameLabel.snp.trailing).offset(4)
             make.centerY.equalTo(petNameLabel)
@@ -75,6 +75,17 @@ class PetProfileCell: UICollectionViewCell {
         petImageView.setImage(from: profile.imageURL, placeholder: "placeholder_image_name")
         petNameLabel.text = profile.name
         petDetailsLabel.text = profile.details
+
+        switch profile.gender.uppercased() {
+        case "FEMALE":
+            genderIcon.image = UIImage(named: "femaleIcon")
+        case "MALE":
+            genderIcon.image = UIImage(named: "maleIcon")
+        default:
+            genderIcon.image = UIImage(named: "defaultIcon")
+        }
+        
+        genderIcon.isHidden = false
     }
     
     func configureAsAddPet() {
@@ -105,6 +116,6 @@ class PetProfileCell: UICollectionViewCell {
         petImageView.isHidden = true
         petDetailsLabel.isHidden = true
         profileButton.isHidden = true
-        femaleIcon.isHidden = true
+        genderIcon.isHidden = true
     }
 }
