@@ -228,4 +228,11 @@ final class CustomAlertView: UIView {
         })
     }
     
+    public func dismiss() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.alpha = 0
+        }) { _ in
+            self.removeFromSuperview()
+        }
+    }
 }
