@@ -44,6 +44,7 @@ final class CustomAlertViewController: UIViewController {
         button.backgroundColor = .gray200
         button.layer.cornerRadius = 10
         button.clipsToBounds = true
+        button.addTarget(self, action: #selector(handleLeftButtonAction), for: .touchUpInside)
         return button
     }()
     
@@ -54,6 +55,7 @@ final class CustomAlertViewController: UIViewController {
         button.backgroundColor = .gray600
         button.layer.cornerRadius = 10
         button.clipsToBounds = true
+        button.addTarget(self, action: #selector(handleRightButtonAction), for: .touchUpInside)
         return button
     }()
     
@@ -64,6 +66,7 @@ final class CustomAlertViewController: UIViewController {
         button.backgroundColor = .gray600
         button.layer.cornerRadius = 10
         button.clipsToBounds = true
+        button.addTarget(self, action: #selector(handleSingleButtonAction), for: .touchUpInside)
         return button
     }()
     
@@ -141,10 +144,22 @@ final class CustomAlertViewController: UIViewController {
             make.height.equalTo(44)
             make.bottom.equalToSuperview().offset(-12)
         }
-        
-        
     }
     
+    @objc private func handleLeftButtonAction() {
+        leftButtonAction?()
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func handleRightButtonAction() {
+        rightButtonAction?()
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func handleSingleButtonAction() {
+        singleButtonAction?()
+        dismiss(animated: true, completion: nil)
+    }
     
     public func dismiss() {
         dismiss(animated: true, completion: nil)
