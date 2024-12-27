@@ -16,23 +16,27 @@ final class NetworkProvider<T: APIEndpoint> {
         self.provider = provider
     }
 
+    /// 비동기 API 호출 메서드
     func request<ResponseType: Decodable>(
         target: T,
-        responseType: ResponseType.Type,
-        completion: @escaping (Result<ResponseType, Error>) -> Void
-    ) {
-        provider.request(target) { result in
-            switch result {
-            case .success(let response):
-                do {
-                    let filteredResponse = try response.filterSuccessfulStatusCodes()
-                    let decodedData = try JSONDecoder().decode(ResponseType.self, from: filteredResponse.data)
-                    completion(.success(decodedData))
-                } catch {
-                    completion(.failure(error))
+        responseType: ResponseType.Type
+    ) async throws -> ResponseType {
+        let response = try await provider.requestAsync(target)
+        let filteredResponse = try response.filterSuccessfulStatusCodes()
+        return try JSONDecoder().decode(ResponseType.self, from: filteredResponse.data)
+    }
+}
+
+extension MoyaProvider {
+    func requestAsync(_ target: Target) async throws -> Response {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.request(target) { result in
+                switch result {
+                case .success(let response):
+                    continuation.resume(returning: response)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
                 }
-            case .failure(let error):
-                completion(.failure(error))
             }
         }
     }
