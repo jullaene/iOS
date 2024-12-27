@@ -86,8 +86,8 @@ class WalkReviewTotalRatingView: UIView {
         }
 
         radarChartView.snp.makeConstraints { make in
-            make.top.equalTo(fixedFrameView.snp.bottom).offset(0)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(fixedFrameView.snp.bottom)
+            make.leading.trailing.equalToSuperview().inset(20).priority(.high)
             make.height.equalTo(0)
         }
     }
