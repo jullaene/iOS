@@ -24,8 +24,8 @@ func callRequest(query: String) async throws -> Data {
     
     var urlRequest = URLRequest(url: url)
     
-    guard let id = SecretManager.shared.getValue(forKey: "NAVER_CLI_ID"),
-          let key = SecretManager.shared.getValue(forKey: "NAVER_KEY") else {
+    guard let id = SecretManager.shared["NAVER_CLI_ID"],
+          let key = SecretManager.shared["NAVER_KEY"] else {
         throw NSError(domain: "GeocodingAPIManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Missing API keys"])
     }
         

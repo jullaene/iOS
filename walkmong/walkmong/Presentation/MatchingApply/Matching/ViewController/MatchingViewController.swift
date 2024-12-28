@@ -19,8 +19,6 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     }
     private var matchingData: [MatchingData] = []
     private var isNavigationBarHidden: Bool = true
-    private let boardProvider = MoyaProvider<BoardAPI>()
-    private let networkManager = NetworkManager(useMockData: true)
 
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
@@ -74,31 +72,9 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
 
     // MARK: - Fetch Data
     private func fetchMatchingData() {
-        networkManager.fetchBoardList(date: nil, addressId: nil, distance: nil, dogSize: nil, matchingYn: nil) { [weak self] result in
-            switch result {
-            case .success(let data):
-                self?.matchingData = data
-                DispatchQueue.main.async {
-                    self?.updateMatchingView()
-                }
-            case .failure(let error):
-                print("Failed to fetch matching data: \(error)")
-            }
-        }
     }
 
     private func fetchAddressList() {
-        networkManager.fetchAddressList { [weak self] result in
-            switch result {
-            case .success(let addresses):
-                let locations = addresses.map { $0.dongAddress }
-                DispatchQueue.main.async {
-                    self?.dropdownView?.updateLocations(locations: locations)
-                }
-            case .failure(let error):
-                print("Failed to fetch addresses: \(error)")
-            }
-        }
     }
 
     private func updateMatchingView() {

@@ -112,38 +112,7 @@ class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     private func setupData() {
-        NetworkManager().fetchDogList { [weak self] result in
-            switch result {
-            case .success(let petModels):
-                self?.petProfiles = petModels.map { petModel in
-                    let dogSizeText: String
-                    switch petModel.dogSize.uppercased() {
-                    case "SMALL":
-                        dogSizeText = "소형견"
-                    case "MIDDLE":
-                        dogSizeText = "중형견"
-                    case "BIG":
-                        dogSizeText = "대형견"
-                    default:
-                        dogSizeText = "알 수 없음"
-                    }
-                    
-                    return PetProfile(
-                        dogId: petModel.dogId,
-                        imageURL: petModel.dogProfile,
-                        name: petModel.dogName,
-                        details: "\(dogSizeText) · \(petModel.breed) · \(petModel.weight)kg",
-                        gender: petModel.dogGender
-                    )
-                }
-                DispatchQueue.main.async {
-                    self?.pageControl.numberOfPages = (self?.petProfiles.count ?? 0) + 1
-                    self?.collectionView.reloadData()
-                }
-            case .failure(let error):
-                print("Error fetching dog list: \(error)")
-            }
-        }
+        
     }
     
     // MARK: UICollectionViewDataSource

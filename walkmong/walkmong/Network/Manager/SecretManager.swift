@@ -12,17 +12,24 @@ class SecretManager {
     private var secrets: [String: Any]?
 
     private init() {
-        if let path = Bundle.main.path(forResource: "Secret", ofType: "plist"),
-           let data = FileManager.default.contents(atPath: path) {
-            do {
-                secrets = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any]
-            } catch {
-                print("Secret.plist 읽기 실패: \(error)")
-            }
+        loadSecrets()
+    }
+
+    private func loadSecrets() {
+        guard let path = Bundle.main.path(forResource: "Secret", ofType: "plist"),
+              let data = FileManager.default.contents(atPath: path) else {
+            print("Secret.plist 파일을 찾을 수 없습니다.")
+            return
+        }
+
+        do {
+            secrets = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any]
+        } catch {
+            print("Secret.plist 읽기 실패: \(error)")
         }
     }
 
-    func getValue(forKey key: String) -> String? {
+    subscript(key: String) -> String? {
         return secrets?[key] as? String
     }
 }
