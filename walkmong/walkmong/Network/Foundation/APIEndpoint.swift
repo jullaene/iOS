@@ -13,7 +13,7 @@ protocol APIEndpoint: TargetType {}
 extension APIEndpoint {
     /// TargetType 중 baseURL을 미리 설정합니다.
     var baseURL: URL {
-        guard let urlString = SecretManager.shared["BASE_URL"],
+        guard let urlString = SecretManager.shared.BASE_URL,
               let url = URL(string: urlString) else {
             fatalError("BASE_URL이 설정되지 않았거나 유효하지 않습니다!")
         }

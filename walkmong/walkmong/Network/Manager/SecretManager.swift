@@ -7,6 +7,7 @@
 
 import Foundation
 
+@dynamicMemberLookup
 class SecretManager {
     static let shared = SecretManager()
     private var secrets: [String: Any]?
@@ -29,7 +30,7 @@ class SecretManager {
         }
     }
 
-    subscript(key: String) -> String? {
-        return secrets?[key] as? String
+    subscript(dynamicMember member: String) -> String? {
+        return secrets?[member] as? String
     }
 }

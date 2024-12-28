@@ -25,8 +25,8 @@ func callRequest(coords: String) async throws -> Data {
     
     var urlRequest = URLRequest(url: url)
     
-    if let clientID = SecretManager.shared["NAVER_CLI_ID"],
-       let secretKey = SecretManager.shared["NAVER_KEY"] {
+    if let clientID = SecretManager.shared.NAVER_CLI_ID,
+       let secretKey = SecretManager.shared.NAVER_KEY {
         urlRequest.addValue(clientID, forHTTPHeaderField: "X-NCP-APIGW-API-KEY-ID")
         urlRequest.addValue(secretKey, forHTTPHeaderField: "X-NCP-APIGW-API-KEY")
     }
