@@ -11,6 +11,7 @@ class DetailReviewHashtagView: UIView {
     private let buttonSpacing: CGFloat = 8
     private let rowSpacing: CGFloat = 16
     var hashtagButtons: [UIButton] = []
+    private let maxSelectedHashtags = 3
 
     init(hashtags: [String]) {
         super.init(frame: .zero)
@@ -63,12 +64,17 @@ class DetailReviewHashtagView: UIView {
 
     @objc private func toggleHashtagButtonStyle(_ sender: UIButton) {
         let isSelected = sender.backgroundColor == UIColor.mainBlue
-        let newStyle: UIButton.ButtonStyle = isSelected ? .light : .dark
-        
-        sender.updateStyle(type: .tag, style: newStyle)
-        
-        if newStyle == .light {
+        if isSelected {
+            sender.updateStyle(type: .tag, style: .light)
             sender.setTitleColor(.mainBlack, for: .normal)
+        } else {
+            let selectedHashtags = getSelectedHashtags()
+            guard selectedHashtags.count < maxSelectedHashtags else {
+                print("최대 \(maxSelectedHashtags)개의 해시태그만 선택할 수 있습니다.")
+                return
+            }
+            sender.updateStyle(type: .tag, style: .dark)
+            sender.setTitleColor(.white, for: .normal)
         }
     }
 
