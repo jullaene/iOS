@@ -17,3 +17,5 @@ struct APIResponse<DTO: Decodable>: Decodable {
 enum WalkmongError: Error {
     case unknownError
 }
+
+struct EmptyDTO: Decodable {}

@@ -13,7 +13,7 @@ extension Notification.Name {
 
 class PetOwnerReviewViewController: UIViewController {
     private let petOwnerReviewView = PetOwnerReviewView()
-    private let networkManager = NetworkManager()
+    private let networkProvider = NetworkProvider<ReviewAPI>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,22 +80,37 @@ class PetOwnerReviewViewController: UIViewController {
     @objc private func didTapSendReviewButton() {
         guard petOwnerReviewView.areAllRatingsFilled() else { return }
 
-        let requestBody: [String: Any] = ["testKey": "testValue"]
-        sendReviewDataToServer(requestBody: requestBody)
+        let requestBody = collectReviewData()
+        Task {
+            await sendReviewData(requestBody: requestBody)
+        }
     }
 
-    private func sendReviewDataToServer(requestBody: [String: Any]) {
-        networkManager.fetchBoardDetail(boardId: 1) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(_):
-                print("후기가 성공적으로 등록되었습니다.")
-                DispatchQueue.main.async {
-                    self.navigateToMatchingViewController()
-                }
-            case .failure(let error):
-                print("후기를 등록하지 못했습니다. 오류: \(error.localizedDescription)")
-            }
+    private func collectReviewData() -> [String: Any] {
+        return [
+            "walkerId": [1],
+            "boardId": [1],
+            "timePunctuality": 4.5,
+            "communication": 4.0,
+            "attitude": 5.0,
+            "taskCompletion": 4.5,
+            "photoSharing": 3.5,
+            "hashtags": ["LIKED_BY_DOG", "POLITE"],
+            "images": [],
+            "content": "좋은 후기 작성 내용"
+        ]
+    }
+
+    private func sendReviewData(requestBody: [String: Any]) async {
+        do {
+            let response: APIResponse<EmptyDTO> = try await networkProvider.request(
+                target: .registerReview(requestBody: requestBody),
+                responseType: APIResponse<EmptyDTO>.self
+            )
+            print("후기 등록 성공: \(response.message)")
+            navigateToMatchingViewController()
+        } catch {
+            print("후기 등록 실패: \(error.localizedDescription)")
         }
     }
 

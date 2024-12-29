@@ -9,7 +9,7 @@ import UIKit
 
 class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private let detailReviewView = PetOwnerDetailReviewView()
-    private let networkManager = NetworkManager()
+    private let networkProvider = NetworkProvider<ReviewAPI>()
     private var selectedHashtags: [String] = []
     private let maxHashtagSelection = 3
     
@@ -101,7 +101,9 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
             "content": content
         ]
         
-        sendReviewDataToServer(requestBody: requestBody)
+        Task {
+            await sendReviewData()
+        }
     }
     
     private func getWalkerId() -> [Int64]? {
@@ -123,7 +125,7 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     }
     
     private func collectSelectedHashtags() -> [String] {
-        return ["LIKED_BY_DOG", "POLITE"]
+        return selectedHashtags
     }
     
     private func collectImages() -> [String] {
@@ -135,18 +137,40 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
         return content?.count ?? 0 >= 20 ? content : nil
     }
     
-    private func sendReviewDataToServer(requestBody: [String: Any]) {
-        networkManager.fetchBoardDetail(boardId: 1) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(_):
-                print("후기가 성공적으로 등록되었습니다.")
-                DispatchQueue.main.async {
-                    self.navigateToMatchingViewController()
-                }
-            case .failure(let error):
-                print("후기를 등록하지 못했습니다. 오류: \(error.localizedDescription)")
-            }
+    private func sendReviewData() async {
+        guard let walkerId = getWalkerId(),
+              let boardId = getBoardId(),
+              let ratings = collectRatings(),
+              let content = collectReviewContent() else {
+            print("모든 필수 데이터를 채워야 합니다.")
+            return
+        }
+        
+        let hashtags = collectSelectedHashtags()
+        let images = collectImages()
+        
+        let requestBody: [String: Any] = [
+            "walkerId": walkerId,
+            "boardId": boardId,
+            "timePunctuality": ratings["timePunctuality"] ?? 0.0,
+            "communication": ratings["communication"] ?? 0.0,
+            "attitude": ratings["attitude"] ?? 0.0,
+            "taskCompletion": ratings["taskCompletion"] ?? 0.0,
+            "photoSharing": ratings["photoSharing"] ?? 0.0,
+            "hashtags": hashtags,
+            "images": images,
+            "content": content
+        ]
+        
+        do {
+            let response: APIResponse<EmptyDTO> = try await networkProvider.request(
+                target: .registerReview(requestBody: requestBody),
+                responseType: APIResponse<EmptyDTO>.self
+            )
+            print("후기 등록 성공: \(response.message)")
+            navigateToMatchingViewController()
+        } catch {
+            print("후기 등록 실패: \(error.localizedDescription)")
         }
     }
     
