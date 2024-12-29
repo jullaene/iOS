@@ -52,6 +52,7 @@ class ReviewPhotoView: UIView {
         textView.isScrollEnabled = true
         textView.showsVerticalScrollIndicator = false
         textView.textAlignment = .left
+        textView.returnKeyType = .done
         return textView
     }()
     
@@ -114,7 +115,7 @@ class ReviewPhotoView: UIView {
         ratingStackView.snp.makeConstraints { make in
             make.top.equalTo(reviewTextView.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(120) // 별점 뷰 높이 설정
+            make.height.equalTo(120)
         }
     }
     
@@ -130,4 +131,5 @@ class ReviewPhotoView: UIView {
             ratingStackView.addArrangedSubview(ratingView)
         }
     }
+    
 }
