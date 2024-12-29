@@ -56,7 +56,6 @@ class ReviewPhotoView: UIView {
         return textView
     }()
     
-    // 추가된 Rating Stack View
     lazy var ratingStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -64,6 +63,14 @@ class ReviewPhotoView: UIView {
         stackView.distribution = .fillEqually
         return stackView
     }()
+    
+    private var photoContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    private var addedPhotos: [UIImageView] = []
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -77,12 +84,12 @@ class ReviewPhotoView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
-        addSubviews(detailedReviewLabel, cameraContainerView, reviewTextView, ratingStackView)
+        addSubviews(detailedReviewLabel, cameraContainerView, photoContainer, reviewTextView, ratingStackView)
         cameraContainerView.addSubviews(cameraIcon, photoCountLabel)
         setupConstraints()
         setupRatings()
     }
-
+    
     private func setupConstraints() {
         detailedReviewLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
@@ -96,14 +103,21 @@ class ReviewPhotoView: UIView {
         }
         
         cameraIcon.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(14)
+            make.top.equalToSuperview().offset(15)
             make.centerX.equalToSuperview()
-            make.width.height.equalTo(26)
+            make.width.height.equalTo(24)
         }
         
         photoCountLabel.snp.makeConstraints { make in
             make.top.equalTo(cameraIcon.snp.bottom).offset(9)
             make.centerX.equalToSuperview()
+        }
+        
+        photoContainer.snp.makeConstraints { make in
+            make.leading.equalTo(cameraContainerView.snp.trailing).offset(12)
+            make.centerY.equalTo(cameraContainerView)
+            make.height.equalTo(80)
+            make.trailing.lessThanOrEqualToSuperview()
         }
         
         reviewTextView.snp.makeConstraints { make in
@@ -132,4 +146,56 @@ class ReviewPhotoView: UIView {
         }
     }
     
+    // MARK: - Photo Management
+    func addPhoto(image: UIImage) {
+        guard addedPhotos.count < 2 else { return }
+
+        let photoView = UIImageView()
+        photoView.image = image
+        photoView.layer.cornerRadius = 5
+        photoView.clipsToBounds = true
+        photoView.contentMode = .scaleAspectFill
+        photoContainer.addSubview(photoView)
+
+        let deleteImageBtn = UIButton()
+        deleteImageBtn.setImage(UIImage(named: "deleteImageBtn"), for: .normal)
+        deleteImageBtn.addTarget(self, action: #selector(handleDeleteImage(_:)), for: .touchUpInside)
+        photoContainer.addSubview(deleteImageBtn)
+
+        let offset = addedPhotos.last?.snp.trailing ?? photoContainer.snp.leading
+        photoView.snp.makeConstraints { make in
+            make.leading.equalTo(offset).offset(addedPhotos.isEmpty ? 0 : 12)
+            make.width.height.equalTo(80)
+            make.centerY.equalToSuperview()
+        }
+
+        deleteImageBtn.snp.makeConstraints { make in
+            make.top.equalTo(photoView.snp.top).offset(-4)
+            make.trailing.equalTo(photoView.snp.trailing).offset(12)
+            make.width.height.equalTo(20)
+        }
+
+        addedPhotos.append(photoView)
+        photoCountLabel.text = "사진 \(addedPhotos.count)/2"
+
+        self.layoutIfNeeded()
+    }
+    
+    // MARK: - Delete Image Action
+    @objc private func handleDeleteImage(_ sender: UIButton) {
+        guard let photoView = sender.superview as? UIImageView else {
+            print("Error: Associated photoView not found")
+            return
+        }
+
+        if let index = addedPhotos.firstIndex(of: photoView) {
+            addedPhotos.remove(at: index)
+        }
+
+        photoView.removeFromSuperview()
+
+        photoCountLabel.text = "사진 \(addedPhotos.count)/2"
+
+        layoutIfNeeded()
+    }
 }

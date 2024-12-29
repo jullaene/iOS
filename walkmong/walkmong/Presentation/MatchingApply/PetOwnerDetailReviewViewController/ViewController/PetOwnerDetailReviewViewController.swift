@@ -208,6 +208,7 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let selectedImage = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
             selectedImages.append(selectedImage)
+            detailReviewView.reviewPhotoView.addPhoto(image: selectedImage)
         }
         dismiss(animated: true, completion: nil)
     }
