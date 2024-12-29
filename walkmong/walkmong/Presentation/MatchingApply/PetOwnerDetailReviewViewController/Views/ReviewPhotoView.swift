@@ -55,6 +55,15 @@ class ReviewPhotoView: UIView {
         return textView
     }()
     
+    // 추가된 Rating Stack View
+    lazy var ratingStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 12
+        stackView.distribution = .fillEqually
+        return stackView
+    }()
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -67,9 +76,10 @@ class ReviewPhotoView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
-        addSubviews(detailedReviewLabel, cameraContainerView, reviewTextView)
+        addSubviews(detailedReviewLabel, cameraContainerView, reviewTextView, ratingStackView)
         cameraContainerView.addSubviews(cameraIcon, photoCountLabel)
         setupConstraints()
+        setupRatings()
     }
 
     private func setupConstraints() {
@@ -99,6 +109,25 @@ class ReviewPhotoView: UIView {
             make.top.equalTo(cameraContainerView.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(224)
+        }
+        
+        ratingStackView.snp.makeConstraints { make in
+            make.top.equalTo(reviewTextView.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(120) // 별점 뷰 높이 설정
+        }
+    }
+    
+    private func setupRatings() {
+        let questions = [
+            "시간 약속을 잘 지켰나요?",
+            "산책자와의 소통이 원활했나요?",
+            "배려심이 느껴졌나요?"
+        ]
+        
+        for question in questions {
+            let ratingView = RatingQuestionView(question: question)
+            ratingStackView.addArrangedSubview(ratingView)
         }
     }
 }

@@ -201,6 +201,42 @@ class PetOwnerReviewView: UIView {
             sendReviewButton.setTitleColor(.gray400, for: .normal)
         }
     }
+
+    func collectRatings() -> [String: Int]? {
+        let ratingTitles = [
+            "timePunctuality",
+            "communication",
+            "attitude",
+            "taskCompletion",
+            "photoSharing"
+        ]
+
+        let ratings = reviewStackView.arrangedSubviews
+            .compactMap { $0 as? RatingQuestionView }
+            .enumerated()
+            .reduce(into: [String: Int]()) { result, item in
+                let (index, view) = item
+                guard index < ratingTitles.count else { return }
+                let rating = view.getSelectedRating()
+                if rating > 0 {
+                    result[ratingTitles[index]] = rating
+                }
+            }
+
+        return ratings.count == ratingTitles.count ? ratings : nil
+    }
+
+    func collectSelectedHashtags() -> [String] {
+        return []
+    }
+
+    func collectImages() -> [String] {
+        return []
+    }
+
+    func collectReviewContent() -> String? {
+        return nil
+    }
     
     @objc private func didTapDetailedReviewButton() {
         NotificationCenter.default.post(name: .ratingUpdated, object: nil)

@@ -11,7 +11,23 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     private let detailReviewView = PetOwnerDetailReviewView()
     private let networkProvider = NetworkProvider<ReviewAPI>()
     private var selectedHashtags: [String] = []
+    private var selectedImages: [UIImage] = []
     private let maxHashtagSelection = 3
+    private let maxImageSelection = 2
+    private var walkerId: [Int64] = []
+    private var boardId: [Int64] = []
+    private var basicRatings: [String: Float] = [:]
+    
+    init(walkerId: [Int64], boardId: [Int64], basicRatings: [String: Float]) {
+        self.walkerId = walkerId
+        self.boardId = boardId
+        self.basicRatings = basicRatings
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +63,11 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     }
     
     @objc private func handleCameraTap() {
+        guard selectedImages.count < maxImageSelection else {
+            print("이미지는 최대 \(maxImageSelection)개까지 추가할 수 있습니다.")
+            return
+        }
+        
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
@@ -80,56 +101,75 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     }
     
     @objc private func handleSubmitButtonTap() {
-        guard let walkerId = getWalkerId(),
-              let boardId = getBoardId(),
-              let ratings = collectRatings(),
-              let content = collectReviewContent() else { return }
-        
+        guard !walkerId.isEmpty, !boardId.isEmpty else {
+            print("필수 데이터(walkerId 또는 boardId)가 설정되지 않았습니다.")
+            return
+        }
+
+        let ratings = collectRatings() ?? [:]
+        let content = collectReviewContent() ?? ""
+
+        let requestBody: [String: Any] = collectDetailedReviewData(
+            walkerId: walkerId,
+            boardId: boardId,
+            ratings: ratings,
+            content: content
+        )
+
+        Task {
+            await sendReviewData(requestBody: requestBody)
+        }
+    }
+
+    private func collectDetailedReviewData(
+        walkerId: [Int64],
+        boardId: [Int64],
+        ratings: [String: Float],
+        content: String
+    ) -> [String: Any] {
         let hashtags = collectSelectedHashtags()
-        let images = collectImages()
+        let images = selectedImages.map { $0.pngData()?.base64EncodedString() ?? "" }
         
-        let requestBody: [String: Any] = [
+        return [
             "walkerId": walkerId,
             "boardId": boardId,
-            "timePunctuality": ratings["timePunctuality"] ?? 0.0,
-            "communication": ratings["communication"] ?? 0.0,
-            "attitude": ratings["attitude"] ?? 0.0,
-            "taskCompletion": ratings["taskCompletion"] ?? 0.0,
-            "photoSharing": ratings["photoSharing"] ?? 0.0,
+            "timePunctuality": basicRatings["timePunctuality"] ?? 0.0,
+            "communication": basicRatings["communication"] ?? 0.0,
+            "attitude": basicRatings["attitude"] ?? 0.0,
+            "taskCompletion": basicRatings["taskCompletion"] ?? 0.0,
+            "photoSharing": basicRatings["photoSharing"] ?? 0.0,
             "hashtags": hashtags,
             "images": images,
             "content": content
         ]
-        
-        Task {
-            await sendReviewData()
-        }
-    }
-    
-    private func getWalkerId() -> [Int64]? {
-        return [1]
-    }
-    
-    private func getBoardId() -> [Int64]? {
-        return [1]
     }
     
     private func collectRatings() -> [String: Float]? {
-        return [
-            "timePunctuality": 4.5,
-            "communication": 4.0,
-            "attitude": 5.0,
-            "taskCompletion": 4.5,
-            "photoSharing": 3.5
+        let ratingTitles = [
+            "timePunctuality",
+            "communication",
+            "attitude",
+            "taskCompletion",
+            "photoSharing"
         ]
+
+        let ratings = detailReviewView.reviewPhotoView.ratingStackView.arrangedSubviews
+            .compactMap { $0 as? RatingQuestionView }
+            .enumerated()
+            .reduce(into: [String: Float]()) { result, item in
+                let (index, view) = item
+                guard index < ratingTitles.count else { return }
+                let rating = Float(view.getSelectedRating())
+                if rating > 0 {
+                    result[ratingTitles[index]] = rating
+                }
+            }
+
+        return ratings.count == ratingTitles.count ? ratings : nil
     }
     
     private func collectSelectedHashtags() -> [String] {
         return selectedHashtags
-    }
-    
-    private func collectImages() -> [String] {
-        return []
     }
     
     private func collectReviewContent() -> String? {
@@ -137,30 +177,12 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
         return content?.count ?? 0 >= 20 ? content : nil
     }
     
-    private func sendReviewData() async {
-        guard let walkerId = getWalkerId(),
-              let boardId = getBoardId(),
-              let ratings = collectRatings(),
-              let content = collectReviewContent() else {
-            print("모든 필수 데이터를 채워야 합니다.")
-            return
+    private func sendReviewData(requestBody: [String: Any]) async {
+        // 디버깅용 로그 추가
+        print("전송할 데이터 (상세 리뷰):")
+        requestBody.forEach { key, value in
+            print("\(key): \(value)")
         }
-        
-        let hashtags = collectSelectedHashtags()
-        let images = collectImages()
-        
-        let requestBody: [String: Any] = [
-            "walkerId": walkerId,
-            "boardId": boardId,
-            "timePunctuality": ratings["timePunctuality"] ?? 0.0,
-            "communication": ratings["communication"] ?? 0.0,
-            "attitude": ratings["attitude"] ?? 0.0,
-            "taskCompletion": ratings["taskCompletion"] ?? 0.0,
-            "photoSharing": ratings["photoSharing"] ?? 0.0,
-            "hashtags": hashtags,
-            "images": images,
-            "content": content
-        ]
         
         do {
             let response: APIResponse<EmptyDTO> = try await networkProvider.request(
@@ -185,7 +207,7 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     // MARK: - UIImagePickerControllerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let selectedImage = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
-            // 선택한 이미지를 처리하는 로직
+            selectedImages.append(selectedImage)
         }
         dismiss(animated: true, completion: nil)
     }
