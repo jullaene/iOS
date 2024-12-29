@@ -7,7 +7,6 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     private var matchingData: MatchingData?
     private let dogInfoView = MatchingDogInformationView()
     private var boardDetail: BoardDetail?
-    private let networkManager = NetworkManager(useMockData: true)
     private var isLoading: Bool = false
 
     // MARK: - Lifecycle
@@ -46,18 +45,6 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     private func fetchBoardDetailData(boardId: Int) {
         isLoading = true
 
-        networkManager.fetchBoardDetail(boardId: boardId) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                switch result {
-                case .success(let detail):
-                    self?.boardDetail = detail
-                    self?.updateUI(with: detail)
-                case .failure(let error):
-                    self?.handleDecodingError(error, boardId: boardId)
-                }
-            }
-        }
     }
 
     private func updateUI(with detail: BoardDetail) {

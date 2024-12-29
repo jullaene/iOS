@@ -65,7 +65,8 @@ class WalkReviewViewController: UIViewController {
                 reviewText: "정말 즐거운 산책이었습니다.",
                 totalRating: 4.5, // 총평점
                 tags: ["친절한", "활동적적적적인", "친절한", "활동적적적적인", "친절한", "활동적적적적인"] // 태그
-            ),
+            )
+            ,
             DogReviewModel(
                 profileData: .init(
                     image: nil,

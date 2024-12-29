@@ -29,16 +29,10 @@ class WalkReviewCell: UIView {
     private func setupUI() {
         backgroundColor = .clear
         addSubview(roundedContainer)
-        setupSubviews()
+        roundedContainer.addSubviews(profileFrame, totalRatingView, circleTagView, photoFrame, reviewTextLabel, tagView)
         setupConstraints()
     }
-
-    private func setupSubviews() {
-        [profileFrame, totalRatingView, circleTagView, photoFrame, reviewTextLabel, tagView].forEach {
-            roundedContainer.addSubview($0)
-        }
-    }
-
+    
     func configure(with model: DogReviewModel) {
         profileFrame.configure(with: model.profileData)
 
@@ -96,38 +90,32 @@ class WalkReviewCell: UIView {
 
     private func setupConstraints() {
         let margin: CGFloat = 20
-        let spacing: CGFloat = 16
 
-        roundedContainer.snp.makeConstraints { $0.edges.equalToSuperview() }
+        roundedContainer.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.greaterThanOrEqualTo(100).priority(.medium)
+        }
 
         profileFrame.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(margin)
             $0.height.equalTo(44)
         }
 
-        totalRatingView.snp.makeConstraints {
-            $0.top.equalTo(profileFrame.snp.bottom).offset(spacing)
-            $0.leading.trailing.equalToSuperview().inset(margin)
-        }
     }
 
     private func setupDynamicConstraints() {
         let margin: CGFloat = 20
         let spacing: CGFloat = 16
 
-        var lastView: UIView = totalRatingView
+        var lastView: UIView = profileFrame
 
-        [circleTagView, photoFrame, reviewTextLabel, tagView].forEach { subview in
+        [totalRatingView, circleTagView, photoFrame, reviewTextLabel, tagView].forEach { subview in
             if subview.isHidden {
                 subview.snp.removeConstraints()
             } else {
-                subview.snp.remakeConstraints {
+                subview.snp.makeConstraints {
                     $0.top.equalTo(lastView.snp.bottom).offset(spacing)
                     $0.leading.trailing.equalToSuperview().inset(margin)
-
-                    if subview === tagView {
-                        $0.height.equalTo(tagView.snp.height)
-                    }
                 }
                 lastView = subview
             }

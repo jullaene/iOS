@@ -11,7 +11,6 @@ import SnapKit
 class DogProfileViewController: UIViewController {
 
     private let dogProfileView = DogProfileView()
-    private let networkManager = NetworkManager(useMockData: true)
     private var dogId: Int?
 
     override func viewDidLoad() {
@@ -46,25 +45,8 @@ class DogProfileViewController: UIViewController {
     }
 
     private func fetchDogProfileIfNeeded() {
-        guard let dogId = dogId else {
-            print("Error: dogId is nil. Cannot fetch dog profile.")
-            return
-        }
-        fetchDogProfile(dogId: dogId)
     }
 
-    private func fetchDogProfile(dogId: Int) {
-        networkManager.fetchDogProfile(dogId: dogId) { [weak self] result in
-            switch result {
-            case .success(let dogProfile):
-                DispatchQueue.main.async {
-                    self?.updateDogProfileView(with: dogProfile)
-                }
-            case .failure(let error):
-                print("Error fetching dog profile for dogId \(dogId): \(error.localizedDescription)")
-            }
-        }
-    }
 
     private func updateDogProfileView(with dogProfile: DogProfile) {
         dogProfileView.configureProfileImage(with: [dogProfile.dogProfile])

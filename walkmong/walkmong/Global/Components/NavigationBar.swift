@@ -29,24 +29,19 @@ extension UIViewController {
         navigationBarView.addSubview(titleLabel)
         
         if showLeftBackButton {
-            let backButtonButton: UIButton = {
+            let backButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.backButton, for: .normal)
-                button.addTarget(self, action: #selector(popViewController), for: .touchUpInside)
+                button.addTarget(self, action: #selector(handleBackButtonTapped), for: .touchUpInside)
                 return button
             }()
-            navigationBarView.addSubview(backButtonButton)
-            backButtonButton.snp.makeConstraints { make in
+            navigationBarView.addSubview(backButton)
+            backButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
-                make.height.width.equalTo(20)
-                make.leading.equalToSuperview().offset(20)
+                make.height.width.equalTo(28)
+                make.leading.equalToSuperview().offset(16)
             }
-            
-            titleLabel.snp.makeConstraints { make in
-                make.centerY.equalToSuperview()
-                make.centerX.equalToSuperview()
-            }
-        } else if showLeftCloseButton {
+        }  else if showLeftCloseButton {
             let closeBarButton: UIButton = {
                 let button = UIButton()
                 button.setImage(.deleteButton, for: .normal)
@@ -56,7 +51,7 @@ extension UIViewController {
             closeBarButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.height.width.equalTo(40)
-                make.leading.equalToSuperview().offset(20)
+                make.leading.equalToSuperview().offset(16)
             }
         }
         
@@ -70,14 +65,14 @@ extension UIViewController {
                 let button = UIButton()
                 button.setImage(.deleteButton, for: .normal)
                 button.tintColor = .mainBlack
-                button.addTarget(self, action: #selector(self.popViewController), for: .touchUpInside)
+                button.addTarget(self, action: #selector(handleCloseButtonTapped), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(closeBarButton)
             closeBarButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
-                make.height.width.equalTo(40)
-                make.trailing.equalToSuperview().offset(-20)
+                make.height.width.equalTo(24)
+                make.trailing.equalToSuperview().offset(-16)
             }
         } else if showRightRefreshButton {
             let refreshBarButton: UIButton = {
@@ -90,7 +85,7 @@ extension UIViewController {
             refreshBarButton.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.height.width.equalTo(40)
-                make.trailing.equalToSuperview().offset(-20)
+                make.trailing.equalToSuperview().offset(-16)
             }
         }
         
