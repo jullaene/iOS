@@ -12,6 +12,9 @@ extension Notification.Name {
 }
 
 class PetOwnerReviewViewController: UIViewController {
+    // MARK: - UI Elements
+    private var navigationBarHeight: CGFloat = 52
+    
     private let petOwnerReviewView = PetOwnerReviewView()
     private let networkProvider = NetworkProvider<ReviewAPI>()
     
