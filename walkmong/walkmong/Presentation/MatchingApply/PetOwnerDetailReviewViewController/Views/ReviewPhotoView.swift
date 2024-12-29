@@ -162,9 +162,14 @@ class ReviewPhotoView: UIView {
         deleteImageBtn.addTarget(self, action: #selector(handleDeleteImage(_:)), for: .touchUpInside)
         photoContainer.addSubview(deleteImageBtn)
 
-        let offset = addedPhotos.last?.snp.trailing ?? photoContainer.snp.leading
+        deleteImageBtn.accessibilityIdentifier = String(addedPhotos.count)
+
+        // 간격 계산
+        let offset = addedPhotos.isEmpty ? cameraContainerView.snp.trailing : addedPhotos.last!.snp.trailing
+        let spacing = addedPhotos.isEmpty ? 12 : 24
+
         photoView.snp.makeConstraints { make in
-            make.leading.equalTo(offset).offset(addedPhotos.isEmpty ? 0 : 12)
+            make.leading.equalTo(offset).offset(spacing)
             make.width.height.equalTo(80)
             make.centerY.equalToSuperview()
         }
@@ -180,22 +185,39 @@ class ReviewPhotoView: UIView {
 
         self.layoutIfNeeded()
     }
-    
-    // MARK: - Delete Image Action
+
     @objc private func handleDeleteImage(_ sender: UIButton) {
-        guard let photoView = sender.superview as? UIImageView else {
+        guard let identifier = sender.accessibilityIdentifier,
+              let index = Int(identifier),
+              index < addedPhotos.count else {
             print("Error: Associated photoView not found")
             return
         }
 
-        if let index = addedPhotos.firstIndex(of: photoView) {
-            addedPhotos.remove(at: index)
-        }
+        let photoView = addedPhotos[index]
+
+        addedPhotos.remove(at: index)
 
         photoView.removeFromSuperview()
+        sender.removeFromSuperview()
 
         photoCountLabel.text = "사진 \(addedPhotos.count)/2"
 
+        rearrangePhotos()
+
         layoutIfNeeded()
+    }
+
+    private func rearrangePhotos() {
+        for (index, photoView) in addedPhotos.enumerated() {
+            let offset: ConstraintRelatableTarget = index == 0 ? cameraContainerView.snp.trailing : addedPhotos[index - 1].snp.trailing
+            let spacing = index == 0 ? 12 : 24
+
+            photoView.snp.remakeConstraints { make in
+                make.leading.equalTo(offset).offset(spacing)
+                make.width.height.equalTo(80)
+                make.centerY.equalToSuperview()
+            }
+        }
     }
 }

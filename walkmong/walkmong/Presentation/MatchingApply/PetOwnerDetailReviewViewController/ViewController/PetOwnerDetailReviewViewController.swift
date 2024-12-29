@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import PhotosUI
 
-class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, PHPickerViewControllerDelegate {
     private let detailReviewView = PetOwnerDetailReviewView()
     private let networkProvider = NetworkProvider<ReviewAPI>()
     private var selectedHashtags: [String] = []
@@ -63,16 +64,29 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     }
     
     @objc private func handleCameraTap() {
-        guard selectedImages.count < maxImageSelection else {
-            print("이미지는 최대 \(maxImageSelection)개까지 추가할 수 있습니다.")
-            return
-        }
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = maxImageSelection - selectedImages.count
+        configuration.filter = .images
         
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        imagePicker.allowsEditing = true
-        present(imagePicker, animated: true, completion: nil)
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true, completion: nil)
+        
+        guard !results.isEmpty else { return }
+        
+        for result in results {
+            result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                guard let self = self, let image = image as? UIImage, error == nil else { return }
+                DispatchQueue.main.async {
+                    self.selectedImages.append(image)
+                    self.detailReviewView.reviewPhotoView.addPhoto(image: image)
+                }
+            }
+        }
     }
     
     private func setupSubmitButtonAction() {
@@ -105,22 +119,22 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
             print("필수 데이터(walkerId 또는 boardId)가 설정되지 않았습니다.")
             return
         }
-
+        
         let ratings = collectRatings() ?? [:]
         let content = collectReviewContent() ?? ""
-
+        
         let requestBody: [String: Any] = collectDetailedReviewData(
             walkerId: walkerId,
             boardId: boardId,
             ratings: ratings,
             content: content
         )
-
+        
         Task {
             await sendReviewData(requestBody: requestBody)
         }
     }
-
+    
     private func collectDetailedReviewData(
         walkerId: [Int64],
         boardId: [Int64],
@@ -152,7 +166,7 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
             "taskCompletion",
             "photoSharing"
         ]
-
+        
         let ratings = detailReviewView.reviewPhotoView.ratingStackView.arrangedSubviews
             .compactMap { $0 as? RatingQuestionView }
             .enumerated()
@@ -164,7 +178,7 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
                     result[ratingTitles[index]] = rating
                 }
             }
-
+        
         return ratings.count == ratingTitles.count ? ratings : nil
     }
     
