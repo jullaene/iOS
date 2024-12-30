@@ -21,6 +21,7 @@ class WalktalkChatViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setUI()
+        setUpKeyboardEvent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,22 +50,21 @@ class WalktalkChatViewController: UIViewController {
 
         walktalkChatView.setupTextViewDelegate(delegate: self)
         addCustomNavigationBar(titleText: "유저 이름", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
-        dismissKeyboardOnTap()
-        setUpKeyboardEvent()
     }
     
     private func setUpKeyboardEvent() {
+        dismissKeyboardOnTap(for: view)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow),
+                                               selector: #selector(chatKeyboardWillShow),
                                                name: UIResponder.keyboardWillShowNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide),
+                                               selector: #selector(chatKeyboardWillHide),
                                                name: UIResponder.keyboardWillHideNotification,
                                                object: nil)
     }
 
-    @objc override func keyboardWillShow(_ sender: Notification) {
+    @objc private func chatKeyboardWillShow(_ sender: Notification) {
         guard let keyboardFrame = sender.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         let keyboardHeight = keyboardFrame.cgRectValue.height
 
@@ -78,8 +78,8 @@ class WalktalkChatViewController: UIViewController {
     }
 
 
-    @objc override func keyboardWillHide(_ sender: Notification) {
-        // 컨테이너 뷰의 bottom 제약 조건 복원
+    @objc private func chatKeyboardWillHide(_ sender: Notification) {
+        
         containerBottomConstraint?.update(offset: -38)
 
         UIView.animate(withDuration: 0.3) {
