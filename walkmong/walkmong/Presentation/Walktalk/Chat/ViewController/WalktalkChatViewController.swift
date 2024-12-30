@@ -53,7 +53,7 @@ class WalktalkChatViewController: UIViewController {
     }
     
     private func setUpKeyboardEvent() {
-        dismissKeyboardOnTap(for: view)
+        dismissKeyboardOnTap()
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(chatKeyboardWillShow),
                                                name: UIResponder.keyboardWillShowNotification,
@@ -72,7 +72,6 @@ class WalktalkChatViewController: UIViewController {
 
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
-        } completion: { _ in
             self.walktalkChatView.scrollToBottom()
         }
     }
