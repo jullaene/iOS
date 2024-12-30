@@ -40,7 +40,7 @@ extension APIEndpoint {
             // TODO: 로그인 화면 이동
             return
         }
-        // TODO: Refresh Token 발급 API 호출
+        // TODO: Access Token 재발급 API 호출
     }
 
 }
