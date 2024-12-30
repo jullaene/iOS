@@ -7,15 +7,18 @@
 
 import UIKit
 import NMapsMap
-import Alamofire
-
+import SnapKit
 
 class MatchingApplyMapViewController: UIViewController {
-        
+    
     let matchingApplyMapView = MatchingApplyMapView()
     let modalView = MatchingApplyMapNotifyModalView()
     let addressModalView = MatchingApplyMapAddressModalView()
     var model = MatchingApplyMapModel(didSelectLocation: false)
+    private var keyboardEventManager: KeyboardEventManager?
+    
+    private var matchingApplyMapViewBottomConstraint: Constraint?
+    private var addressModalTopConstraint: Constraint?
 
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.setNavigationBarHidden(true, animated: animated)
@@ -27,6 +30,8 @@ class MatchingApplyMapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setConfigure()
+        dismissKeyboardOnTap()
+        keyboardEventManager = KeyboardEventManager(delegate: self)
     }
     
     private func setConfigure(){
@@ -49,7 +54,7 @@ class MatchingApplyMapViewController: UIViewController {
     private func setConstraints(){
         matchingApplyMapView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(52)
-            make.bottom.equalToSuperview()
+            matchingApplyMapViewBottomConstraint = make.bottom.equalToSuperview().constraint
             make.horizontalEdges.equalToSuperview()
         }
         modalView.snp.makeConstraints { make in
@@ -59,7 +64,7 @@ class MatchingApplyMapViewController: UIViewController {
         addressModalView.snp.makeConstraints { make in
             make.height.equalTo(341)
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(view.snp.bottom)
+            addressModalTopConstraint = make.top.equalTo(view.snp.bottom).constraint
         }
     }
     
@@ -68,7 +73,25 @@ class MatchingApplyMapViewController: UIViewController {
     }
 }
 
-extension MatchingApplyMapViewController: MatchingApplyMapViewDelegate{
+extension MatchingApplyMapViewController: KeyboardObserverDelegate {
+    func keyboardWillShow(keyboardHeight: CGFloat) {
+        matchingApplyMapViewBottomConstraint?.update(offset: -keyboardHeight)
+        addressModalTopConstraint?.update(offset: -keyboardHeight)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    func keyboardWillHide() {
+        matchingApplyMapViewBottomConstraint?.update(offset: 0)
+        addressModalTopConstraint?.update(offset: 0)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+}
+
+extension MatchingApplyMapViewController: MatchingApplyMapViewDelegate {
     func willSelectLocation() {
         self.model.didSelectLocation = false
     }
