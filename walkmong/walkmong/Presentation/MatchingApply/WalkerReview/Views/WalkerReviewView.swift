@@ -64,6 +64,44 @@ final class WalkerReviewView: UIView {
         return button
     }()
 
+    // MARK: - Additional UI for reviewFeedbackView
+    private let smallTitleLabel: SmallTitleLabel = {
+        let label = SmallTitleLabel(text: "봄별이 반려인에 대해 어떻게\n생각하시나요?")
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        return label
+    }()
+
+    private lazy var likeButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .gray100
+        button.layer.cornerRadius = 25.5
+        button.setImage(UIImage(named: "reviewLikeIcon"), for: .normal)
+        button.addTarget(self, action: #selector(handleLikeButtonTapped), for: .touchUpInside)
+        return button
+    }()
+
+    private lazy var dislikeButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .gray100
+        button.layer.cornerRadius = 25.5
+        button.setImage(rotatedImage(named: "reviewLikeIcon", rotationAngle: CGFloat.pi), for: .normal)
+        button.addTarget(self, action: #selector(handleDislikeButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private let likeDislikeStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 20
+        stackView.alignment = .center
+        return stackView
+    }()
+
+    // MARK: - State
+    private var isLikeSelected: Bool = false
+    private var isDislikeSelected: Bool = false
+
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -86,10 +124,35 @@ final class WalkerReviewView: UIView {
         reviewStackView.layoutMargins = UIEdgeInsets(top: 24, left: 20, bottom: 24, right: 20)
         reviewStackView.isLayoutMarginsRelativeArrangement = true
 
-        let emptyView1 = UIView()
-        emptyView1.backgroundColor = .white
-        emptyView1.snp.makeConstraints { make in
+        let reviewFeedbackView = UIView()
+        reviewFeedbackView.backgroundColor = .white
+        reviewFeedbackView.layer.cornerRadius = 20
+        reviewFeedbackView.layer.masksToBounds = true
+
+        reviewFeedbackView.addSubviews(smallTitleLabel, likeDislikeStackView)
+        likeDislikeStackView.addArrangedSubview(dislikeButton)
+        likeDislikeStackView.addArrangedSubview(likeButton)
+
+        reviewFeedbackView.snp.makeConstraints { make in
             make.height.equalTo(159)
+        }
+
+        smallTitleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(16)
+            make.centerX.equalToSuperview()
+        }
+
+        likeDislikeStackView.snp.makeConstraints { make in
+            make.top.equalTo(smallTitleLabel.snp.bottom).offset(20)
+            make.centerX.equalToSuperview()
+        }
+
+        dislikeButton.snp.makeConstraints { make in
+            make.width.height.equalTo(51)
+        }
+
+        likeButton.snp.makeConstraints { make in
+            make.width.height.equalTo(51)
         }
 
         let emptyView2 = UIView()
@@ -98,7 +161,7 @@ final class WalkerReviewView: UIView {
             make.height.equalTo(572)
         }
 
-        reviewStackView.addArrangedSubview(emptyView1)
+        reviewStackView.addArrangedSubview(reviewFeedbackView)
         reviewStackView.addArrangedSubview(emptyView2)
 
         setupConstraints()
@@ -155,5 +218,46 @@ final class WalkerReviewView: UIView {
             make.trailing.equalToSuperview().offset(-20)
             make.width.equalTo(detailedReviewButton)
         }
+    }
+
+    // MARK: - Button Actions
+    @objc private func handleLikeButtonTapped() {
+        isLikeSelected = true
+        isDislikeSelected = false
+        updateButtonStates()
+    }
+
+    @objc private func handleDislikeButtonTapped() {
+        isDislikeSelected = true
+        isLikeSelected = false
+        updateButtonStates()
+    }
+
+    private func updateButtonStates() {
+        if isLikeSelected {
+            likeButton.setImage(UIImage(named: "reviewLikeSelectedIcon"), for: .normal)
+            likeButton.backgroundColor = .mainBlue
+
+            dislikeButton.setImage(rotatedImage(named: "reviewLikeIcon", rotationAngle: CGFloat.pi), for: .normal)
+            dislikeButton.backgroundColor = .gray100
+        } else if isDislikeSelected {
+            dislikeButton.setImage(rotatedImage(named: "reviewLikeSelectedIcon", rotationAngle: CGFloat.pi), for: .normal)
+            dislikeButton.backgroundColor = .buttonBad
+
+            likeButton.setImage(UIImage(named: "reviewLikeIcon"), for: .normal)
+            likeButton.backgroundColor = .gray100
+        }
+    }
+    
+    private func rotatedImage(named imageName: String, rotationAngle: CGFloat) -> UIImage? {
+        guard let originalImage = UIImage(named: imageName) else { return nil }
+        UIGraphicsBeginImageContext(originalImage.size)
+        let context = UIGraphicsGetCurrentContext()
+        context?.translateBy(x: originalImage.size.width / 2, y: originalImage.size.height / 2)
+        context?.rotate(by: rotationAngle)
+        originalImage.draw(in: CGRect(x: -originalImage.size.width / 2, y: -originalImage.size.height / 2, width: originalImage.size.width, height: originalImage.size.height))
+        let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return rotatedImage
     }
 }
