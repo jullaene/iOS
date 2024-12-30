@@ -33,7 +33,6 @@ class MatchingApplyMapViewController: UIViewController {
         self.view.backgroundColor = .white
         modalView.delegate = self
         addressModalView.delegate = self
-        setupKeyboardEvent(for: matchingApplyMapView)
         setMapView()
     }
     private func setUI(){
