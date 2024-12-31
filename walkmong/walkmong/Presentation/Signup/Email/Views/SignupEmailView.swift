@@ -59,10 +59,10 @@ class SignupEmailView: UIView {
     }
     
     private func setButtonAction() {
-        nextButton.addTarget(self, action: #selector(nextButtonAction), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
-    @objc private func nextButtonAction() {
+    @objc private func nextButtonTapped() {
         //TODO: 인증 코드 API 호출 + 화면 전환
         print("nextButton Action")
     }
@@ -75,19 +75,28 @@ extension SignupEmailView: UITextFieldDelegate {
         if let text = textField.text, isValidEmail(text) {
             emailTextFieldWithSubtitle.showSubtitleText(false)
             nextButton.setButtonState(isEnabled: true)
+            
             //TODO: 이메일 중복 검사 API 호출
 //            if {requestAPI} {
 //                emailTextFieldWithSubtitle.shakeSubtitleLabel()
 //                emailTextFieldWithSubtitle.showSubtitleText(true)
+//                nextButton.setButtonState(isEnabled: true)
 //                emailTextFieldWithSubtitle.setSubtitleText(textColor: ., text: "이미 가입된 이메일 주소입니다. 다른 이메일을 입력해주세요.")
 //            }else {
+//                nextButton.setButtonState(isEnabled: false)
 //                emailTextFieldWithSubtitle.showSubtitleText(false)
 //            }
         }else {
+            nextButton.setButtonState(isEnabled: false)
             emailTextFieldWithSubtitle.shakeSubtitleLabel()
             emailTextFieldWithSubtitle.showSubtitleText(true)
             emailTextFieldWithSubtitle.setSubtitleText(textColor: .negative, text: "올바른 이메일 형식을 입력해주세요.")
         }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        nextButtonTapped()
+        return true
     }
     
     private func isValidEmail(_ email: String) -> Bool {
