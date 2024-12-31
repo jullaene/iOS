@@ -9,10 +9,12 @@ import UIKit
 
 class SignupEmailView: UIView {
     
-    private let emailTextField = TextField(placeHolderText: <#T##String#>,
-                                           keyboardType: <#T##UIKeyboardType#>,
-                                           shouldHideText: <#T##Bool#>,
-                                           textContentType: <#T##UITextContentType#>)
+    private let emailTextField = TextField(placeHolderText: "이메일을 입력해주세요",
+                                           keyboardType: .emailAddress,
+                                           shouldHideText: false,
+                                           textContentType: .emailAddress)
+    
+    private let emailTextFieldWithSubtitle = TextFieldWithSubtitle(frame: <#T##CGRect#>, textField: <#T##TextField#>)
 
     override init(frame: CGRect) {
         super.init(frame: frame)

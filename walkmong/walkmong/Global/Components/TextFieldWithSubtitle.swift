@@ -20,10 +20,13 @@ class TextFieldWithSubtitle: UIStackView {
     
     private let textField: TextField?
     
-    init(frame: CGRect, textField: TextField) {
-        super.init(frame: frame)
+    init(textField: TextField) {
+        super.init(frame: .zero)
         self.textField = textField
-        self.addSubviews(subtitleLabel, textField)
+        self.addArrangedSubview(subtitleLabel)
+        self.addArrangedSubview(textField)
+        self.axis = .vertical
+        self.alignment = .fill
         self.spacing = 12
     }
     
@@ -39,6 +42,8 @@ extension TextFieldWithSubtitle {
     }
     
     func shakeSubtitleLabel() {
+        subtitleLabel.layer.removeAnimation(forKey: "position")
+        
         let animation = CABasicAnimation(keyPath: "position")
         animation.duration = 0.1
         animation.repeatCount = 3
@@ -52,5 +57,4 @@ extension TextFieldWithSubtitle {
         
         subtitleLabel.layer.add(animation, forKey: "position")
     }
-
 }
