@@ -9,15 +9,7 @@ import UIKit
 
 class TextFieldWithSubtitle: UIStackView {
     
-    private let subtitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont(name: "Pretendard-Medium", size: 12)
-        label.textColor = .mainBlue
-        label.textAlignment = .left
-        label.numberOfLines = 0
-        return label
-    }()
-    
+    private let subtitleLabel = SubtitleLabel()
     private var textField: TextField?
     
     init(textField: TextField) {
@@ -38,8 +30,7 @@ class TextFieldWithSubtitle: UIStackView {
 extension TextFieldWithSubtitle {
     
     func setSubtitleText(textColor: UIColor, text: String) {
-        subtitleLabel.textColor = textColor
-        subtitleLabel.text = text
+        subtitleLabel.setText(text, textColor: textColor)
     }
     
     func showSubtitleText(_ show: Bool) {
@@ -47,16 +38,7 @@ extension TextFieldWithSubtitle {
     }
     
     func shakeSubtitleLabel() {
-        subtitleLabel.layer.removeAnimation(forKey: "shake")
-        
-        let animation = CABasicAnimation(keyPath: "transform.translation.x")
-        animation.duration = 0.075
-        animation.repeatCount = 3
-        animation.autoreverses = true
-        animation.fromValue = -2
-        animation.toValue = 2
-        
-        subtitleLabel.layer.add(animation, forKey: "shake")
+        subtitleLabel.shake()
     }
 
 }
