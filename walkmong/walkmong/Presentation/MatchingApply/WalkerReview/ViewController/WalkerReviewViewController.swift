@@ -8,16 +8,19 @@
 import UIKit
 import SnapKit
 
-final class WalkerReviewViewController: UIViewController {
+final class WalkerReviewViewController: UIViewController, KeyboardObserverDelegate {
 
     // MARK: - Properties
     private let walkerReviewView = WalkerReviewView()
+    private var keyboardEventManager: KeyboardEventManager?
+    private var feedbackViewBottomConstraint: Constraint?
 
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         setupNavigationBar()
+        keyboardEventManager = KeyboardEventManager(delegate: self)
     }
 
     // MARK: - Setup Methods
@@ -37,5 +40,20 @@ final class WalkerReviewViewController: UIViewController {
             showRightCloseButton: false,
             showRightRefreshButton: false
         )
+    }
+    
+    // MARK: - KeyboardObserverDelegate
+    func keyboardWillShow(keyboardHeight: CGFloat) {
+        feedbackViewBottomConstraint?.update(offset: -keyboardHeight)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    func keyboardWillHide() {
+        feedbackViewBottomConstraint?.update(offset: 0)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
 }
