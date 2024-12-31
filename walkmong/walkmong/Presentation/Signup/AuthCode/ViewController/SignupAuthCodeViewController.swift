@@ -39,6 +39,8 @@ extension SignupAuthCodeViewController: SignupAuthCodeViewDelegate {
     func didEnterCode(_ code: String) {
         //TODO: 코드 인증 API 호출
         print(code)
+        let nextVC = SignupPasswordViewController()
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
 }

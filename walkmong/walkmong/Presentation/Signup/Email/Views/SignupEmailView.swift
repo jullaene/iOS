@@ -67,10 +67,10 @@ class SignupEmailView: UIView {
     }
     
     private func setButtonAction() {
-        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
     }
     
-    @objc private func nextButtonTapped() {
+    @objc private func didTapNextButton() {
         //TODO: 인증 코드 API 호출 + 화면 전환
         debounceTimer?.invalidate()
         validateEmailInput(in: emailTextField)
@@ -98,7 +98,7 @@ extension SignupEmailView: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        nextButtonTapped()
+        didTapNextButton()
         return true
     }
     
