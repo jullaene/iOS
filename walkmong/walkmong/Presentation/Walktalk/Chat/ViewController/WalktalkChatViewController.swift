@@ -16,11 +16,14 @@ class WalktalkChatViewController: UIViewController {
     private let currentMatchingState: MatchingState = .matching
 
     private var containerBottomConstraint: Constraint?
+    private var keyboardEventManager: KeyboardEventManager?
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setUI()
+        setUpKeyboardEvent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,43 +52,14 @@ class WalktalkChatViewController: UIViewController {
 
         walktalkChatView.setupTextViewDelegate(delegate: self)
         addCustomNavigationBar(titleText: "유저 이름", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
-        dismissKeyboardOnTap()
-        setUpKeyboardEvent()
     }
     
     private func setUpKeyboardEvent() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
+        walktalkChatView.setupTextViewDelegate(delegate: self)
+        keyboardEventManager = KeyboardEventManager(delegate: self)
+        dismissKeyboardOnTap()
     }
 
-    @objc override func keyboardWillShow(_ sender: Notification) {
-        guard let keyboardFrame = sender.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-        let keyboardHeight = keyboardFrame.cgRectValue.height
-
-        containerBottomConstraint?.update(offset: -keyboardHeight)
-
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.walktalkChatView.scrollToBottom()
-        }
-    }
-
-
-    @objc override func keyboardWillHide(_ sender: Notification) {
-        // 컨테이너 뷰의 bottom 제약 조건 복원
-        containerBottomConstraint?.update(offset: -38)
-
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
 }
 
 extension WalktalkChatViewController: UITextViewDelegate {
@@ -104,7 +78,24 @@ extension WalktalkChatViewController: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        // 텍스트뷰가 변경될 때 View에 알림
         walktalkChatView.updateTextViewHeight()
+    }
+}
+
+
+extension WalktalkChatViewController: KeyboardObserverDelegate {
+    func keyboardWillShow(keyboardHeight: CGFloat) {
+        containerBottomConstraint?.update(offset: -keyboardHeight)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+            self.walktalkChatView.scrollToBottom()
+        }
+    }
+
+    func keyboardWillHide() {
+        containerBottomConstraint?.update(offset: -38)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
 }

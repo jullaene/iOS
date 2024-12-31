@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserService {
+struct DogService {
     private let provider = NetworkProvider<DogAPI>()
     
     func getDogList() async throws -> DogListResponse {
