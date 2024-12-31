@@ -21,6 +21,7 @@ final class WalkerReviewViewController: UIViewController, KeyboardObserverDelega
         setupView()
         setupNavigationBar()
         keyboardEventManager = KeyboardEventManager(delegate: self)
+        setupScrollToDismissKeyboard()
     }
 
     // MARK: - Setup Methods
@@ -42,6 +43,18 @@ final class WalkerReviewViewController: UIViewController, KeyboardObserverDelega
         )
     }
     
+    private func setupScrollToDismissKeyboard() {
+        walkerReviewView.scrollView.keyboardDismissMode = .onDrag
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        walkerReviewView.scrollView.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        keyboardEventManager?.dismissKeyboard()
+    }
+
     // MARK: - KeyboardObserverDelegate
     func keyboardWillShow(keyboardHeight: CGFloat) {
         feedbackViewBottomConstraint?.update(offset: -keyboardHeight)

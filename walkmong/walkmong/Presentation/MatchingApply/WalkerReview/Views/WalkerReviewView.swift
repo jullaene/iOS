@@ -12,7 +12,7 @@ final class WalkerReviewView: UIView {
     // MARK: - UI Elements
     private var navigationBarHeight: CGFloat = 52
     
-    private let scrollView: UIScrollView = {
+    let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
