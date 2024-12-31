@@ -225,12 +225,14 @@ final class WalkerReviewView: UIView {
         isLikeSelected = true
         isDislikeSelected = false
         updateButtonStates()
+        removeFeedbackViewIfNeeded()
     }
 
     @objc private func handleDislikeButtonTapped() {
         isDislikeSelected = true
         isLikeSelected = false
         updateButtonStates()
+        addFeedbackViewIfNeeded()
     }
 
     private func updateButtonStates() {
@@ -247,6 +249,50 @@ final class WalkerReviewView: UIView {
             likeButton.setImage(UIImage(named: "reviewLikeIcon"), for: .normal)
             likeButton.backgroundColor = .gray100
         }
+    }
+    
+    private func addFeedbackViewIfNeeded() {
+        if reviewStackView.arrangedSubviews.contains(where: { $0.tag == 1001 }) {
+            return
+        }
+
+        let feedbackView = createFeedbackView()
+        feedbackView.tag = 1001 // 고유 태그로 식별
+
+        if reviewStackView.arrangedSubviews.count >= 2 {
+            reviewStackView.insertArrangedSubview(feedbackView, at: 1)
+        } else {
+            reviewStackView.addArrangedSubview(feedbackView)
+        }
+
+        reviewStackView.setNeedsLayout()
+        reviewStackView.layoutIfNeeded()
+    }
+
+    private func removeFeedbackViewIfNeeded() {
+        if let feedbackView = reviewStackView.arrangedSubviews.first(where: { $0.tag == 1001 }) {
+            reviewStackView.removeArrangedSubview(feedbackView)
+            feedbackView.removeFromSuperview()
+        }
+    }
+
+    private func createFeedbackView() -> UIView {
+        let feedbackView = UIView()
+        feedbackView.backgroundColor = .white
+        feedbackView.layer.cornerRadius = 20
+
+        feedbackView.snp.makeConstraints { make in
+            make.height.equalTo(304)
+        }
+
+        let feedbackLabel = SmallTitleLabel(text: "봄별이 반려인이 어떤 점이 아쉬웠나요?")
+        feedbackView.addSubview(feedbackLabel)
+        feedbackLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(16)
+        }
+
+        return feedbackView
     }
     
     private func rotatedImage(named imageName: String, rotationAngle: CGFloat) -> UIImage? {
