@@ -112,7 +112,7 @@ extension SignupEmailView: UITextFieldDelegate {
 //                emailTextFieldWithSubtitle.shakeSubtitleLabel()
 //                emailTextFieldWithSubtitle.showSubtitleText(true)
 //                nextButton.setButtonState(isEnabled: true)
-//                emailTextFieldWithSubtitle.setSubtitleText(textColor: ., text: "이미 가입된 이메일 주소입니다. 다른 이메일을 입력해주세요.")
+//                emailTextFieldWithSubtitle.setSubtitleText(textColor: .negative, text: "이미 가입된 이메일 주소입니다. 다른 이메일을 입력해주세요.", image: .warningIconNegative)
 //            }else {
 //                nextButton.setButtonState(isEnabled: false)
 //                emailTextFieldWithSubtitle.showSubtitleText(false)
@@ -122,7 +122,7 @@ extension SignupEmailView: UITextFieldDelegate {
             nextButton.setButtonState(isEnabled: false)
             emailTextFieldWithSubtitle.shakeSubtitleLabel()
             emailTextFieldWithSubtitle.showSubtitleText(true)
-            emailTextFieldWithSubtitle.setSubtitleText(textColor: .negative, text: "올바른 이메일 형식을 입력해주세요.")
+            emailTextFieldWithSubtitle.setSubtitleText(textColor: .negative, text: "올바른 이메일 형식을 입력해주세요.", image: .warningIconNegative)
         }
     }
     

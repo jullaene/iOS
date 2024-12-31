@@ -117,7 +117,7 @@ class MatchingApplyDetailSelectView: UIView {
     
     private let selectPlaceWarningIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .warningIcon
+        imageView.image = .warningIconMainBlue
         return imageView
     }()
     
@@ -237,7 +237,7 @@ class MatchingApplyDetailSelectView: UIView {
     
     private let selectPreMeetingWarningIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .warningIcon
+        imageView.image = .warningIconMainBlue
         return imageView
     }()
     

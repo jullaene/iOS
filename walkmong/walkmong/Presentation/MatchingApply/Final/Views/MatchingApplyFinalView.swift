@@ -80,7 +80,7 @@ class MatchingApplyFinalView: UIView {
     private let preMeetingTitleLabel = SmallTitleLabel(text: "사전 만남")
     private let preMeetingWarningIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .warningIcon
+        imageView.image = .warningIconMainBlue
         return imageView
     }()
     private let preMeetingWarningMessageLabel = SmallMainHighlightParagraphLabel(text: "매칭 확정 후 반려인과 상의하여 사전 만남을 진행해 주세요", textColor: .mainBlue)

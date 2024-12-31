@@ -29,8 +29,8 @@ class TextFieldWithSubtitle: UIStackView {
 }
 extension TextFieldWithSubtitle {
     
-    func setSubtitleText(textColor: UIColor, text: String) {
-        subtitleLabel.setText(text, textColor: textColor)
+    func setSubtitleText(textColor: UIColor, text: String, image: UIImage) {
+        subtitleLabel.setContent(text, textColor: textColor, image: image)
     }
     
     func showSubtitleText(_ show: Bool) {
