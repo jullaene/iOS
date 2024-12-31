@@ -18,7 +18,7 @@ class TextFieldWithSubtitle: UIStackView {
         return label
     }()
     
-    private let textField: TextField?
+    private var textField: TextField?
     
     init(textField: TextField) {
         super.init(frame: .zero)
@@ -37,8 +37,13 @@ class TextFieldWithSubtitle: UIStackView {
 }
 extension TextFieldWithSubtitle {
     
-    func setSubtitleTextColor(color: UIColor) {
-        subtitleLabel.textColor = color
+    func setSubtitleText(textColor: UIColor, text: String) {
+        subtitleLabel.textColor = textColor
+        subtitleLabel.text = text
+    }
+    
+    func showSubtitleText(_ show: Bool) {
+        subtitleLabel.isHidden = !show
     }
     
     func shakeSubtitleLabel() {

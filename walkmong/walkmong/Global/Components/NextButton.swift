@@ -15,9 +15,17 @@ class NextButton: UIButton {
         self.titleLabel?.textColor = .white
         self.backgroundColor = .gray300
         self.layer.cornerRadius = 15
+        setButtonState(isEnabled: false)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension NextButton {
+    func setButtonState(isEnabled: Bool) {
+        self.isUserInteractionEnabled = isEnabled
+        self.backgroundColor = isEnabled ? .gray600 : .gray300
     }
 }

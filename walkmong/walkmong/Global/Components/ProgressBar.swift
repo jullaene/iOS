@@ -34,16 +34,16 @@ extension UIViewController {
         backgroundView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.top.equalToSuperview().offset(119)
-            make.height.equalTo(35)
+            make.height.equalTo(36)
         }
         progressBackgroundView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.top.equalToSuperview().offset(7)
+            make.top.equalToSuperview().offset(16)
             make.height.equalTo(4)
         }
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
-            make.top.equalToSuperview().offset(7)
+            make.top.equalToSuperview().offset(16)
             make.width.equalTo((view.bounds.width-40)*CGFloat(currentStep)/CGFloat(totalSteps))
             make.height.equalTo(4)
         }

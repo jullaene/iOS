@@ -11,10 +11,14 @@ class TextField: UITextField {
     
     init(placeHolderText: String, keyboardType: UIKeyboardType, shouldHideText: Bool, textContentType: UITextContentType) {
         super.init(frame: .zero)
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 46))
+        
         self.textColor = .gray600
         self.font = UIFont(name:"Pretendard-Medium",size: 16)
         self.backgroundColor = .gray100
         self.layer.cornerRadius = 5
+        self.leftView = paddingView
+        self.leftViewMode = .always
         self.keyboardType = keyboardType
         self.placeholder = placeHolderText
         self.textContentType = textContentType
