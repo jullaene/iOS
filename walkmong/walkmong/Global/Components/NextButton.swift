@@ -25,7 +25,7 @@ class NextButton: UIButton {
 
 extension NextButton {
     func setButtonState(isEnabled: Bool) {
-        self.isUserInteractionEnabled = isEnabled
+        self.isEnabled = isEnabled
         self.backgroundColor = isEnabled ? .gray600 : .gray300
     }
 }
