@@ -70,12 +70,6 @@ class SignupEmailView: UIView {
 }
 
 extension SignupEmailView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let maxLength = 20
-        guard let text = textField.text else { return true }
-        let newlength = text.count + string.count - range.length
-        return newlength < maxLength
-    }
     
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
         if let text = textField.text, isValidEmail(text) {

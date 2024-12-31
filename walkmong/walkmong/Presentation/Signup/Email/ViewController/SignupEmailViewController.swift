@@ -22,6 +22,7 @@ final class SignupEmailViewController: UIViewController {
         setConstraints()
         addCustomNavigationBar(titleText: "가입하기", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         addProgressBar(currentStep: 1, totalSteps: 7)
+        dismissKeyboardOnTap()
     }
     
     private func addSubview() {

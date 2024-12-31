@@ -47,19 +47,16 @@ extension TextFieldWithSubtitle {
     }
     
     func shakeSubtitleLabel() {
-        subtitleLabel.layer.removeAnimation(forKey: "position")
+        subtitleLabel.layer.removeAnimation(forKey: "shake")
         
-        let animation = CABasicAnimation(keyPath: "position")
-        animation.duration = 0.1
+        let animation = CABasicAnimation(keyPath: "transform.translation.x")
+        animation.duration = 0.075
         animation.repeatCount = 3
         animation.autoreverses = true
+        animation.fromValue = -2
+        animation.toValue = 2
         
-        let fromPoint = CGPoint(x: subtitleLabel.center.x - 5, y: subtitleLabel.center.y)
-        let toPoint = CGPoint(x: subtitleLabel.center.x + 5, y: subtitleLabel.center.y)
-        
-        animation.fromValue = NSValue(cgPoint: fromPoint)
-        animation.toValue = NSValue(cgPoint: toPoint)
-        
-        subtitleLabel.layer.add(animation, forKey: "position")
+        subtitleLabel.layer.add(animation, forKey: "shake")
     }
+
 }
