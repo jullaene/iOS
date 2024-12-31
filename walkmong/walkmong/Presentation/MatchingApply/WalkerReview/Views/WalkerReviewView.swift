@@ -155,16 +155,89 @@ final class WalkerReviewView: UIView {
             make.width.height.equalTo(51)
         }
         
-        let emptyView2 = UIView()
-        emptyView2.backgroundColor = .white
-        emptyView2.snp.makeConstraints { make in
-            make.height.equalTo(572)
-        }
+        let keywordView: UIView = {
+            let view = UIView()
+            view.backgroundColor = .white
+            view.layer.cornerRadius = 20
+            view.snp.makeConstraints { make in
+                make.height.equalTo(572)
+            }
+            return view
+        }()
         
         reviewStackView.addArrangedSubview(reviewFeedbackView)
-        reviewStackView.addArrangedSubview(emptyView2)
-        
+        reviewStackView.addArrangedSubview(keywordView)
+
         setupConstraints()
+        
+        let experienceLabel: SmallTitleLabel = {
+            let label = SmallTitleLabel(text: "봄별이는 산책 중 어땠나요?")
+            return label
+        }()
+
+        let selectKeywordLabel: SmallMainParagraphLabel = {
+            let label = SmallMainParagraphLabel(text: "봄별이를 가장 잘 나타내는 키워드를 항목별로 하나씩 선택해주세요")
+            label.numberOfLines = 2
+            return label
+        }()
+
+        let socialityLabel = MainHighlightParagraphLabel(text: "사회성")
+        let activityLabel = MainHighlightParagraphLabel(text: "활동량")
+        let aggressionLabel = MainHighlightParagraphLabel(text: "공격성")
+
+        let socialityTagView = UIView()
+        socialityTagView.backgroundColor = .red
+
+        let activityTagView = UIView()
+        activityTagView.backgroundColor = .red
+
+        let aggressionTagView = UIView()
+        aggressionTagView.backgroundColor = .red
+
+        keywordView.addSubviews(experienceLabel, selectKeywordLabel, socialityLabel, socialityTagView, activityLabel, activityTagView, aggressionLabel, aggressionTagView)
+
+        experienceLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(16)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        selectKeywordLabel.snp.makeConstraints { make in
+            make.top.equalTo(experienceLabel.snp.bottom).offset(6)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        socialityLabel.snp.makeConstraints { make in
+            make.top.equalTo(selectKeywordLabel.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        socialityTagView.snp.makeConstraints { make in
+            make.top.equalTo(socialityLabel.snp.bottom).offset(12)
+            make.height.equalTo(80)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        activityLabel.snp.makeConstraints { make in
+            make.top.equalTo(socialityTagView.snp.bottom).offset(52)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        activityTagView.snp.makeConstraints { make in
+            make.top.equalTo(activityLabel.snp.bottom).offset(12)
+            make.height.equalTo(80)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        aggressionLabel.snp.makeConstraints { make in
+            make.top.equalTo(activityTagView.snp.bottom).offset(52)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        aggressionTagView.snp.makeConstraints { make in
+            make.top.equalTo(aggressionLabel.snp.bottom).offset(12)
+            make.height.equalTo(80)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
     }
     
     private func setupConstraints() {
