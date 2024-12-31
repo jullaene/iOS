@@ -55,7 +55,7 @@ class KeyboardEventManager {
         delegate?.keyboardWillHide()
     }
 
-    @objc func dismissKeyboard() {
+    @objc func dismisskeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
