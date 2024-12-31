@@ -14,6 +14,7 @@ class SubtitleLabel: UIView {
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "icon_subtitle")
         return imageView
     }()
 
