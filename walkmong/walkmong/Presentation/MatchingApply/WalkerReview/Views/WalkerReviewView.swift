@@ -187,19 +187,19 @@ final class WalkerReviewView: UIView {
             make.top.equalTo(selectKeywordLabel.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(16)
         }
-        setupTagView(tagView: socialityTagView, below: socialityLabel)
-        
+        setupTagView(tagView: socialityTagView, below: socialityLabel, in: keywordView)
+
         activityLabel.snp.makeConstraints { make in
             make.top.equalTo(socialityTagView.snp.bottom).offset(52)
             make.leading.trailing.equalToSuperview().inset(16)
         }
-        setupTagView(tagView: activityTagView, below: activityLabel)
+        setupTagView(tagView: activityTagView, below: activityLabel, in: keywordView)
         
         aggressionLabel.snp.makeConstraints { make in
             make.top.equalTo(activityTagView.snp.bottom).offset(52)
             make.leading.trailing.equalToSuperview().inset(16)
         }
-        setupTagView(tagView: aggressionTagView, below: aggressionLabel)
+        setupTagView(tagView: aggressionTagView, below: aggressionLabel, in: keywordView)
         
         keywordView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
@@ -378,14 +378,15 @@ final class WalkerReviewView: UIView {
     }
     
     // MARK: - Helper Methods
-    private func setupTagView(tagView: TagView, below label: UILabel) {
-        addSubview(tagView)
+    private func setupTagView(tagView: TagView, below label: UILabel, in keywordView: UIView) {
+        keywordView.addSubview(tagView)
         tagView.snp.makeConstraints { make in
             make.top.equalTo(label.snp.bottom).offset(12)
-            make.leading.trailing.equalToSuperview().inset(36)
+            make.leading.trailing.equalToSuperview().inset(16)
             make.height.greaterThanOrEqualTo(80)
         }
     }
+
 }
 
 // MARK: - UITextViewDelegate
