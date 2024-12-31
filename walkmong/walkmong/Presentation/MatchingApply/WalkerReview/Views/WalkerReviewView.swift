@@ -12,11 +12,7 @@ final class WalkerReviewView: UIView {
     // MARK: - UI Elements
     private var navigationBarHeight: CGFloat = 52
     
-    let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.showsVerticalScrollIndicator = false
-        return scrollView
-    }()
+    let scrollView = UIScrollView()
     
     private let contentView = UIView()
     
@@ -98,6 +94,10 @@ final class WalkerReviewView: UIView {
         return stackView
     }()
     
+    let socialityTagView = TagView(hashtags: ["👩🏻 사람 좋아함", "🐶 강아지 좋아함", "😳 낯가림 있음", "😉 애교 많음", "😫 경계가 심함"])
+    let activityTagView = TagView(hashtags: ["😲 계속 뜀", "😮 빠르게 걸음", "😌 천천히 걸음", "🤨 자주 멈춤"])
+    let aggressionTagView = TagView(hashtags: ["☺️ 온순함", "😯 가끔 짖음", "😫 자주 짖음", "😰 물려고 함", "😡 입질이 있음"])
+
     // MARK: - State
     private var isLikeSelected: Bool = false
     private var isDislikeSelected: Bool = false
@@ -114,11 +114,10 @@ final class WalkerReviewView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
-        addSubview(scrollView)
+        addSubviews(scrollView, bottomButtonView)
         scrollView.addSubview(contentView)
         contentView.addSubviews(titleLabel, subtitleLabel, illustrationImageView, reviewStackView)
         
-        addSubview(bottomButtonView)
         bottomButtonView.addSubviews(detailedReviewButton, sendReviewButton)
         
         reviewStackView.layoutMargins = UIEdgeInsets(top: 24, left: 20, bottom: 24, right: 20)
@@ -155,44 +154,22 @@ final class WalkerReviewView: UIView {
             make.width.height.equalTo(51)
         }
         
-        let keywordView: UIView = {
-            let view = UIView()
-            view.backgroundColor = .white
-            view.layer.cornerRadius = 20
-            view.snp.makeConstraints { make in
-                make.height.equalTo(572)
-            }
-            return view
-        }()
+        let keywordView = UIView()
+        keywordView.backgroundColor = .white
+        keywordView.layer.cornerRadius = 20
         
         reviewStackView.addArrangedSubview(reviewFeedbackView)
         reviewStackView.addArrangedSubview(keywordView)
 
         setupConstraints()
         
-        let experienceLabel: SmallTitleLabel = {
-            let label = SmallTitleLabel(text: "봄별이는 산책 중 어땠나요?")
-            return label
-        }()
-
-        let selectKeywordLabel: SmallMainParagraphLabel = {
-            let label = SmallMainParagraphLabel(text: "봄별이를 가장 잘 나타내는 키워드를 항목별로 하나씩 선택해주세요")
-            label.numberOfLines = 2
-            return label
-        }()
+        let experienceLabel = SmallTitleLabel(text: "봄별이는 산책 중 어땠나요?")
+        let selectKeywordLabel = SmallMainParagraphLabel(text: "봄별이를 가장 잘 나타내는 키워드를 항목별로 하나씩 선택해주세요")
+        selectKeywordLabel.numberOfLines = 2
 
         let socialityLabel = MainHighlightParagraphLabel(text: "사회성")
         let activityLabel = MainHighlightParagraphLabel(text: "활동량")
         let aggressionLabel = MainHighlightParagraphLabel(text: "공격성")
-
-        let socialityTagView = UIView()
-        socialityTagView.backgroundColor = .red
-
-        let activityTagView = UIView()
-        activityTagView.backgroundColor = .red
-
-        let aggressionTagView = UIView()
-        aggressionTagView.backgroundColor = .red
 
         keywordView.addSubviews(experienceLabel, selectKeywordLabel, socialityLabel, socialityTagView, activityLabel, activityTagView, aggressionLabel, aggressionTagView)
 
@@ -210,33 +187,23 @@ final class WalkerReviewView: UIView {
             make.top.equalTo(selectKeywordLabel.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(16)
         }
-
-        socialityTagView.snp.makeConstraints { make in
-            make.top.equalTo(socialityLabel.snp.bottom).offset(12)
-            make.height.equalTo(80)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-
+        setupTagView(tagView: socialityTagView, below: socialityLabel)
+        
         activityLabel.snp.makeConstraints { make in
             make.top.equalTo(socialityTagView.snp.bottom).offset(52)
             make.leading.trailing.equalToSuperview().inset(16)
         }
-
-        activityTagView.snp.makeConstraints { make in
-            make.top.equalTo(activityLabel.snp.bottom).offset(12)
-            make.height.equalTo(80)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-
+        setupTagView(tagView: activityTagView, below: activityLabel)
+        
         aggressionLabel.snp.makeConstraints { make in
             make.top.equalTo(activityTagView.snp.bottom).offset(52)
             make.leading.trailing.equalToSuperview().inset(16)
         }
-
-        aggressionTagView.snp.makeConstraints { make in
-            make.top.equalTo(aggressionLabel.snp.bottom).offset(12)
-            make.height.equalTo(80)
-            make.leading.trailing.equalToSuperview().inset(16)
+        setupTagView(tagView: aggressionTagView, below: aggressionLabel)
+        
+        keywordView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalTo(aggressionTagView.snp.bottom).offset(16)
         }
     }
     
@@ -250,6 +217,7 @@ final class WalkerReviewView: UIView {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
+            make.bottom.equalTo(reviewStackView.snp.bottom)
         }
         
         titleLabel.snp.makeConstraints { make in
@@ -408,6 +376,16 @@ final class WalkerReviewView: UIView {
         UIGraphicsEndImageContext()
         return rotatedImage
     }
+    
+    // MARK: - Helper Methods
+    private func setupTagView(tagView: TagView, below label: UILabel) {
+        addSubview(tagView)
+        tagView.snp.makeConstraints { make in
+            make.top.equalTo(label.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview().inset(36)
+            make.height.greaterThanOrEqualTo(80)
+        }
+    }
 }
 
 // MARK: - UITextViewDelegate
@@ -438,4 +416,89 @@ extension WalkerReviewView: UITextViewDelegate {
             textView.textColor = .gray400
         }
     }
+}
+
+class TagView: UIView {
+    private let buttonSpacing: CGFloat = 8
+    private let rowSpacing: CGFloat = 16
+    var hashtagButtons: [UIButton] = []
+    private let maxSelectedHashtags = 1
+
+    init(hashtags: [String]) {
+        super.init(frame: .zero)
+        setupHashtagButtons(hashtags: hashtags)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupHashtagButtons(hashtags: [String]) {
+        for hashtag in hashtags {
+            let button = UIButton.createStyledButton(type: .tag, style: .light, title: hashtag)
+            button.isUserInteractionEnabled = true
+            button.addTarget(self, action: #selector(toggleHashtagButtonStyle(_:)), for: .touchUpInside)
+            hashtagButtons.append(button)
+            addSubview(button)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layoutHashtagButtons()
+        invalidateIntrinsicContentSize()
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let totalHeight = hashtagButtons.last?.frame.maxY ?? 0
+        return CGSize(width: UIView.noIntrinsicMetric, height: totalHeight)
+    }
+
+    private func layoutHashtagButtons() {
+        var currentX: CGFloat = 0
+        var currentY: CGFloat = 0
+        let maxWidth = self.bounds.width
+
+        for button in hashtagButtons {
+            let buttonWidth = button.intrinsicContentSize.width + 16
+            let buttonHeight = button.intrinsicContentSize.height
+
+            if currentX + buttonWidth > maxWidth {
+                currentX = 0
+                currentY += buttonHeight + rowSpacing
+            }
+
+            button.frame = CGRect(x: currentX, y: currentY, width: buttonWidth, height: buttonHeight)
+            currentX += buttonWidth + buttonSpacing
+        }
+    }
+
+    @objc private func toggleHashtagButtonStyle(_ sender: UIButton) {
+        let isSelected = sender.backgroundColor == UIColor.mainBlue
+        let selectedHashtags = getSelectedHashtags()
+        
+        if isSelected && selectedHashtags.count == 1 {
+            return
+        }
+        
+        if isSelected {
+            sender.updateStyle(type: .tag, style: .light)
+            sender.setTitleColor(.mainBlack, for: .normal)
+        } else {
+            hashtagButtons.forEach { button in
+                button.updateStyle(type: .tag, style: .light)
+                button.setTitleColor(.mainBlack, for: .normal)
+                button.backgroundColor = .gray200
+            }
+            
+            sender.updateStyle(type: .tag, style: .dark)
+            sender.setTitleColor(.mainBlack, for: .normal)
+            sender.backgroundColor = UIColor.mainBlue
+        }
+    }
+
+    func getSelectedHashtags() -> [String] {
+        return hashtagButtons.filter { $0.backgroundColor == UIColor.mainBlue }.compactMap { $0.title(for: .normal) }
+    }
+
 }
