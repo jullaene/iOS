@@ -33,6 +33,7 @@ class TextField: UITextField {
         let button = UIButton()
         button.setImage(.blind, for: .normal)
         button.setImage(.eye, for: .selected)
+        button.addTarget(self, action: #selector(secureButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -42,6 +43,11 @@ class TextField: UITextField {
     
     override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         return CGRect(x: bounds.width - 28, y: 15, width: bounds.height - 30, height: bounds.height - 30)
+    }
+    
+    @objc private func secureButtonTapped() {
+        isSecureTextEntry.toggle()
+        secureButton.isSelected.toggle()
     }
     
 }
