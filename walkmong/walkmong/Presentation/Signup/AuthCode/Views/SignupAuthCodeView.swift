@@ -11,10 +11,8 @@ protocol SignupAuthCodeViewDelegate: AnyObject {
     func didEnterCode(_ code: String)
 }
 
-class SignupAuthCodeView: UIView {
+final class SignupAuthCodeView: UIView {
     private let userEmail: String = "이메일 오류"
-    private var currentTextCount: Int = 0
-    private var filledCount: Int = 0
     
     private let titleLabel = MiddleTitleLabel(text: "계정 인증 코드를 확인해주세요")
     private let subtitleLabel = SubtitleLabel()
@@ -41,7 +39,8 @@ class SignupAuthCodeView: UIView {
         addSubview()
         setUI()
         setConstraints()
-        subtitleLabel.setContent(userEmail, textColor: .mainBlue, image: .warningIconMainBlue)
+        subtitleLabel.setContent("\(userEmail)으로 보내드린 인증코드로 로그인 하실 수 있습니다.", textColor: .mainBlue, image: .warningIconMainBlue)
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -112,8 +111,13 @@ class SignupAuthCodeView: UIView {
         textField.clearsOnInsertion = true
         return textField
     }
-    func getCode() -> String {
+    
+    private func getCode() -> String {
         return textFields.compactMap { $0.text }.joined()
+    }
+    
+    @objc private func nextButtonTapped() {
+        delegate?.didEnterCode(getCode())
     }
 }
 
@@ -124,7 +128,6 @@ extension SignupAuthCodeView: UITextFieldDelegate {
         
         if string.count == 1 {
             textField.text = string
-            currentTextCount = textFields.filter { !($0.text?.isEmpty ?? true) }.count
             
             if currentIndex < 5 {
                 textFields[currentIndex + 1].becomeFirstResponder()
@@ -136,7 +139,6 @@ extension SignupAuthCodeView: UITextFieldDelegate {
             return false
         } else if string.isEmpty {
             textField.text = ""
-            currentTextCount = textFields.filter { !($0.text?.isEmpty ?? true) }.count
             if currentIndex > 0 {
                 textFields[currentIndex - 1].becomeFirstResponder()
             }

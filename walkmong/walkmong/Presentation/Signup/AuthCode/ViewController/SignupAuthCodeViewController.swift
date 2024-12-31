@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SignupAuthCodeViewController: UIViewController {
+final class SignupAuthCodeViewController: UIViewController {
     
     private let signupAuthCodeView = SignupAuthCodeView()
     
@@ -38,6 +38,7 @@ class SignupAuthCodeViewController: UIViewController {
 extension SignupAuthCodeViewController: SignupAuthCodeViewDelegate {
     func didEnterCode(_ code: String) {
         //TODO: 코드 인증 API 호출
+        print(code)
     }
     
 }

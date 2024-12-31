@@ -45,7 +45,7 @@ class SubtitleLabel: UIView {
     private func setupConstraints() {
         imageView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
-            make.top.equalToSuperview().offset(4)
+            make.top.equalToSuperview().offset(1)
             make.width.height.equalTo(12)
         }
 
