@@ -296,17 +296,6 @@ class MyPageReviewView: UIView {
 //            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
 //        }
 //    }
-    
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while responder != nil {
-            if let viewController = responder as? UIViewController {
-                return viewController
-            }
-            responder = responder?.next
-        }
-        return nil
-    }
 }
 
 class ReviewTitleView: UIView {

@@ -205,6 +205,9 @@ final class WalkerReviewView: UIView {
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalTo(aggressionTagView.snp.bottom).offset(16)
         }
+        
+        setupActions()
+        updateButtonState()
     }
     
     private func setupConstraints() {
@@ -290,6 +293,7 @@ final class WalkerReviewView: UIView {
             likeButton.setImage(UIImage(named: "reviewLikeIcon"), for: .normal)
             likeButton.backgroundColor = .gray100
         }
+        updateButtonState()
     }
     
     private func addFeedbackViewIfNeeded() {
@@ -387,6 +391,17 @@ final class WalkerReviewView: UIView {
         }
     }
 
+    @objc private func navigateToDetailReview() {
+        if let viewController = findViewController() {
+            let detailReviewVC = WalkerDetailReviewViewController()
+            viewController.navigationController?.pushViewController(detailReviewVC, animated: true)
+        }
+    }
+    
+    private func setupActions() {
+        detailedReviewButton.addTarget(self, action: #selector(navigateToDetailReview), for: .touchUpInside)
+    }
+
 }
 
 // MARK: - UITextViewDelegate
@@ -416,6 +431,23 @@ extension WalkerReviewView: UITextViewDelegate {
             textView.text = "반려인과의 산책 과정 내에서 불편했거나, 힘들었던 점이 있었다면 적어주세요. 검토 후 반려인에게 패널티를 부과하겠습니다. (최소 20자 이상)"
             textView.textColor = .gray400
         }
+    }
+    
+    func updateButtonState() {
+        let isSocialitySelected = !socialityTagView.getSelectedHashtags().isEmpty
+        let isActivitySelected = !activityTagView.getSelectedHashtags().isEmpty
+        let isAggressionSelected = !aggressionTagView.getSelectedHashtags().isEmpty
+        let isFeedbackSelected = isLikeSelected || isDislikeSelected
+
+        let allSelected = isSocialitySelected && isActivitySelected && isAggressionSelected && isFeedbackSelected
+
+        detailedReviewButton.isEnabled = allSelected
+        detailedReviewButton.backgroundColor = allSelected ? .gray400 : .gray100
+        detailedReviewButton.setTitleColor(allSelected ? .white : .gray400, for: .normal)
+
+        sendReviewButton.isEnabled = allSelected
+        sendReviewButton.backgroundColor = allSelected ? .gray600 : .gray200
+        sendReviewButton.setTitleColor(allSelected ? .white : .gray400, for: .normal)
     }
 }
 
@@ -476,30 +508,41 @@ class TagView: UIView {
 
     @objc private func toggleHashtagButtonStyle(_ sender: UIButton) {
         let isSelected = sender.backgroundColor == UIColor.mainBlue
-        let selectedHashtags = getSelectedHashtags()
-        
-        if isSelected && selectedHashtags.count == 1 {
-            return
-        }
-        
         if isSelected {
             sender.updateStyle(type: .tag, style: .light)
             sender.setTitleColor(.mainBlack, for: .normal)
+            sender.backgroundColor = .gray200
         } else {
             hashtagButtons.forEach { button in
                 button.updateStyle(type: .tag, style: .light)
                 button.setTitleColor(.mainBlack, for: .normal)
                 button.backgroundColor = .gray200
             }
-            
             sender.updateStyle(type: .tag, style: .dark)
-            sender.setTitleColor(.mainBlack, for: .normal)
+            sender.setTitleColor(.white, for: .normal)
             sender.backgroundColor = UIColor.mainBlue
+        }
+
+        if let walkerReviewView = self.superview as? WalkerReviewView {
+            walkerReviewView.updateButtonState()
+        } else {
+            var parentView: UIView? = self.superview
+            while parentView != nil {
+                if let walkerView = parentView as? WalkerReviewView {
+                    walkerView.updateButtonState()
+                    break
+                }
+                parentView = parentView?.superview
+            }
         }
     }
 
     func getSelectedHashtags() -> [String] {
-        return hashtagButtons.filter { $0.backgroundColor == UIColor.mainBlue }.compactMap { $0.title(for: .normal) }
+        return hashtagButtons.filter { button in
+            button.backgroundColor == UIColor.mainBlue
+        }.compactMap { button in
+            button.title(for: .normal)
+        }
     }
 
 }
