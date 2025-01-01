@@ -9,12 +9,23 @@ import UIKit
 import SnapKit
 
 final class WalkerReviewViewController: UIViewController, KeyboardObserverDelegate {
+    
+    enum WalkerReviewViewState {
+        case reviewOverview
+        case detailedReview
+    }
+    
+    private var currentState: WalkerReviewViewState = .reviewOverview
 
     // MARK: - Properties
     private let walkerReviewView = WalkerReviewView()
     private var keyboardEventManager: KeyboardEventManager?
     private var feedbackViewBottomConstraint: Constraint?
-
+    private let reviewPhotoView = ReviewPhotoView()
+    private let bottomButton: UIButton = {
+        return UIButton.createStyledButton(type: .large, style: .dark, title: "완료")
+    }()
+    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,14 +33,23 @@ final class WalkerReviewViewController: UIViewController, KeyboardObserverDelega
         setupNavigationBar()
         keyboardEventManager = KeyboardEventManager(delegate: self)
         setupScrollToDismissKeyboard()
+        setupBottomButton()
+        switchToState(.reviewOverview)
     }
 
     // MARK: - Setup Methods
     private func setupView() {
         view.backgroundColor = .white
+        
         view.addSubview(walkerReviewView)
         walkerReviewView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        
+        view.addSubview(reviewPhotoView)
+        reviewPhotoView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52 + 23)
+            make.leading.trailing.equalToSuperview().inset(20)
         }
     }
 
@@ -41,6 +61,19 @@ final class WalkerReviewViewController: UIViewController, KeyboardObserverDelega
             showRightCloseButton: false,
             showRightRefreshButton: false
         )
+    }
+    
+    private func setupBottomButton() {
+        view.addSubview(bottomButton)
+        
+        bottomButton.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-12)
+            make.height.equalTo(53)
+        }
+        
+        bottomButton.addTarget(self, action: #selector(handleBottomButtonTapped), for: .touchUpInside)
+        bottomButton.isHidden = true
     }
     
     private func setupScrollToDismissKeyboard() {
@@ -68,5 +101,25 @@ final class WalkerReviewViewController: UIViewController, KeyboardObserverDelega
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
+    }
+    
+    func switchToState(_ state: WalkerReviewViewState) {
+        currentState = state
+
+        switch state {
+        case .reviewOverview:
+            walkerReviewView.isHidden = false
+            reviewPhotoView.isHidden = true
+            bottomButton.isHidden = true
+            
+        case .detailedReview:
+            walkerReviewView.isHidden = true
+            reviewPhotoView.isHidden = false
+            bottomButton.isHidden = false
+        }
+    }
+    
+    @objc private func handleBottomButtonTapped() {
+        print("후기 완료 버튼이 눌렸습니다.")
     }
 }

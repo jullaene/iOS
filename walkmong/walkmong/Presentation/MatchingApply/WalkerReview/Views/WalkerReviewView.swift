@@ -394,9 +394,8 @@ final class WalkerReviewView: UIView {
     }
 
     @objc private func navigateToDetailReview() {
-        if let viewController = findViewController() {
-            let detailReviewVC = WalkerDetailReviewViewController()
-            viewController.navigationController?.pushViewController(detailReviewVC, animated: true)
+        if let viewController = findViewController() as? WalkerReviewViewController {
+            viewController.switchToState(WalkerReviewViewController.WalkerReviewViewState.detailedReview)
         }
     }
     

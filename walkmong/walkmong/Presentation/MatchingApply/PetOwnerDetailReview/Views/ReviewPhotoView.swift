@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ReviewPhotoView: UIView {
+class ReviewPhotoView: UIView, UITextViewDelegate {
     // MARK: - UI Elements
     private let detailedReviewLabel: SmallTitleLabel = {
         let label = SmallTitleLabel(text: "김철수님에 대한 자세한 후기를 남겨주세요.", textColor: .mainBlack)
@@ -43,6 +43,8 @@ class ReviewPhotoView: UIView {
     
     lazy var reviewTextView: UITextView = {
         let textView = UITextView()
+        textView.isEditable = true
+        textView.isSelectable = true
         textView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         textView.textColor = .gray500
         textView.backgroundColor = .gray100
@@ -53,8 +55,11 @@ class ReviewPhotoView: UIView {
         textView.showsVerticalScrollIndicator = false
         textView.textAlignment = .left
         textView.returnKeyType = .done
+        textView.delegate = self
         return textView
     }()
+    
+    private let charCountLabel = MainParagraphLabel(text: "(0/\(CharacterCountManager.maxCharacterCount))", textColor: .gray400)
     
     private var photoContainer: UIView = {
         let view = UIView()
@@ -76,7 +81,7 @@ class ReviewPhotoView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
-        addSubviews(detailedReviewLabel, cameraContainerView, photoContainer, reviewTextView)
+        addSubviews(detailedReviewLabel, cameraContainerView, photoContainer, reviewTextView, charCountLabel)
         cameraContainerView.addSubviews(cameraIcon, photoCountLabel)
         setupConstraints()
     }
@@ -115,6 +120,11 @@ class ReviewPhotoView: UIView {
             make.top.equalTo(cameraContainerView.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(224)
+        }
+        
+        charCountLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(reviewTextView.snp.bottom).offset(-12)
+            make.trailing.equalToSuperview().inset(12)
         }
     }
     
@@ -191,5 +201,10 @@ class ReviewPhotoView: UIView {
                 make.centerY.equalToSuperview()
             }
         }
+    }
+    
+    // MARK: - UITextViewDelegate
+    func textViewDidChange(_ textView: UITextView) {
+        CharacterCountManager.updateCountLabel(textView: textView, remainLabel: charCountLabel)
     }
 }
