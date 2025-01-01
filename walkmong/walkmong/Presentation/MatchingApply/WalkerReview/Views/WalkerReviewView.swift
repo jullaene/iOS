@@ -371,11 +371,13 @@ final class WalkerReviewView: UIView {
     
     private func rotatedImage(named imageName: String, rotationAngle: CGFloat) -> UIImage? {
         guard let originalImage = UIImage(named: imageName) else { return nil }
-        UIGraphicsBeginImageContext(originalImage.size)
-        let context = UIGraphicsGetCurrentContext()
-        context?.translateBy(x: originalImage.size.width / 2, y: originalImage.size.height / 2)
-        context?.rotate(by: rotationAngle)
-        originalImage.draw(in: CGRect(x: -originalImage.size.width / 2, y: -originalImage.size.height / 2, width: originalImage.size.width, height: originalImage.size.height))
+        let size = originalImage.size
+        let scale = UIScreen.main.scale
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        context.translateBy(x: size.width / 2, y: size.height / 2)
+        context.rotate(by: rotationAngle)
+        originalImage.draw(in: CGRect(x: -size.width / 2, y: -size.height / 2, width: size.width, height: size.height))
         let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return rotatedImage
