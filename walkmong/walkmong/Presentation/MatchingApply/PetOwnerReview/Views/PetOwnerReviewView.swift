@@ -44,6 +44,10 @@ class PetOwnerReviewView: UIView {
         return stackView
     }()
     
+    var ratingQuestionView: UIStackView {
+        return reviewStackView
+    }
+    
     private let bottomButtonView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -202,7 +206,7 @@ class PetOwnerReviewView: UIView {
         }
     }
 
-    func collectRatings() -> [String: Int]? {
+    func collectRatings() -> [String: Float]? {
         let ratingTitles = [
             "timePunctuality",
             "communication",
@@ -210,19 +214,20 @@ class PetOwnerReviewView: UIView {
             "taskCompletion",
             "photoSharing"
         ]
+        
 
         let ratings = reviewStackView.arrangedSubviews
             .compactMap { $0 as? RatingQuestionView }
             .enumerated()
-            .reduce(into: [String: Int]()) { result, item in
+            .reduce(into: [String: Float]()) { result, item in
                 let (index, view) = item
                 guard index < ratingTitles.count else { return }
-                let rating = view.getSelectedRating()
+                let rating = Float(view.getSelectedRating())
                 if rating > 0 {
                     result[ratingTitles[index]] = rating
                 }
             }
-
+        
         return ratings.count == ratingTitles.count ? ratings : nil
     }
 

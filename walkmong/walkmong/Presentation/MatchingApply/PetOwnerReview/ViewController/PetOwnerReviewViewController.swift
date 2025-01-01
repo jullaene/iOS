@@ -89,20 +89,24 @@ class PetOwnerReviewViewController: UIViewController {
     }
 
     @objc private func didTapDetailedReviewButton() {
-        if petOwnerReviewView.areAllRatingsFilled() {
-            guard let ratings = petOwnerReviewView.collectRatings() else {
-                print("별점 데이터를 수집하지 못했습니다.")
-                return
-            }
-
-            let basicRatings = ratings.mapValues { Float($0) }
-            let detailReviewVC = PetOwnerDetailReviewViewController(
-                walkerId: walkerId,
-                boardId: boardId,
-                basicRatings: basicRatings
-            )
-            navigationController?.pushViewController(detailReviewVC, animated: true)
+        guard petOwnerReviewView.areAllRatingsFilled() else {
+            print("모든 평가 항목을 채워주세요.")
+            return
         }
+        
+        guard let ratings = petOwnerReviewView.collectRatings() else {
+            print("별점 데이터를 수집하지 못했습니다.")
+            return
+        }
+        
+        let basicRatings = ratings.mapValues { Float($0) }
+        
+        let detailReviewVC = PetOwnerDetailReviewViewController(
+            walkerId: walkerId,
+            boardId: boardId,
+            basicRatings: basicRatings
+        )
+        navigationController?.pushViewController(detailReviewVC, animated: true)
     }
 
     @objc private func didTapSendReviewButton() {
