@@ -53,7 +53,8 @@ class StompService {
 extension StompService: StompClientLibDelegate {
     
     func stompClient(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: AnyObject?, akaStringBody stringBody: String?, withHeader header: [String : String]?, withDestination destination: String) {
-        print("[STOMP] Received Message: \(stringBody ?? "nil")")
+        print("[STOMP] Received Message: \(String(describing: jsonBody?.value(forKey: "msg")))")
+        delegate?.stompService(self, didReceiveMessage: (String(describing: jsonBody?.value(forKey: "msg"))), from: destination)
     }
     
     func serverDidSendReceipt(client: StompClientLib!, withReceiptId receiptId: String) {
@@ -87,6 +88,6 @@ extension StompService: StompClientLibDelegate {
 protocol StompServiceDelegate: AnyObject {
     func stompServiceDidConnect(_ service: StompService)
     func stompServiceDidDisconnect(_ service: StompService)
-    func stompService(_ service: StompService, didReceiveMessage message: Any?, from destination: String)
+    func stompService(_ service: StompService, didReceiveMessage message: String, from destination: String)
     func stompService(_ service: StompService, didReceiveError error: String)
 }
