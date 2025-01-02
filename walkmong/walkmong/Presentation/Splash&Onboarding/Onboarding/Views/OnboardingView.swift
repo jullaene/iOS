@@ -68,6 +68,7 @@ final class OnboardingView: UIView {
                 make.width.equalToSuperview()
                 make.height.equalToSuperview()
                 make.leading.equalTo(scrollView.snp.leading).offset(CGFloat(index) * UIScreen.main.bounds.width)
+                make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(42)
                 make.bottom.equalTo(pageControl.snp.top).offset(-16)
             }
             
