@@ -15,9 +15,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-        let mainTabBarController = SplashViewController()
-        let navigationController = UINavigationController(rootViewController: mainTabBarController)
-        window?.rootViewController = navigationController
+        
+        let splashViewController = SplashViewController()
+        window?.rootViewController = splashViewController
         
         window?.overrideUserInterfaceStyle = .light
         window?.makeKeyAndVisible()
