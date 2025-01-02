@@ -27,7 +27,7 @@ extension WalkTalkChatLogModel {
     // 날짜 포맷터
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS" // 입력 형식
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS" // 입력 형식
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone.current
         return formatter
