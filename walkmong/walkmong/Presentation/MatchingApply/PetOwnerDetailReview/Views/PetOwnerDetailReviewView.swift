@@ -69,7 +69,6 @@ class PetOwnerDetailReviewView: UIView {
 
     // MARK: - Initializer
     override init(frame: CGRect) {
-        // DetailReviewHashtagView에 해시태그의 displayName 전달
         self.hashtagView = DetailReviewHashtagView(hashtags: Hashtag.allCases.map { $0.displayName })
         super.init(frame: frame)
         setupUI()

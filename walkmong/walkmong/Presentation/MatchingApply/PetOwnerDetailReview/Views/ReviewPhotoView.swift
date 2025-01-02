@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ReviewPhotoView: UIView, UITextViewDelegate {
+class ReviewPhotoView: UIView, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK: - UI Elements
     private let detailedReviewLabel: SmallTitleLabel = {
         let label = SmallTitleLabel(text: "김철수님에 대한 자세한 후기를 남겨주세요.", textColor: .mainBlack)
@@ -41,20 +41,20 @@ class ReviewPhotoView: UIView, UITextViewDelegate {
         )
     }()
     
+    let placeholderText = "작성한 산책 후기는 닉네임, 프로필 이미지와 함께 누구나 볼 수 있도록 공개됩니다. 내용에 민감한 개인정보가 포함되지 않도록 조심해주세요. (최소 20자 이상)"
+    
     lazy var reviewTextView: UITextView = {
         let textView = UITextView()
         textView.isEditable = true
         textView.isSelectable = true
         textView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        textView.text = placeholderText
         textView.textColor = .gray500
         textView.backgroundColor = .gray100
         textView.layer.cornerRadius = 5
-        textView.text = "작성한 산책 후기는 닉네임, 프로필 이미지와 함께 누구나 볼 수 있도록 공개됩니다. 내용에 민감한 개인정보가 포함되지 않도록 조심해주세요. (최소 20자 이상)"
         textView.font = UIFont(name: "Pretendard-Regular", size: 14)
         textView.isScrollEnabled = true
         textView.showsVerticalScrollIndicator = false
-        textView.textAlignment = .left
-        textView.returnKeyType = .done
         textView.delegate = self
         return textView
     }()
@@ -83,6 +83,10 @@ class ReviewPhotoView: UIView, UITextViewDelegate {
     private func setupUI() {
         addSubviews(detailedReviewLabel, cameraContainerView, photoContainer, reviewTextView, charCountLabel)
         cameraContainerView.addSubviews(cameraIcon, photoCountLabel)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleCameraTapped))
+        cameraContainerView.addGestureRecognizer(tapGesture)
+
         setupConstraints()
     }
     
@@ -128,7 +132,7 @@ class ReviewPhotoView: UIView, UITextViewDelegate {
         }
     }
     
-    // MARK: - Photo Management
+    // MARK: - Photo Handling
     func addPhoto(image: UIImage) {
         guard addedPhotos.count < 2 else { return }
 
@@ -146,7 +150,6 @@ class ReviewPhotoView: UIView, UITextViewDelegate {
 
         deleteImageBtn.accessibilityIdentifier = String(addedPhotos.count)
 
-        // 간격 계산
         let offset = addedPhotos.isEmpty ? cameraContainerView.snp.trailing : addedPhotos.last!.snp.trailing
         let spacing = addedPhotos.isEmpty ? 12 : 24
 
@@ -203,8 +206,55 @@ class ReviewPhotoView: UIView, UITextViewDelegate {
         }
     }
     
-    // MARK: - UITextViewDelegate
-    func textViewDidChange(_ textView: UITextView) {
-        CharacterCountManager.updateCountLabel(textView: textView, remainLabel: charCountLabel)
+    @objc private func handleCameraTapped() {
+        let picker = UIImagePickerController()
+        picker.sourceType = .photoLibrary
+        picker.delegate = self
+        picker.allowsEditing = true
+        if let viewController = self.findViewController() {
+            viewController.present(picker, animated: true, completion: nil)
+        }
     }
+
+    // MARK: - UIImagePickerControllerDelegate
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        if let editedImage = info[.editedImage] as? UIImage {
+            addPhoto(image: editedImage)
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            addPhoto(image: originalImage)
+        }
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.text == placeholderText {
+            textView.text = ""
+            textView.textColor = .mainBlack
+        }
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = placeholderText
+            textView.textColor = .gray500
+        }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        let isPlaceholder = textView.text == placeholderText
+        let textToCount = isPlaceholder ? "" : textView.text
+        let characterCount = textToCount?.trimmingCharacters(in: .whitespacesAndNewlines).count ?? 0
+
+        CharacterCountManager.updateCountLabel(
+            textView: textView,
+            remainLabel: charCountLabel
+        )
+        
+        let isValid = characterCount > 0 && !isPlaceholder
+    }
+    
 }

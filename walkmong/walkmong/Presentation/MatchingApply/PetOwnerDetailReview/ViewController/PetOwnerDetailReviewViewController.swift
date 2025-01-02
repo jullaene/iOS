@@ -55,6 +55,12 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
             showRightCloseButton: false,
             showRightRefreshButton: false
         )
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismisskeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func dismisskeyboard() {
+        view.endEditing(true)
     }
     
     private func setupCameraTapGesture() {
@@ -167,8 +173,13 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     }
     
     private func collectReviewContent() -> String? {
-        let content = detailReviewView.reviewPhotoView.reviewTextView.text
-        return content?.count ?? 0 >= 20 ? content : nil
+        let content = detailReviewView.reviewPhotoView.reviewTextView.text ?? ""
+        let placeholderText = detailReviewView.reviewPhotoView.placeholderText
+
+        if content == placeholderText || content.trimmingCharacters(in: .whitespacesAndNewlines).count < 0 {
+            return nil
+        }
+        return content.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     private func sendReviewData(requestBody: [String: Any]) async {
