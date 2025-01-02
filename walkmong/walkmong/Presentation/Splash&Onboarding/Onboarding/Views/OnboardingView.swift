@@ -73,7 +73,7 @@ final class OnboardingView: UIView {
             }
             
             imageView.snp.makeConstraints { make in
-                make.bottom.equalTo(titleLabel.snp.top).offset(-63)
+                make.top.equalToSuperview()
                 make.leading.trailing.equalToSuperview().inset(20)
             }
             
@@ -110,7 +110,7 @@ final class OnboardingView: UIView {
         
         pageControl.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(nextButton.snp.top).offset(-16)
+            make.bottom.equalTo(nextButton.snp.top).offset(-48)
         }
     }
     
