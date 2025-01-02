@@ -30,8 +30,9 @@ final class OnboardingViewController: UIViewController {
     // MARK: - Actions
     @objc private func didTapNextButton() {
         let mainTabBarController = MainTabBarController()
-        let navigationController = UINavigationController(rootViewController: mainTabBarController)
-        navigationController.modalPresentationStyle = .fullScreen
-        self.present(navigationController, animated: true, completion: nil)
+        if let window = UIApplication.shared.keyWindow {
+            window.rootViewController = UINavigationController(rootViewController: mainTabBarController)
+            window.makeKeyAndVisible()
+        }
     }
 }
