@@ -44,7 +44,7 @@ extension WalktalkListViewController {
         }
     }
     
-    func getChatroom(record: String, status: String) {
+    func getChatroom(record: Record, status: Status) {
         Task {
             do {
                 let response = try await service.getChatroom(record: record, status: status)

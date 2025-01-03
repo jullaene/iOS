@@ -11,7 +11,7 @@ import Moya
 enum WalktalkAPI {
     case createChatroom(boardId: Int)
     case getHistory(roomId: Int)
-    case getChatroom(record: String, status: String)
+    case getChatroom(record: Record, status: Status)
 }
 
 extension WalktalkAPI: APIEndpoint {

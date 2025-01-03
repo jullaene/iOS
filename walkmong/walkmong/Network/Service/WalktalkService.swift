@@ -24,7 +24,7 @@ struct WalktalkService {
         )
     }
     
-    func getChatroom(record: String, status: String) async throws -> GetChatroomResponse {
+    func getChatroom(record: Record, status: Status) async throws -> GetChatroomResponse {
         return try await provider.request(
             target: .getChatroom(record: record, status: status),
             responseType: GetChatroomResponse.self
