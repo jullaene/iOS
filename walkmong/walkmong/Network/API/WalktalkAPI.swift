@@ -11,7 +11,7 @@ import Moya
 enum WalktalkAPI {
     case createChatroom(boardId: Int)
     case getHistory(roomId: Int)
-    case getChatroom
+    case getChatroom(record: String, status: String)
 }
 
 extension WalktalkAPI: APIEndpoint {
@@ -38,8 +38,10 @@ extension WalktalkAPI: APIEndpoint {
     
     var task: Task {
         switch self {
-        case .createChatroom, .getHistory, .getChatroom:
+        case .createChatroom, .getHistory:
             return .requestPlain
+        case .getChatroom(record: let record, status: let status):
+            return .requestParameters(parameters: ["record": record, "status": status], encoding: URLEncoding.queryString)
         }
     }
 }
