@@ -17,6 +17,8 @@ class WalktalkChatViewController: UIViewController {
 
     private var containerBottomConstraint: Constraint?
     private var keyboardEventManager: KeyboardEventManager?
+    
+    private let service = WalktalkService()
 
 
     override func viewDidLoad() {
@@ -96,6 +98,18 @@ extension WalktalkChatViewController: KeyboardObserverDelegate {
         containerBottomConstraint?.update(offset: -38)
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
+        }
+    }
+}
+
+extension WalktalkChatViewController {
+    func getHistory(roomId: Int) {
+        Task {
+            do {
+                let response = try await service.getHistory(roomId: roomId)
+            } catch {
+                print("채팅 히스토리 조회 실패: \(error)")
+            }
         }
     }
 }

@@ -7,9 +7,11 @@
 
 import UIKit
 
-class WalktalkListViewController: UIViewController {
+final class WalktalkListViewController: UIViewController {
     
     private let walktalkListView = WalktalkListView()
+    private let service = WalktalkService()
+    private var chatRoomData: ChatroomResponseData?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,5 +31,26 @@ class WalktalkListViewController: UIViewController {
             make.horizontalEdges.bottom.equalToSuperview()
         }
         addCustomNavigationBar(titleText: "워크톡", showLeftBackButton: false, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
+    }
+}
+extension WalktalkListViewController {
+    func createChatroom(boardId: Int) {
+        Task {
+            do {
+                let response = try await service.createChatroom(boardId: boardId)
+            } catch {
+                print("채팅방 생성 실패: \(error)")
+            }
+        }
+    }
+    
+    func getChatroom(record: String, status: String) {
+        Task {
+            do {
+                let response = try await service.getChatroom(record: record, status: status)
+            } catch {
+                print("채팅방 조회 실패: \(error)")
+            }
+        }
     }
 }
