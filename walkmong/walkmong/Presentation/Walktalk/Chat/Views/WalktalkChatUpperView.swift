@@ -10,7 +10,7 @@ import SnapKit
 
 class WalktalkChatUpperView: UIView {
 
-    private var currentMatchingState: MatchingState = .matching //FIXME: 매칭 상태 변수 분리 필요
+    private var currentMatchingState: Status = .PENDING //FIXME: 매칭 상태 변수 분리 필요
 
     private let matchingStateFrameView: UIView = {
         let view = UIView()
@@ -98,9 +98,9 @@ class WalktalkChatUpperView: UIView {
         matchingStateView.addSubview(matchingStateLabel)
 
         switch currentMatchingState {
-        case .matching:
+        case .PENDING:
             matchingStateInnerView.addSubview(matchingStateFirstButton)
-        case .confirmed:
+        case .CONFIRMED:
             matchingStateInnerView.addSubviews(
                 matchingStateFirstButton,
                 matchingStateSecondButton,
@@ -113,7 +113,7 @@ class WalktalkChatUpperView: UIView {
     private func setupConstraints() {
         matchingStateFrameView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.height.equalTo(currentMatchingState == .ended || currentMatchingState == .cancelled ? 88 : 149)
+            make.height.equalTo(currentMatchingState == .COMPLETED || currentMatchingState == .REJECTED ? 88 : 149)
             make.horizontalEdges.equalToSuperview()
         }
 
@@ -156,7 +156,7 @@ class WalktalkChatUpperView: UIView {
             make.width.equalTo(100)
         }
 
-        if currentMatchingState == .confirmed {
+        if currentMatchingState == .CONFIRMED {
             matchingStateSecondButton.snp.makeConstraints { make in
                 make.leading.equalTo(matchingStateFirstButton.snp.trailing).offset(8)
                 make.bottom.equalToSuperview()
@@ -176,26 +176,26 @@ class WalktalkChatUpperView: UIView {
     private func updateMatchingState() {
         matchingStateLabel.text = currentMatchingState.rawValue
         switch currentMatchingState {
-        case .matching:
+        case .PENDING:
             matchingStateFirstButton.setTitle("매칭 확정하기", for: .normal)
             matchingStateView.backgroundColor = .lightBlue
             matchingStateLabel.textColor = .mainBlue
-        case .confirmed:
+        case .CONFIRMED:
             matchingStateFirstButton.setTitle("사전만남 설정", for: .normal)
             matchingStateView.backgroundColor = .mainBlue
             matchingStateLabel.textColor = .white
-        case .ended:
+        case .COMPLETED:
             matchingStateProfileImageView.toGrayscale()
             matchingStateView.backgroundColor = .gray400
             matchingStateLabel.textColor = .white
-        case .cancelled:
+        case .REJECTED:
             matchingStateProfileImageView.toGrayscale()
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400
         }
     }
 
-    func setMatchingState(_ state: MatchingState) {
+    func setMatchingState(_ state: Status) {
         currentMatchingState = state
         updateMatchingState()
         setupConstraints()

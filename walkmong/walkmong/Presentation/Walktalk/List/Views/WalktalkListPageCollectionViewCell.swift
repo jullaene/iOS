@@ -135,13 +135,13 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDataSource {
             }
             switch indexPath.row {
             case 0:
-                cell.setContent(text: "매칭중")
+                cell.setContent(text: Status.PENDING.rawValue)
             case 1:
-                cell.setContent(text: "매칭확정")
+                cell.setContent(text: Status.CONFIRMED.rawValue)
             case 2:
-                cell.setContent(text: "산책완료")
+                cell.setContent(text: Status.COMPLETED.rawValue)
             default:
-                cell.setContent(text: "매칭취소")
+                cell.setContent(text: Status.REJECTED.rawValue)
             }
             return cell
         }

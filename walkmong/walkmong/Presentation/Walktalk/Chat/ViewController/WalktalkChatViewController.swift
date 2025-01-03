@@ -13,7 +13,7 @@ class WalktalkChatViewController: UIViewController {
     private let walktalkChatView = WalktalkChatView()
     private let walktalkChatUpperView = WalktalkChatUpperView()
     private let walktalkChatContainerView = UIView()
-    private let currentMatchingState: MatchingState = .matching
+    private let currentMatchingState: Status = .PENDING
 
     private var containerBottomConstraint: Constraint?
     private var keyboardEventManager: KeyboardEventManager?
@@ -44,7 +44,7 @@ class WalktalkChatViewController: UIViewController {
 
         walktalkChatContainerView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(walktalkChatUpperView.snp.top).offset(currentMatchingState == .ended || currentMatchingState == .cancelled ? 88 - 30 : 149 - 30)
+            make.top.equalTo(walktalkChatUpperView.snp.top).offset(currentMatchingState == .COMPLETED || currentMatchingState == .REJECTED ? 88 - 30 : 149 - 30)
             containerBottomConstraint = make.bottom.equalToSuperview().offset(-38).constraint
         }
 

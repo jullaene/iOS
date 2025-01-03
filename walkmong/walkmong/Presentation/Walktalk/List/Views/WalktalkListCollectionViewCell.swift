@@ -133,16 +133,16 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     func setContent(with datamodel: WalktalkListModel) {
         matchingStateLabel.text = datamodel.matchingState.rawValue
         switch datamodel.matchingState {
-        case .matching:
+        case .PENDING:
             matchingStateView.backgroundColor = .lightBlue
             matchingStateLabel.textColor = .mainBlue
-        case .confirmed:
+        case .CONFIRMED:
             matchingStateView.backgroundColor = .mainBlue
             matchingStateLabel.textColor = .white
-        case .ended:
+        case .COMPLETED:
             matchingStateView.backgroundColor = .gray400
             matchingStateLabel.textColor = .white
-        case .cancelled:
+        case .REJECTED:
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400
         }
