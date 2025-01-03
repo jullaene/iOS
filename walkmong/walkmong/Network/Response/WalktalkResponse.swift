@@ -13,11 +13,7 @@ struct CreateChatroomResponseData: Decodable {
     var roomId: Int
 }
 
-typealias GetHistoryResponse = APIResponse<HistoryResponseData>
-
-struct HistoryResponseData: Decodable {
-    let data: [HistoryItem]
-}
+typealias GetHistoryResponse = APIResponse<[HistoryItem]>
 
 struct HistoryItem: Decodable {
     let message: String
@@ -25,7 +21,7 @@ struct HistoryItem: Decodable {
     let createdAt: String
 }
 
-typealias GetChatroomResponse = APIResponse<ChatroomResponseData>
+typealias GetChatroomResponse = APIResponse<[ChatroomResponseData]>
 
 struct ChatroomResponseData: Decodable {
     let dogName: String
@@ -37,5 +33,6 @@ struct ChatroomResponseData: Decodable {
     let lastChatTime: String
     let targetName: String
     let notRead: Int
+    let roomId: Int
 }
 
