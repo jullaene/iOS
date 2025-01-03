@@ -103,6 +103,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
+            make.height.equalToSuperview()
         }
     }
 
