@@ -41,8 +41,7 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
     
     // MARK: - Setup Methods
     private func setupView() {
-        addSubview(smallTitle)
-        addSubview(collectionView)
+        addSubviews(smallTitle, collectionView)
         
         setupConstraints()
         setupCollectionView()
