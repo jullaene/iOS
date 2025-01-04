@@ -22,7 +22,9 @@ class StompService {
         if let token = AuthManager.shared.token {
             self.connectionHeaders = ["Authorization": "Bearer \(token)"]
         }else {
-            let testToken = "testToken"
+            guard let testToken = SecretManager.shared.TEST_TOKEN else {
+                fatalError("Initialization failed: Missing TEST_TOKEN")
+            }
             self.connectionHeaders = ["Authorization": "Bearer \(testToken)"]
         }
         self.socketURL = url
