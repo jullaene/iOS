@@ -7,10 +7,16 @@
 
 import UIKit
 
-class WalktalkListPageCollectionViewCell: UICollectionViewCell {
+protocol WalktalkListPageCollectionViewCellDelegate: AnyObject {
+    func didSelectMatchingStatus(index: Int)
+}
+
+final class WalktalkListPageCollectionViewCell: UICollectionViewCell {
     
-    private var selectedMatchingStateIndex: Int?
-    private var walktalkListData: [WalktalkListModel]?
+    private var selectedMatchingStateIndex: Int = 0
+    private var selectedTabbarIndex: Int = 0
+    private var chatroomResponseData: [ChatroomResponseData] = []
+    weak var delegate: WalktalkListPageCollectionViewCellDelegate?
     
     private let walktalkListCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -33,6 +39,7 @@ class WalktalkListPageCollectionViewCell: UICollectionViewCell {
         addSubviews(walktalkListCollectionView, walktalkListMatchingStateCollectionView)
         setDelegate()
         setConstraints()
+        walktalkListMatchingStateCollectionView.selectItem(at: IndexPath(item: 1, section: 0), animated: true, scrollPosition: .centeredHorizontally)
     }
     
     
@@ -59,8 +66,8 @@ class WalktalkListPageCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setContent(with dataModel: [WalktalkListModel]) {
-        self.walktalkListData = dataModel
+    func setContent(with dataModel: [ChatroomResponseData]) {
+        self.chatroomResponseData = dataModel
         walktalkListCollectionView.reloadData()
     }
     
@@ -96,10 +103,11 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegateFlowLayout
 extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == walktalkListCollectionView {
-            //TODO: 해당 채팅으로 전환
+            let VC = WalktalkChatViewController(roomId: chatroomResponseData[indexPath.row].roomId, currentMatchingState: Status.from(index: selectedMatchingStateIndex))
+            self.getViewController()?.navigationController?.pushViewController(VC, animated: true)
         }else {
             selectedMatchingStateIndex = indexPath.row
-            //TODO: 매칭 상태 필터링 구현
+            delegate?.didSelectMatchingStatus(index: indexPath.row)
             collectionView.reloadData()
         }
         
@@ -109,11 +117,7 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
 extension WalktalkListPageCollectionViewCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == walktalkListCollectionView {
-            if let data = walktalkListData {
-                return data.count
-            }else {
-                return 0
-            }
+            return chatroomResponseData.count
         }else {
             return 4
         }
@@ -122,9 +126,7 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == walktalkListCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListCollectionViewCell.className, for: indexPath) as? WalktalkListCollectionViewCell else { return UICollectionViewCell() }
-            if let data = walktalkListData {
-                cell.setContent(with: data[indexPath.row])
-            }
+            cell.setContent(with: chatroomResponseData[indexPath.row], status: Status.from(index: selectedMatchingStateIndex), record: Record.from(index: selectedTabbarIndex))
             return cell
         }else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListMatchingStateCollectionViewCell.className, for: indexPath) as? WalktalkListMatchingStateCollectionViewCell else { return UICollectionViewCell() }

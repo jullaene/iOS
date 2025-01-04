@@ -7,10 +7,16 @@
 
 import UIKit
 
-class WalktalkListView: UIView {
+protocol WalktalkListViewDelegate: AnyObject {
+    func didSelectTabBarIndex(record: Record, status: Status)
+}
+
+final class WalktalkListView: UIView {
     
     private var selectedTabBarIndex: Int = 0
-    private var walktalkListDataList: [[WalktalkListModel]?] = [nil, nil, nil]
+    private var selectedMatchingStateIndex: Int = 0
+    private var chatroomResponse: [ChatroomResponseData] = []
+    weak var delegate: WalktalkListViewDelegate?
     
     
     private let walktalkListPageCollectionView: UICollectionView = {
@@ -114,6 +120,13 @@ class WalktalkListView: UIView {
         }
     }
     
+    func setContent(with dataModel: [ChatroomResponseData]){
+        chatroomResponse = dataModel
+        if chatroomResponse.isEmpty {
+            //TODO: 비어있을 때 처리
+        }
+        walktalkListPageCollectionView.reloadData()
+    }
 }
 
 extension WalktalkListView: UIScrollViewDelegate {
@@ -123,7 +136,8 @@ extension WalktalkListView: UIScrollViewDelegate {
             if selectedTabBarIndex != targetIndex {
                 selectedTabBarIndex = targetIndex
                 moveIndicatorBar(targetIndex: targetIndex)
-                walktalkListTabBarCollectionView.reloadData()
+                delegate?.didSelectTabBarIndex(record: Record.from(index: targetIndex), status: Status.from(index: selectedMatchingStateIndex))
+                walktalkListPageCollectionView.reloadData()
             }
         }
     }
@@ -141,7 +155,7 @@ extension WalktalkListView: UICollectionViewDelegate {
             walktalkListPageCollectionView.isPagingEnabled = true
             
             moveIndicatorBar(targetIndex: indexPath.row)
-            walktalkListTabBarCollectionView.reloadData()
+            walktalkListPageCollectionView.reloadData()
         }
     }
 }
@@ -185,10 +199,8 @@ extension WalktalkListView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == walktalkListPageCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListPageCollectionViewCell.className, for: indexPath) as? WalktalkListPageCollectionViewCell else { return UICollectionViewCell() }
-
-            if let data = walktalkListDataList[selectedTabBarIndex] {
-                cell.setContent(with: data)
-            }
+            cell.delegate = self
+            delegate?.didSelectTabBarIndex(record: Record.from(index: indexPath.row),status: Status.from(index: selectedMatchingStateIndex))
             return cell
         }else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListTabBarCollectionViewCell.className, for: indexPath) as? WalktalkListTabBarCollectionViewCell else { return UICollectionViewCell() }
@@ -207,5 +219,11 @@ extension WalktalkListView: UICollectionViewDataSource {
             }
             return cell
         }
+    }
+}
+
+extension WalktalkListView: WalktalkListPageCollectionViewCellDelegate {
+    func didSelectMatchingStatus(index: Int) {
+        selectedMatchingStateIndex = index
     }
 }

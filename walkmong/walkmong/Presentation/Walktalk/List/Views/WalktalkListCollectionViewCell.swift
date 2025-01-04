@@ -130,9 +130,9 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setContent(with datamodel: WalktalkListModel) {
-        matchingStateLabel.text = datamodel.matchingState.rawValue
-        switch datamodel.matchingState {
+    func setContent(with datamodel: ChatroomResponseData, status: Status, record: Record) {
+        matchingStateLabel.text = status.rawValue
+        switch status {
         case .PENDING:
             matchingStateView.backgroundColor = .lightBlue
             matchingStateLabel.textColor = .mainBlue
@@ -146,13 +146,13 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400
         }
-        dateLabel.text = datamodel.date
-        walkerIconView.isHidden = datamodel.isWalker
-        nameLabel.text = datamodel.name
-        textPreviewLabel.text = datamodel.textPreview
-        chatCountLabel.text = String(datamodel.chatCount)
-        profileImageView.image = .defaultProfile
-        timeLabel.text = datamodel.time
+        dateLabel.text = datamodel.startTime //FIXME: 시간 형식 수정
+        walkerIconView.isHidden = record != .requested
+        nameLabel.text = datamodel.targetName
+        textPreviewLabel.text = datamodel.lastChat
+        chatCountLabel.text = String(datamodel.notRead)
+//        profileImageView.image = datamodel.dogProfile
+        timeLabel.text = datamodel.lastChatTime //FIXME: 시간 형식 수정
     }
     
 }

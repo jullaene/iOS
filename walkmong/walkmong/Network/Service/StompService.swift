@@ -72,7 +72,6 @@ extension StompService: StompClientLibDelegate {
     
     func stompClientDidDisconnect(client: StompClientLib!) {
         print("[STOMP] Disconnected")
-        delegate?.stompServiceDidDisconnect(self)
     }
     
     func serverDidSendError(client: StompClientLib!, withErrorMessage description: String) {
@@ -87,7 +86,6 @@ extension StompService: StompClientLibDelegate {
 
 protocol StompServiceDelegate: AnyObject {
     func stompServiceDidConnect(_ service: StompService)
-    func stompServiceDidDisconnect(_ service: StompService)
     func stompService(_ service: StompService, didReceiveMessage message: String, from destination: String)
     func stompService(_ service: StompService, didReceiveError error: String)
 }
