@@ -52,6 +52,16 @@ final class WalktalkListView: UIView {
         return view
     }()
     
+    private let walktalkListMatchingStateCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = .white
+        collectionView.register(WalktalkListMatchingStateCollectionViewCell.self, forCellWithReuseIdentifier: WalktalkListMatchingStateCollectionViewCell.className)
+        return collectionView
+    }()
+
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .white
@@ -60,15 +70,26 @@ final class WalktalkListView: UIView {
         configureCollectionView()
         loadInitialData()
     }
-    
+
     private func loadInitialData() {
-        DispatchQueue.main.async { [self] in
-            moveIndicatorBar(targetIndex: selectedTabBarIndex)
-            delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex) , status: Status.from(index: selectedMatchingStateIndex))
-            walktalkListPageCollectionView.reloadData()
-            walktalkListTabBarCollectionView.reloadData()
+        walktalkListTabBarCollectionView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.moveIndicatorBar(targetIndex: self.selectedTabBarIndex)
         }
     }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if selectedTabBarIndex == 0 {
+            moveIndicatorBar(targetIndex: selectedTabBarIndex)
+        }
+        self.delegate?.didSelectTabBarIndex(
+            record: Record.from(index: self.selectedTabBarIndex),
+            status: Status.from(index: self.selectedMatchingStateIndex)
+        )
+    }
+
 
 
     required init?(coder: NSCoder) {
@@ -76,14 +97,10 @@ final class WalktalkListView: UIView {
     }
     
     private func addSubview() {
-        addSubviews(walktalkListPageCollectionView, walktalkListTabBarCollectionView, sectionLineView, sectionSelectedLineView)
+        addSubviews(walktalkListPageCollectionView, walktalkListTabBarCollectionView, sectionLineView, sectionSelectedLineView, walktalkListMatchingStateCollectionView)
     }
     
     private func setConstraints() {
-        walktalkListPageCollectionView.snp.makeConstraints { make in
-            make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(sectionLineView.snp.bottom)
-        }
         walktalkListTabBarCollectionView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.top.equalToSuperview().offset(20)
@@ -100,6 +117,15 @@ final class WalktalkListView: UIView {
             make.bottom.equalTo(walktalkListTabBarCollectionView.snp.bottom).offset(12)
             make.leading.equalToSuperview().offset(20)
         }
+        walktalkListMatchingStateCollectionView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview()
+            make.top.equalTo(sectionLineView.snp.bottom).offset(16)
+            make.height.equalTo(36)
+        }
+        walktalkListPageCollectionView.snp.makeConstraints { make in
+            make.horizontalEdges.bottom.equalToSuperview()
+            make.top.equalTo(walktalkListMatchingStateCollectionView.snp.bottom).offset(12)
+        }
     }
     
     private func configureCollectionView() {
@@ -107,6 +133,8 @@ final class WalktalkListView: UIView {
         walktalkListPageCollectionView.dataSource = self
         walktalkListTabBarCollectionView.delegate = self
         walktalkListTabBarCollectionView.dataSource = self
+        walktalkListMatchingStateCollectionView.delegate = self
+        walktalkListMatchingStateCollectionView.dataSource = self
     }
     
     private func moveIndicatorBar(targetIndex: Int) {
@@ -205,8 +233,7 @@ extension WalktalkListView: UIScrollViewDelegate {
 extension WalktalkListView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(indexPath.row)
-        
-        if collectionView == walktalkListTabBarCollectionView && selectedTabBarIndex != indexPath.row {
+        if collectionView == walktalkListTabBarCollectionView {
             selectedTabBarIndex = indexPath.row
             walktalkListPageCollectionView.isPagingEnabled = false
             walktalkListPageCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
@@ -214,6 +241,11 @@ extension WalktalkListView: UICollectionViewDelegate {
             moveIndicatorBar(targetIndex: indexPath.row)
             delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex),status: Status.from(index: selectedMatchingStateIndex))
             walktalkListTabBarCollectionView.reloadData()
+            walktalkListPageCollectionView.reloadData()
+        }else if collectionView == walktalkListMatchingStateCollectionView {
+            selectedMatchingStateIndex = indexPath.row
+            delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex),status: Status.from(index: selectedMatchingStateIndex))
+            walktalkListMatchingStateCollectionView.reloadData()
             walktalkListPageCollectionView.reloadData()
         }
     }
@@ -223,8 +255,10 @@ extension WalktalkListView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == walktalkListPageCollectionView {
             return CGSize(width: collectionView.bounds.width, height: collectionView.bounds.height)
-        }else {
+        }else if collectionView == walktalkListTabBarCollectionView{
             return CGSize(width: indexPath.row == 0 ? 28 : 72, height: collectionView.bounds.height)
+        }else {
+            return CGSize(width: indexPath.row == 0 ? 68 : 80, height: 36)
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -233,13 +267,17 @@ extension WalktalkListView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         if collectionView == walktalkListPageCollectionView {
             return 0
-        }else {
+        }else if collectionView == walktalkListTabBarCollectionView{
             return 24
+        }else {
+            return 8
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         if collectionView == walktalkListPageCollectionView {
             return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        }else if collectionView == walktalkListTabBarCollectionView{
+            return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
         }else {
             return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
         }
@@ -250,18 +288,19 @@ extension WalktalkListView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == walktalkListPageCollectionView {
             return 3
-        }else {
+        }else if collectionView == walktalkListTabBarCollectionView{
             return 3
+        }else {
+            return 4
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == walktalkListPageCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListPageCollectionViewCell.className, for: indexPath) as? WalktalkListPageCollectionViewCell else { return UICollectionViewCell() }
-            cell.delegate = self
-            cell.setContent(with: chatroomResponse)
+            cell.setContent(with: chatroomResponse, selectedMatchingStateIndex: selectedMatchingStateIndex, selectedTabbarIndex: selectedTabBarIndex)
             return cell
-        }else {
+        }else if collectionView == walktalkListTabBarCollectionView{
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListTabBarCollectionViewCell.className, for: indexPath) as? WalktalkListTabBarCollectionViewCell else { return UICollectionViewCell() }
             if indexPath.row == selectedTabBarIndex {
                 cell.setSelected(textColor: .mainBlack)
@@ -277,13 +316,25 @@ extension WalktalkListView: UICollectionViewDataSource {
                 cell.setContent(text: "의뢰한 산책")
             }
             return cell
+        }else {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListMatchingStateCollectionViewCell.className, for: indexPath) as? WalktalkListMatchingStateCollectionViewCell else { return UICollectionViewCell() }
+            if indexPath.row == selectedMatchingStateIndex {
+                cell.setSelected(textColor: .gray100, backgroundColor: .gray600)
+                print("색상 반영 인덱스 : ",selectedMatchingStateIndex, indexPath.row)
+            } else {
+                cell.setSelected(textColor: .gray500, backgroundColor: .gray200)
+            }
+            switch indexPath.row {
+            case 0:
+                cell.setContent(text: Status.PENDING.rawValue)
+            case 1:
+                cell.setContent(text: Status.CONFIRMED.rawValue)
+            case 2:
+                cell.setContent(text: Status.COMPLETED.rawValue)
+            default:
+                cell.setContent(text: Status.REJECTED.rawValue)
+            }
+            return cell
         }
-    }
-}
-
-extension WalktalkListView: WalktalkListPageCollectionViewCellDelegate {
-    func didSelectMatchingStatus(index: Int) {
-        selectedMatchingStateIndex = index
-        delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex), status: Status.from(index: selectedMatchingStateIndex))
     }
 }

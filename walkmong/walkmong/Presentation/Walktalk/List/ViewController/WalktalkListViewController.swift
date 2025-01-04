@@ -20,13 +20,13 @@ final class WalktalkListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUI()
-        setupStompService()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+        setUI()
+        setupStompService()
     }
     
     private func setupStompService() {
