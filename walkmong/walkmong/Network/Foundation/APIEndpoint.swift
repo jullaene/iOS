@@ -24,6 +24,7 @@ extension APIEndpoint {
     var headers: [String: String]? {
         guard let token = AuthManager.shared.token else {
             if let testToken = SecretManager.shared.TEST_TOKEN {
+                print("testToken used : Bearer \(testToken)")
                 return [
                     "Content-Type": "application/json",
                     "Authorization": "Bearer \(testToken)"

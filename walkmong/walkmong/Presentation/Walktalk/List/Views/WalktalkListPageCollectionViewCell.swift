@@ -39,7 +39,6 @@ final class WalktalkListPageCollectionViewCell: UICollectionViewCell {
         addSubviews(walktalkListCollectionView, walktalkListMatchingStateCollectionView)
         setDelegate()
         setConstraints()
-        walktalkListMatchingStateCollectionView.selectItem(at: IndexPath(item: 1, section: 0), animated: true, scrollPosition: .centeredHorizontally)
     }
     
     
@@ -103,15 +102,14 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegateFlowLayout
 extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == walktalkListCollectionView {
-            let VC = WalktalkChatViewController(roomId: chatroomResponseData[indexPath.row].roomId, currentMatchingState: Status.from(index: selectedMatchingStateIndex))
-            self.getViewController()?.navigationController?.pushViewController(VC, animated: true)
+            //TODO: 해당 채팅으로 전환
         }else {
             selectedMatchingStateIndex = indexPath.row
             delegate?.didSelectMatchingStatus(index: indexPath.row)
             collectionView.reloadData()
         }
-        
     }
+
 }
 
 extension WalktalkListPageCollectionViewCell: UICollectionViewDataSource {
@@ -132,6 +130,7 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListMatchingStateCollectionViewCell.className, for: indexPath) as? WalktalkListMatchingStateCollectionViewCell else { return UICollectionViewCell() }
             if indexPath.row == selectedMatchingStateIndex {
                 cell.setSelected(textColor: .gray100, backgroundColor: .gray600)
+                print("색상 반영 인덱스 : ",selectedMatchingStateIndex, indexPath.row)
             } else {
                 cell.setSelected(textColor: .gray500, backgroundColor: .gray200)
             }

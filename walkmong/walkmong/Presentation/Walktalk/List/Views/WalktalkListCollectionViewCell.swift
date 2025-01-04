@@ -147,11 +147,11 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
             matchingStateLabel.textColor = .gray400
         }
         dateLabel.text = datamodel.startTime //FIXME: 시간 형식 수정
-        walkerIconView.isHidden = record != .requested
+        walkerIconView.isHidden = record == .all
         nameLabel.text = datamodel.targetName
         textPreviewLabel.text = datamodel.lastChat
         chatCountLabel.text = String(datamodel.notRead)
-//        profileImageView.image = datamodel.dogProfile
+        profileImageView.image = .defaultProfile //FIXME: 이미지 렌더링 필요
         timeLabel.text = datamodel.lastChatTime //FIXME: 시간 형식 수정
     }
     

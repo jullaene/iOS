@@ -63,6 +63,7 @@ extension WalktalkListViewController {
     func getChatroom(record: Record, status: Status){
         Task {
             do {
+                print(record, status)
                 let response = try await service.getChatroom(record: record, status: status)
                 chatRoomData = response.data
                 stompService.connect()
@@ -88,10 +89,11 @@ extension WalktalkListViewController: StompServiceDelegate {
     }
     
     func stompService(_ service: StompService, didReceiveMessage message: String, from destination: String) {
-        didSelectTabBarIndex(record: Record.from(index: selectedTabbarIndex), status: Status.from(index: selectedMatchingStatusIndex))
-        if let data = chatRoomData {
-            walktalkListView.setContent(with: data)
+        guard let newMessage = decodeMessage(message) else {
+            print("메시지 디코딩 실패")
+            return
         }
+        updateChatroomData(roomId: extractRoomId(from: destination), lastChat: newMessage.msg, lastChatTime: newMessage.sendTime)
     }
     
     func stompService(_ service: StompService, didReceiveError error: String) {
@@ -107,10 +109,48 @@ extension WalktalkListViewController: StompServiceDelegate {
             })
             .showAlertView()
     }
+    func updateChatroomData(roomId: Int, lastChat: String, lastChatTime: String) {
+        guard var data = chatRoomData else { return }
+        
+        if let index = data.firstIndex(where: { $0.roomId == roomId }) {
+            var updatedChatroom = data[index]
+            updatedChatroom.lastChat = lastChat
+            updatedChatroom.lastChatTime = lastChatTime
+            updatedChatroom.notRead += 1
+            
+            data.remove(at: index)
+            data.insert(updatedChatroom, at: 0)
+            
+            chatRoomData = data
+            
+            walktalkListView.setContent(with: data)
+        }
+    }
+    
 }
 
 extension WalktalkListViewController: WalktalkListViewDelegate {
     func didSelectTabBarIndex(record: Record, status: Status){
         getChatroom(record: record, status: status)
+    }
+}
+
+extension WalktalkListViewController {
+    private func extractRoomId(from destination: String) -> Int {
+        let components = destination.split(separator: "/")
+        guard let lastComponent = components.last, let roomId = Int(lastComponent) else {
+            return -1
+        }
+        return roomId
+    }
+    private func decodeMessage(_ message: String) -> MessageModel? {
+        let decoder = JSONDecoder()
+        guard let data = message.data(using: .utf8) else { return nil }
+        do {
+            return try decoder.decode(MessageModel.self, from: data)
+        } catch {
+            print("디코딩 오류: \(error)")
+            return nil
+        }
     }
 }

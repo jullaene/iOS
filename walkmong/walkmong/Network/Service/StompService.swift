@@ -25,6 +25,7 @@ class StompService {
             guard let testToken = SecretManager.shared.TEST_TOKEN else {
                 fatalError("Initialization failed: Missing TEST_TOKEN")
             }
+            print("testToken used : Bearer \(testToken)")
             self.connectionHeaders = ["Authorization": "Bearer \(testToken)"]
         }
         self.socketURL = url

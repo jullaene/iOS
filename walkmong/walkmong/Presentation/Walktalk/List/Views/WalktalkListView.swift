@@ -58,11 +58,19 @@ final class WalktalkListView: UIView {
         addSubview()
         setConstraints()
         configureCollectionView()
-        DispatchQueue.main.async {
-            self.moveIndicatorBar(targetIndex: self.selectedTabBarIndex)
-        }
+        loadInitialData()
     }
     
+    private func loadInitialData() {
+        DispatchQueue.main.async { [self] in
+            moveIndicatorBar(targetIndex: selectedTabBarIndex)
+            delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex) , status: Status.from(index: selectedMatchingStateIndex))
+            walktalkListPageCollectionView.reloadData()
+            walktalkListTabBarCollectionView.reloadData()
+        }
+    }
+
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -74,7 +82,7 @@ final class WalktalkListView: UIView {
     private func setConstraints() {
         walktalkListPageCollectionView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(sectionLineView.snp.bottom).offset(16)
+            make.top.equalTo(sectionLineView.snp.bottom)
         }
         walktalkListTabBarCollectionView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
@@ -121,10 +129,60 @@ final class WalktalkListView: UIView {
     }
     
     func setContent(with dataModel: [ChatroomResponseData]){
-        chatroomResponse = dataModel
+        chatroomResponse = [
+            ChatroomResponseData(
+                dogName: "Buddy",
+                dogProfile: "buddy_profile.png",
+                startTime: "2025-01-01 10:00:00",
+                endTime: "2025-01-01 11:00:00",
+                chatTarget: 1,
+                lastChat: "오늘 산책 가능하세요?",
+                lastChatTime: "2025-01-01 09:50:00",
+                targetName: "Alice",
+                notRead: 2,
+                roomId: 101
+            ),
+            ChatroomResponseData(
+                dogName: "Max",
+                dogProfile: "max_profile.png",
+                startTime: "2025-01-02 14:00:00",
+                endTime: "2025-01-02 15:00:00",
+                chatTarget: 2,
+                lastChat: "내일 산책 일정 확인 부탁드립니다.",
+                lastChatTime: "2025-01-02 13:45:00",
+                targetName: "Bob",
+                notRead: 5,
+                roomId: 102
+            ),
+            ChatroomResponseData(
+                dogName: "Charlie",
+                dogProfile: "charlie_profile.png",
+                startTime: "2025-01-03 16:00:00",
+                endTime: "2025-01-03 17:00:00",
+                chatTarget: 3,
+                lastChat: "새로운 산책 경로 제안드립니다.",
+                lastChatTime: "2025-01-03 15:30:00",
+                targetName: "Carol",
+                notRead: 0,
+                roomId: 103
+            ),
+            ChatroomResponseData(
+                dogName: "Rocky",
+                dogProfile: "rocky_profile.png",
+                startTime: "2025-01-04 18:00:00",
+                endTime: "2025-01-04 19:00:00",
+                chatTarget: 4,
+                lastChat: "산책 후 간식 나눠줄게요!",
+                lastChatTime: "2025-01-04 17:50:00",
+                targetName: "David",
+                notRead: 3,
+                roomId: 104
+            )
+        ]
         if chatroomResponse.isEmpty {
             //TODO: 비어있을 때 처리
         }
+        moveIndicatorBar(targetIndex: selectedTabBarIndex)
         walktalkListPageCollectionView.reloadData()
     }
 }
@@ -138,6 +196,7 @@ extension WalktalkListView: UIScrollViewDelegate {
                 moveIndicatorBar(targetIndex: targetIndex)
                 delegate?.didSelectTabBarIndex(record: Record.from(index: targetIndex), status: Status.from(index: selectedMatchingStateIndex))
                 walktalkListPageCollectionView.reloadData()
+                walktalkListTabBarCollectionView.reloadData()
             }
         }
     }
@@ -149,12 +208,12 @@ extension WalktalkListView: UICollectionViewDelegate {
         
         if collectionView == walktalkListTabBarCollectionView && selectedTabBarIndex != indexPath.row {
             selectedTabBarIndex = indexPath.row
-            
             walktalkListPageCollectionView.isPagingEnabled = false
             walktalkListPageCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
             walktalkListPageCollectionView.isPagingEnabled = true
-            
             moveIndicatorBar(targetIndex: indexPath.row)
+            delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex),status: Status.from(index: selectedMatchingStateIndex))
+            walktalkListTabBarCollectionView.reloadData()
             walktalkListPageCollectionView.reloadData()
         }
     }
@@ -200,7 +259,7 @@ extension WalktalkListView: UICollectionViewDataSource {
         if collectionView == walktalkListPageCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListPageCollectionViewCell.className, for: indexPath) as? WalktalkListPageCollectionViewCell else { return UICollectionViewCell() }
             cell.delegate = self
-            delegate?.didSelectTabBarIndex(record: Record.from(index: indexPath.row),status: Status.from(index: selectedMatchingStateIndex))
+            cell.setContent(with: chatroomResponse)
             return cell
         }else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: WalktalkListTabBarCollectionViewCell.className, for: indexPath) as? WalktalkListTabBarCollectionViewCell else { return UICollectionViewCell() }
@@ -225,5 +284,6 @@ extension WalktalkListView: UICollectionViewDataSource {
 extension WalktalkListView: WalktalkListPageCollectionViewCellDelegate {
     func didSelectMatchingStatus(index: Int) {
         selectedMatchingStateIndex = index
+        delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex), status: Status.from(index: selectedMatchingStateIndex))
     }
 }
