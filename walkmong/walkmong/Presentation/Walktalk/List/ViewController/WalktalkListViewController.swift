@@ -108,6 +108,16 @@ extension WalktalkListViewController: StompServiceDelegate {
             })
             .showAlertView()
     }
+    
+}
+
+extension WalktalkListViewController: WalktalkListViewDelegate {
+    func didSelectTabBarIndex(record: Record, status: Status){
+        getChatroom(record: record, status: status)
+    }
+}
+
+extension WalktalkListViewController {
     func updateChatroomData(roomId: Int, lastChat: String, lastChatTime: String) {
         guard var data = chatRoomData else { return }
         
@@ -126,15 +136,6 @@ extension WalktalkListViewController: StompServiceDelegate {
         }
     }
     
-}
-
-extension WalktalkListViewController: WalktalkListViewDelegate {
-    func didSelectTabBarIndex(record: Record, status: Status){
-        getChatroom(record: record, status: status)
-    }
-}
-
-extension WalktalkListViewController {
     private func extractRoomId(from destination: String) -> Int {
         let components = destination.split(separator: "/")
         guard let lastComponent = components.last, let roomId = Int(lastComponent) else {
@@ -142,11 +143,11 @@ extension WalktalkListViewController {
         }
         return roomId
     }
-    private func decodeMessage(_ message: String) -> MessageModel? {
+    private func decodeMessage(_ message: String) -> MessageSendModel? {
         let decoder = JSONDecoder()
         guard let data = message.data(using: .utf8) else { return nil }
         do {
-            return try decoder.decode(MessageModel.self, from: data)
+            return try decoder.decode(MessageSendModel.self, from: data)
         } catch {
             print("디코딩 오류: \(error)")
             return nil

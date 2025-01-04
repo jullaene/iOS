@@ -14,18 +14,29 @@ class WalktalkChatView: UIView {
     private var keyboardInputTextViewHeightConstraint: Constraint?
     private let maxTextViewHeight: CGFloat = 100
     private let userID: Int = 0
+    private var chatLog: [HistoryItem] = []
+    private var sectionedMessages: [(sectionTitle: String, messages: [HistoryItem])] = []
+
+    init() {
+        super.init(frame: .zero)
+        self.backgroundColor = .gray100
+        addSubViews()
+        setConstraints()
+        addButtonTargets()
+        configureCollectionView()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
-    let chatLog = WalkTalkChatLogModel(
-        matchingState: "매칭중",
-        dogName: "Buddy",
-        date: "2024-12-23",
-        id: "123",
-        data: []
-    )
-    
-    lazy var sectionedMessages = chatLog.sectionedChatMessages()
-    
-    // MARK: 채팅 UI 구성
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        walktalkChatCollectionView.layoutIfNeeded()
+        scrollToBottom()
+    }
+
+    // MARK: UI Components
     private let walktalkChatCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.showsHorizontalScrollIndicator = false
@@ -36,20 +47,19 @@ class WalktalkChatView: UIView {
         collectionView.register(WalktalkChatMessageSentCollectionViewCell.self, forCellWithReuseIdentifier: WalktalkChatMessageSentCollectionViewCell.className)
         return collectionView
     }()
-    
-    //MARK: 키보드 구성
+
     private let keyboardFrameView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         return view
     }()
-    
+
     private let keyboardPhotoButton: UIButton = {
         let button = UIButton()
         button.setImage(.union, for: .normal)
         return button
     }()
-    
+
     private let keyboardInputTextView: UITextView = {
         let textView = UITextView()
         textView.font = UIFont.systemFont(ofSize: 15)
@@ -67,26 +77,7 @@ class WalktalkChatView: UIView {
         button.setImage(.send, for: .normal)
         return button
     }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.backgroundColor = .gray100
-        addSubViews()
-        setConstraints()
-        addButtonTargets()
-        configureCollectionView()
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        walktalkChatCollectionView.layoutIfNeeded()
-        scrollToBottom()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+
     private func addSubViews() {
         addSubviews(walktalkChatCollectionView, keyboardFrameView)
         keyboardFrameView.addSubviews(keyboardSendButton, keyboardPhotoButton, keyboardInputTextView)
@@ -104,12 +95,12 @@ class WalktalkChatView: UIView {
             make.bottom.equalToSuperview()
             keyboardFrameHeightConstraint = make.height.equalTo(58).constraint
         }
-        
+
         keyboardPhotoButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview().offset(20)
         }
-        
+
         keyboardSendButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-20)
@@ -134,43 +125,49 @@ class WalktalkChatView: UIView {
         walktalkChatCollectionView.dataSource = self
     }
     
-    @objc private func sendButtonTapped(){
-        //TODO: 메시지 전송
+    func updateChatLog(_ chatLog: [HistoryItem]) {
+        self.chatLog = chatLog
+        self.sectionedMessages = chatLog.sectionedChatMessages()
+        walktalkChatCollectionView.reloadData()
+        scrollToBottom()
     }
-    
-    @objc private func photoButtonTapped() {
-        //TODO: 앨범/카메라 탭 노출
+
+    func appendMessage(_ message: HistoryItem) {
+        chatLog.append(message)
+        sectionedMessages = chatLog.sectionedChatMessages()
+        walktalkChatCollectionView.reloadData()
+        scrollToBottom()
     }
-    
+
     func setupTextViewDelegate(delegate: UITextViewDelegate) {
         keyboardInputTextView.delegate = delegate
     }
-    
-    func updateTextViewHeight(){
+
+    func updateTextViewHeight() {
         let size = CGSize(width: keyboardInputTextView.frame.width, height: .infinity)
         let estimatedSize = keyboardInputTextView.sizeThatFits(size)
-        
         let newHeight = min(estimatedSize.height, maxTextViewHeight)
-        let isScrollEnabled = estimatedSize.height > maxTextViewHeight
-        keyboardInputTextView.isScrollEnabled = isScrollEnabled
-        
+        keyboardInputTextView.isScrollEnabled = estimatedSize.height > maxTextViewHeight
         keyboardInputTextViewHeightConstraint?.update(offset: newHeight)
         let newFrameHeight = newHeight + 16
         keyboardFrameHeightConstraint?.update(offset: max(newFrameHeight, 58))
         layoutIfNeeded()
     }
+
     func scrollToBottom() {
         let contentHeight = walktalkChatCollectionView.contentSize.height
         let collectionViewHeight = walktalkChatCollectionView.bounds.size.height
         let yOffset = max(0, contentHeight - collectionViewHeight + walktalkChatCollectionView.contentInset.bottom)
-        
         walktalkChatCollectionView.setContentOffset(CGPoint(x: 0, y: yOffset), animated: true)
     }
-    
-}
 
-extension WalktalkChatView: UICollectionViewDelegate {
-    
+    @objc private func sendButtonTapped() {
+        // TODO: 메시지 전송 로직
+    }
+
+    @objc private func photoButtonTapped() {
+        // TODO: 앨범/카메라 액션
+    }
 }
 
 extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
@@ -179,13 +176,13 @@ extension WalktalkChatView: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let width = (sectionedMessages[indexPath.section].messages[indexPath.row].id == String(userID)) ?
+        let message = sectionedMessages[indexPath.section].messages[indexPath.row]
+        let width = message.senderId == userID ?
         (collectionView.bounds.width - 56 - 4 - 16) :
         (collectionView.bounds.width - 32 - 8 - 16 - 56 - 4)
-        let text = sectionedMessages[indexPath.section].messages[indexPath.row].text
-        let font = UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16)
-        let estimatedFrame = text?.getEstimatedMessageFrame(width: width, with: font, lineBreakStrategy: .hangulWordPriority)
-        return CGSize(width: collectionView.bounds.width, height: (estimatedFrame?.height ?? 0) + 32)
+        let font = UIFont.systemFont(ofSize: 16)
+        let estimatedHeight = message.message.getEstimatedMessageFrame(width: width, with: font, lineBreakStrategy: .hangulWordPriority).height
+        return CGSize(width: collectionView.bounds.width, height: estimatedHeight + 32)
     }
     
     func collectionView(
@@ -229,54 +226,46 @@ extension WalktalkChatView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return sectionedMessages[section].messages.count
     }
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let message = sectionedMessages[indexPath.section].messages[indexPath.row]
-        
-        guard let dateString = message.date,
-              let textString = message.text else {
-            return UICollectionViewCell()
-        }
-        
-        let timeFormatted = WalkTalkChatLogModel.dateFormatter.date(from: dateString)
-            .flatMap { WalkTalkChatLogModel.outputTimeFormatter.string(from: $0) }
-            ?? dateString
-        
-        if message.id == String(userID) {
-            //MARK: 보낸 메시지 셀
+        let formattedTime = HistoryItem.inputDateFormatter.date(from: message.createdAt)
+            .flatMap { HistoryItem.outputTimeFormatter.string(from: $0) }
+        ?? message.createdAt
+
+        if message.senderId == userID {
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: WalktalkChatMessageSentCollectionViewCell.className,
                 for: indexPath
             ) as? WalktalkChatMessageSentCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            cell.setContent(message: textString, time: timeFormatted)
+            cell.setContent(message: message.message, time: formattedTime)
             return cell
         } else {
-            //MARK: 받은 메시지 셀
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: WalktalkChatMessageReceivedCollectionViewCell.className,
                 for: indexPath
             ) as? WalktalkChatMessageReceivedCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            cell.setContent(message: textString, time: timeFormatted, profileImage: .defaultProfile)
+            cell.setContent(message: message.message, time: formattedTime, profileImage: .defaultProfile)
             return cell
         }
     }
+
     func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
-            guard let supplementaryView = collectionView.dequeueReusableSupplementaryView(
+            guard let header = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: WalktalkChatDateHeaderView.className,
                 for: indexPath
             ) as? WalktalkChatDateHeaderView else { return UICollectionReusableView() }
-            supplementaryView.setContent(date: sectionedMessages[indexPath.section].sectionTitle)
-            return supplementaryView
+            header.setContent(date: sectionedMessages[indexPath.section].sectionTitle)
+            return header
         }
         return UICollectionReusableView()
     }

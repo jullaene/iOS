@@ -10,7 +10,7 @@ import SnapKit
 
 class WalktalkChatUpperView: UIView {
 
-    private var currentMatchingState: Status = .PENDING //FIXME: 매칭 상태 변수 분리 필요
+    private var currentMatchingState: Status!
 
     private let matchingStateFrameView: UIView = {
         let view = UIView()
@@ -76,9 +76,10 @@ class WalktalkChatUpperView: UIView {
         button.layer.cornerRadius = 5
         return button
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    
+    init(matchingState: Status) {
+        super.init(frame: .zero)
+        self.currentMatchingState = matchingState
         setupView()
         setupConstraints()
         updateMatchingState()
@@ -149,29 +150,38 @@ class WalktalkChatUpperView: UIView {
             make.trailing.equalToSuperview().inset(16)
         }
 
-        matchingStateFirstButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.height.equalTo(41)
-            make.width.equalTo(100)
-        }
-
-        if currentMatchingState == .CONFIRMED {
-            matchingStateSecondButton.snp.makeConstraints { make in
+        updateStateConstraints()
+    }
+    
+    private func updateStateConstraints() {
+        if currentMatchingState == .PENDING {
+            matchingStateFirstButton.snp.remakeConstraints { make in
+                make.leading.equalToSuperview()
+                make.bottom.equalToSuperview()
+                make.height.equalTo(41)
+                make.width.equalTo(100)
+            }
+        }else if currentMatchingState == .CONFIRMED {
+            matchingStateSecondButton.snp.remakeConstraints { make in
                 make.leading.equalTo(matchingStateFirstButton.snp.trailing).offset(8)
                 make.bottom.equalToSuperview()
                 make.height.equalTo(41)
                 make.width.equalTo(100)
             }
 
-            matchingStateThirdButton.snp.makeConstraints { make in
+            matchingStateThirdButton.snp.remakeConstraints { make in
                 make.leading.equalTo(matchingStateSecondButton.snp.trailing).offset(8)
                 make.bottom.equalToSuperview()
                 make.height.equalTo(41)
                 make.width.equalTo(100)
             }
+        } else {
+            matchingStateSecondButton.snp.removeConstraints()
+            matchingStateThirdButton.snp.removeConstraints()
         }
     }
+
+
 
     private func updateMatchingState() {
         matchingStateLabel.text = currentMatchingState.rawValue
@@ -192,6 +202,8 @@ class WalktalkChatUpperView: UIView {
             matchingStateProfileImageView.toGrayscale()
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400
+        default:
+            break
         }
     }
 
@@ -200,4 +212,11 @@ class WalktalkChatUpperView: UIView {
         updateMatchingState()
         setupConstraints()
     }
+    
+    func setContent(dogName: String, date: String, profileImageURL: String) {
+        matchingStateDogNameLabel.text = dogName
+        matchingStateDateLabel.text = date
+        matchingStateProfileImageView.image = .defaultProfile //FIXME: 이미지 렌더링 필요
+    }
 }
+
