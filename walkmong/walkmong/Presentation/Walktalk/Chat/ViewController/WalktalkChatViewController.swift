@@ -21,10 +21,12 @@ class WalktalkChatViewController: UIViewController {
     private let service = WalktalkService()
     private let stompService = StompService()
     private let roomId: Int!
+    private let targetName: String!
     
     private var dataModel: WalkTalkChatLogModel!
 
-    required init(datamodel: WalkTalkChatLogModel) {
+    required init(datamodel: WalkTalkChatLogModel, targetName: String) {
+        self.targetName = targetName
         self.dataModel = datamodel
         self.currentMatchingState = datamodel.matchingState
         self.roomId = datamodel.roomId
@@ -70,7 +72,7 @@ class WalktalkChatViewController: UIViewController {
         }
 
         walktalkChatView.setupTextViewDelegate(delegate: self)
-        addCustomNavigationBar(titleText: "유저 이름", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
+        addCustomNavigationBar(titleText: targetName, showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
     }
     
     private func setupStompService() {

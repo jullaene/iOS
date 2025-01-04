@@ -76,8 +76,9 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
             date: formatDateRange(
                 start: chatroomResponseData[indexPath.row].startTime,
                 end: chatroomResponseData[indexPath.row].endTime),
-            roomId: chatroomResponseData[indexPath.row].roomId, profileImageUrl: chatroomResponseData[indexPath.row].dogProfile,
-            data: nil))
+            roomId: chatroomResponseData[indexPath.row].roomId,
+            profileImageUrl: chatroomResponseData[indexPath.row].dogProfile,
+            data: nil),targetName: chatroomResponseData[indexPath.row].targetName)
         self.getViewController()?.navigationController?.pushViewController(VC, animated: true)
     }
     
