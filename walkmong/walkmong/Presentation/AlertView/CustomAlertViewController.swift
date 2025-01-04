@@ -82,7 +82,7 @@ final class CustomAlertViewController: UIViewController {
     private lazy var titleStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 4
+        stack.spacing = 8
         stack.alignment = .center
         stack.distribution = .fill
         return stack

@@ -22,6 +22,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = .defaultProfile
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 31
@@ -30,7 +31,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     
     private let walkerIconView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .defaultProfile
+        imageView.image = .isWalkerIcon
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 12
@@ -130,29 +131,29 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setContent(with datamodel: WalktalkListModel) {
-        matchingStateLabel.text = datamodel.matchingState.rawValue
-        switch datamodel.matchingState {
-        case .matching:
+    func setContent(with datamodel: ChatroomResponseData, status: Status, record: Record) {
+        matchingStateLabel.text = status.rawValue
+        switch status {
+        case .PENDING:
             matchingStateView.backgroundColor = .lightBlue
             matchingStateLabel.textColor = .mainBlue
-        case .confirmed:
+        case .CONFIRMED:
             matchingStateView.backgroundColor = .mainBlue
             matchingStateLabel.textColor = .white
-        case .ended:
+        case .COMPLETED:
             matchingStateView.backgroundColor = .gray400
             matchingStateLabel.textColor = .white
-        case .cancelled:
+        case .REJECTED:
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400
         }
-        dateLabel.text = datamodel.date
-        walkerIconView.isHidden = datamodel.isWalker
-        nameLabel.text = datamodel.name
-        textPreviewLabel.text = datamodel.textPreview
-        chatCountLabel.text = String(datamodel.chatCount)
-        profileImageView.image = .defaultProfile
-        timeLabel.text = datamodel.time
+        dateLabel.text = formatDateRange(start: datamodel.startTime, end: datamodel.endTime)
+        walkerIconView.isHidden = record != .requested
+        nameLabel.text = datamodel.targetName
+        textPreviewLabel.text = datamodel.lastChat
+        chatCountLabel.text = String(datamodel.notRead)
+        profileImageView.image = .defaultProfile //FIXME: 이미지 렌더링 필요
+        timeLabel.text = formatLastChatTime(datamodel.lastChatTime)
     }
     
 }
