@@ -22,6 +22,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = .defaultProfile
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 31
@@ -30,7 +31,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     
     private let walkerIconView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .defaultProfile
+        imageView.image = .isWalkerIcon
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 12
@@ -147,7 +148,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
             matchingStateLabel.textColor = .gray400
         }
         dateLabel.text = formatDateRange(start: datamodel.startTime, end: datamodel.endTime)
-        walkerIconView.isHidden = record == .all
+        walkerIconView.isHidden = record != .requested
         nameLabel.text = datamodel.targetName
         textPreviewLabel.text = datamodel.lastChat
         chatCountLabel.text = String(datamodel.notRead)
@@ -160,7 +161,7 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
 extension WalktalkListCollectionViewCell {
     private func formatDateRange(start: String, end: String) -> String {
         let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // 입력 형식
+        inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS" // 입력 형식
 
         let outputFormatter = DateFormatter()
         outputFormatter.dateFormat = "MM.dd (E) HH:mm" // 원하는 출력 형식
@@ -181,7 +182,7 @@ extension WalktalkListCollectionViewCell {
 
     private func formatLastChatTime(_ time: String) -> String {
         let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // 입력 형식
+        inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS" // 입력 형식
 
         let outputFormatter = DateFormatter()
         outputFormatter.dateFormat = "a hh:mm" // 오전/오후 시간 형식

@@ -117,6 +117,7 @@ extension WalktalkChatViewController {
         Task {
             do {
                 let response = try await service.getHistory(roomId: roomId)
+                
             } catch {
                 print("채팅 히스토리 조회 실패: \(error)")
             }
