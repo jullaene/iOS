@@ -16,12 +16,16 @@ class StompService {
     
     init() {
         guard let urlString = SecretManager.shared.BASE_URL,
-              let url = URL(string: urlString),
-              let token = AuthManager.shared.token else {
-            fatalError("Initialization failed: Missing URL or token")
+              let url = URL(string: urlString) else {
+            fatalError("Initialization failed: Missing URL")
+        }
+        if let token = AuthManager.shared.token {
+            self.connectionHeaders = ["Authorization": "Bearer \(token)"]
+        }else {
+            let testToken = "testToken"
+            self.connectionHeaders = ["Authorization": "Bearer \(testToken)"]
         }
         self.socketURL = url
-        self.connectionHeaders = ["Authorization": "Bearer \(token)"]
     }
     
     func connect() {
