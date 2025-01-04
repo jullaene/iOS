@@ -73,6 +73,7 @@ class WalktalkChatViewController: UIViewController {
 
         walktalkChatView.setupTextViewDelegate(delegate: self)
         addCustomNavigationBar(titleText: targetName, showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
+        walktalkChatView.delegate = self
     }
     
     private func setupStompService() {
@@ -203,3 +204,8 @@ extension WalktalkChatViewController: StompServiceDelegate {
     }
 }
 
+extension WalktalkChatViewController: WalktalkChatViewDelegate {
+    func didSendMessage(_ message: String) {
+        stompService.sendMessage(body: message, to: "/sub/chat/room/\(String(describing: roomId))", with: "no receipt")
+    }
+}

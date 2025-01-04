@@ -8,6 +8,10 @@
 import UIKit
 import SnapKit
 
+protocol WalktalkChatViewDelegate: AnyObject {
+    func didSendMessage(_ message: String)
+}
+
 class WalktalkChatView: UIView {
     
     private var keyboardFrameHeightConstraint: Constraint?
@@ -16,6 +20,8 @@ class WalktalkChatView: UIView {
     private let userID: Int = 0
     private var chatLog: [HistoryItem] = []
     private var sectionedMessages: [(sectionTitle: String, messages: [HistoryItem])] = []
+    
+    weak var delegate: WalktalkChatViewDelegate?
 
     init() {
         super.init(frame: .zero)
@@ -162,12 +168,21 @@ class WalktalkChatView: UIView {
     }
 
     @objc private func sendButtonTapped() {
-        // TODO: 메시지 전송 로직
+        guard let text = keyboardInputTextView.text, !text.isEmpty, keyboardInputTextView.textColor != .lightGray else { return }
+
+        delegate?.didSendMessage(text)
+        appendMessage(HistoryItem(message: text, senderId: userID, createdAt: Date.currentTimestamp()))
+        keyboardInputTextView.text = "메시지 보내기"
+        keyboardInputTextView.textColor = UIColor(hexCode: "#D8DDE4")
+        updateTextViewHeight()
+        scrollToBottom()
     }
+
 
     @objc private func photoButtonTapped() {
         // TODO: 앨범/카메라 액션
     }
+
 }
 
 extension WalktalkChatView: UICollectionViewDelegateFlowLayout {

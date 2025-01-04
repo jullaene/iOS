@@ -157,57 +157,7 @@ final class WalktalkListView: UIView {
     }
     
     func setContent(with dataModel: [ChatroomResponseData]){
-//        chatroomResponse = sortChatroomDataByRecentTime(dataModel)
-        chatroomResponse = [
-            ChatroomResponseData(
-                dogName: "Buddy",
-                dogProfile: "buddy_profile.png",
-                startTime: "2025-01-01 10:00:00.123123",
-                endTime: "2025-01-01 11:00:00.123123",
-                chatTarget: 1,
-                lastChat: "오늘 산책 가능하세요?",
-                lastChatTime: "2025-01-01 09:50:00.123123",
-                targetName: "Alice",
-                notRead: 2,
-                roomId: 101
-            ),
-            ChatroomResponseData(
-                dogName: "Max",
-                dogProfile: "max_profile.png",
-                startTime: "2025-01-02 14:00:00.123123",
-                endTime: "2025-01-02 15:00:00.123123",
-                chatTarget: 2,
-                lastChat: "내일 산책 일정 확인 부탁드립니다.",
-                lastChatTime: "2025-01-02 13:45:00.123123",
-                targetName: "Bob",
-                notRead: 5,
-                roomId: 102
-            ),
-            ChatroomResponseData(
-                dogName: "Charlie",
-                dogProfile: "charlie_profile.png",
-                startTime: "2025-01-03 16:00:00.123123",
-                endTime: "2025-01-03 17:00:00.123123",
-                chatTarget: 3,
-                lastChat: "새로운 산책 경로 제안드립니다.",
-                lastChatTime: "2025-01-03 15:30:00.123123",
-                targetName: "Carol",
-                notRead: 0,
-                roomId: 103
-            ),
-            ChatroomResponseData(
-                dogName: "Rocky",
-                dogProfile: "rocky_profile.png",
-                startTime: "2025-01-04 18:00:00.123123",
-                endTime: "2025-01-04 19:00:00.123123",
-                chatTarget: 4,
-                lastChat: "산책 후 간식 나눠줄게요!",
-                lastChatTime: "2025-01-04 17:50:00.123123",
-                targetName: "David",
-                notRead: 3,
-                roomId: 104
-            )
-        ]
+        chatroomResponse = sortChatroomDataByRecentTime(dataModel)
         chatroomResponse = sortChatroomDataByRecentTime(chatroomResponse)
         if chatroomResponse.isEmpty {
             //TODO: 비어있을 때 처리
