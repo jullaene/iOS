@@ -218,4 +218,8 @@ extension UIButton {
             button.configuration = configuration
         }
     }
+    
+    func setStyle(_ style: ButtonStyle, type: ButtonCategory) {
+        self.updateStyle(type: type, style: style)
+    }
 }

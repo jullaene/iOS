@@ -14,6 +14,9 @@ class PetProfileCell: UICollectionViewCell {
     private let profileButton = UIButton()
     private let genderIcon = UIImageView()
     
+    var didTapProfileButton: (() -> Void)?
+    var didTapAddPetCell: (() -> Void)?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -72,7 +75,11 @@ class PetProfileCell: UICollectionViewCell {
     }
     
     func configure(with profile: PetProfile) {
-        petImageView.setImage(from: profile.imageURL, placeholder: "placeholder_image_name")
+        if let url = URL(string: profile.imageURL ?? "") {
+            petImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
+        } else {
+            petImageView.image = UIImage(named: "placeholder")
+        }
         petNameLabel.text = profile.name
         petDetailsLabel.text = profile.details
 
@@ -117,5 +124,51 @@ class PetProfileCell: UICollectionViewCell {
         petDetailsLabel.isHidden = true
         profileButton.isHidden = true
         genderIcon.isHidden = true
+    }
+    
+    private func setupActions() {
+        profileButton.addTarget(self, action: #selector(handleProfileButtonTap), for: .touchUpInside)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleCellTap))
+        contentView.addGestureRecognizer(tapGesture)
+        contentView.isUserInteractionEnabled = true
+    }
+
+    @objc private func handleProfileButtonTap() {
+        didTapProfileButton?()
+    }
+    
+    @objc private func handleCellTap() {
+        didTapAddPetCell?()
+    }
+}
+
+extension PetProfileCell {
+    func setSelectedStyle() {
+        contentView.backgroundColor = .mainBlue
+        petNameLabel.textColor = .white
+        petDetailsLabel.textColor = .white
+        
+        if let icon = genderIcon.image?.withRenderingMode(.alwaysTemplate) {
+            genderIcon.image = icon
+        }
+        genderIcon.tintColor = .white
+
+        profileButton.setTitleColor(.mainBlue, for: .normal)
+        profileButton.backgroundColor = .lightBlue
+    }
+
+    func setDefaultStyle() {
+        contentView.backgroundColor = .gray100
+        petNameLabel.textColor = .black
+        petDetailsLabel.textColor = .gray
+
+        if let icon = genderIcon.image?.withRenderingMode(.alwaysTemplate) {
+            genderIcon.image = icon
+        }
+        genderIcon.tintColor = .black
+        
+        profileButton.setTitleColor(.white, for: .normal)
+        profileButton.backgroundColor = .mainBlue
     }
 }
