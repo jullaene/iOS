@@ -125,8 +125,13 @@ final class SupportRequestViewController: UIViewController {
     }
     
     private func configureActionsForStep(_ step: Int) {
-        if step == 1 {
+        switch step {
+        case 1:
             configureStep1Actions()
+        case 2:
+            configureStep2Actions()
+        default:
+            break
         }
     }
     
@@ -143,6 +148,12 @@ final class SupportRequestViewController: UIViewController {
             guard let self = self else { return }
             self.updateActionButtonState(isEnabled: isDogSelected, style: isDogSelected ? .dark : .light)
         }
+    }
+    
+    private func configureStep2Actions() {
+        guard let step2View = stepData[1].additionalView as? SupportRequestView2 else { return }
+        
+        step2View.calendarView.reloadCalendar()
     }
     
     private func configurePetCellActions(for petCell: PetProfileCell) {

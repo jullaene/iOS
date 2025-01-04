@@ -3,15 +3,9 @@ import SnapKit
 
 class CalendarView: UIView {
     // MARK: - UI Components
-    private let monthLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.gray600
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        label.textAlignment = .left
-        return label
-    }()
+    private let monthLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
     
-    private lazy var dayCollectionView: UICollectionView = {
+    lazy var dayCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 37, height: 63)
@@ -28,7 +22,7 @@ class CalendarView: UIView {
     }()
     
     // MARK: - Properties
-    private var selectedIndexPath: IndexPath?
+    var selectedIndexPath: IndexPath?
     private var days: [(dayOfWeek: String, date: String)] = []
     private let calendar = Calendar.current
     private let today = Date()
@@ -169,5 +163,16 @@ extension CalendarView {
         formatter.dateFormat = "MM. dd (EEE)" // "11. 14 (목)" 형식
         
         return formatter.string(from: date)
+    }
+    
+    func reloadCalendar() {
+        generateDays()
+        dayCollectionView.reloadData()
+    }
+    
+    func updateSectionInset(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) {
+        if let layout = dayCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.sectionInset = UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
+        }
     }
 }

@@ -19,11 +19,14 @@ final class SupportRequestView2: UIView {
         return imageView
     }()
     private let warningText = SmallMainHighlightParagraphLabel(text: "오늘부터 2주 이내의 날짜를 선택하실 수 있어요.", textColor: .gray400)
+    private let containerView = UIView()
+    let calendarView = CalendarView()
 
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        customizeCalendarView()
     }
     
     required init?(coder: NSCoder) {
@@ -32,7 +35,8 @@ final class SupportRequestView2: UIView {
     
     // MARK: - Setup Methods
     private func setupView() {
-        addSubviews(smallTitle, warningIcon, warningText)
+        addSubviews(smallTitle, warningIcon, warningText, containerView)
+        containerView.addSubview(calendarView)
         setupConstraints()
     }
     
@@ -51,5 +55,22 @@ final class SupportRequestView2: UIView {
             make.top.equalTo(smallTitle.snp.bottom).offset(5)
             make.leading.equalTo(warningIcon.snp.trailing).offset(4)
         }
+        
+        containerView.snp.makeConstraints { make in
+            make.top.equalTo(warningText.snp.bottom).offset(28)
+            make.leading.trailing.equalToSuperview().inset(-20)
+            make.height.equalTo(97)
+        }
+        
+        calendarView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    private func customizeCalendarView() {
+        calendarView.dayCollectionView.isScrollEnabled = true
+        calendarView.dayCollectionView.alwaysBounceHorizontal = true
+        calendarView.updateSectionInset(top: 0, left: 20, bottom: 0, right: 20)
+        calendarView.reloadCalendar()
     }
 }
