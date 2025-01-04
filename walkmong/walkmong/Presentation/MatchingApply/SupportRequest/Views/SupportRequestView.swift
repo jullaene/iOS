@@ -8,7 +8,12 @@
 import UIKit
 import SnapKit
 
-class SupportRequestView: UIView {
+final class SupportRequestView: UIView {
+
+    let scrollView = UIScrollView()
+    let contentView = UIView()
+
+    let middleTitleLabel = MiddleTitleLabel(text: "중제목")
 
     let actionButton: UIButton = UIButton.createStyledButton(
         type: .large,
@@ -26,7 +31,31 @@ class SupportRequestView: UIView {
     }
 
     private func setupViews() {
-        addSubview(actionButton)
+        addSubviews(scrollView, actionButton)
+
+        scrollView.addSubview(contentView)
+
+        contentView.addSubview(middleTitleLabel)
+        
+        setupLayout()
+    }
+
+    private func setupLayout() {
+        scrollView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(140)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(actionButton.snp.top).offset(-12)
+        }
+
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+        }
+
+        middleTitleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(39)
+            make.leading.equalToSuperview().offset(18)
+        }
 
         actionButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)

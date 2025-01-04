@@ -11,7 +11,7 @@ extension UIViewController {
     func addProgressBar(currentStep:Int, totalSteps:Int, backgroundColor: UIColor = .white){
         let backgroundView: UIView = {
             let view = UIView()
-            view.backgroundColor = backgroundColor
+            view.backgroundColor = .clear
             return view
         }()
         let progressBackgroundView: UIView = {
