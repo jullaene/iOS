@@ -102,7 +102,7 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegateFlowLayout
 extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == walktalkListCollectionView {
-            //TODO: 해당 채팅으로 전환
+            let VC = WalktalkChatViewController(roomId: chatroomResponseData[indexPath.row].roomId, currentMatchingState: Status.from(index: selectedMatchingStateIndex))
         }else {
             selectedMatchingStateIndex = indexPath.row
             delegate?.didSelectMatchingStatus(index: indexPath.row)

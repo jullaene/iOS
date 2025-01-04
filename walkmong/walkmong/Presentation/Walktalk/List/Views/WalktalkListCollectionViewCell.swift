@@ -146,13 +146,52 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400
         }
-        dateLabel.text = datamodel.startTime //FIXME: 시간 형식 수정
+        dateLabel.text = formatDateRange(start: datamodel.startTime, end: datamodel.endTime)
         walkerIconView.isHidden = record == .all
         nameLabel.text = datamodel.targetName
         textPreviewLabel.text = datamodel.lastChat
         chatCountLabel.text = String(datamodel.notRead)
         profileImageView.image = .defaultProfile //FIXME: 이미지 렌더링 필요
-        timeLabel.text = datamodel.lastChatTime //FIXME: 시간 형식 수정
+        timeLabel.text = formatLastChatTime(datamodel.lastChatTime)
     }
     
+}
+
+extension WalktalkListCollectionViewCell {
+    private func formatDateRange(start: String, end: String) -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // 입력 형식
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MM.dd (E) HH:mm" // 원하는 출력 형식
+        outputFormatter.locale = Locale(identifier: "ko_KR")
+
+        guard let startDate = inputFormatter.date(from: start),
+              let endDate = inputFormatter.date(from: end) else {
+            return "\(start) ~ \(end)" // 변환 실패 시 원래 값 반환
+        }
+
+        let startString = outputFormatter.string(from: startDate)
+        let endTimeFormatter = DateFormatter()
+        endTimeFormatter.dateFormat = "HH:mm" // 끝나는 시간은 시간:분만 표시
+        let endString = endTimeFormatter.string(from: endDate)
+
+        return "\(startString) ~ \(endString)"
+    }
+
+    private func formatLastChatTime(_ time: String) -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // 입력 형식
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "a hh:mm" // 오전/오후 시간 형식
+        outputFormatter.locale = Locale(identifier: "ko_KR")
+
+        guard let date = inputFormatter.date(from: time) else {
+            return time // 변환 실패 시 원래 값 반환
+        }
+
+        return outputFormatter.string(from: date)
+    }
+
 }
