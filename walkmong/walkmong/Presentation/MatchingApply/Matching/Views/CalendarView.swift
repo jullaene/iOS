@@ -1,8 +1,14 @@
 import UIKit
 import SnapKit
 
+protocol CalendarViewDelegate: AnyObject {
+    func didSelectDate(_ date: String)
+}
+
 class CalendarView: UIView {
     // MARK: - UI Components
+    weak var delegate: CalendarViewDelegate?
+    
     private let monthLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
     
     lazy var dayCollectionView: UICollectionView = {
@@ -112,11 +118,18 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("didSelectItemAt called with indexPath: \(indexPath)") // 로그 추가
+
         guard selectedIndexPath != indexPath else { return }
-        
         updateSelection(from: selectedIndexPath, to: indexPath)
         selectedIndexPath = indexPath
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        
+        if let selectedDate = getSelectedDate() {
+            print("Selected date: \(selectedDate)") // 로그 추가
+            delegate?.didSelectDate(selectedDate)
+            print("Delegate's didSelectDate method called.") // 로그 추가
+        }
     }
     
     // MARK: - Selection Update
@@ -133,35 +146,17 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
 }
 
 extension CalendarView {
-    func getSelectedDate() -> String? {
-        guard let indexPath = selectedIndexPath else {
-            print("No selected index path")
-            return nil
-        }
-        let day = days[indexPath.item]
-
-        // 현재 연도와 월 가져오기
-        let currentYear = calendar.component(.year, from: today)
-        let currentMonth = calendar.component(.month, from: today)
-
-        // 선택된 날짜(day.date)를 정수로 변환
-        guard let dayInt = Int(day.date) else {
-            print("Failed to convert day.date (\(day.date)) to Int")
-            return nil
-        }
-
-        // 날짜 컴포넌트 생성
-        let components = DateComponents(year: currentYear, month: currentMonth, day: dayInt)
+    
+    private func formatDate(_ components: DateComponents, with format: String) -> String? {
         guard let date = calendar.date(from: components) else {
             print("Failed to generate date from components: \(components)")
             return nil
         }
 
-        // 포맷터 설정
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "MM. dd (EEE)" // "11. 14 (목)" 형식
-        
+        formatter.dateFormat = format
+
         return formatter.string(from: date)
     }
     
@@ -174,5 +169,43 @@ extension CalendarView {
         if let layout = dayCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.sectionInset = UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
         }
+    }
+    
+    func getSelectedDate() -> String? {
+        guard let indexPath = selectedIndexPath else {
+            print("No selected index path")
+            return nil
+        }
+        let day = days[indexPath.item]
+
+        let currentYear = calendar.component(.year, from: today)
+        let currentMonth = calendar.component(.month, from: today)
+
+        guard let dayInt = Int(day.date) else {
+            print("Failed to convert day.date (\(day.date)) to Int")
+            return nil
+        }
+
+        let components = DateComponents(year: currentYear, month: currentMonth, day: dayInt)
+        return formatDate(components, with: "MM. dd (EEE)")
+    }
+    
+    func getSelectedDateWithFullFormat() -> String? {
+        guard let indexPath = selectedIndexPath else {
+            print("No selected index path")
+            return nil
+        }
+        let day = days[indexPath.item]
+
+        let currentYear = calendar.component(.year, from: today)
+        let currentMonth = calendar.component(.month, from: today)
+
+        guard let dayInt = Int(day.date) else {
+            print("Failed to convert day.date (\(day.date)) to Int")
+            return nil
+        }
+
+        let components = DateComponents(year: currentYear, month: currentMonth, day: dayInt)
+        return formatDate(components, with: "yyyy년 MM월 dd일 (EEE)")
     }
 }
