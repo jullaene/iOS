@@ -117,12 +117,12 @@ final class SupportRequestViewController: UIViewController, SupportRequestView1D
         supportRequestView.updateContentView(with: data.additionalView)
         addProgressBar(currentStep: currentStep, totalSteps: totalSteps)
         
-        if currentStep == 3 {
+        if currentStep == 4 {
             supportRequestView.showWarningSection()
             supportRequestView.updateWarningText("산책 지원 요청 내용을 확인했습니다.")
             supportRequestView.actionButton.isEnabled = false
             supportRequestView.actionButton.setStyle(.light, type: .large)
-        } else if currentStep == 4 {
+        } else if currentStep == 5 {
             supportRequestView.showWarningSection()
             supportRequestView.updateWarningText("주의사항을 모두 확인했습니다.")
             supportRequestView.actionButton.isEnabled = false
