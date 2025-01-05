@@ -58,7 +58,6 @@ final class SupportRequestViewController: UIViewController, SupportRequestView2D
         setupActions()
         updateViewForCurrentStep()
         configureActionsForStep(currentStep)
-        updateActionButtonState(isEnabled: false)
     }
     
     // MARK: - UI Setup
@@ -106,8 +105,16 @@ final class SupportRequestViewController: UIViewController, SupportRequestView2D
         supportRequestView.middleTitleLabel.text = data.middleTitle
         supportRequestView.actionButton.setTitle(data.buttonText, for: .normal)
         
-        updateContentView(with: data.additionalView)
+        supportRequestView.updateContentView(with: data.additionalView)
         addProgressBar(currentStep: currentStep, totalSteps: totalSteps)
+        
+        if currentStep == 4 {
+            supportRequestView.showWarningSection()
+            supportRequestView.actionButton.isEnabled = false
+            supportRequestView.actionButton.setStyle(.light, type: .large)
+        } else {
+            supportRequestView.hideWarningSection()
+        }
     }
     
     private func updateContentView(with additionalView: UIView) {
