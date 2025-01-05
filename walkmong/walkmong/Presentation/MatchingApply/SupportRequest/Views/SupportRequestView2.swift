@@ -343,9 +343,13 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         let timePicker = UIDatePicker()
         timePicker.datePickerMode = .time
         timePicker.preferredDatePickerStyle = .wheels
-        timePicker.locale = Locale(identifier: "ko_KR")
         timePicker.calendar = Calendar(identifier: .gregorian)
+        timePicker.locale = Locale(identifier: "ko_KR")
         timePicker.timeZone = TimeZone.current
+        timePicker.date = Date()
+        
+        timePicker.locale = Locale(identifier: "en_GB") // 24시간제
+        timePicker.calendar = Calendar(identifier: .gregorian)
         
         let confirmButton = UIButton(type: .system)
         confirmButton.setTitle("확인", for: .normal)
