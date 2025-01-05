@@ -21,6 +21,7 @@ extension UIButton {
         case smallSelection
         case homeFilter
         case customFilter
+        case largeSelectionCheck
     }
     
     static func createStyledButton(
@@ -41,6 +42,8 @@ extension UIButton {
             } else {
                 configureHomeFilter(button: button, style: style, title: title)
             }
+        case .largeSelectionCheck:
+            configureLargeSelectionCheck(button: button, style: style, title: title)
         default:
             let label = labelForCategory(type: type, text: title, style: style)
             button.titleLabel?.font = label.font
@@ -79,7 +82,7 @@ extension UIButton {
         : (type == .large ? .gray100 : .white)
         
         switch type {
-        case .large, .homeFilter, .customFilter:
+        case .large, .homeFilter, .customFilter, .largeSelectionCheck:
             return MainHighlightParagraphLabel(text: text, textColor: textColor)
         case .largeSelection, .smallSelection:
             return MainParagraphLabel(text: text, textColor: textColor)
@@ -114,6 +117,9 @@ extension UIButton {
             button.backgroundColor = style == .dark ? .gray600 : .gray100
         case .customFilter:
             break
+        case .largeSelectionCheck:
+            button.layer.cornerRadius = 5
+            button.backgroundColor = style == .light ? .gray100 : .mainBlue
         }
     }
     
@@ -154,6 +160,8 @@ extension UIButton {
     func updateStyle(type: ButtonCategory, style: ButtonStyle) {
         if type == .customFilter {
             UIButton.configureCustomFilter(button: self, style: style, title: self.title(for: .normal) ?? "")
+        } else if type == .largeSelectionCheck {
+            UIButton.configureLargeSelectionCheck(button: self, style: style, title: self.title(for: .normal) ?? "")
         } else {
             let label = UIButton.labelForCategory(type: type, text: self.title(for: .normal) ?? "", style: style)
             self.titleLabel?.font = label.font
@@ -217,6 +225,38 @@ extension UIButton {
             configuration.baseForegroundColor = UIColor(named: "gray500")
             button.configuration = configuration
         }
+    }
+    
+    private static func configureLargeSelectionCheck(button: UIButton, style: ButtonStyle, title: String) {
+        let textColor: UIColor = style == .light ? .gray500 : .white
+        let customFont = UIFont(name: "Pretendard-SemiBold", size: 16)!
+
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(textColor, for: .normal)
+        button.titleLabel?.font = customFont
+        button.contentHorizontalAlignment = .leading
+        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 0)
+
+        let icon = UIImageView()
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.image = UIImage(named: style == .light ? "myPageReportUnchecked" : "checkWhiteIcon")
+        icon.contentMode = .scaleAspectFit
+
+        button.subviews
+            .filter { $0 is UIImageView }
+            .forEach { $0.removeFromSuperview() }
+        button.addSubview(icon)
+        
+        NSLayoutConstraint.activate([
+            icon.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -24),
+            icon.centerYAnchor.constraint(equalTo: button.centerYAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 24),
+            icon.heightAnchor.constraint(equalToConstant: 24),
+            button.heightAnchor.constraint(equalToConstant: 46)
+        ])
+
+        button.layer.cornerRadius = 5
+        button.backgroundColor = style == .light ? .gray100 : .mainBlue
     }
     
     func setStyle(_ style: ButtonStyle, type: ButtonCategory) {

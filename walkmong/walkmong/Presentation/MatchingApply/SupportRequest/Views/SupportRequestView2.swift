@@ -118,8 +118,24 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             textColor: .gray400
         )
         
-        // LocationSelectionView에 추가
-        locationSelectionView.addSubviews(locationTitle, locationWarningIcon, locationWarningText)
+        let button1 = UIButton.createStyledButton(
+            type: .largeSelectionCheck,
+            style: .light,
+            title: "산책자가 선택한 장소가 좋아요"
+        )
+        let button2 = UIButton.createStyledButton(
+            type: .largeSelectionCheck,
+            style: .light,
+            title: "산책자와 상의하여 결정하고 싶어요"
+        )
+        
+        button1.tag = 1
+        button2.tag = 2
+        
+        button1.addTarget(self, action: #selector(toggleExclusiveButton(_:)), for: .touchUpInside)
+        button2.addTarget(self, action: #selector(toggleExclusiveButton(_:)), for: .touchUpInside)
+        
+        locationSelectionView.addSubviews(locationTitle, locationWarningIcon, locationWarningText, button1, button2)
         
         locationTitle.snp.makeConstraints { make in
             make.top.equalToSuperview()
@@ -135,6 +151,19 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             make.centerY.equalTo(locationWarningIcon.snp.centerY)
             make.leading.equalTo(locationWarningIcon.snp.trailing).offset(Metrics.smallInset)
             make.trailing.equalToSuperview()
+        }
+        
+        button1.snp.makeConstraints { make in
+            make.top.equalTo(locationWarningText.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(46)
+        }
+        
+        button2.snp.makeConstraints { make in
+            make.top.equalTo(button1.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(46)
+            make.bottom.equalToSuperview().inset(24)
         }
     }
     
@@ -182,7 +211,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         locationSelectionView.snp.makeConstraints { make in
             make.top.equalTo(timeSelectionView.snp.bottom).offset(Metrics.sectionSpacing)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview().inset(60)
+            make.bottom.equalToSuperview().inset(20)
         }
     }
     
@@ -243,5 +272,14 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         imageView.image = UIImage(named: named)
         imageView.contentMode = contentMode
         return imageView
+    }
+    
+    @objc private func toggleExclusiveButton(_ sender: UIButton) {
+        locationSelectionView.subviews.forEach {
+            if let button = $0 as? UIButton {
+                button.setStyle(.light, type: .largeSelectionCheck)
+            }
+        }
+        sender.setStyle(.dark, type: .largeSelectionCheck)
     }
 }
