@@ -24,7 +24,14 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     
     // MARK: - Properties
     private let smallTitle = SmallTitleLabel(text: "산책 날짜를 선택해주세요.", textColor: .gray600)
-    private let warningIcon = createImageView(named: "warningIcon", contentMode: .scaleAspectFit)
+    private let warningIcon: UIImageView = {
+        let imageView = UIImageView()
+        if let image = UIImage(named: "warningIcon") {
+            imageView.image = image
+        }
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     private let warningText = SmallMainHighlightParagraphLabel(
         text: "오늘부터 2주 이내의 날짜를 선택하실 수 있어요.",
         textColor: .gray400
@@ -41,9 +48,9 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     }()
     
     private let timeSelectionView = UIView()
-    private let locationSelectionView1 = UIView()
-    private let locationSelectionView2 = UIView()
-    private let locationSelectionView3 = UIView()
+    private let selectionView1 = UIView()
+    private let selectionView2 = UIView()
+    private let selectionView3 = UIView()
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -60,16 +67,15 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     // MARK: - Setup Methods
     private func setupView() {
         addSubviews(
-            smallTitle, warningIcon, warningText, containerView, dateView, timeSelectionView, locationSelectionView1, locationSelectionView2, locationSelectionView3
+            smallTitle, warningIcon, warningText, containerView, dateView, timeSelectionView, selectionView1, selectionView2, selectionView3
         )
         
         containerView.addSubview(calendarView)
         dateView.addSubview(dateLabel)
         setupTimeSelectionView()
         
-        // Reuse the location selection setup with different configurations
         setupLocationSelectionView(
-            locationSelectionView1,
+            selectionView1,
             title: "만남 장소는 어떻게 정하고 싶으신가요?",
             warningText: "산책자가 정한 장소에서 만나면 더 빠르게 매칭할 수 있어요!",
             warningColor: .gray400,
@@ -80,7 +86,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         )
         
         setupLocationSelectionView(
-            locationSelectionView2,
+            selectionView2,
             title: "산책 용품 준비가 완료되었나요?",
             warningText: "아래 3개 용품은 구비가 되어 있어야 산책이 가능해요!",
             warningColor: .mainBlue,
@@ -92,7 +98,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         )
         
         setupLocationSelectionView(
-            locationSelectionView3,
+            selectionView3,
             title: "산책 전 사전 만남이 가능한가요?",
             warningText: "사전 만남을 통해 반려견과 산책자가 친해질 수 있어요!",
             warningColor: .mainBlue,
@@ -204,18 +210,18 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             make.leading.trailing.equalToSuperview()
         }
         
-        locationSelectionView1.snp.makeConstraints { make in
+        selectionView1.snp.makeConstraints { make in
             make.top.equalTo(timeSelectionView.snp.bottom).offset(Metrics.sectionSpacing)
             make.leading.trailing.equalToSuperview()
         }
         
-        locationSelectionView2.snp.makeConstraints { make in
-            make.top.equalTo(locationSelectionView1.snp.bottom).offset(Metrics.sectionSpacing)
+        selectionView2.snp.makeConstraints { make in
+            make.top.equalTo(selectionView1.snp.bottom).offset(Metrics.sectionSpacing)
             make.leading.trailing.equalToSuperview()
         }
         
-        locationSelectionView3.snp.makeConstraints { make in
-            make.top.equalTo(locationSelectionView2.snp.bottom).offset(Metrics.sectionSpacing)
+        selectionView3.snp.makeConstraints { make in
+            make.top.equalTo(selectionView2.snp.bottom).offset(Metrics.sectionSpacing)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview().inset(20)
         }
