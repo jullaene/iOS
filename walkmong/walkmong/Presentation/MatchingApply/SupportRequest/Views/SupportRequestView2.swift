@@ -228,7 +228,71 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     }
     
     private func setupTimeSelectionView() {
-        // 시간 선택 뷰 초기화 (제공된 메서드 사용)
+        let startEndTimeTitle = SmallTitleLabel(text: "산책 시작/종료 시간을 선택해주세요.", textColor: .gray600)
+        let startLabel = MainHighlightParagraphLabel(text: "산책 시작 시간", textColor: .gray600)
+        let startHourView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
+        let startSeparateText = MainHighlightParagraphLabel(text: ":", textColor: .gray600)
+        let startMinuteView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
+        let endLabel = MainHighlightParagraphLabel(text: "산책 종료 시간", textColor: .gray600)
+        let endHourView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
+        let endSeparateText = MainHighlightParagraphLabel(text: ":", textColor: .gray600)
+        let endMinuteView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
+        
+        timeSelectionView.addSubviews(
+            startEndTimeTitle, startLabel, startHourView, startSeparateText,
+            startMinuteView, endLabel, endHourView, endSeparateText, endMinuteView
+        )
+        
+        startEndTimeTitle.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview()
+        }
+        
+        startLabel.snp.makeConstraints { make in
+            make.top.equalTo(startEndTimeTitle.snp.bottom).offset(Metrics.sectionSpacing)
+            make.leading.equalToSuperview()
+        }
+        
+        endLabel.snp.makeConstraints { make in
+            make.top.equalTo(startLabel.snp.top)
+            make.leading.equalTo(startLabel.snp.trailing).offset(90)
+        }
+        
+        setupTimeViewConstraints(
+            startHourView, startSeparateText, startMinuteView,
+            startLabel.snp.bottom, topOffset: 12, alignWith: startLabel
+        )
+        
+        setupTimeViewConstraints(
+            endHourView, endSeparateText, endMinuteView,
+            endLabel.snp.bottom, topOffset: 12, alignWith: endLabel
+        )
+    }
+    
+    private func setupTimeViewConstraints(
+        _ hourView: UIView, _ separator: UILabel, _ minuteView: UIView,
+        _ topAnchor: ConstraintRelatableTarget, topOffset: CGFloat = 0, alignWith: UIView? = nil
+    ) {
+        let alignmentView = alignWith ?? hourView
+        
+        hourView.snp.makeConstraints { make in
+            make.top.equalTo(topAnchor).offset(topOffset)
+            make.leading.equalTo(alignmentView.snp.leading)
+            make.height.equalTo(Metrics.inputHeight)
+            make.width.equalTo(Metrics.inputWidth)
+            make.bottom.equalToSuperview().inset(24)
+        }
+        
+        separator.snp.makeConstraints { make in
+            make.leading.equalTo(hourView.snp.trailing).offset(Metrics.smallInset)
+            make.centerY.equalTo(hourView)
+        }
+        
+        minuteView.snp.makeConstraints { make in
+            make.top.equalTo(hourView)
+            make.leading.equalTo(separator.snp.trailing).offset(Metrics.smallInset)
+            make.height.equalTo(Metrics.inputHeight)
+            make.width.equalTo(Metrics.inputWidth)
+        }
     }
     
     private func customizeCalendarView() {
