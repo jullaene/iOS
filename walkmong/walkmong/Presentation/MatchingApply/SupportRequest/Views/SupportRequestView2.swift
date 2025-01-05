@@ -387,16 +387,20 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         if let overlayView = UIApplication.shared.keyWindow?.viewWithTag(999) {
             overlayView.removeFromSuperview()
         }
-
+        
         switch sender.tag {
-        case 1: // Start Hour
-            startHourLabel.text = selectedTime.split(separator: ":").first.map { String($0) }
-        case 2: // Start Minute
-            startMinuteLabel.text = selectedTime.split(separator: ":").last.map { String($0) }
-        case 3: // End Hour
-            endHourLabel.text = selectedTime.split(separator: ":").first.map { String($0) }
-        case 4: // End Minute
-            endMinuteLabel.text = selectedTime.split(separator: ":").last.map { String($0) }
+        case 1, 2: // 시작 시간 업데이트
+            let timeComponents = selectedTime.split(separator: ":").map { String($0) }
+            if timeComponents.count == 2 {
+                startHourLabel.text = timeComponents[0]
+                startMinuteLabel.text = timeComponents[1]
+            }
+        case 3, 4: // 종료 시간 업데이트
+            let timeComponents = selectedTime.split(separator: ":").map { String($0) }
+            if timeComponents.count == 2 {
+                endHourLabel.text = timeComponents[0]
+                endMinuteLabel.text = timeComponents[1]
+            }
         default:
             break
         }
@@ -406,7 +410,6 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         selectedTime = formatter.string(from: sender.date)
-        print("선택된 시간: \(selectedTime)")
     }
 
     
