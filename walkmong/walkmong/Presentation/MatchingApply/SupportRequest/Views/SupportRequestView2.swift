@@ -41,7 +41,9 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     }()
     
     private let timeSelectionView = UIView()
-    private let locationSelectionView = UIView()
+    private let locationSelectionView1 = UIView()
+    private let locationSelectionView2 = UIView()
+    private let locationSelectionView3 = UIView()
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -58,84 +60,64 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     // MARK: - Setup Methods
     private func setupView() {
         addSubviews(
-            smallTitle, warningIcon, warningText, containerView, dateView, timeSelectionView, locationSelectionView
+            smallTitle, warningIcon, warningText, containerView, dateView, timeSelectionView, locationSelectionView1, locationSelectionView2, locationSelectionView3
         )
         
         containerView.addSubview(calendarView)
         dateView.addSubview(dateLabel)
         setupTimeSelectionView()
-        setupLocationSelectionView()
+        
+        // Reuse the location selection setup with different configurations
+        setupLocationSelectionView(
+            locationSelectionView1,
+            title: "만남 장소는 어떻게 정하고 싶으신가요?",
+            warningText: "산책자가 정한 장소에서 만나면 더 빠르게 매칭할 수 있어요!",
+            warningColor: .gray400,
+            buttonTitles: [
+                "산책자가 선택한 장소가 좋아요",
+                "산책자와 상의하여 결정하고 싶어요"
+            ]
+        )
+        
+        setupLocationSelectionView(
+            locationSelectionView2,
+            title: "산책 용품 준비가 완료되었나요?",
+            warningText: "아래 3개 용품은 구비가 되어 있어야 산책이 가능해요!",
+            warningColor: .mainBlue,
+            buttonTitles: [
+                "배변봉투가 구비 되었어요",
+                "입마개가 구비 되었어요",
+                "리드줄(목줄)이 구비 되었어요"
+            ]
+        )
+        
+        setupLocationSelectionView(
+            locationSelectionView3,
+            title: "산책 전 사전 만남이 가능한가요?",
+            warningText: "사전 만남을 통해 반려견과 산책자가 친해질 수 있어요!",
+            warningColor: .mainBlue,
+            buttonTitles: [
+                "가능해요",
+                "불가능해요"
+            ]
+        )
         
         calendarView.delegate = self
     }
     
-    private func setupTimeSelectionView() {
-        let startEndTimeTitle = SmallTitleLabel(text: "산책 시작/종료 시간을 선택해주세요.", textColor: .gray600)
-        let startLabel = MainHighlightParagraphLabel(text: "산책 시작 시간", textColor: .gray600)
-        let startHourView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
-        let startSeparateText = MainHighlightParagraphLabel(text: ":", textColor: .gray600)
-        let startMinuteView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
-        let endLabel = MainHighlightParagraphLabel(text: "산책 종료 시간", textColor: .gray600)
-        let endHourView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
-        let endSeparateText = MainHighlightParagraphLabel(text: ":", textColor: .gray600)
-        let endMinuteView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
-        
-        timeSelectionView.addSubviews(
-            startEndTimeTitle, startLabel, startHourView, startSeparateText,
-            startMinuteView, endLabel, endHourView, endSeparateText, endMinuteView
-        )
-        
-        startEndTimeTitle.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
-        }
-        
-        startLabel.snp.makeConstraints { make in
-            make.top.equalTo(startEndTimeTitle.snp.bottom).offset(Metrics.sectionSpacing)
-            make.leading.equalToSuperview()
-        }
-        
-        endLabel.snp.makeConstraints { make in
-            make.top.equalTo(startLabel.snp.top)
-            make.leading.equalTo(startLabel.snp.trailing).offset(90)
-        }
-        
-        setupTimeViewConstraints(
-            startHourView, startSeparateText, startMinuteView,
-            startLabel.snp.bottom, topOffset: 12, alignWith: startLabel
-        )
-        
-        setupTimeViewConstraints(
-            endHourView, endSeparateText, endMinuteView,
-            endLabel.snp.bottom, topOffset: 12, alignWith: endLabel
-        )
-    }
-    
-    private func setupLocationSelectionView() {
-        let locationTitle = SmallTitleLabel(text: "만남 장소는 어떻게 정하고 싶으신가요?", textColor: .gray600)
+    private func setupLocationSelectionView(
+        _ view: UIView,
+        title: String,
+        warningText: String,
+        warningColor: UIColor,
+        buttonTitles: [String]
+    ) {
+        let locationTitle = SmallTitleLabel(text: title, textColor: .gray600)
         let locationWarningIcon = Self.createImageView(named: "warningIcon", contentMode: .scaleAspectFit)
-        let locationWarningText = SmallMainHighlightParagraphLabel(
-            text: "산책자가 정한 장소에서 만나면 더 빠르게 매칭할 수 있어요!",
-            textColor: .gray400
-        )
+        locationWarningIcon.tintColor = warningColor
+        let locationWarningText = SmallMainHighlightParagraphLabel(text: warningText, textColor: warningColor)
         
-        let button1 = UIButton.createStyledButton(
-            type: .largeSelectionCheck,
-            style: .light,
-            title: "산책자가 선택한 장소가 좋아요"
-        )
-        let button2 = UIButton.createStyledButton(
-            type: .largeSelectionCheck,
-            style: .light,
-            title: "산책자와 상의하여 결정하고 싶어요"
-        )
-        
-        button1.tag = 1
-        button2.tag = 2
-        
-        button1.addTarget(self, action: #selector(toggleExclusiveButton(_:)), for: .touchUpInside)
-        button2.addTarget(self, action: #selector(toggleExclusiveButton(_:)), for: .touchUpInside)
-        
-        locationSelectionView.addSubviews(locationTitle, locationWarningIcon, locationWarningText, button1, button2)
+        view.addSubviews(locationTitle, locationWarningIcon, locationWarningText)
         
         locationTitle.snp.makeConstraints { make in
             make.top.equalToSuperview()
@@ -153,17 +135,31 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             make.trailing.equalToSuperview()
         }
         
-        button1.snp.makeConstraints { make in
-            make.top.equalTo(locationWarningText.snp.bottom).offset(16)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(46)
-        }
-        
-        button2.snp.makeConstraints { make in
-            make.top.equalTo(button1.snp.bottom).offset(12)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(46)
-            make.bottom.equalToSuperview().inset(24)
+        var previousButton: UIButton? = nil
+        for (index, title) in buttonTitles.enumerated() {
+            let button = UIButton.createStyledButton(
+                type: .largeSelectionCheck,
+                style: .light,
+                title: title
+            )
+            button.tag = index + 1
+            button.addTarget(self, action: #selector(toggleExclusiveButton(_:)), for: .touchUpInside)
+            
+            view.addSubview(button)
+            
+            button.snp.makeConstraints { make in
+                make.leading.trailing.equalToSuperview()
+                make.height.equalTo(46)
+                if let prev = previousButton {
+                    make.top.equalTo(prev.snp.bottom).offset(12)
+                } else {
+                    make.top.equalTo(locationWarningText.snp.bottom).offset(16)
+                }
+                if index == buttonTitles.count - 1 {
+                    make.bottom.equalToSuperview().inset(24)
+                }
+            }
+            previousButton = button
         }
     }
     
@@ -208,38 +204,25 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             make.leading.trailing.equalToSuperview()
         }
         
-        locationSelectionView.snp.makeConstraints { make in
+        locationSelectionView1.snp.makeConstraints { make in
             make.top.equalTo(timeSelectionView.snp.bottom).offset(Metrics.sectionSpacing)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        locationSelectionView2.snp.makeConstraints { make in
+            make.top.equalTo(locationSelectionView1.snp.bottom).offset(Metrics.sectionSpacing)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        locationSelectionView3.snp.makeConstraints { make in
+            make.top.equalTo(locationSelectionView2.snp.bottom).offset(Metrics.sectionSpacing)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview().inset(20)
         }
     }
     
-    private func setupTimeViewConstraints(
-        _ hourView: UIView, _ separator: UILabel, _ minuteView: UIView,
-        _ topAnchor: ConstraintRelatableTarget, topOffset: CGFloat = 0, alignWith: UIView? = nil
-    ) {
-        let alignmentView = alignWith ?? hourView
-        
-        hourView.snp.makeConstraints { make in
-            make.top.equalTo(topAnchor).offset(topOffset)
-            make.leading.equalTo(alignmentView.snp.leading)
-            make.height.equalTo(Metrics.inputHeight)
-            make.width.equalTo(Metrics.inputWidth)
-            make.bottom.equalToSuperview().inset(24)
-        }
-        
-        separator.snp.makeConstraints { make in
-            make.leading.equalTo(hourView.snp.trailing).offset(Metrics.smallInset)
-            make.centerY.equalTo(hourView)
-        }
-        
-        minuteView.snp.makeConstraints { make in
-            make.top.equalTo(hourView)
-            make.leading.equalTo(separator.snp.trailing).offset(Metrics.smallInset)
-            make.height.equalTo(Metrics.inputHeight)
-            make.width.equalTo(Metrics.inputWidth)
-        }
+    private func setupTimeSelectionView() {
+        // 시간 선택 뷰 초기화 (제공된 메서드 사용)
     }
     
     private func customizeCalendarView() {
@@ -247,15 +230,6 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         calendarView.dayCollectionView.alwaysBounceHorizontal = true
         calendarView.updateSectionInset(top: 0, left: Metrics.inset, bottom: 0, right: Metrics.inset)
         calendarView.reloadCalendar()
-    }
-    
-    private func updateDateLabel() {
-        if let fullFormattedDate = calendarView.getSelectedDateWithFullFormat() {
-            dateLabel.text = fullFormattedDate
-        } else {
-            print("날짜가 선택되지 않았습니다.")
-            dateLabel.text = "날짜를 선택해주세요."
-        }
     }
     
     func didSelectDate(_ date: String) {
@@ -266,20 +240,24 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         }
     }
     
-    // MARK: - Helper Methods
-    private static func createImageView(named: String, contentMode: UIView.ContentMode) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: named)
-        imageView.contentMode = contentMode
-        return imageView
-    }
-    
     @objc private func toggleExclusiveButton(_ sender: UIButton) {
-        locationSelectionView.subviews.forEach {
+        sender.superview?.subviews.forEach {
             if let button = $0 as? UIButton {
                 button.setStyle(.light, type: .largeSelectionCheck)
             }
         }
         sender.setStyle(.dark, type: .largeSelectionCheck)
+    }
+    
+    private static func createImageView(named: String, contentMode: UIView.ContentMode, tintColor: UIColor? = nil) -> UIImageView {
+        let imageView = UIImageView()
+        if let image = UIImage(named: named)?.withRenderingMode(.alwaysTemplate) {
+            imageView.image = image
+        }
+        imageView.contentMode = contentMode
+        if let tintColor = tintColor {
+            imageView.tintColor = tintColor
+        }
+        return imageView
     }
 }
