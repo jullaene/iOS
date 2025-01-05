@@ -34,7 +34,7 @@ final class SupportRequestView: UIView {
         return imageView
     }()
     
-    private let checkBoxText: UILabel = {
+    let checkBoxText: UILabel = {
         let label = MainHighlightParagraphLabel(text: "주의사항을 모두 확인했습니다.", textColor: .gray500)
         label.isUserInteractionEnabled = true
         return label
@@ -129,6 +129,10 @@ final class SupportRequestView: UIView {
 
     func hideWarningSection() {
         warningBackgroundView.isHidden = true
+    }
+    
+    func updateWarningText(_ text: String) {
+        checkBoxText.text = text
     }
     
     func updateContentView(with additionalView: UIView) {
