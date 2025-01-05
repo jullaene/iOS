@@ -67,6 +67,8 @@ final class SupportRequestView3: UIView {
     private let setView2 = UIView()
     private let setView3 = UIView()
     
+    private let sendMessage = SmallTitleLabel(text: "산책자에게 전달할 메시지", textColor: .gray600)
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupSubviews()
@@ -85,7 +87,8 @@ final class SupportRequestView3: UIView {
                     planEndInformationView,
                     setView1,
                     setView2,
-                    setView3)
+                    setView3,
+                    sendMessage)
         planStartInformationView.addSubviews(planStartLabel, planStartDateLabel)
         planEndInformationView.addSubviews(planEndLabel, planEndDateLabel)
         profileContainerView.addSubview(profileInformationView)
@@ -178,6 +181,42 @@ final class SupportRequestView3: UIView {
             make.top.equalTo(setView2.snp.bottom).offset(48)
             make.leading.trailing.equalToSuperview()
         }
+        
+        sendMessage.snp.makeConstraints { make in
+            make.top.equalTo(setView3.snp.bottom).offset(48)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        let sectionView1 = createSectionView(
+            titleText: "산책 요청 사항(필수)",
+            contentText: "으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아 으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"
+        )
+        addSubview(sectionView1)
+        sectionView1.snp.makeConstraints { make in
+            make.top.equalTo(sendMessage.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        let sectionView2 = createSectionView(
+            titleText: "산책 유의 사항(필수)",
+            contentText: "으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아 으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"
+        )
+        addSubview(sectionView2)
+        sectionView2.snp.makeConstraints { make in
+            make.top.equalTo(sectionView1.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        let sectionView3 = createSectionView(
+            titleText: "추가 안내 사항(선택)",
+            contentText: "으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아 으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"
+        )
+        addSubview(sectionView3)
+        sectionView3.snp.makeConstraints { make in
+            make.top.equalTo(sectionView2.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().inset(90)
+        }
     }
     
     private func setupLocationSelectionView(
@@ -264,6 +303,41 @@ final class SupportRequestView3: UIView {
             imageView.tintColor = tintColor
         }
         return imageView
+    }
+    
+    private func createSectionView(titleText: String, contentText: String) -> UIView {
+        let containerView = UIView()
+
+        let titleLabel = MainHighlightParagraphLabel(text: titleText, textColor: .gray600)
+        containerView.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+        }
+
+        let whiteBackgroundView = UIView()
+        whiteBackgroundView.backgroundColor = .white
+        whiteBackgroundView.layer.cornerRadius = 5
+        whiteBackgroundView.clipsToBounds = true
+        containerView.addSubview(whiteBackgroundView)
+        whiteBackgroundView.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+
+        let contentLabel = MainParagraphLabel(text: contentText, textColor: .gray500)
+        contentLabel.numberOfLines = 0
+        contentLabel.lineBreakMode = .byWordWrapping
+        contentLabel.textAlignment = .left
+        
+        whiteBackgroundView.addSubview(contentLabel)
+        contentLabel.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview().inset(12)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+
+        return containerView
     }
     
     private func configureView() {
