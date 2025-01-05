@@ -48,6 +48,12 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     }()
     
     private let timeSelectionView = UIView()
+    private let startHourLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
+    private let startMinuteLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
+    private let endHourLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
+    private let endMinuteLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
+    private var selectedTime: String = ""
+    
     private let selectionView1 = UIView()
     private let selectionView2 = UIView()
     private let selectionView3 = UIView()
@@ -237,6 +243,26 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         let endHourView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
         let endSeparateText = MainHighlightParagraphLabel(text: ":", textColor: .gray600)
         let endMinuteView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
+
+        addTimePickerGesture(to: startHourView, timeLabel: startHourLabel, isStartTime: true)
+        addTimePickerGesture(to: startMinuteView, timeLabel: startMinuteLabel, isStartTime: true)
+        addTimePickerGesture(to: endHourView, timeLabel: endHourLabel, isStartTime: false)
+        addTimePickerGesture(to: endMinuteView, timeLabel: endMinuteLabel, isStartTime: false)
+        
+        startHourView.tag = 1
+        startMinuteView.tag = 2
+        endHourView.tag = 3
+        endMinuteView.tag = 4
+        
+        startHourView.addSubview(startHourLabel)
+        startMinuteView.addSubview(startMinuteLabel)
+        endHourView.addSubview(endHourLabel)
+        endMinuteView.addSubview(endMinuteLabel)
+        
+        addTimePickerGesture(to: startHourView, timeLabel: startLabel, isStartTime: true)
+        addTimePickerGesture(to: startMinuteView, timeLabel: startLabel, isStartTime: true)
+        addTimePickerGesture(to: endHourView, timeLabel: endLabel, isStartTime: false)
+        addTimePickerGesture(to: endMinuteView, timeLabel: endLabel, isStartTime: false)
         
         timeSelectionView.addSubviews(
             startEndTimeTitle, startLabel, startHourView, startSeparateText,
@@ -266,7 +292,119 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             endHourView, endSeparateText, endMinuteView,
             endLabel.snp.bottom, topOffset: 12, alignWith: endLabel
         )
+        
+        startHourView.addSubview(startHourLabel)
+        startHourLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        startMinuteView.addSubview(startMinuteLabel)
+        startMinuteLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        endHourView.addSubview(endHourLabel)
+        endHourLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        endMinuteView.addSubview(endMinuteLabel)
+        endMinuteLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
+
+    private func addTimePickerGesture(to view: UIView, timeLabel: UILabel, isStartTime: Bool) {
+        let tapGesture = UITapGestureRecognizer(target: self, action: isStartTime ? #selector(didTapStartTimeView(_:)) : #selector(didTapEndTimeView(_:)))
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func didTapStartTimeView(_ sender: UITapGestureRecognizer) {
+        guard let view = sender.view else { return }
+        showTimePicker(for: view)
+    }
+
+    @objc private func didTapEndTimeView(_ sender: UITapGestureRecognizer) {
+        guard let view = sender.view else { return }
+        showTimePicker(for: view)
+    }
+
+    private func showTimePicker(for view: UIView) {
+        let overlayView = UIView()
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        overlayView.frame = UIScreen.main.bounds
+        overlayView.tag = 999
+        
+        let timePickerContainer = UIView()
+        timePickerContainer.backgroundColor = .white
+        timePickerContainer.layer.cornerRadius = 10
+        timePickerContainer.clipsToBounds = true
+        
+        let timePicker = UIDatePicker()
+        timePicker.datePickerMode = .time
+        timePicker.preferredDatePickerStyle = .wheels
+        timePicker.locale = Locale(identifier: "ko_KR")
+        timePicker.calendar = Calendar(identifier: .gregorian)
+        timePicker.timeZone = TimeZone.current
+        
+        let confirmButton = UIButton(type: .system)
+        confirmButton.setTitle("확인", for: .normal)
+        confirmButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        confirmButton.addTarget(self, action: #selector(dismissTimePicker(_:)), for: .touchUpInside)
+        
+        confirmButton.tag = view.tag
+        
+        UIApplication.shared.keyWindow?.addSubview(overlayView)
+        overlayView.addSubview(timePickerContainer)
+        timePickerContainer.addSubview(timePicker)
+        timePickerContainer.addSubview(confirmButton)
+        
+        timePickerContainer.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalTo(300)
+            make.height.equalTo(250)
+        }
+        
+        timePicker.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(16)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        confirmButton.snp.makeConstraints { make in
+            make.top.equalTo(timePicker.snp.bottom).offset(8)
+            make.trailing.equalToSuperview().offset(-16)
+            make.bottom.equalToSuperview().offset(-16)
+        }
+        
+        timePicker.addTarget(self, action: #selector(handleTimePickerValueChange(_:)), for: .valueChanged)
+    }
+
+    @objc private func dismissTimePicker(_ sender: UIButton) {
+        if let overlayView = UIApplication.shared.keyWindow?.viewWithTag(999) {
+            overlayView.removeFromSuperview()
+        }
+
+        switch sender.tag {
+        case 1: // Start Hour
+            startHourLabel.text = selectedTime.split(separator: ":").first.map { String($0) }
+        case 2: // Start Minute
+            startMinuteLabel.text = selectedTime.split(separator: ":").last.map { String($0) }
+        case 3: // End Hour
+            endHourLabel.text = selectedTime.split(separator: ":").first.map { String($0) }
+        case 4: // End Minute
+            endMinuteLabel.text = selectedTime.split(separator: ":").last.map { String($0) }
+        default:
+            break
+        }
+    }
+
+    @objc private func handleTimePickerValueChange(_ sender: UIDatePicker) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        selectedTime = formatter.string(from: sender.date)
+        print("선택된 시간: \(selectedTime)")
+    }
+
     
     private func setupTimeViewConstraints(
         _ hourView: UIView, _ separator: UILabel, _ minuteView: UIView,
@@ -293,6 +431,44 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             make.height.equalTo(Metrics.inputHeight)
             make.width.equalTo(Metrics.inputWidth)
         }
+    }
+    
+    private func setupTimePicker(for view: UIView, isStartTime: Bool) {
+        let timePicker = UIDatePicker()
+        timePicker.datePickerMode = .time
+        timePicker.preferredDatePickerStyle = .wheels
+        timePicker.locale = Locale(identifier: "ko_KR")
+        
+        timePicker.date = isStartTime ? Date() : Date().addingTimeInterval(60 * 60)
+    
+        timePicker.addTarget(self, action: #selector(timePickerValueChanged(_:)), for: .valueChanged)
+        
+        view.addSubview(timePicker)
+        
+        timePicker.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        let hourLabel = MainHighlightParagraphLabel(text: "00", textColor: .gray600)
+        let minuteLabel = MainHighlightParagraphLabel(text: "00", textColor: .gray600)
+        view.addSubviews(hourLabel, minuteLabel)
+        
+        hourLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.leading.equalTo(view).offset(8)
+        }
+        
+        minuteLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(hourLabel)
+            make.leading.equalTo(hourLabel.snp.trailing).offset(4)
+        }
+    }
+
+    @objc private func timePickerValueChanged(_ sender: UIDatePicker) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        let formattedTime = formatter.string(from: sender.date)
+        print("선택된 시간: \(formattedTime)")
     }
     
     private func customizeCalendarView() {
