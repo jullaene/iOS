@@ -64,6 +64,8 @@ final class SupportRequestView3: UIView {
     }()
     
     private let setView1 = UIView()
+    private let setView2 = UIView()
+    private let setView3 = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -81,7 +83,9 @@ final class SupportRequestView3: UIView {
                     planTitleLabel,
                     planStartInformationView,
                     planEndInformationView,
-                    setView1)
+                    setView1,
+                    setView2,
+                    setView3)
         planStartInformationView.addSubviews(planStartLabel, planStartDateLabel)
         planEndInformationView.addSubviews(planEndLabel, planEndDateLabel)
         profileContainerView.addSubview(profileInformationView)
@@ -149,7 +153,30 @@ final class SupportRequestView3: UIView {
         setView1.snp.makeConstraints { make in
             make.top.equalTo(planStartInformationView.snp.bottom).offset(48)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview().inset(200)
+        }
+        
+        setupLocationSelectionView(
+            setView2,
+            title: "산책 용품 제공",
+            warningText: nil,
+            warningColor: nil,
+            centerLabelText: "배변봉투, 입마개, 리드줄(목줄)을 제공 가능해요")
+        
+        setView2.snp.makeConstraints { make in
+            make.top.equalTo(setView1.snp.bottom).offset(48)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        setupLocationSelectionView(
+            setView3,
+            title: "사전 만남",
+            warningText: "매칭 확정 후 산책자와 상의하여 사전 만남을 진행해 주세요",
+            warningColor: .mainBlue,
+            centerLabelText: "산책일 전 사전 만남이 가능해요")
+        
+        setView3.snp.makeConstraints { make in
+            make.top.equalTo(setView2.snp.bottom).offset(48)
+            make.leading.trailing.equalToSuperview()
         }
     }
     
@@ -161,30 +188,22 @@ final class SupportRequestView3: UIView {
         centerLabelText: String
     ) {
         let locationTitle = SmallTitleLabel(text: title, textColor: .gray600)
-        locationTitle.translatesAutoresizingMaskIntoConstraints = false
-
         let locationWarningIcon: UIImageView? = {
             guard let warningColor = warningColor else { return nil }
             let icon = Self.createImageView(named: "warningIcon", contentMode: .scaleAspectFit)
             icon.tintColor = warningColor
-            icon.translatesAutoresizingMaskIntoConstraints = false
             return icon
         }()
 
         let locationWarningText: UILabel? = {
             guard let text = warningText else { return nil }
-            let label = SmallMainHighlightParagraphLabel(text: text, textColor: warningColor ?? .gray400)
-            label.translatesAutoresizingMaskIntoConstraints = false
-            return label
+            return SmallMainHighlightParagraphLabel(text: text, textColor: warningColor ?? .gray400)
         }()
 
-        let whiteBackgroundView: UIView = {
-            let view = UIView()
-            view.backgroundColor = .white
-            view.layer.cornerRadius = 5
-            view.clipsToBounds = true
-            return view
-        }()
+        let whiteBackgroundView = UIView()
+        whiteBackgroundView.backgroundColor = .white
+        whiteBackgroundView.layer.cornerRadius = 5
+        whiteBackgroundView.clipsToBounds = true
 
         let centerLabel = MainParagraphLabel(text: centerLabelText, textColor: .gray500)
 
@@ -208,6 +227,7 @@ final class SupportRequestView3: UIView {
                 make.top.equalTo(locationTitle.snp.bottom).offset(4)
                 make.leading.equalToSuperview()
             }
+
             warningLabel.snp.makeConstraints { make in
                 make.centerY.equalTo(icon.snp.centerY)
                 make.leading.equalTo(icon.snp.trailing).offset(4)
@@ -215,9 +235,17 @@ final class SupportRequestView3: UIView {
             }
 
             whiteBackgroundView.snp.makeConstraints { make in
-                make.top.equalTo(locationWarningIcon?.snp.bottom ?? locationTitle.snp.bottom).offset(16)
+                make.top.equalTo(icon.snp.bottom).offset(16)
                 make.leading.trailing.equalToSuperview()
                 make.height.equalTo(46)
+                make.bottom.equalToSuperview()
+            }
+        } else {
+            whiteBackgroundView.snp.makeConstraints { make in
+                make.top.equalTo(locationTitle.snp.bottom).offset(16)
+                make.leading.trailing.equalToSuperview()
+                make.height.equalTo(46)
+                make.bottom.equalToSuperview()
             }
         }
 
