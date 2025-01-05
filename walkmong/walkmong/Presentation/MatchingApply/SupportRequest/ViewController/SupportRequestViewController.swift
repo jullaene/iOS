@@ -14,8 +14,8 @@ struct StepData {
     let backgroundColor: UIColor
 }
 
-final class SupportRequestViewController: UIViewController, SupportRequestView1Delegate, SupportRequestView2Delegate {
-    
+final class SupportRequestViewController: UIViewController, UIScrollViewDelegate, SupportRequestView1Delegate, SupportRequestView2Delegate {
+
     private let supportRequestView = SupportRequestView()
     private var currentStep: Int = 1
     private let totalSteps: Int = 5
@@ -53,6 +53,31 @@ final class SupportRequestViewController: UIViewController, SupportRequestView1D
         )
     ]
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow(_:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide(_:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let tabBarController = self.tabBarController as? MainTabBarController {
+            tabBarController.tabBar.isHidden = false
+        }
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
     override func loadView() {
         super.loadView()
         self.view = supportRequestView
@@ -64,6 +89,8 @@ final class SupportRequestViewController: UIViewController, SupportRequestView1D
         setupActions()
         updateViewForCurrentStep()
         configureActionsForStep(currentStep)
+        setupDismissKeyboardGesture()
+        supportRequestView.scrollView.delegate = self
         if let step1View = stepData[0].additionalView as? SupportRequestView1 {
             step1View.delegate = self
         }
@@ -155,6 +182,8 @@ final class SupportRequestViewController: UIViewController, SupportRequestView1D
             configureStep1Actions()
         case 2:
             configureStep2Actions()
+        case 3:
+            configureStep3Actions()
         default:
             break
         }
@@ -182,6 +211,17 @@ final class SupportRequestViewController: UIViewController, SupportRequestView1D
         
         step2View.calendarView.reloadCalendar()
         step2View.delegate = self
+    }
+    
+    private func configureStep3Actions() {
+        guard let step3View = stepData[2].additionalView as? SupportRequestView3 else { return }
+
+        updateActionButtonState(isEnabled: false, style: .light)
+
+        step3View.textViewDidUpdate = { [weak self] isAllRequiredFieldsFilled in
+            guard let self = self else { return }
+            self.updateActionButtonState(isEnabled: isAllRequiredFieldsFilled, style: isAllRequiredFieldsFilled ? .dark : .light)
+        }
     }
     
     private func configurePetCellActions(for petCell: PetProfileCell) {
@@ -219,12 +259,33 @@ final class SupportRequestViewController: UIViewController, SupportRequestView1D
         supportRequestView.actionButton.setStyle(isEnabled ? .dark : .light, type: .large)
     }
     
-    // MARK: - Navigation and Lifecycle
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if let tabBarController = self.tabBarController as? MainTabBarController {
-            tabBarController.tabBar.isHidden = false
+    private func setupDismissKeyboardGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismisskeyboard))
+        supportRequestView.scrollView.addGestureRecognizer(tapGesture)
+        tapGesture.cancelsTouchesInView = false
+    }
+
+    @objc private func dismisskeyboard() {
+        view.endEditing(true)
+    }
+    
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
         }
+        let keyboardHeight = keyboardFrame.height
+
+        supportRequestView.scrollView.contentInset.bottom = keyboardHeight + 20
+        supportRequestView.scrollView.scrollIndicatorInsets.bottom = keyboardHeight + 20
+    }
+
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        supportRequestView.scrollView.contentInset.bottom = 0
+        supportRequestView.scrollView.scrollIndicatorInsets.bottom = 0
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        view.endEditing(true)
     }
 }
