@@ -117,11 +117,13 @@ final class SupportRequestViewController: UIViewController {
         }
         
         supportRequestView.contentView.addSubview(additionalView)
+        
         additionalView.snp.makeConstraints { make in
             make.top.equalTo(supportRequestView.middleTitleLabel.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview()
+            make.bottom.lessThanOrEqualToSuperview()
         }
+
     }
     
     private func configureActionsForStep(_ step: Int) {

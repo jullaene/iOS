@@ -32,7 +32,13 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     private let containerView = UIView()
     let calendarView = CalendarView()
     private let dateView = UIView.createRoundedView(backgroundColor: .gray200, cornerRadius: Metrics.cornerRadius)
-    private let dateLabel = SmallTitleLabel(text: "dateLabel", textColor: .gray600)
+    private let dateLabel: SmallTitleLabel = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 MM월 dd일 (EEE)"
+        formatter.locale = Locale(identifier: "ko_KR")
+        let currentDate = formatter.string(from: Date())
+        return SmallTitleLabel(text: currentDate, textColor: .gray600)
+    }()
     
     private let timeSelectionView = UIView()
     private let locationSelectionView = UIView()
@@ -57,7 +63,6 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         
         containerView.addSubview(calendarView)
         dateView.addSubview(dateLabel)
-        
         setupTimeSelectionView()
         setupLocationSelectionView()
         
@@ -106,7 +111,31 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     }
     
     private func setupLocationSelectionView() {
-        // LocationSelectionView 관련 뷰 생성 및 제약 조건 설정 추가
+        let locationTitle = SmallTitleLabel(text: "만남 장소는 어떻게 정하고 싶으신가요?", textColor: .gray600)
+        let locationWarningIcon = Self.createImageView(named: "warningIcon", contentMode: .scaleAspectFit)
+        let locationWarningText = SmallMainHighlightParagraphLabel(
+            text: "산책자가 정한 장소에서 만나면 더 빠르게 매칭할 수 있어요!",
+            textColor: .gray400
+        )
+        
+        // LocationSelectionView에 추가
+        locationSelectionView.addSubviews(locationTitle, locationWarningIcon, locationWarningText)
+        
+        locationTitle.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+        }
+        
+        locationWarningIcon.snp.makeConstraints { make in
+            make.top.equalTo(locationTitle.snp.bottom).offset(Metrics.smallInset)
+            make.leading.equalToSuperview()
+        }
+        
+        locationWarningText.snp.makeConstraints { make in
+            make.centerY.equalTo(locationWarningIcon.snp.centerY)
+            make.leading.equalTo(locationWarningIcon.snp.trailing).offset(Metrics.smallInset)
+            make.trailing.equalToSuperview()
+        }
     }
     
     private func setupConstraints() {
@@ -153,6 +182,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         locationSelectionView.snp.makeConstraints { make in
             make.top.equalTo(timeSelectionView.snp.bottom).offset(Metrics.sectionSpacing)
             make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().inset(60)
         }
     }
     
@@ -167,6 +197,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             make.leading.equalTo(alignmentView.snp.leading)
             make.height.equalTo(Metrics.inputHeight)
             make.width.equalTo(Metrics.inputWidth)
+            make.bottom.equalToSuperview().inset(24)
         }
         
         separator.snp.makeConstraints { make in
@@ -190,21 +221,19 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     }
     
     private func updateDateLabel() {
-        if let selectedDate = calendarView.getSelectedDate() {
-            dateLabel.text = selectedDate
+        if let fullFormattedDate = calendarView.getSelectedDateWithFullFormat() {
+            dateLabel.text = fullFormattedDate
         } else {
-            print("No date selected.")
+            print("날짜가 선택되지 않았습니다.")
             dateLabel.text = "날짜를 선택해주세요."
         }
     }
     
     func didSelectDate(_ date: String) {
-        print("didSelectDate called with date: \(date)")
         if let fullFormattedDate = calendarView.getSelectedDateWithFullFormat() {
             dateLabel.text = fullFormattedDate
-            print("dateLabel updated to: \(fullFormattedDate)")
         } else {
-            print("Failed to get full formatted date.")
+            print("전체 형식 날짜를 가져오지 못했습니다.")
         }
     }
     

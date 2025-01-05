@@ -50,6 +50,7 @@ final class SupportRequestView: UIView {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
+            make.height.greaterThanOrEqualToSuperview()
         }
 
         middleTitleLabel.snp.makeConstraints { make in
