@@ -118,7 +118,6 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("didSelectItemAt called with indexPath: \(indexPath)") // 로그 추가
 
         guard selectedIndexPath != indexPath else { return }
         updateSelection(from: selectedIndexPath, to: indexPath)
@@ -126,9 +125,7 @@ extension CalendarView: UICollectionViewDataSource, UICollectionViewDelegate {
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         
         if let selectedDate = getSelectedDate() {
-            print("Selected date: \(selectedDate)") // 로그 추가
             delegate?.didSelectDate(selectedDate)
-            print("Delegate's didSelectDate method called.") // 로그 추가
         }
     }
     
