@@ -18,7 +18,7 @@ final class SupportRequestViewController: UIViewController, SupportRequestView1D
     
     private let supportRequestView = SupportRequestView()
     private var currentStep: Int = 1
-    private let totalSteps: Int = 4
+    private let totalSteps: Int = 5
     
     private let stepData: [StepData] = [
         StepData(
@@ -34,15 +34,21 @@ final class SupportRequestViewController: UIViewController, SupportRequestView1D
             backgroundColor: .white
         ),
         StepData(
-            middleTitle: "산책 요청 최종 확인",
+            middleTitle: "산책자에게 전달할 메시지",
             buttonText: "다음으로",
             additionalView: SupportRequestView3(),
+            backgroundColor: .white
+        ),
+        StepData(
+            middleTitle: "산책 요청 최종 확인",
+            buttonText: "다음으로",
+            additionalView: SupportRequestView4(),
             backgroundColor: .gray100
         ),
         StepData(
             middleTitle: "주의사항 확인",
             buttonText: "산책 지원하기",
-            additionalView: SupportRequestView4(),
+            additionalView: SupportRequestView5(),
             backgroundColor: .gray100
         )
     ]
