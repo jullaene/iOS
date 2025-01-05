@@ -9,7 +9,12 @@ import UIKit
 import SnapKit
 import Kingfisher
 
+protocol SupportRequestView1Delegate: AnyObject {
+    func didTapProfileButton(for profile: PetProfile)
+}
+
 final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    weak var delegate: SupportRequestView1Delegate?
     
     // MARK: - Properties
     private let profiles: [PetProfile] = [
@@ -88,25 +93,29 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PetProfileCell", for: indexPath) as! PetProfileCell
-
+        
         if indexPath.item < profiles.count {
             let profile = profiles[indexPath.item]
             cell.configure(with: profile)
             
-            if indexPath == selectedIndexPath {
-                cell.setSelectedStyle()
-            } else {
-                cell.setDefaultStyle()
+            cell.didTapProfileButton = { [weak self] in
+                guard let self = self else { return }
+                print("프로필 버튼 클릭: \(profile.name)")
+                self.delegate?.didTapProfileButton(for: profile) // 델리게이트 호출로 뷰 컨트롤러에 이벤트 전달
             }
         } else {
             cell.configureAsAddPet()
         }
-
+        
         return cell
     }
     
     // MARK: - UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == profiles.count {
+            return
+        }
+        
         if let previousIndexPath = selectedIndexPath {
             let previousCell = collectionView.cellForItem(at: previousIndexPath) as? PetProfileCell
             previousCell?.setDefaultStyle()
@@ -116,6 +125,7 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
         selectedCell?.setSelectedStyle()
         
         selectedIndexPath = indexPath
+        
         onDogSelected?(true)
     }
     

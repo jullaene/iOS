@@ -14,7 +14,7 @@ struct StepData {
     let backgroundColor: UIColor
 }
 
-final class SupportRequestViewController: UIViewController, SupportRequestView2Delegate {
+final class SupportRequestViewController: UIViewController, SupportRequestView1Delegate, SupportRequestView2Delegate {
     
     private let supportRequestView = SupportRequestView()
     private var currentStep: Int = 1
@@ -58,6 +58,9 @@ final class SupportRequestViewController: UIViewController, SupportRequestView2D
         setupActions()
         updateViewForCurrentStep()
         configureActionsForStep(currentStep)
+        if let step1View = stepData[0].additionalView as? SupportRequestView1 {
+            step1View.delegate = self
+        }
     }
     
     // MARK: - UI Setup
@@ -153,16 +156,18 @@ final class SupportRequestViewController: UIViewController, SupportRequestView2D
     
     private func configureStep1Actions() {
         guard let step1View = stepData[0].additionalView as? SupportRequestView1 else { return }
-        
-        step1View.collectionView.visibleCells.forEach { cell in
-            if let petCell = cell as? PetProfileCell {
-                configurePetCellActions(for: petCell)
-            }
-        }
-        
+
         step1View.onDogSelected = { [weak self] isDogSelected in
             guard let self = self else { return }
-            self.updateActionButtonState(isEnabled: isDogSelected, style: isDogSelected ? .dark : .light)
+            
+            if isDogSelected {
+                print("반려견이 선택되었습니다.")
+                self.updateActionButtonState(isEnabled: true, style: .dark)
+            } else {
+                print("DogProfileViewController로 이동합니다.")
+                let profileVC = DogProfileViewController()
+                self.navigationController?.pushViewController(profileVC, animated: true)
+            }
         }
     }
     
@@ -187,6 +192,13 @@ final class SupportRequestViewController: UIViewController, SupportRequestView2D
             // let registerVC = RegisterPetViewController()
             // self.navigationController?.pushViewController(registerVC, animated: true)
         }
+        
+    }
+    
+    func didTapProfileButton(for profile: PetProfile) {
+        print("프로필 버튼 클릭: \(profile.name)")
+        let profileVC = DogProfileViewController()
+        navigationController?.pushViewController(profileVC, animated: true)
     }
     
     // MARK: - Action Button Updates
