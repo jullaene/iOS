@@ -8,7 +8,17 @@
 import UIKit
 import SnapKit
 
+protocol SupportRequestView2Delegate: AnyObject {
+    func updateActionButtonState(isEnabled: Bool)
+}
+
 final class SupportRequestView2: UIView, CalendarViewDelegate {
+    
+    private var isStartTimeSelected: Bool = false
+    private var isEndTimeSelected: Bool = false
+    private var isSelection1Complete: Bool = false
+    private var isSelection2Complete: Bool = false
+    private var isSelection3Complete: Bool = false
     
     // MARK: - Constants
     private enum Metrics {
@@ -58,12 +68,15 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     private let selectionView2 = UIView()
     private let selectionView3 = UIView()
     
+    weak var delegate: SupportRequestView2Delegate?
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
         setupConstraints()
         customizeCalendarView()
+        delegate?.updateActionButtonState(isEnabled: false)
     }
     
     required init?(coder: NSCoder) {
@@ -115,6 +128,8 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         )
         
         calendarView.delegate = self
+        
+        setupSelectionActions()
     }
     
     private func setupLocationSelectionView(
@@ -243,7 +258,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         let endHourView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
         let endSeparateText = MainHighlightParagraphLabel(text: ":", textColor: .gray600)
         let endMinuteView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: Metrics.smallCornerRadius)
-
+        
         addTimePickerGesture(to: startHourView, timeLabel: startHourLabel, isStartTime: true)
         addTimePickerGesture(to: startMinuteView, timeLabel: startMinuteLabel, isStartTime: true)
         addTimePickerGesture(to: endHourView, timeLabel: endHourLabel, isStartTime: false)
@@ -258,11 +273,11 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         startMinuteView.addSubview(startMinuteLabel)
         endHourView.addSubview(endHourLabel)
         endMinuteView.addSubview(endMinuteLabel)
-        
-        addTimePickerGesture(to: startHourView, timeLabel: startLabel, isStartTime: true)
-        addTimePickerGesture(to: startMinuteView, timeLabel: startLabel, isStartTime: true)
-        addTimePickerGesture(to: endHourView, timeLabel: endLabel, isStartTime: false)
-        addTimePickerGesture(to: endMinuteView, timeLabel: endLabel, isStartTime: false)
+    
+        addTimePickerGesture(to: startHourView, timeLabel: startHourLabel, isStartTime: true)
+        addTimePickerGesture(to: startMinuteView, timeLabel: startMinuteLabel, isStartTime: true)
+        addTimePickerGesture(to: endHourView, timeLabel: endHourLabel, isStartTime: false)
+        addTimePickerGesture(to: endMinuteView, timeLabel: endMinuteLabel, isStartTime: false)
         
         timeSelectionView.addSubviews(
             startEndTimeTitle, startLabel, startHourView, startSeparateText,
@@ -297,38 +312,38 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         startHourLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
+        
         startMinuteView.addSubview(startMinuteLabel)
         startMinuteLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
+        
         endHourView.addSubview(endHourLabel)
         endHourLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
+        
         endMinuteView.addSubview(endMinuteLabel)
         endMinuteLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
     }
-
+    
     private func addTimePickerGesture(to view: UIView, timeLabel: UILabel, isStartTime: Bool) {
         let tapGesture = UITapGestureRecognizer(target: self, action: isStartTime ? #selector(didTapStartTimeView(_:)) : #selector(didTapEndTimeView(_:)))
         view.addGestureRecognizer(tapGesture)
     }
-
+    
     @objc private func didTapStartTimeView(_ sender: UITapGestureRecognizer) {
         guard let view = sender.view else { return }
         showTimePicker(for: view)
     }
-
+    
     @objc private func didTapEndTimeView(_ sender: UITapGestureRecognizer) {
         guard let view = sender.view else { return }
         showTimePicker(for: view)
     }
-
+    
     private func showTimePicker(for view: UIView) {
         let overlayView = UIView()
         overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -382,7 +397,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         
         timePicker.addTarget(self, action: #selector(handleTimePickerValueChange(_:)), for: .valueChanged)
     }
-
+    
     @objc private func dismissTimePicker(_ sender: UIButton) {
         if let overlayView = UIApplication.shared.keyWindow?.viewWithTag(999) {
             overlayView.removeFromSuperview()
@@ -405,13 +420,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             break
         }
     }
-
-    @objc private func handleTimePickerValueChange(_ sender: UIDatePicker) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        selectedTime = formatter.string(from: sender.date)
-    }
-
+    
     
     private func setupTimeViewConstraints(
         _ hourView: UIView, _ separator: UILabel, _ minuteView: UIView,
@@ -447,7 +456,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         timePicker.locale = Locale(identifier: "ko_KR")
         
         timePicker.date = isStartTime ? Date() : Date().addingTimeInterval(60 * 60)
-    
+        
         timePicker.addTarget(self, action: #selector(timePickerValueChanged(_:)), for: .valueChanged)
         
         view.addSubview(timePicker)
@@ -470,7 +479,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             make.leading.equalTo(hourLabel.snp.trailing).offset(4)
         }
     }
-
+    
     @objc private func timePickerValueChanged(_ sender: UIDatePicker) {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -512,5 +521,88 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             imageView.tintColor = tintColor
         }
         return imageView
+    }
+    
+    private func setupSelectionActions() {
+        let selectionViews = [selectionView1, selectionView2, selectionView3]
+        
+        for (index, view) in selectionViews.enumerated() {
+            view.subviews.forEach { subview in
+                if let button = subview as? UIButton {
+                    button.addTarget(self, action: #selector(handleSelection(_:)), for: .touchUpInside)
+                    button.tag = index
+                }
+            }
+        }
+    }
+    
+    @objc private func handleSelection(_ sender: UIButton) {
+        switch sender.tag {
+        case 0:
+            isSelection1Complete = true
+        case 1:
+            isSelection2Complete = true
+        case 2:
+            isSelection3Complete = true
+        default:
+            break
+        }
+        sender.setStyle(.dark, type: .largeSelectionCheck)
+        updateActionButtonState()
+    }
+    
+    @objc private func handleTimePickerValueChange(_ sender: UIDatePicker) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        selectedTime = formatter.string(from: sender.date)
+        
+        let selectedComponents = Calendar.current.dateComponents([.hour, .minute], from: sender.date)
+        guard let selectedHour = selectedComponents.hour, let selectedMinute = selectedComponents.minute else { return }
+        
+        if sender.tag == 1 || sender.tag == 2 { // 시작 시간
+            isStartTimeSelected = true
+            if let endHour = Int(endHourLabel.text ?? ""), let endMinute = Int(endMinuteLabel.text ?? "") {
+                if selectedHour > endHour || (selectedHour == endHour && selectedMinute >= endMinute) {
+                    showTimeValidationError(message: "시작 시간은 종료 시간보다 빨라야 합니다.")
+                    return
+                }
+            }
+            startHourLabel.text = String(format: "%02d", selectedHour)
+            startMinuteLabel.text = String(format: "%02d", selectedMinute)
+        } else if sender.tag == 3 || sender.tag == 4 { // 종료 시간
+            isEndTimeSelected = true
+            if let startHour = Int(startHourLabel.text ?? ""), let startMinute = Int(startMinuteLabel.text ?? "") {
+                if selectedHour < startHour || (selectedHour == startHour && selectedMinute <= startMinute) {
+                    showTimeValidationError(message: "종료 시간은 시작 시간보다 늦어야 합니다.")
+                    return
+                }
+            }
+            endHourLabel.text = String(format: "%02d", selectedHour)
+            endMinuteLabel.text = String(format: "%02d", selectedMinute)
+        }
+
+        updateActionButtonState()
+    }
+    
+    private func showTimeValidationError(message: String) {
+        if let viewController = self.getViewController() as? SupportRequestViewController {
+            let alertBuilder = CustomAlertViewController.CustomAlertBuilder(viewController: viewController)
+                .setTitleState(.useTitleAndSubTitle)
+                .setButtonState(.singleButton)
+                .setTitleText("시간 오류")
+                .setSubTitleText(message)
+                .setSingleButtonTitle("확인")
+                .setSingleButtonAction {
+                    viewController.dismiss(animated: true)
+                }
+            alertBuilder.showAlertView()
+        }
+    }
+
+    private func updateActionButtonState() {
+        let isAllConditionsMet = isStartTimeSelected && isEndTimeSelected &&
+            isSelection1Complete && isSelection2Complete && isSelection3Complete
+        
+        delegate?.updateActionButtonState(isEnabled: isAllConditionsMet)
     }
 }

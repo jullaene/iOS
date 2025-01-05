@@ -14,7 +14,7 @@ struct StepData {
     let backgroundColor: UIColor
 }
 
-final class SupportRequestViewController: UIViewController {
+final class SupportRequestViewController: UIViewController, SupportRequestView2Delegate {
     
     private let supportRequestView = SupportRequestView()
     private var currentStep: Int = 1
@@ -58,6 +58,7 @@ final class SupportRequestViewController: UIViewController {
         setupActions()
         updateViewForCurrentStep()
         configureActionsForStep(currentStep)
+        updateActionButtonState(isEnabled: false)
     }
     
     // MARK: - UI Setup
@@ -156,6 +157,7 @@ final class SupportRequestViewController: UIViewController {
         guard let step2View = stepData[1].additionalView as? SupportRequestView2 else { return }
         
         step2View.calendarView.reloadCalendar()
+        step2View.delegate = self
     }
     
     private func configurePetCellActions(for petCell: PetProfileCell) {
@@ -178,7 +180,12 @@ final class SupportRequestViewController: UIViewController {
     private func updateActionButtonState(isEnabled: Bool, style: UIButton.ButtonStyle) {
         supportRequestView.actionButton.isEnabled = isEnabled
         supportRequestView.actionButton.setStyle(style, type: .large)
-        supportRequestView.actionButton.backgroundColor = isEnabled ? .darkGray : .lightGray
+        supportRequestView.actionButton.setStyle(isEnabled ? .dark : .light, type: .large)
+    }
+    
+    func updateActionButtonState(isEnabled: Bool) {
+        supportRequestView.actionButton.isEnabled = isEnabled
+        supportRequestView.actionButton.setStyle(isEnabled ? .dark : .light, type: .large)
     }
     
     // MARK: - Navigation and Lifecycle
