@@ -11,6 +11,7 @@ import SnapKit
 protocol SignupDetailViewDelegate: AnyObject {
     func shouldCheckNickname(_ textfield: UITextField)
     func didTapNextButton(_ view: SignupDetailView)
+    func didTapPlaceSelectButton(_ view: SignupDetailView)
 }
 
 class SignupDetailView: UIView {
@@ -75,7 +76,7 @@ class SignupDetailView: UIView {
         return button
     }()
     
-    private let placeSelectLabel = MainHighlightParagraphLabel(text: "동네를 입력해주세요.")
+    private let placeSelectLabel = MiddleTitleLabel(text: "동네를 입력해주세요.")
     private let selectPlaceButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .gray100
@@ -263,6 +264,7 @@ class SignupDetailView: UIView {
         femaleButton.addTarget(self, action: #selector(femaleButtonTapped), for: .touchUpInside)
         nicknameCheckButton.addTarget(self, action: #selector(nicknameCheckButtonTapped), for: .touchUpInside)
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+        selectPlaceButton.addTarget(self, action: #selector(placeSelectButtonTapped), for: .touchUpInside)
     }
     
     private func setTextFieldDelegate() {
@@ -299,7 +301,7 @@ class SignupDetailView: UIView {
             showErrorAlert(message: "정확한 생년월일을 입력해주세요")
             return false
         }
-        if let first = firstNumberTextField.text, !(first.count == 3), let second = secondNumberTextField.text, !(second.count >= 3), let third = thirdNumberTextField.text, !(third.count >= 4) {
+        if let first = firstNumberTextField.text, (first.count == 3), let second = secondNumberTextField.text, (second.count >= 3), let third = thirdNumberTextField.text, (third.count >= 4) {
             self.number = first+second+third
         }else {
             showErrorAlert(message: "정확한 전화번호를 입력해주세요")
@@ -373,6 +375,10 @@ class SignupDetailView: UIView {
         delegate?.shouldCheckNickname(nicknameTextField)
     }
     
+    @objc private func placeSelectButtonTapped() {
+        delegate?.didTapPlaceSelectButton(self)
+    }
+    
     @objc private func nextButtonTapped() {
         guard checkDetailState() else { return }
         delegate?.didTapNextButton(self)
@@ -385,9 +391,6 @@ class SignupDetailView: UIView {
                 .setTitleText(message)
                 .setButtonState(.singleButton)
                 .setSingleButtonTitle("돌아가기")
-                .setSingleButtonAction({
-                    self.getViewController()?.navigationController?.popViewController(animated: true)
-                })
                 .showAlertView()
         }
     }
@@ -400,12 +403,8 @@ class SignupDetailView: UIView {
                     .setTitleText("사용하실 수 있는 닉네임입니다")
                     .setButtonState(.doubleButton)
                     .setLeftButtonTitle("취소")
-                    .setLeftButtonAction({
-                        self.getViewController()?.navigationController?.popViewController(animated: true)
-                    })
                     .setRightButtonTitle("사용하기")
                     .setRightButtonAction({
-                        self.getViewController()?.navigationController?.popViewController(animated: true)
                         self.nickname = nickname
                         self.nicknameCheckButton.backgroundColor = .mainBlue
                         self.nicknameCheckButton.setTitle("사용가능", for: .normal)
@@ -416,6 +415,13 @@ class SignupDetailView: UIView {
         }else {
             showErrorAlert(message: "중복된 닉네임입니다.")
         }
+    }
+    
+    func updatePlaceState(place: String, latitude: Double, longitude: Double) {
+        self.place = place
+        self.latitude = latitude
+        self.longtitude = longitude
+        placeSelectButtonLabel.text = place
     }
 }
 

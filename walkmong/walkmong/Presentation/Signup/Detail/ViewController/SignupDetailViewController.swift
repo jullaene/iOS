@@ -10,7 +10,7 @@ import SnapKit
 
 final class SignupDetailViewController: UIViewController {
     
-    private let signupDetailView = SignupDetailView()
+    let signupDetailView = SignupDetailView()
     private var isNicknamechecked = false
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
@@ -41,6 +41,11 @@ final class SignupDetailViewController: UIViewController {
 }
 
 extension SignupDetailViewController: SignupDetailViewDelegate {
+    func didTapPlaceSelectButton(_ view: SignupDetailView) {
+        let nextVC = MatchingApplyPlaceSearchViewController(isSignUp: true)
+        navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
     func shouldCheckNickname(_ textfield: UITextField) {
         if let nickname = textfield.text, nickname.count <= 6 {
             //TODO: 닉네임 중복 검사

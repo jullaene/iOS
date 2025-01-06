@@ -37,6 +37,7 @@ class SignupPasswordViewController: UIViewController {
 
 extension SignupPasswordViewController: SignupPasswordViewDelegate {
     func didTapNextButton() {
-        //TODO: 화면 전환
+        let nextVC = SignupDetailViewController()
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 }

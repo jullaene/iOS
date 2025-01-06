@@ -125,6 +125,7 @@ extension SignupPasswordView: UITextFieldDelegate {
             if passwordTextField.text == passwordRewriteTextField.text {
                 // 재입력 통과
                 passwordRewriteTextFieldWithSubtitle.showSubtitleText(false)
+                nextButton.setButtonState(isEnabled: true)
             }else {
                 // 재입력 거부
                 passwordTextFieldWithSubtitle.showSubtitleText(true)
@@ -132,6 +133,7 @@ extension SignupPasswordView: UITextFieldDelegate {
                 passwordRewriteTextFieldWithSubtitle.showSubtitleText(true)
                 passwordRewriteTextFieldWithSubtitle.setSubtitleText(textColor: .negative, text: "비밀번호가 다릅니다.", image: .warningIconNegative)
                 passwordRewriteTextFieldWithSubtitle.shakeSubtitleLabel()
+                nextButton.setButtonState(isEnabled: false)
             }
         }else {
             // 새로운 비밀번호 거부
@@ -141,6 +143,7 @@ extension SignupPasswordView: UITextFieldDelegate {
             
             passwordRewriteTextFieldWithSubtitle.showSubtitleText(false)
             passwordRewriteTextField.text = ""
+            nextButton.setButtonState(isEnabled: false)
         }
     }
     
