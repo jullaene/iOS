@@ -477,6 +477,7 @@ extension SignupDetailView: UITextFieldDelegate {
                 
                 // 닉네임 입력 처리
                 else if textField == nicknameTextField {
+                    nicknameTextFieldWithSubtitle.setSubtitleText(textColor: .mainBlue, text: "공백 없이 한글/영문만 입력가능, 최대 6자", image: .warningIconMainBlue)
                     // 닉네임 내용 변경 시 중복 검사 상태 초기화
                     nicknameCheckButton.backgroundColor = .gray500
                     nicknameCheckButton.setTitle("중복확인", for: .normal)
@@ -501,6 +502,10 @@ extension SignupDetailView: UITextFieldDelegate {
                 }
 
             }else {
+                if textField == nicknameTextField {
+                    nicknameTextFieldWithSubtitle.setSubtitleText(textColor: .negative, text: "최대 6자로만 입력해주세요", image: .warningIconNegative)
+                    nicknameTextFieldWithSubtitle.shakeSubtitleLabel()
+                }
                 return false
             }
         }
