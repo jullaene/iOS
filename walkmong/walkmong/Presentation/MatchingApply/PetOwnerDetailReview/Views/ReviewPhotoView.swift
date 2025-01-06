@@ -117,7 +117,6 @@ class ReviewPhotoView: UIView, UITextViewDelegate, UIImagePickerControllerDelega
             make.leading.equalTo(cameraContainerView.snp.trailing).offset(12)
             make.centerY.equalTo(cameraContainerView)
             make.height.equalTo(80)
-            make.trailing.lessThanOrEqualToSuperview()
         }
         
         reviewTextView.snp.makeConstraints { make in

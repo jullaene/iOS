@@ -109,7 +109,6 @@ class PetOwnerDetailReviewView: UIView {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
-            make.height.greaterThanOrEqualTo(scrollView)
         }
         
         infoContainerView.snp.makeConstraints { make in
