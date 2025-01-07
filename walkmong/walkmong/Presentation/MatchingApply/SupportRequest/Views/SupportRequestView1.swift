@@ -17,15 +17,12 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
     weak var delegate: SupportRequestView1Delegate?
     
     // MARK: - Properties
-    private let profiles: [PetProfile] = [
-        PetProfile(dogId: 1, imageURL: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQP5QQKcY4t1-_XAOvt_5Ii9LGJqTDX0B7u5sOZJFeU8QCGJ2jReifGEDftXkScCw-lMm8nmFUYF2QXwMR2KrzTsw", name: "초코", details: "소형견 · 푸들 · 5kg", gender: "FEMALE"),
-        PetProfile(dogId: 2, imageURL: "https://nz.rs-cdn.com/images/nwsp9-jl7cn/blog/feb38fea9fe8d3e2af6fef82dedbc7ba__d935/zoom668x467z105000cw668.jpg?etag=b76ec26bd9831e6a6223c7aca5d23961", name: "바둑이", details: "중형견 · 믹스 · 15kg", gender: "MALE"),
-    ]
-    
+    private var profiles: [PetProfile] = []
     private var selectedIndexPath: IndexPath?
     var onDogSelected: ((Bool) -> Void)?
     
-    let collectionView: UICollectionView
+    private let networkProvider = NetworkProvider<DogAPI>()
+    private let collectionView: UICollectionView
     private let smallTitle = SmallTitleLabel(text: "나의 반려견")
     
     // MARK: - Initializer
@@ -38,6 +35,7 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
         
         setupView()
         observeCollectionViewHeight()
+        fetchDogProfiles() // 데이터를 가져오는 함수 호출
     }
     
     required init?(coder: NSCoder) {
@@ -47,7 +45,6 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
     // MARK: - Setup Methods
     private func setupView() {
         addSubviews(smallTitle, collectionView)
-        
         setupConstraints()
         setupCollectionView()
     }
@@ -70,7 +67,6 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
         collectionView.dataSource = self
         collectionView.backgroundColor = .white
         collectionView.register(PetProfileCell.self, forCellWithReuseIdentifier: "PetProfileCell")
-        collectionView.reloadData()
     }
     
     private func observeCollectionViewHeight() {
@@ -83,6 +79,30 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
                 make.height.equalTo(contentHeight)
             }
             self.layoutIfNeeded()
+        }
+    }
+    
+    // MARK: - Fetch Data
+    private func fetchDogProfiles() {
+        Task {
+            do {
+                let response = try await networkProvider.request(
+                    target: .getDogList,
+                    responseType: DogListResponse.self
+                )
+                profiles = response.data.map { item in
+                    PetProfile(
+                        dogId: item.dogId,
+                        imageURL: item.dogProfile ?? "",
+                        name: item.dogName,
+                        details: "\(item.dogSize) · \(item.breed) · \(item.weight)kg",
+                        gender: item.dogGender
+                    )
+                }
+                collectionView.reloadData()
+            } catch {
+                print("Failed to fetch dog profiles: \(error)")
+            }
         }
     }
     
@@ -101,7 +121,7 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
             cell.didTapProfileButton = { [weak self] in
                 guard let self = self else { return }
                 print("프로필 버튼 클릭: \(profile.name)")
-                self.delegate?.didTapProfileButton(for: profile) // 델리게이트 호출로 뷰 컨트롤러에 이벤트 전달
+                self.delegate?.didTapProfileButton(for: profile)
             }
         } else {
             cell.configureAsAddPet()
@@ -125,7 +145,6 @@ final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionV
         selectedCell?.setSelectedStyle()
         
         selectedIndexPath = indexPath
-        
         onDogSelected?(true)
     }
     

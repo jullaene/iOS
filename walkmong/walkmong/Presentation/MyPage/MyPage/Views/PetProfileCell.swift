@@ -28,9 +28,6 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("profileButton isUserInteractionEnabled: \(profileButton.isUserInteractionEnabled)")
-        print("profileButton isHidden: \(profileButton.isHidden)")
-        print("profileButton alpha: \(profileButton.alpha)")
     }
     
     private func setupView() {
