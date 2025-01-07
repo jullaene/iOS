@@ -272,6 +272,7 @@ class MyPageReviewView: UIView {
         donutChart.chartDescription.enabled = false
         donutChart.holeColor = .clear
         donutChart.drawEntryLabelsEnabled = false
+        donutChart.rotationEnabled = false
         
         // 3. 도넛 차트 추가
         keywordBubbleContainer.addSubview(donutChart)
