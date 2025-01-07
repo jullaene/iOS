@@ -41,7 +41,7 @@ class ReviewPhotoView: UIView, UIImagePickerControllerDelegate, UINavigationCont
         )
     }()
     
-    let placeholderText = "작성한 산책 후기는 닉네임, 프로필 이미지와 함께 누구나 볼 수 있도록 공개됩니다. 내용에 민감한 개인정보가 포함되지 않도록 조심해주세요. (최소 20자 이상)"
+    private let placeholderText = "작성한 산책 후기는 닉네임, 프로필 이미지와 함께 누구나 볼 수 있도록 공개됩니다. 내용에 민감한 개인정보가 포함되지 않도록 조심해주세요. (최소 20자 이상)"
     
     lazy var reviewTextView: UITextView = {
         let textView = UITextView()
