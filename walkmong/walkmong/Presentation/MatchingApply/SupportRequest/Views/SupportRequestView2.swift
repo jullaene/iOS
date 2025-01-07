@@ -170,7 +170,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
                 title: title
             )
             button.tag = index + 1
-            button.addTarget(self, action: #selector(toggleExclusiveButton(_:)), for: .touchUpInside)
+            button.addTarget(self, action: #selector(toggleSelection(_:)), for: .touchUpInside)
             
             view.addSubview(button)
             
@@ -188,6 +188,52 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             }
             previousButton = button
         }
+    }
+    
+    @objc private func toggleSelection(_ sender: UIButton) {
+        sender.isSelected.toggle()
+
+
+        if sender.isSelected {
+            sender.setStyle(.dark, type: .largeSelectionCheck)
+        } else {
+            sender.setStyle(.light, type: .largeSelectionCheck)
+        }
+
+        updateSelectionCompletionState(for: sender.superview)
+    }
+
+    private func updateSelectionCompletionState(for view: UIView?) {
+        guard let view = view else { return }
+
+        if view == selectionView1 {
+            isSelection1Complete = view.subviews.contains {
+                guard let button = $0 as? UIButton else { return false }
+                return button.isSelected
+            }
+        }
+
+        if view == selectionView2 {
+            isSelection2Complete = view.subviews.contains {
+                guard let button = $0 as? UIButton else { return false }
+                return button.isSelected
+            }
+        }
+
+        if view == selectionView3 {
+            isSelection3Complete = view.subviews.contains {
+                guard let button = $0 as? UIButton else { return false }
+                return button.isSelected
+            }
+        }
+
+        updateActionButtonState()
+    }
+
+    private func updateActionButtonState() {
+        let isAllConditionsMet = isStartTimeSelected && isEndTimeSelected &&
+            isSelection1Complete && isSelection2Complete && isSelection3Complete
+        delegate?.updateActionButtonState(isEnabled: isAllConditionsMet)
     }
     
     private func setupConstraints() {
@@ -273,7 +319,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         startMinuteView.addSubview(startMinuteLabel)
         endHourView.addSubview(endHourLabel)
         endMinuteView.addSubview(endMinuteLabel)
-    
+        
         addTimePickerGesture(to: startHourView, timeLabel: startHourLabel, isStartTime: true)
         addTimePickerGesture(to: startMinuteView, timeLabel: startMinuteLabel, isStartTime: true)
         addTimePickerGesture(to: endHourView, timeLabel: endHourLabel, isStartTime: false)
@@ -402,7 +448,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         if let overlayView = UIApplication.shared.keyWindow?.viewWithTag(999) {
             overlayView.removeFromSuperview()
         }
-
+        
         let timeComponents = selectedTime.split(separator: ":").map { String($0) }
         guard timeComponents.count == 2,
               let selectedHour = Int(timeComponents[0]),
@@ -410,15 +456,15 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             print("시간 선택 실패: \(selectedTime)")
             return
         }
-
+        
         var shouldShowError = false
         var errorMessage = ""
-
+        
         if sender.tag == 1 || sender.tag == 2 { // 시작 시간
             isStartTimeSelected = true
             startHourLabel.text = String(format: "%02d", selectedHour)
             startMinuteLabel.text = String(format: "%02d", selectedMinute)
-
+            
             // 종료 시간이 이미 설정된 경우 검증
             if let endHour = Int(endHourLabel.text ?? ""),
                let endMinute = Int(endMinuteLabel.text ?? "") {
@@ -431,7 +477,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
             isEndTimeSelected = true
             endHourLabel.text = String(format: "%02d", selectedHour)
             endMinuteLabel.text = String(format: "%02d", selectedMinute)
-
+            
             // 시작 시간이 이미 설정된 경우 검증
             if let startHour = Int(startHourLabel.text ?? ""),
                let startMinute = Int(startMinuteLabel.text ?? "") {
@@ -441,14 +487,14 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
                 }
             }
         }
-
+        
         if shouldShowError {
             print("시간 검증 실패: \(errorMessage)")
             showTimeValidationError(message: errorMessage)
         } else {
             print("시간 검증 통과: 시작 시간 = \(startHourLabel.text ?? "없음"), 종료 시간 = \(endHourLabel.text ?? "없음")")
         }
-
+        
         updateActionButtonState()
     }
     
@@ -586,13 +632,13 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         selectedTime = formatter.string(from: sender.date)
-
+        
         let selectedComponents = Calendar.current.dateComponents([.hour, .minute], from: sender.date)
         guard let selectedHour = selectedComponents.hour, let selectedMinute = selectedComponents.minute else {
             print("시간 선택 실패: hour 또는 minute 추출 실패")
             return
         }
-
+        
         print("현재 선택 중인 시간: \(selectedHour):\(selectedMinute) (태그: \(sender.tag == 1 || sender.tag == 2 ? "시작 시간" : "종료 시간"))")
     }
     
@@ -613,12 +659,5 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         } else {
             print("viewController를 찾을 수 없음")
         }
-    }
-
-    private func updateActionButtonState() {
-        let isAllConditionsMet = isStartTimeSelected && isEndTimeSelected &&
-            isSelection1Complete && isSelection2Complete && isSelection3Complete
-        
-        delegate?.updateActionButtonState(isEnabled: isAllConditionsMet)
     }
 }
