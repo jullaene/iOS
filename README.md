@@ -47,7 +47,7 @@
 | Architecture     | `MVC(Model-View-Controller)`      | 각 계층의 명확한 책임 분리와 유지보수성 향상을 위해 MVC 패턴을 사용하였습니다.       |
 | Concurrency     | `Swift Concurrency`      | 비동기 API 호출과 UI 반영을 효율적으로 처리하기 위해 `Task`와 `async/await`를 활용했습니다. |
 | Data Storage     | `UserDefaults`, `Keychain`          | `UserDefaults`를 사용해 사용자 경험을 개선하기 위한 자동완성 데이터를 저장하고, `Keychain`을 사용해 액세스 토큰과 같은 민감한 데이터를 안전하게 저장했습니다. |
-| Network     | `Moya`       | iOS에서 네트워크 레이어를 효율적으로 관리하기 위한 라이브러리입니다.     |
+| Network     | `Moya`, `StompClientLib`       | 네트워크 레이어를 효율적으로 관리하기 위해 `Moya`를, STOMP 프로토콜 기반의 채팅을 구현하기 위해 `StompClientLib`을 사용하였습니다.    |
 | Image     | `KingFisher`       | 이미지 렌더링을 위한 라이브러리입니다.     |
 | Dependency     | `cocoapods`, `Swift Package Manager`       | 라이브러리 종속성 관리 도구입니다.    |
 
