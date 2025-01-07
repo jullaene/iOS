@@ -112,19 +112,17 @@ class MyPageReviewView: UIView {
         keywordView.snp.makeConstraints { make in
             make.top.equalTo(userRatingView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(333)
         }
         
         keywordTitleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(24)
-            make.leading.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(20)
         }
         
         keywordBubbleContainer.snp.makeConstraints { make in
             make.top.equalTo(keywordTitleLabel.snp.bottom).offset(20)
-            make.leading.equalToSuperview().inset(20)
+            make.leading.equalToSuperview()
             make.trailing.equalToSuperview().inset(13)
-            make.height.equalTo(245)
             make.bottom.equalToSuperview().inset(20)
         }
         
@@ -216,7 +214,7 @@ class MyPageReviewView: UIView {
     }
     
     @objc private func walkerReviewTitleTapped() {
-        if let currentViewController = findViewController() {
+        if let currentViewController = getViewController() {
             let walkerReviewVC = MyPageWalkerReviewViewController()
             currentViewController.navigationController?.pushViewController(walkerReviewVC, animated: true)
         }
@@ -234,17 +232,6 @@ class MyPageReviewView: UIView {
     //            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
     //        }
     //    }
-    
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while responder != nil {
-            if let viewController = responder as? UIViewController {
-                return viewController
-            }
-            responder = responder?.next
-        }
-        return nil
-    }
     
     private func setupDonutChart() {
         // 1. 데이터 설정
@@ -276,16 +263,20 @@ class MyPageReviewView: UIView {
         
         // 3. 도넛 차트 추가
         keywordBubbleContainer.addSubview(donutChart)
+        
+        let legendView = createLegendView(for: entries, colors: dataSet.colors)
+        keywordBubbleContainer.addSubview(legendView)
+        
         donutChart.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
-            make.size.equalTo(CGSize(width: 244, height: 244))
+            make.top.equalTo(keywordTitleLabel.snp.bottom).offset(20)
+            make.leading.equalTo(keywordTitleLabel.snp.leading)
+            make.trailing.equalTo(legendView.snp.leading).offset(-16)
+            make.height.equalTo(donutChart.snp.width)
+            make.bottom.equalToSuperview()
         }
         
         // 4. LegendView 추가
-        let legendView = createLegendView(for: entries, colors: dataSet.colors)
-        keywordBubbleContainer.addSubview(legendView)
         legendView.snp.makeConstraints { make in
-            make.leading.equalTo(donutChart.snp.trailing).offset(16)
             make.centerY.equalTo(donutChart)
             make.trailing.equalToSuperview()
             make.width.equalTo(80)
