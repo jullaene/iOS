@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ReviewPhotoView: UIView, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ReviewPhotoView: UIView, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK: - UI Elements
     private let detailedReviewLabel: SmallTitleLabel = {
         let label = SmallTitleLabel(text: "김철수님에 대한 자세한 후기를 남겨주세요.", textColor: .mainBlack)
@@ -228,7 +228,9 @@ class ReviewPhotoView: UIView, UITextViewDelegate, UIImagePickerControllerDelega
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
-    
+}
+
+extension ReviewPhotoView: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == placeholderText {
             textView.text = ""
