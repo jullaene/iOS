@@ -10,14 +10,32 @@ import SnapKit
 
 class WalktalkChatViewController: UIViewController {
     
-    private let walktalkChatView = WalktalkChatView()
-    private let walktalkChatUpperView = WalktalkChatUpperView()
+    private lazy var walktalkChatView = WalktalkChatView()
+    private lazy var walktalkChatUpperView = WalktalkChatUpperView(matchingState: self.dataModel.matchingState)
     private let walktalkChatContainerView = UIView()
-    private let currentMatchingState: MatchingState = .matching
+    private let currentMatchingState: Status!
 
     private var containerBottomConstraint: Constraint?
     private var keyboardEventManager: KeyboardEventManager?
+    
+    private let service = WalktalkService()
+    private let stompService = StompService()
+    private let roomId: Int!
+    private let targetName: String!
+    
+    private var dataModel: WalkTalkChatLogModel!
 
+    required init(datamodel: WalkTalkChatLogModel, targetName: String) {
+        self.targetName = targetName
+        self.dataModel = datamodel
+        self.currentMatchingState = datamodel.matchingState
+        self.roomId = datamodel.roomId
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,12 +47,15 @@ class WalktalkChatViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
-        // TODO: 소켓 통신 활성화
+        setupStompService()
+        getHistory(roomId: roomId)
     }
     
     private func setUI() {
         view.addSubviews(walktalkChatContainerView, walktalkChatUpperView)
         walktalkChatContainerView.addSubview(walktalkChatView)
+        walktalkChatUpperView.setMatchingState(currentMatchingState)
+        walktalkChatUpperView.setContent(dogName: dataModel.dogName, date: dataModel.date, profileImageURL: dataModel.profileImageUrl)
         walktalkChatUpperView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
             make.horizontalEdges.equalToSuperview()
@@ -42,7 +63,7 @@ class WalktalkChatViewController: UIViewController {
 
         walktalkChatContainerView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(walktalkChatUpperView.snp.top).offset(currentMatchingState == .ended || currentMatchingState == .cancelled ? 88 - 30 : 149 - 30)
+            make.top.equalTo(walktalkChatUpperView.snp.top).offset(currentMatchingState == .COMPLETED || currentMatchingState == .REJECTED ? 88 - 30 : 149 - 30)
             containerBottomConstraint = make.bottom.equalToSuperview().offset(-38).constraint
         }
 
@@ -51,7 +72,12 @@ class WalktalkChatViewController: UIViewController {
         }
 
         walktalkChatView.setupTextViewDelegate(delegate: self)
-        addCustomNavigationBar(titleText: "유저 이름", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
+        addCustomNavigationBar(titleText: targetName, showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
+        walktalkChatView.delegate = self
+    }
+    
+    private func setupStompService() {
+        stompService.delegate = self
     }
     
     private func setUpKeyboardEvent() {
@@ -97,5 +123,89 @@ extension WalktalkChatViewController: KeyboardObserverDelegate {
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
+    }
+}
+
+extension WalktalkChatViewController {
+    func getHistory(roomId: Int) {
+        showLoading()
+        Task {
+            do {
+                let response = try await service.getHistory(roomId: roomId)
+                print("채팅 히스토리 조회 성공: \(response)")
+                walktalkChatView.updateChatLog(response.data)
+            } catch {
+                print("채팅 히스토리 조회 실패: \(error)")
+                CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleOnly)
+                    .setButtonState(.singleButton)
+                    .setTitleText("에러")
+                    .setSingleButtonTitle("돌아가기")
+                    .setSingleButtonAction({
+                        if let tabBarController = self.tabBarController {
+                            tabBarController.selectedIndex = 0
+                        }
+                    })
+                    .showAlertView()
+            }
+            hideLoading()
+        }
+    }
+
+    private func decodeMessage(_ message: String) -> HistoryItem? {
+        let decoder = JSONDecoder()
+        guard let data = message.data(using: .utf8) else { return nil }
+        do {
+            return try decoder.decode(HistoryItem.self, from: data)
+        } catch {
+            print("디코딩 오류: \(error)")
+            return nil
+        }
+    }
+    func showLoading() {
+        let loadingView = UIActivityIndicatorView(style: .large)
+        loadingView.color = .gray
+        loadingView.startAnimating()
+        loadingView.tag = 999 // 로딩 뷰 식별용 태그
+        loadingView.center = self.view.center
+        self.view.addSubview(loadingView)
+    }
+    func hideLoading() {
+        self.view.viewWithTag(999)?.removeFromSuperview()
+    }
+
+}
+
+extension WalktalkChatViewController: StompServiceDelegate {
+    func stompServiceDidConnect(_ service: StompService) {
+        
+    }
+    
+    func stompService(_ service: StompService, didReceiveMessage message: String, from destination: String) {
+        guard let newMessage = decodeMessage(message) else {
+            print("메시지 디코딩 실패")
+            return
+        }
+        walktalkChatView.appendMessage(newMessage)
+    }
+    
+    func stompService(_ service: StompService, didReceiveError error: String) {
+        CustomAlertViewController.CustomAlertBuilder(viewController: self)
+            .setTitleState(.useTitleOnly)
+            .setButtonState(.singleButton)
+            .setTitleText("에러")
+            .setSingleButtonTitle("돌아가기")
+            .setSingleButtonAction({
+                if let tabBarController = self.tabBarController {
+                    tabBarController.selectedIndex = 0
+                }
+            })
+            .showAlertView()
+    }
+}
+
+extension WalktalkChatViewController: WalktalkChatViewDelegate {
+    func didSendMessage(_ message: String) {
+        stompService.sendMessage(body: message, to: "/sub/chat/room/\(String(describing: roomId))", with: "no receipt")
     }
 }
