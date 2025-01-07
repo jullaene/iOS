@@ -115,8 +115,7 @@ class MyPageReviewView: UIView {
         }
         
         keywordTitleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(24)
-            make.leading.equalToSuperview().offset(20)
+            make.top.leading.equalToSuperview().inset(20)
         }
         
         keywordBubbleContainer.snp.makeConstraints { make in
@@ -321,7 +320,7 @@ class MyPageReviewView: UIView {
 
             colorView.snp.makeConstraints { make in
                 make.size.equalTo(CGSize(width: 8, height: 8))
-                make.top.equalTo(mainLabel.snp.top).inset(6)
+                make.top.equalTo(mainLabel.snp.top).inset(5)
             }
         }
         
