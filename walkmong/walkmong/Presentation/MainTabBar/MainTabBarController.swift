@@ -72,7 +72,7 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func createTalkViewController() -> UIViewController {
-        let vc = UIViewController()
+        let vc = WalktalkListViewController()
         vc.view.backgroundColor = .white
         vc.tabBarItem = UITabBarItem(title: "워크톡", image: UIImage(named: "WalkMongTalkIcon"), tag: 2)
         return vc

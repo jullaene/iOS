@@ -15,11 +15,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-        let mainTabBarController = MainTabBarController()
-        let navigationController = UINavigationController(rootViewController: mainTabBarController)
-        window?.rootViewController = navigationController
         
-        window?.overrideUserInterfaceStyle = .light  // 라이트모드
+        let splashViewController = SplashViewController()
+        window?.rootViewController = splashViewController
+        
+        window?.overrideUserInterfaceStyle = .light
         window?.makeKeyAndVisible()
     }
     

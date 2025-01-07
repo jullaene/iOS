@@ -49,7 +49,9 @@ class WalktalkListMatchingStateCollectionViewCell: UICollectionViewCell {
     }
     
     func setSelected(textColor: UIColor, backgroundColor: UIColor) {
-        matchingStateLabel.textColor = textColor
-        frameView.backgroundColor = backgroundColor
+        DispatchQueue.main.async{
+            self.matchingStateLabel.textColor = textColor
+            self.frameView.backgroundColor = backgroundColor
+        }
     }
 }

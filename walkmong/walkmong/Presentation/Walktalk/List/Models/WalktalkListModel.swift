@@ -8,7 +8,7 @@
 import UIKit
     
 struct WalktalkListModel {
-    let matchingState: MatchingState
+    let matchingState: Status
     let date: String
     let name: String
     let textPreview: String
