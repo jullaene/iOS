@@ -142,7 +142,7 @@ class MyPageView: UIView {
     }
     
     @objc private func alertIconTapped() {
-        if let viewController = findViewController() {
+        if let viewController = getViewController() {
             let alertVC = AlertViewController()
             viewController.navigationController?.pushViewController(alertVC, animated: true)
         }

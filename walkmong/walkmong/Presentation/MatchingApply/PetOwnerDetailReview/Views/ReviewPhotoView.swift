@@ -210,7 +210,7 @@ class ReviewPhotoView: UIView, UITextViewDelegate, UIImagePickerControllerDelega
         picker.sourceType = .photoLibrary
         picker.delegate = self
         picker.allowsEditing = true
-        if let viewController = self.findViewController() {
+        if let viewController = self.getViewController() {
             viewController.present(picker, animated: true, completion: nil)
         }
     }

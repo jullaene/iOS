@@ -278,7 +278,7 @@ class MyPageReviewView: UIView {
     }
 
     @objc private func walkerReviewTitleTapped() {
-        if let currentViewController = findViewController() {
+        if let currentViewController = getViewController() {
             let walkerReviewVC = MyPageWalkerReviewViewController()
             currentViewController.navigationController?.pushViewController(walkerReviewVC, animated: true)
         }
@@ -291,7 +291,7 @@ class MyPageReviewView: UIView {
     }
     
 //    @objc private func ownerReviewTitleTapped() {
-//        if let currentViewController = findViewController() {
+//        if let currentViewController = getViewController() {
 //            let ownerReviewVC = MyPageOwnerReviewViewController()
 //            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
 //        }
