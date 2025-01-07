@@ -1,5 +1,5 @@
 //
-//  SupportRequestView5.swift
+//  WalkRequestView5.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class SupportRequestView5: UIView {
+final class WalkRequestView5: UIView {
 
     private let contentView: UIView = {
         let view = UIView()

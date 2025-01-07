@@ -1,5 +1,5 @@
 //
-//  SupportRequestViewController.swift
+//  WalkRequestViewController.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -14,9 +14,9 @@ struct StepData {
     let backgroundColor: UIColor
 }
 
-final class SupportRequestViewController: UIViewController, UIScrollViewDelegate, SupportRequestView1Delegate, SupportRequestView2Delegate {
+final class WalkRequestViewController: UIViewController, UIScrollViewDelegate, WalkRequestView1Delegate, WalkRequestView2Delegate {
 
-    private let supportRequestView = SupportRequestView()
+    private let walkRequestView = WalkRequestView()
     private var currentStep: Int = 1
     private let totalSteps: Int = 5
     
@@ -24,31 +24,31 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
         StepData(
             middleTitle: "산책이 필요한 반려견을 선택해요.",
             buttonText: "다음으로",
-            additionalView: SupportRequestView1(),
+            additionalView: WalkRequestView1(),
             backgroundColor: .white
         ),
         StepData(
             middleTitle: "산책 정보 작성하기",
             buttonText: "다음으로",
-            additionalView: SupportRequestView2(),
+            additionalView: WalkRequestView2(),
             backgroundColor: .white
         ),
         StepData(
             middleTitle: "산책자에게 전달할 메시지",
             buttonText: "다음으로",
-            additionalView: SupportRequestView3(),
+            additionalView: WalkRequestView3(),
             backgroundColor: .white
         ),
         StepData(
             middleTitle: "산책 요청 최종 확인",
             buttonText: "다음으로",
-            additionalView: SupportRequestView4(),
+            additionalView: WalkRequestView4(),
             backgroundColor: .gray100
         ),
         StepData(
             middleTitle: "주의사항 확인",
             buttonText: "산책 지원하기",
-            additionalView: SupportRequestView5(),
+            additionalView: WalkRequestView5(),
             backgroundColor: .gray100
         )
     ]
@@ -80,7 +80,7 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
     
     override func loadView() {
         super.loadView()
-        self.view = supportRequestView
+        self.view = walkRequestView
     }
     
     override func viewDidLoad() {
@@ -90,8 +90,8 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
         updateViewForCurrentStep()
         configureActionsForStep(currentStep)
         setupDismissKeyboardGesture()
-        supportRequestView.scrollView.delegate = self
-        if let step1View = stepData[0].additionalView as? SupportRequestView1 {
+        walkRequestView.scrollView.delegate = self
+        if let step1View = stepData[0].additionalView as? WalkRequestView1 {
             step1View.delegate = self
         }
     }
@@ -113,13 +113,13 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
     }
     
     private func setupActions() {
-        supportRequestView.actionButton.addTarget(self, action: #selector(handleActionButtonTapped), for: .touchUpInside)
+        walkRequestView.actionButton.addTarget(self, action: #selector(handleActionButtonTapped), for: .touchUpInside)
         updateActionButtonState(isEnabled: false, style: .light)
     }
     
     // MARK: - Button Actions
     @objc private func handleActionButtonTapped() {
-        guard supportRequestView.actionButton.isEnabled else {
+        guard walkRequestView.actionButton.isEnabled else {
             return
         }
         
@@ -138,38 +138,38 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
         let data = stepData[currentStep - 1]
         
         view.backgroundColor = data.backgroundColor
-        supportRequestView.middleTitleLabel.text = data.middleTitle
-        supportRequestView.actionButton.setTitle(data.buttonText, for: .normal)
+        walkRequestView.middleTitleLabel.text = data.middleTitle
+        walkRequestView.actionButton.setTitle(data.buttonText, for: .normal)
         
-        supportRequestView.updateContentView(with: data.additionalView)
+        walkRequestView.updateContentView(with: data.additionalView)
         addProgressBar(currentStep: currentStep, totalSteps: totalSteps)
         
         if currentStep == 4 {
-            supportRequestView.showWarningSection()
-            supportRequestView.updateWarningText("산책 지원 요청 내용을 확인했습니다.")
-            supportRequestView.actionButton.isEnabled = false
-            supportRequestView.actionButton.setStyle(.light, type: .large)
+            walkRequestView.showWarningSection()
+            walkRequestView.updateWarningText("산책 지원 요청 내용을 확인했습니다.")
+            walkRequestView.actionButton.isEnabled = false
+            walkRequestView.actionButton.setStyle(.light, type: .large)
         } else if currentStep == 5 {
-            supportRequestView.showWarningSection()
-            supportRequestView.updateWarningText("주의사항을 모두 확인했습니다.")
-            supportRequestView.actionButton.isEnabled = false
-            supportRequestView.actionButton.setStyle(.light, type: .large)
+            walkRequestView.showWarningSection()
+            walkRequestView.updateWarningText("주의사항을 모두 확인했습니다.")
+            walkRequestView.actionButton.isEnabled = false
+            walkRequestView.actionButton.setStyle(.light, type: .large)
         } else {
-            supportRequestView.hideWarningSection()
+            walkRequestView.hideWarningSection()
         }
     }
     
     private func updateContentView(with additionalView: UIView) {
-        supportRequestView.contentView.subviews.forEach {
-            if $0 != supportRequestView.middleTitleLabel && !$0.isKind(of: UICollectionView.self) {
+        walkRequestView.contentView.subviews.forEach {
+            if $0 != walkRequestView.middleTitleLabel && !$0.isKind(of: UICollectionView.self) {
                 $0.removeFromSuperview()
             }
         }
         
-        supportRequestView.contentView.addSubview(additionalView)
+        walkRequestView.contentView.addSubview(additionalView)
         
         additionalView.snp.makeConstraints { make in
-            make.top.equalTo(supportRequestView.middleTitleLabel.snp.bottom).offset(12)
+            make.top.equalTo(walkRequestView.middleTitleLabel.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.lessThanOrEqualToSuperview()
         }
@@ -190,7 +190,7 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
     }
     
     private func configureStep1Actions() {
-        guard let step1View = stepData[0].additionalView as? SupportRequestView1 else { return }
+        guard let step1View = stepData[0].additionalView as? WalkRequestView1 else { return }
 
         step1View.onDogSelected = { [weak self] isDogSelected in
             guard let self = self else { return }
@@ -207,14 +207,14 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
     }
     
     private func configureStep2Actions() {
-        guard let step2View = stepData[1].additionalView as? SupportRequestView2 else { return }
+        guard let step2View = stepData[1].additionalView as? WalkRequestView2 else { return }
         
         step2View.calendarView.reloadCalendar()
         step2View.delegate = self
     }
     
     private func configureStep3Actions() {
-        guard let step3View = stepData[2].additionalView as? SupportRequestView3 else { return }
+        guard let step3View = stepData[2].additionalView as? WalkRequestView3 else { return }
 
         updateActionButtonState(isEnabled: false, style: .light)
 
@@ -249,19 +249,19 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
     
     // MARK: - Action Button Updates
     private func updateActionButtonState(isEnabled: Bool, style: UIButton.ButtonStyle) {
-        supportRequestView.actionButton.isEnabled = isEnabled
-        supportRequestView.actionButton.setStyle(style, type: .large)
-        supportRequestView.actionButton.setStyle(isEnabled ? .dark : .light, type: .large)
+        walkRequestView.actionButton.isEnabled = isEnabled
+        walkRequestView.actionButton.setStyle(style, type: .large)
+        walkRequestView.actionButton.setStyle(isEnabled ? .dark : .light, type: .large)
     }
     
     func updateActionButtonState(isEnabled: Bool) {
-        supportRequestView.actionButton.isEnabled = isEnabled
-        supportRequestView.actionButton.setStyle(isEnabled ? .dark : .light, type: .large)
+        walkRequestView.actionButton.isEnabled = isEnabled
+        walkRequestView.actionButton.setStyle(isEnabled ? .dark : .light, type: .large)
     }
     
     private func setupDismissKeyboardGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismisskeyboard))
-        supportRequestView.scrollView.addGestureRecognizer(tapGesture)
+        walkRequestView.scrollView.addGestureRecognizer(tapGesture)
         tapGesture.cancelsTouchesInView = false
     }
 
@@ -276,13 +276,13 @@ final class SupportRequestViewController: UIViewController, UIScrollViewDelegate
         }
         let keyboardHeight = keyboardFrame.height
 
-        supportRequestView.scrollView.contentInset.bottom = keyboardHeight + 20
-        supportRequestView.scrollView.scrollIndicatorInsets.bottom = keyboardHeight + 20
+        walkRequestView.scrollView.contentInset.bottom = keyboardHeight + 20
+        walkRequestView.scrollView.scrollIndicatorInsets.bottom = keyboardHeight + 20
     }
 
     @objc private func keyboardWillHide(_ notification: Notification) {
-        supportRequestView.scrollView.contentInset.bottom = 0
-        supportRequestView.scrollView.scrollIndicatorInsets.bottom = 0
+        walkRequestView.scrollView.contentInset.bottom = 0
+        walkRequestView.scrollView.scrollIndicatorInsets.bottom = 0
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {

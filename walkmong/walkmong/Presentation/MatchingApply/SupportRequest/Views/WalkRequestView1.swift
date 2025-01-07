@@ -1,5 +1,5 @@
 //
-//  SupportRequestView1.swift
+//  WalkRequestView1.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -9,12 +9,12 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-protocol SupportRequestView1Delegate: AnyObject {
+protocol WalkRequestView1Delegate: AnyObject {
     func didTapProfileButton(for profile: PetProfile)
 }
 
-final class SupportRequestView1: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    weak var delegate: SupportRequestView1Delegate?
+final class WalkRequestView1: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    weak var delegate: WalkRequestView1Delegate?
     
     // MARK: - Properties
     private var profiles: [PetProfile] = []

@@ -1,5 +1,5 @@
 //
-//  SupportRequestView3.swift
+//  WalkRequestView3.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/5/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class SupportRequestView3: UIView {
+final class WalkRequestView3: UIView {
     // MARK: - Properties
     private var iconStates: [Bool] = [false, false, false]
     private var textViewStates: [Bool] = [false, false]
@@ -160,7 +160,7 @@ final class SupportRequestView3: UIView {
 }
 
 // MARK: - UITextViewDelegate
-extension SupportRequestView3: UITextViewDelegate {
+extension WalkRequestView3: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let index = textView.tag
         guard index < textViewStates.count else { return }

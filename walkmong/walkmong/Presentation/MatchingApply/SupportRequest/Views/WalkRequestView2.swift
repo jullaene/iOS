@@ -8,11 +8,11 @@
 import UIKit
 import SnapKit
 
-protocol SupportRequestView2Delegate: AnyObject {
+protocol WalkRequestView2Delegate: AnyObject {
     func updateActionButtonState(isEnabled: Bool)
 }
 
-final class SupportRequestView2: UIView, CalendarViewDelegate {
+final class WalkRequestView2: UIView, CalendarViewDelegate {
     
     private var isStartTimeSelected: Bool = false
     private var isEndTimeSelected: Bool = false
@@ -68,7 +68,7 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
     private let selectionView2 = UIView()
     private let selectionView3 = UIView()
     
-    weak var delegate: SupportRequestView2Delegate?
+    weak var delegate: WalkRequestView2Delegate?
     
     // MARK: - Initializer
     override init(frame: CGRect) {

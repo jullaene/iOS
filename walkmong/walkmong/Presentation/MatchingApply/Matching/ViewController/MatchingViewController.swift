@@ -182,14 +182,14 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseInOut], animations: animations, completion: completion)
     }
     
-    func navigateToSupportRequestView() {
+    func navigateToWalkRequestView() {
         // 서버에서 반려견 조회 (현재 주석 처리)
         // 예: let hasDogs = fetchDogProfiles() > 0
         let hasDogs = true // 서버가 동작하지 않으므로 임시값 사용
 
         if hasDogs {
-            let supportRequestVC = SupportRequestViewController()
-            navigationController?.pushViewController(supportRequestVC, animated: true)
+            let walkRequestVC = WalkRequestViewController()
+            navigationController?.pushViewController(walkRequestVC, animated: true)
         } else {
             showNoDogsAlert()
         }
