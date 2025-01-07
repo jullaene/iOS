@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class OnboardingView: UIView {
+final class OnboardingView: UIView, UIScrollViewDelegate {
 
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -131,12 +131,23 @@ final class OnboardingView: UIView {
         super.layoutSubviews()
         setupScrollViewContentSize()
     }
-}
 
-// MARK: - UIScrollViewDelegate
-extension OnboardingView: UIScrollViewDelegate {
+    // MARK: - UIScrollViewDelegate
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentPage = Int(scrollView.contentOffset.x / scrollView.frame.width)
         pageControl.currentPage = currentPage
+    }
+    
+    var currentPage: Int {
+        return Int(scrollView.contentOffset.x / scrollView.frame.width)
+    }
+
+    var totalPages: Int {
+        return slides.count
+    }
+
+    func scrollToPage(_ page: Int) {
+        let xOffset = CGFloat(page) * scrollView.frame.width
+        scrollView.setContentOffset(CGPoint(x: xOffset, y: 0), animated: true)
     }
 }

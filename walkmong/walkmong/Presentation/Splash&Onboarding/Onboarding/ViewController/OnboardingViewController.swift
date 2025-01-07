@@ -29,10 +29,17 @@ final class OnboardingViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func didTapNextButton() {
-        let mainTabBarController = MainTabBarController()
-        if let window = UIApplication.shared.keyWindow {
-            window.rootViewController = UINavigationController(rootViewController: mainTabBarController)
-            window.makeKeyAndVisible()
+        let currentPage = onboardingView.currentPage
+        let totalPages = onboardingView.totalPages
+
+        if currentPage < totalPages - 1 {
+            onboardingView.scrollToPage(currentPage + 1)
+        } else {
+            let mainTabBarController = MainTabBarController()
+            if let window = UIApplication.shared.keyWindow {
+                window.rootViewController = UINavigationController(rootViewController: mainTabBarController)
+                window.makeKeyAndVisible()
+            }
         }
     }
 }
