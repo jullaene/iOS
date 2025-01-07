@@ -79,13 +79,9 @@ final class WalkerReviewViewController: UIViewController, KeyboardObserverDelega
     private func setupScrollToDismissKeyboard() {
         walkerReviewView.scrollView.keyboardDismissMode = .onDrag
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismisskeyboard))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         walkerReviewView.scrollView.addGestureRecognizer(tapGesture)
-    }
-
-    @objc private func dismisskeyboard() {
-        keyboardEventManager?.dismisskeyboard()
     }
 
     // MARK: - KeyboardObserverDelegate
