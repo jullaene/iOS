@@ -70,26 +70,4 @@ extension UIView {
         view.layer.masksToBounds = true
         return view
     }
-    
-    static func createRoundedView(
-            frame: CGRect = .zero,
-            corners: UIRectCorner,
-            cornerRadius: CGFloat,
-            backgroundColor: UIColor
-        ) -> UIView {
-            let view = UIView(frame: frame)
-            view.backgroundColor = backgroundColor
-            
-            let path = UIBezierPath(
-                roundedRect: view.bounds,
-                byRoundingCorners: corners,
-                cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
-            )
-            let mask = CAShapeLayer()
-            mask.path = path.cgPath
-            view.layer.mask = mask
-            
-            return view
-        }
-    
 }
