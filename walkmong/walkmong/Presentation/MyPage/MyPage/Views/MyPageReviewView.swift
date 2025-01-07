@@ -301,9 +301,6 @@ class MyPageReviewView: UIView {
             let colorView = UIView()
             colorView.backgroundColor = colors[index]
             colorView.layer.cornerRadius = 4
-            colorView.snp.makeConstraints { make in
-                make.size.equalTo(CGSize(width: 8, height: 8))
-            }
             
             let labelStackView = UIStackView()
             labelStackView.axis = .vertical
@@ -312,7 +309,6 @@ class MyPageReviewView: UIView {
             let mainLabel = SmallMainHighlightParagraphLabel(text: entry.label ?? "", textColor: .gray500)
             mainLabel.numberOfLines = 0
             mainLabel.lineBreakMode = .byWordWrapping
-            mainLabel.preferredMaxLayoutWidth = 80
             labelStackView.addArrangedSubview(mainLabel)
             
             if entry.label != "기타" {
@@ -322,11 +318,19 @@ class MyPageReviewView: UIView {
                 labelStackView.addArrangedSubview(percentLabel)
             }
             
-            let horizontalStack = UIStackView(arrangedSubviews: [colorView, labelStackView])
+            let horizontalStack = UIStackView()
             horizontalStack.axis = .horizontal
             horizontalStack.spacing = 8
-            horizontalStack.alignment = .center
+            horizontalStack.alignment = .top
+            horizontalStack.addArrangedSubview(colorView)
+            horizontalStack.addArrangedSubview(labelStackView)
+
             stackView.addArrangedSubview(horizontalStack)
+
+            colorView.snp.makeConstraints { make in
+                make.size.equalTo(CGSize(width: 8, height: 8))
+                make.top.equalTo(mainLabel.snp.top).inset(6)
+            }
         }
         
         return stackView
