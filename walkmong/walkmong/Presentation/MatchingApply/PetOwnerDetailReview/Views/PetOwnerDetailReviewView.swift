@@ -10,7 +10,7 @@ import SnapKit
 
 class PetOwnerDetailReviewView: UIView {
     // MARK: - 서버 해시태그 매핑
-    private let hashtags: [Hashtag] = Hashtag.allCases // enum Hashtag 사용
+    private let hashtags: [Hashtag] = Hashtag.allCases
 
     // MARK: - UI Elements
     private let scrollView = UIScrollView()

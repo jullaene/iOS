@@ -90,12 +90,12 @@ class PetOwnerReviewViewController: UIViewController {
 
     @objc private func didTapDetailedReviewButton() {
         guard petOwnerReviewView.areAllRatingsFilled() else {
-            print("모든 평가 항목을 채워주세요.")
+            showAlert(message: "모든 평가 항목을 채워주세요.")
             return
         }
         
         guard let ratings = petOwnerReviewView.collectRatings() else {
-            print("별점 데이터를 수집하지 못했습니다.")
+            showAlert(message: "별점 데이터를 수집하지 못했습니다.")
             return
         }
         
@@ -111,7 +111,7 @@ class PetOwnerReviewViewController: UIViewController {
 
     @objc private func didTapSendReviewButton() {
         guard petOwnerReviewView.areAllRatingsFilled() else {
-            print("모든 평가 항목을 채워주세요.")
+            showAlert(message: "모든 평가 항목을 채워주세요.")
             return
         }
 
@@ -123,7 +123,7 @@ class PetOwnerReviewViewController: UIViewController {
 
     private func collectBasicReviewData() -> [String: Any] {
         guard let ratings = petOwnerReviewView.collectRatings() else {
-            print("별점 데이터를 수집하지 못했습니다.")
+            showAlert(message: "별점 데이터를 수집하지 못했습니다.")
             return [:]
         }
 
@@ -139,7 +139,6 @@ class PetOwnerReviewViewController: UIViewController {
     }
     
     private func sendReviewData(requestBody: [String: Any]) async {
-        // 디버깅용 로그 추가
         print("전송할 데이터 (기본 리뷰):")
         requestBody.forEach { key, value in
             print("\(key): \(value)")
@@ -153,7 +152,7 @@ class PetOwnerReviewViewController: UIViewController {
             print("후기 등록 성공: \(response.message)")
             navigateToMatchingViewController()
         } catch {
-            print("후기 등록 실패: \(error.localizedDescription)")
+            showAlert(message: "후기 등록에 실패했습니다. 네트워크를 확인해주세요.")
         }
     }
 
@@ -163,5 +162,17 @@ class PetOwnerReviewViewController: UIViewController {
             mainTabBarController.selectedIndex = 0
             navigationController?.popToRootViewController(animated: true)
         }
+    }
+    
+    private func showAlert(message: String) {
+        CustomAlertViewController
+            .CustomAlertBuilder(viewController: self)
+            .setTitleState(.useTitleOnly)
+            .setButtonState(.singleButton)
+            .setTitleText("알림")
+            .setSubTitleText(message)
+            .setButtonState(.singleButton)
+            .setSingleButtonTitle("확인")
+            .showAlertView()
     }
 }

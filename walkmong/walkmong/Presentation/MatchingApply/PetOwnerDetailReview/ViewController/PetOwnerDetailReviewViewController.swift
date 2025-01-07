@@ -174,7 +174,7 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     
     private func collectReviewContent() -> String? {
         let content = detailReviewView.reviewPhotoView.reviewTextView.text ?? ""
-        let placeholderText = detailReviewView.reviewPhotoView.placeholderText
+        let placeholderText = detailReviewView.reviewPhotoView.getPlaceholderText()
 
         if content == placeholderText || content.trimmingCharacters(in: .whitespacesAndNewlines).count < 0 {
             return nil

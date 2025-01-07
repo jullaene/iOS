@@ -167,14 +167,9 @@ class PetOwnerReviewView: UIView {
     
     // MARK: - Configure Radius
     private func configureRadius() {
-        let radiusPath = UIBezierPath(
-            roundedRect: reviewStackView.bounds,
-            byRoundingCorners: [.topLeft, .topRight],
-            cornerRadii: CGSize(width: 20, height: 20)
-        )
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = radiusPath.cgPath
-        reviewStackView.layer.mask = maskLayer
+        reviewStackView.clipsToBounds = true
+        reviewStackView.layer.cornerRadius = 20
+        reviewStackView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     }
     
     // MARK: - Public Methods

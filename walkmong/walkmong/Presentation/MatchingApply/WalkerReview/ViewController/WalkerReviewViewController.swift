@@ -44,6 +44,7 @@ final class WalkerReviewViewController: UIViewController, KeyboardObserverDelega
         view.addSubview(walkerReviewView)
         walkerReviewView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+            feedbackViewBottomConstraint = make.bottom.equalToSuperview().constraint
         }
         
         view.addSubview(reviewPhotoView)
