@@ -285,7 +285,7 @@ class MyPageReviewView: UIView {
         keywordBubbleContainer.addSubview(legendView)
         legendView.snp.makeConstraints { make in
             make.leading.equalTo(donutChart.snp.trailing).offset(16)
-            make.top.equalTo(donutChart)
+            make.centerY.equalTo(donutChart)
             make.trailing.equalToSuperview()
             make.width.equalTo(80)
         }
