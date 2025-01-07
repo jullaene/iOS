@@ -140,14 +140,10 @@ class SignupDetailView: UIView {
         femaleButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(20)
             make.top.equalTo(genderLabel.snp.bottom).offset(20)
-            make.width.equalTo(38)
-            make.height.equalTo(46)
         }
         maleButton.snp.makeConstraints { make in
             make.trailing.equalTo(femaleButton.snp.leading).offset(-12)
             make.top.equalTo(genderLabel.snp.bottom).offset(20)
-            make.width.equalTo(38)
-            make.height.equalTo(46)
         }
         birthdayLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
