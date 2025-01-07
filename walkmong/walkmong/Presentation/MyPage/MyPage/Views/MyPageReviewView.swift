@@ -169,16 +169,18 @@ class MyPageReviewView: UIView {
         rightView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
         rightView.clipsToBounds = true
 
-        let leftLabel = SmallTitleLabel(text: "👍")
-        leftLabel.textColor = .white
-        leftLabel.textAlignment = .center
+        let leftIcon = UIImageView(image: UIImage(named: "dislikeIcon"))
+        leftIcon.contentMode = .scaleAspectFit
 
-        let rightLabel = SmallTitleLabel(text: "👍 90%")
+        let rightIcon = UIImageView(image: UIImage(named: "likeIcon"))
+        rightIcon.contentMode = .scaleAspectFit
+        
+        let rightLabel = SmallTitleLabel(text: "90%")
         rightLabel.textColor = .white
         rightLabel.textAlignment = .center
 
-        leftView.addSubview(leftLabel)
-        rightView.addSubview(rightLabel)
+        leftView.addSubview(leftIcon)
+        rightView.addSubviews(rightIcon, rightLabel)
         chartView.addSubviews(leftView, rightView)
 
         leftView.snp.makeConstraints { make in
@@ -191,10 +193,17 @@ class MyPageReviewView: UIView {
             make.width.equalToSuperview().multipliedBy(0.9)
         }
 
-        leftLabel.snp.makeConstraints { make in
+        leftIcon.snp.makeConstraints { make in
             make.center.equalToSuperview()
+            make.width.height.equalTo(24)
         }
 
+        rightIcon.snp.makeConstraints { make in
+            make.trailing.equalTo(rightLabel.snp.leading).offset(-8)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(24)
+        }
+        
         rightLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
