@@ -402,23 +402,54 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         if let overlayView = UIApplication.shared.keyWindow?.viewWithTag(999) {
             overlayView.removeFromSuperview()
         }
-        
-        switch sender.tag {
-        case 1, 2: // 시작 시간 업데이트
-            let timeComponents = selectedTime.split(separator: ":").map { String($0) }
-            if timeComponents.count == 2 {
-                startHourLabel.text = timeComponents[0]
-                startMinuteLabel.text = timeComponents[1]
-            }
-        case 3, 4: // 종료 시간 업데이트
-            let timeComponents = selectedTime.split(separator: ":").map { String($0) }
-            if timeComponents.count == 2 {
-                endHourLabel.text = timeComponents[0]
-                endMinuteLabel.text = timeComponents[1]
-            }
-        default:
-            break
+
+        let timeComponents = selectedTime.split(separator: ":").map { String($0) }
+        guard timeComponents.count == 2,
+              let selectedHour = Int(timeComponents[0]),
+              let selectedMinute = Int(timeComponents[1]) else {
+            print("시간 선택 실패: \(selectedTime)")
+            return
         }
+
+        var shouldShowError = false
+        var errorMessage = ""
+
+        if sender.tag == 1 || sender.tag == 2 { // 시작 시간
+            isStartTimeSelected = true
+            startHourLabel.text = String(format: "%02d", selectedHour)
+            startMinuteLabel.text = String(format: "%02d", selectedMinute)
+
+            // 종료 시간이 이미 설정된 경우 검증
+            if let endHour = Int(endHourLabel.text ?? ""),
+               let endMinute = Int(endMinuteLabel.text ?? "") {
+                if selectedHour > endHour || (selectedHour == endHour && selectedMinute >= endMinute) {
+                    shouldShowError = true
+                    errorMessage = "시작 시간은 종료 시간보다 빨라야 합니다."
+                }
+            }
+        } else if sender.tag == 3 || sender.tag == 4 { // 종료 시간
+            isEndTimeSelected = true
+            endHourLabel.text = String(format: "%02d", selectedHour)
+            endMinuteLabel.text = String(format: "%02d", selectedMinute)
+
+            // 시작 시간이 이미 설정된 경우 검증
+            if let startHour = Int(startHourLabel.text ?? ""),
+               let startMinute = Int(startMinuteLabel.text ?? "") {
+                if selectedHour < startHour || (selectedHour == startHour && selectedMinute <= startMinute) {
+                    shouldShowError = true
+                    errorMessage = "종료 시간은 시작 시간보다 늦어야 합니다."
+                }
+            }
+        }
+
+        if shouldShowError {
+            print("시간 검증 실패: \(errorMessage)")
+            showTimeValidationError(message: errorMessage)
+        } else {
+            print("시간 검증 통과: 시작 시간 = \(startHourLabel.text ?? "없음"), 종료 시간 = \(endHourLabel.text ?? "없음")")
+        }
+
+        updateActionButtonState()
     }
     
     
@@ -555,37 +586,19 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         selectedTime = formatter.string(from: sender.date)
-        
+
         let selectedComponents = Calendar.current.dateComponents([.hour, .minute], from: sender.date)
-        guard let selectedHour = selectedComponents.hour, let selectedMinute = selectedComponents.minute else { return }
-        
-        if sender.tag == 1 || sender.tag == 2 { // 시작 시간
-            isStartTimeSelected = true
-            if let endHour = Int(endHourLabel.text ?? ""), let endMinute = Int(endMinuteLabel.text ?? "") {
-                if selectedHour > endHour || (selectedHour == endHour && selectedMinute >= endMinute) {
-                    showTimeValidationError(message: "시작 시간은 종료 시간보다 빨라야 합니다.")
-                    return
-                }
-            }
-            startHourLabel.text = String(format: "%02d", selectedHour)
-            startMinuteLabel.text = String(format: "%02d", selectedMinute)
-        } else if sender.tag == 3 || sender.tag == 4 { // 종료 시간
-            isEndTimeSelected = true
-            if let startHour = Int(startHourLabel.text ?? ""), let startMinute = Int(startMinuteLabel.text ?? "") {
-                if selectedHour < startHour || (selectedHour == startHour && selectedMinute <= startMinute) {
-                    showTimeValidationError(message: "종료 시간은 시작 시간보다 늦어야 합니다.")
-                    return
-                }
-            }
-            endHourLabel.text = String(format: "%02d", selectedHour)
-            endMinuteLabel.text = String(format: "%02d", selectedMinute)
+        guard let selectedHour = selectedComponents.hour, let selectedMinute = selectedComponents.minute else {
+            print("시간 선택 실패: hour 또는 minute 추출 실패")
+            return
         }
 
-        updateActionButtonState()
+        print("현재 선택 중인 시간: \(selectedHour):\(selectedMinute) (태그: \(sender.tag == 1 || sender.tag == 2 ? "시작 시간" : "종료 시간"))")
     }
     
     private func showTimeValidationError(message: String) {
-        if let viewController = self.getViewController() as? SupportRequestViewController {
+        
+        if let viewController = self.getViewController() {
             let alertBuilder = CustomAlertViewController.CustomAlertBuilder(viewController: viewController)
                 .setTitleState(.useTitleAndSubTitle)
                 .setButtonState(.singleButton)
@@ -595,7 +608,10 @@ final class SupportRequestView2: UIView, CalendarViewDelegate {
                 .setSingleButtonAction {
                     viewController.dismiss(animated: true)
                 }
+            
             alertBuilder.showAlertView()
+        } else {
+            print("viewController를 찾을 수 없음")
         }
     }
 
