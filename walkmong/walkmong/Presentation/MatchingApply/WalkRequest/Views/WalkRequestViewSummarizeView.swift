@@ -1,5 +1,5 @@
 //
-//  WalkRequestViewSummarizeView.swift
+//  MatchingApplyWalkRequestViewSummarizeView.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class WalkRequestViewSummarizeView: UIView {
+final class MatchingApplyWalkRequestViewSummarizeView: UIView {
 
     private let profileContainerView = UIView()
     private let profileInformationView = DogProfileInformationView()

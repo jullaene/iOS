@@ -1,5 +1,5 @@
 //
-//  WalkRequestCautionView.swift
+//  MatchingApplyWalkRequestCautionView.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class WalkRequestCautionView: UIView {
+final class MatchingApplyWalkRequestCautionView: UIView {
 
     private let contentView: UIView = {
         let view = UIView()

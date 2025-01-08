@@ -1,5 +1,5 @@
 //
-//  WalkRequestViewController.swift
+//  MatchingApplyWalkRequestViewController.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -14,9 +14,9 @@ struct StepData {
     let backgroundColor: UIColor
 }
 
-final class WalkRequestViewController: UIViewController {
+final class MatchingApplyWalkRequestViewController: UIViewController {
 
-    private let walkRequestView = WalkRequestView()
+    private let walkRequestView = MatchingApplyWalkRequestView()
     private var currentStep: Int = 1
     private let totalSteps: Int = 5
     
@@ -24,31 +24,31 @@ final class WalkRequestViewController: UIViewController {
         StepData(
             middleTitle: "산책이 필요한 반려견을 선택해요.",
             buttonText: "다음으로",
-            additionalView: WalkRequestDogProfileSelectionView(),
+            additionalView: MatchingApplyWalkRequestDogProfileSelectionView(),
             backgroundColor: .white
         ),
         StepData(
             middleTitle: "산책 정보 작성하기",
             buttonText: "다음으로",
-            additionalView: WalkRequestInformationInputView(),
+            additionalView: MatchingApplyWalkRequestInformationInputView(),
             backgroundColor: .white
         ),
         StepData(
             middleTitle: "산책자에게 전달할 메시지",
             buttonText: "다음으로",
-            additionalView: WalkRequestTextInputView(),
+            additionalView: MatchingApplyWalkRequestTextInputView(),
             backgroundColor: .white
         ),
         StepData(
             middleTitle: "산책 요청 최종 확인",
             buttonText: "다음으로",
-            additionalView: WalkRequestViewSummarizeView(),
+            additionalView: MatchingApplyWalkRequestViewSummarizeView(),
             backgroundColor: .gray100
         ),
         StepData(
             middleTitle: "주의사항 확인",
             buttonText: "산책 지원하기",
-            additionalView: WalkRequestCautionView(),
+            additionalView: MatchingApplyWalkRequestCautionView(),
             backgroundColor: .gray100
         )
     ]
@@ -91,7 +91,7 @@ final class WalkRequestViewController: UIViewController {
         configureActionsForStep(currentStep)
         setupDismissKeyboardGesture()
         walkRequestView.scrollView.delegate = self
-        if let step1View = stepData[0].additionalView as? WalkRequestDogProfileSelectionView {
+        if let step1View = stepData[0].additionalView as? MatchingApplyWalkRequestDogProfileSelectionView {
             step1View.delegate = self
         }
     }
@@ -190,7 +190,7 @@ final class WalkRequestViewController: UIViewController {
     }
     
     private func configureStep1Actions() {
-        guard let step1View = stepData[0].additionalView as? WalkRequestDogProfileSelectionView else { return }
+        guard let step1View = stepData[0].additionalView as? MatchingApplyWalkRequestDogProfileSelectionView else { return }
 
         step1View.onDogSelected = { [weak self] isDogSelected in
             guard let self = self else { return }
@@ -207,14 +207,14 @@ final class WalkRequestViewController: UIViewController {
     }
     
     private func configureStep2Actions() {
-        guard let step2View = stepData[1].additionalView as? WalkRequestInformationInputView else { return }
+        guard let step2View = stepData[1].additionalView as? MatchingApplyWalkRequestInformationInputView else { return }
         
         step2View.calendarView.reloadCalendar()
         step2View.delegate = self
     }
     
     private func configureStep3Actions() {
-        guard let step3View = stepData[2].additionalView as? WalkRequestTextInputView else { return }
+        guard let step3View = stepData[2].additionalView as? MatchingApplyWalkRequestTextInputView else { return }
 
         updateActionButtonState(isEnabled: false, style: .light)
 
@@ -287,7 +287,7 @@ final class WalkRequestViewController: UIViewController {
 }
 
 // MARK: - WalkRequestDogProfileSelectionViewDelegate
-extension WalkRequestViewController: WalkRequestDogProfileSelectionViewDelegate {
+extension MatchingApplyWalkRequestViewController: MatchingApplyWalkRequestDogProfileSelectionViewDelegate {
     func onDogSelected(isDogSelected: Bool) {
         if isDogSelected {
             print("반려견이 선택되었습니다.")
@@ -300,8 +300,8 @@ extension WalkRequestViewController: WalkRequestDogProfileSelectionViewDelegate 
     }
 }
 
-// MARK: - WalkRequestInformationInputViewDelegate
-extension WalkRequestViewController: WalkRequestInformationInputViewDelegate {
+// MARK: - MatchingApplyWalkRequestInformationInputViewDelegate
+extension MatchingApplyWalkRequestViewController: MatchingApplyWalkRequestInformationInputViewDelegate {
     func didUpdateWalkInfo() {
         print("산책 정보가 업데이트되었습니다.")
         updateActionButtonState(isEnabled: true, style: .dark)
@@ -309,7 +309,7 @@ extension WalkRequestViewController: WalkRequestInformationInputViewDelegate {
 }
 
 // MARK: - UIScrollViewDelegate
-extension WalkRequestViewController: UIScrollViewDelegate {
+extension MatchingApplyWalkRequestViewController: UIScrollViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         view.endEditing(true)
     }

@@ -188,7 +188,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         let hasDogs = true // 서버가 동작하지 않으므로 임시값 사용
 
         if hasDogs {
-            let walkRequestVC = WalkRequestViewController()
+            let walkRequestVC = MatchingApplyWalkRequestViewController()
             navigationController?.pushViewController(walkRequestVC, animated: true)
         } else {
             showNoDogsAlert()

@@ -1,5 +1,5 @@
 //
-//  WalkRequestDogProfileSelectionView.swift
+//  MatchingApplyWalkRequestDogProfileSelectionView.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -9,12 +9,12 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-protocol WalkRequestDogProfileSelectionViewDelegate: AnyObject {
+protocol MatchingApplyWalkRequestDogProfileSelectionViewDelegate: AnyObject {
     func didTapProfileButton(for profile: PetProfile)
 }
 
-final class WalkRequestDogProfileSelectionView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    weak var delegate: WalkRequestDogProfileSelectionViewDelegate?
+final class MatchingApplyWalkRequestDogProfileSelectionView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    weak var delegate: MatchingApplyWalkRequestDogProfileSelectionViewDelegate?
     
     // MARK: - Properties
     private var profiles: [PetProfile] = []
