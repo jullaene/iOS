@@ -1,5 +1,5 @@
 //
-//  WalkRequestView1.swift
+//  WalkRequestDogProfileSelectionView.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -14,7 +14,7 @@ protocol WalkRequestDogProfileSelectionViewDelegate: AnyObject {
 }
 
 final class WalkRequestDogProfileSelectionView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    weak var delegate: WalkRequestView1Delegate?
+    weak var delegate: WalkRequestDogProfileSelectionViewDelegate?
     
     // MARK: - Properties
     private var profiles: [PetProfile] = []
