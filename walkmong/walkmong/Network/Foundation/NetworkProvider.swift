@@ -21,9 +21,38 @@ final class NetworkProvider<T: APIEndpoint> {
         target: T,
         responseType: ResponseType.Type
     ) async throws -> ResponseType {
-        let response = try await provider.requestAsync(target)
-        let filteredResponse = try response.filterSuccessfulStatusCodes()
-        return try JSONDecoder().decode(ResponseType.self, from: filteredResponse.data)
+        do {
+            /// 최초로 API 요청
+            let response = try await provider.requestAsync(target)
+            let filteredResponse = try response.filterSuccessfulStatusCodes()
+            return try JSONDecoder().decode(ResponseType.self, from: filteredResponse.data)
+        } catch let error as MoyaError {
+            /// 토큰 만료 시 에러 처리
+            if case .statusCode(let response) = error, response.statusCode == 401 {
+                /// AccessToken 갱신 요청
+                try await refreshAccessToken()
+
+                /// 갱신된 토큰으로 재요청
+                let retryResponse = try await provider.requestAsync(target)
+                let filteredRetryResponse = try retryResponse.filterSuccessfulStatusCodes()
+                return try JSONDecoder().decode(ResponseType.self, from: filteredRetryResponse.data)
+            }
+            /// 기타 에러 전달
+            throw error
+        }
+    }
+
+    /// AccessToken 갱신 메서드
+    private func refreshAccessToken() async throws {
+        guard let refreshToken = AuthManager.shared.refreshToken else {
+            /// RefreshToken이 없으면 로그아웃 처리할 수 있도록 설정
+            throw NetworkError.unauthorized
+        }
+
+        let service = AuthService()
+        let response = try await service.refreshAccessToken(refreshToken: refreshToken)
+        AuthManager.shared.accessToken = response.data.accessToken
+        AuthManager.shared.refreshToken = response.data.refreshToken
     }
 }
 

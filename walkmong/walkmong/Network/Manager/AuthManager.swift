@@ -12,7 +12,7 @@ class AuthManager {
     private init() {}
 
     /// Access Token 프로퍼티
-    var token: String? {
+    var accessToken: String? {
         get {
             // KeychainManager에서 Access Token 가져오기
             return KeychainManager.getTokens().accessToken

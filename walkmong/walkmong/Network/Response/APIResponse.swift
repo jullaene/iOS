@@ -13,7 +13,7 @@ struct APIResponse<DTO: Decodable>: Decodable {
     let data: DTO
 }
 
-// Custom error for unknown cases
-enum WalkmongError: Error {
-    case unknownError
+enum NetworkError: Error {
+    case unauthorized // RefreshToken 없음
+    case tokenRefreshFailed // RefreshToken으로 갱신 실패
 }

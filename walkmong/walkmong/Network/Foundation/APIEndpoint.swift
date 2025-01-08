@@ -21,26 +21,15 @@ extension APIEndpoint {
     }
 
     /// TargetType 중 header의 토큰을 미리 설정합니다.
-    var headers: [String: String]? {
-        guard let token = AuthManager.shared.token else {
+    var headers: [String: String] {
+        guard let token = AuthManager.shared.accessToken else {
             /// Access Token이 없는 경우
-            refreshAccessToken()
-            return nil
+            return ["Content-Type": "application/json"]
         }
         return [
             "Content-Type": "application/json",
             "Authorization": "Bearer \(token)"
         ]
-    }
-
-    /// Refresh Token을 조회하여 발급합니다.
-    private func refreshAccessToken() {
-        guard let refreshToken = AuthManager.shared.refreshToken else {
-            print("Refresh Token이 없습니다. 로그인 화면으로 이동합니다.")
-            // TODO: 로그인 화면 이동
-            return
-        }
-        // TODO: Access Token 재발급 API 호출
     }
 
 }
