@@ -95,10 +95,10 @@ extension UIButton {
     }
     
     private static func setButtonSizeConstraints(button: UIButton, width: CGFloat, height: CGFloat) {
-        NSLayoutConstraint.activate([
-            button.widthAnchor.constraint(equalToConstant: width),
-            button.heightAnchor.constraint(equalToConstant: height)
-        ])
+        button.snp.makeConstraints { make in
+            make.width.equalTo(width)
+            make.height.equalTo(height)
+        }
     }
     
     private static func configureStyle(for button: UIButton, type: ButtonCategory, style: ButtonStyle) {
@@ -145,13 +145,9 @@ extension UIButton {
         
         button.addSubview(stackView)
         
-        NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            stackView.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8),
-            icon.centerYAnchor.constraint(equalTo: label.centerYAnchor)
-        ])
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+        }
         
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray100 : .gray600
@@ -184,12 +180,9 @@ extension UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
 
         button.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
-        ])
+        label.snp.makeConstraints { make in
+            make.edges.equalTo(button).inset(UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+        }
 
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray200 : .gray600
@@ -206,12 +199,9 @@ extension UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         button.addSubview(label)
         
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
-        ])
+        label.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+        }
         
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray100 : .gray600
@@ -247,13 +237,15 @@ extension UIButton {
             .forEach { $0.removeFromSuperview() }
         button.addSubview(icon)
         
-        NSLayoutConstraint.activate([
-            icon.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -24),
-            icon.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-            icon.widthAnchor.constraint(equalToConstant: 24),
-            icon.heightAnchor.constraint(equalToConstant: 24),
-            button.heightAnchor.constraint(equalToConstant: 46)
-        ])
+        icon.snp.makeConstraints { make in
+            make.trailing.equalTo(button).offset(-24)
+            make.centerY.equalTo(button)
+            make.width.height.equalTo(24)
+        }
+
+        button.snp.makeConstraints { make in
+            make.height.equalTo(46)
+        }
 
         button.layer.cornerRadius = 5
         button.backgroundColor = style == .light ? .gray100 : .mainBlue

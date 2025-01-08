@@ -203,8 +203,6 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             .setSubTitleText("산책 지원 요청을 위해 반려견 프로필을 먼저 등록하시겠어요?")
             .setLeftButtonTitle("취소")
             .setRightButtonTitle("등록하기")
-            .setLeftButtonAction {
-            }
             .setRightButtonAction {
                 self.navigateToDogProfileRegistration()
             }

@@ -1,5 +1,5 @@
 //
-//  WalkRequestView5.swift
+//  WalkRequestCautionView.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class WalkRequestView5: UIView {
+final class WalkRequestCautionView: UIView {
 
     private let contentView: UIView = {
         let view = UIView()

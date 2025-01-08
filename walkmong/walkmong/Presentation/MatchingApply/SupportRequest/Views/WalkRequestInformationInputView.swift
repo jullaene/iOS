@@ -1,5 +1,5 @@
 //
-//  SupportRequestView2.swift
+//  WalkRequestInformationInputView.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/4/25.
@@ -8,11 +8,11 @@
 import UIKit
 import SnapKit
 
-protocol WalkRequestView2Delegate: AnyObject {
+protocol WalkRequestInformationInputViewDelegate: AnyObject {
     func updateActionButtonState(isEnabled: Bool)
 }
 
-final class WalkRequestView2: UIView, CalendarViewDelegate {
+final class WalkRequestInformationInputView: UIView, CalendarViewDelegate {
     
     private var isStartTimeSelected: Bool = false
     private var isEndTimeSelected: Bool = false
@@ -68,7 +68,7 @@ final class WalkRequestView2: UIView, CalendarViewDelegate {
     private let selectionView2 = UIView()
     private let selectionView3 = UIView()
     
-    weak var delegate: WalkRequestView2Delegate?
+    weak var delegate: WalkRequestInformationInputViewDelegate?
     
     // MARK: - Initializer
     override init(frame: CGRect) {
