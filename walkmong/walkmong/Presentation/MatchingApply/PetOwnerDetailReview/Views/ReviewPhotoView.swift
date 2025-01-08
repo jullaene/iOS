@@ -47,21 +47,7 @@ class ReviewPhotoView: UIView, UIImagePickerControllerDelegate, UINavigationCont
         return placeholderText
     }
     
-    lazy var reviewTextView: UITextView = {
-        let textView = UITextView()
-        textView.isEditable = true
-        textView.isSelectable = true
-        textView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        textView.text = placeholderText
-        textView.textColor = .gray500
-        textView.backgroundColor = .gray100
-        textView.layer.cornerRadius = 5
-        textView.font = UIFont(name: "Pretendard-Regular", size: 14)
-        textView.isScrollEnabled = true
-        textView.showsVerticalScrollIndicator = false
-        textView.delegate = self
-        return textView
-    }()
+    private var reviewTextView: UITextView
     
     private let charCountLabel = MainParagraphLabel(text: "(0/\(CharacterCountManager.maxCharacterCount))", textColor: .gray400)
     
@@ -75,8 +61,20 @@ class ReviewPhotoView: UIView, UIImagePickerControllerDelegate, UINavigationCont
     
     // MARK: - Initializer
     override init(frame: CGRect) {
+        self.reviewTextView = UITextView()
         super.init(frame: frame)
-        setupUI()
+        
+        reviewTextView.isEditable = true
+        reviewTextView.isSelectable = true
+        reviewTextView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        reviewTextView.text = placeholderText
+        reviewTextView.textColor = .gray500
+        reviewTextView.backgroundColor = .gray100
+        reviewTextView.layer.cornerRadius = 5
+        reviewTextView.font = UIFont(name: "Pretendard-Regular", size: 14)
+        reviewTextView.isScrollEnabled = true
+        reviewTextView.showsVerticalScrollIndicator = false
+        reviewTextView.delegate = self
     }
     
     required init?(coder: NSCoder) {
