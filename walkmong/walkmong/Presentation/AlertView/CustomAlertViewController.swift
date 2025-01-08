@@ -252,14 +252,13 @@ final class CustomAlertViewController: UIViewController {
         }
         
         func showAlertView() {
-            print("Attempting to present CustomAlertViewController")
-            baseViewController.view.endEditing(true) // 키보드 닫기
-            let viewController = buildAlertView()
-            viewController.modalPresentationStyle = .overFullScreen
-            viewController.modalTransitionStyle = .crossDissolve
-            baseViewController.present(viewController, animated: true) {
-                print("CustomAlertViewController presented successfully")
-            }
+                baseViewController.view.endEditing(true)
+                let viewController = buildAlertView()
+                viewController.modalPresentationStyle = .overFullScreen
+                viewController.modalTransitionStyle = .crossDissolve
+                viewController.setupView()
+                viewController.setConstraints()
+                baseViewController.present(viewController, animated: true)
         }
     }
 }
