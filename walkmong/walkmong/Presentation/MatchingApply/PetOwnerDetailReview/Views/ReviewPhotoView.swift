@@ -41,13 +41,20 @@ class ReviewPhotoView: UIView, UIImagePickerControllerDelegate, UINavigationCont
         )
     }()
     
-    private let placeholderText = "작성한 산책 후기는 닉네임, 프로필 이미지와 함께 누구나 볼 수 있도록 공개됩니다. 내용에 민감한 개인정보가 포함되지 않도록 조심해주세요. (최소 20자 이상)"
-    
-    func getPlaceholderText() -> String {
-        return placeholderText
-    }
-    
-    private var reviewTextView: UITextView
+    private let reviewTextView: UITextView = {
+        let textView = UITextView()
+        textView.isEditable = true
+        textView.isSelectable = true
+        textView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        textView.textColor = .gray500
+        textView.backgroundColor = .gray100
+        textView.layer.cornerRadius = 5
+        textView.font = UIFont(name: "Pretendard-Regular", size: 14)
+        textView.isScrollEnabled = true
+        textView.showsVerticalScrollIndicator = false
+        textView.text = "작성한 산책 후기는 닉네임, 프로필 이미지와 함께 누구나 볼 수 있도록 공개됩니다. 내용에 민감한 개인정보가 포함되지 않도록 조심해주세요. (최소 20자 이상)"
+        return textView
+    }()
     
     private let charCountLabel = MainParagraphLabel(text: "(0/\(CharacterCountManager.maxCharacterCount))", textColor: .gray400)
     
@@ -61,24 +68,17 @@ class ReviewPhotoView: UIView, UIImagePickerControllerDelegate, UINavigationCont
     
     // MARK: - Initializer
     override init(frame: CGRect) {
-        self.reviewTextView = UITextView()
         super.init(frame: frame)
-        
-        reviewTextView.isEditable = true
-        reviewTextView.isSelectable = true
-        reviewTextView.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        reviewTextView.text = placeholderText
-        reviewTextView.textColor = .gray500
-        reviewTextView.backgroundColor = .gray100
-        reviewTextView.layer.cornerRadius = 5
-        reviewTextView.font = UIFont(name: "Pretendard-Regular", size: 14)
-        reviewTextView.isScrollEnabled = true
-        reviewTextView.showsVerticalScrollIndicator = false
         reviewTextView.delegate = self
+        setupUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    private func setupTextView() {
+        reviewTextView.delegate = self
+        reviewTextView.text = "작성한 산책 후기는 닉네임, 프로필 이미지와 함께 누구나 볼 수 있도록 공개됩니다. 내용에 민감한 개인정보가 포함되지 않도록 조심해주세요. (최소 20자 이상)"
     }
     
     // MARK: - Setup
@@ -234,7 +234,7 @@ class ReviewPhotoView: UIView, UIImagePickerControllerDelegate, UINavigationCont
 
 extension ReviewPhotoView: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == placeholderText {
+        if textView.text == reviewTextView.text {
             textView.text = ""
             textView.textColor = .mainBlack
         }
@@ -242,13 +242,13 @@ extension ReviewPhotoView: UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
-            textView.text = placeholderText
+            textView.text = reviewTextView.text
             textView.textColor = .gray500
         }
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        let isPlaceholder = textView.text == placeholderText
+        let isPlaceholder = textView.text == reviewTextView.text
         let textToCount = isPlaceholder ? "" : textView.text
         let characterCount = textToCount?.trimmingCharacters(in: .whitespacesAndNewlines).count ?? 0
 
@@ -260,4 +260,16 @@ extension ReviewPhotoView: UITextViewDelegate {
         let isValid = characterCount > 0 && !isPlaceholder
     }
     
+}
+
+extension ReviewPhotoView {
+    func getReviewText() -> String {
+        return reviewTextView.text ?? ""
+    }
+}
+
+extension ReviewPhotoView {
+    func getPlaceholderText() -> String {
+        return "작성한 산책 후기는 닉네임, 프로필 이미지와 함께 누구나 볼 수 있도록 공개됩니다. 내용에 민감한 개인정보가 포함되지 않도록 조심해주세요. (최소 20자 이상)"
+    }
 }
