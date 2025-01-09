@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Charts
 
 class MyPageReviewView: UIView {
     
@@ -26,12 +27,6 @@ class MyPageReviewView: UIView {
     private let keywordView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
     private let keywordTitleLabel = SmallTitleLabel(text: "김철수님의 키워드 TOP 3", textColor: .gray600)
     private let keywordBubbleContainer = UIView()
-    private let largeBubble = UIView.createRoundedView(backgroundColor: .mainBlue, cornerRadius: 81)
-    private let mediumBubble = UIView.createRoundedView(backgroundColor: .mainGreen, cornerRadius: 64)
-    private let smallBubble = UIView.createRoundedView(backgroundColor: .gray400, cornerRadius: 54.5)
-    private let largeBubbleLabel = SmallTitleLabel.createLabel(text: "# 친절해요", textColor: .white, lineHeightMultiple: 1.17)
-    private let mediumBubbleLabel = SmallTitleLabel.createLabel(text: "# 연락이\n잘 되어요", textColor: .white, fontSize: 16, lineHeightMultiple: 1.17)
-    private let smallBubbleLabel = SmallTitleLabel.createLabel(text: "# 반려견\n훈련이 잘\n되어있어요", textColor: .white, fontSize: 14, lineHeightMultiple: 1.17)
     
     // Owner Review
     private let ownerReviewView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
@@ -53,26 +48,21 @@ class MyPageReviewView: UIView {
     // MARK: - Setup Methods
     private func setupView() {
         // User Rating View
-        addSubview(walkerReviewTitle)
-        addSubview(userRatingView)
+        addSubviews(walkerReviewTitle, userRatingView)
         userRatingView.addSubviews(userRatingTitleLabel, participantCountLabel, starRatingLabel, starIcon, radarChart)
         
         // Keyword View
         addSubview(keywordView)
         keywordView.addSubviews(keywordTitleLabel, keywordBubbleContainer)
-        keywordBubbleContainer.addSubviews(mediumBubble, smallBubble, largeBubble)
-        largeBubble.addSubview(largeBubbleLabel)
-        mediumBubble.addSubview(mediumBubbleLabel)
-        smallBubble.addSubview(smallBubbleLabel)
         
         // Owner Review View
-        addSubview(ownerReviewTitle)
-        addSubview(ownerReviewView)
+        addSubviews(ownerReviewTitle, ownerReviewView)
         ownerReviewView.addSubviews(ownerReviewTitleLabel, participantLabel, chartView)
         
         setupChartView()
         setupWalkerReviewTapAction()
         setupOwnerReviewTapAction()
+        setupDonutChart()
     }
     
     private func setupConstraints() {
@@ -122,49 +112,17 @@ class MyPageReviewView: UIView {
         keywordView.snp.makeConstraints { make in
             make.top.equalTo(userRatingView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(305)
         }
         
         keywordTitleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(24)
-            make.leading.equalToSuperview().offset(16)
+            make.top.leading.equalToSuperview().inset(20)
         }
         
         keywordBubbleContainer.snp.makeConstraints { make in
-            make.top.equalTo(keywordTitleLabel.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(260)
-            make.height.equalTo(221)
-        }
-        
-        largeBubble.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(25)
+            make.top.equalTo(keywordTitleLabel.snp.bottom).offset(20)
             make.leading.equalToSuperview()
-            make.width.height.equalTo(162)
-        }
-        
-        mediumBubble.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.trailing.equalToSuperview()
-            make.width.height.equalTo(128)
-        }
-        
-        smallBubble.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-21)
-            make.bottom.equalToSuperview()
-            make.width.height.equalTo(109)
-        }
-        
-        largeBubbleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-        
-        mediumBubbleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-        
-        smallBubbleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.trailing.equalToSuperview().inset(13)
+            make.bottom.equalToSuperview().inset(20)
         }
         
         // Owner Review
@@ -199,70 +157,56 @@ class MyPageReviewView: UIView {
     }
     
     private func setupChartView() {
-        let leftView = RoundedView(corners: [.topLeft, .bottomLeft], cornerRadius: 10, backgroundColor: .gray400)
-        let rightView = RoundedView(corners: [.topRight, .bottomRight], cornerRadius: 10, backgroundColor: .mainBlue)
+        let leftView = UIView()
+        leftView.backgroundColor = .gray400
+        leftView.layer.cornerRadius = 10
+        leftView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+        leftView.clipsToBounds = true
+
+        let rightView = UIView()
+        rightView.backgroundColor = .mainBlue
+        rightView.layer.cornerRadius = 10
+        rightView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+        rightView.clipsToBounds = true
+
+        let leftIcon = UIImageView(image: UIImage(named: "dislikeIcon"))
+        leftIcon.contentMode = .scaleAspectFit
+
+        let rightIcon = UIImageView(image: UIImage(named: "likeIcon"))
+        rightIcon.contentMode = .scaleAspectFit
         
-        // 텍스트 추가
-        let leftLabel = SmallTitleLabel(text: "👍")
-        leftLabel.textColor = .white
-        leftLabel.transform = CGAffineTransform(rotationAngle: .pi)
-        leftLabel.textAlignment = .center
-        
-        let rightLabel = SmallTitleLabel(text: "👍 90%")
+        let rightLabel = SmallTitleLabel(text: "90%")
         rightLabel.textColor = .white
         rightLabel.textAlignment = .center
-        
-        leftView.addSubview(leftLabel)
-        rightView.addSubview(rightLabel)
+
+        leftView.addSubview(leftIcon)
+        rightView.addSubviews(rightIcon, rightLabel)
         chartView.addSubviews(leftView, rightView)
-        
+
         leftView.snp.makeConstraints { make in
             make.leading.top.bottom.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.1)
         }
-        
+
         rightView.snp.makeConstraints { make in
             make.trailing.top.bottom.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.9)
         }
-        
-        leftLabel.snp.makeConstraints { make in
+
+        leftIcon.snp.makeConstraints { make in
             make.center.equalToSuperview()
+            make.width.height.equalTo(24)
+        }
+
+        rightIcon.snp.makeConstraints { make in
+            make.trailing.equalTo(rightLabel.snp.leading).offset(-8)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(24)
         }
         
         rightLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
-        }
-    }
-    
-    // 커스텀 UIView 클래스 정의
-    class RoundedView: UIView {
-        private let corners: UIRectCorner
-        private let cornerRadius: CGFloat
-        
-        init(corners: UIRectCorner, cornerRadius: CGFloat, backgroundColor: UIColor) {
-            self.corners = corners
-            self.cornerRadius = cornerRadius
-            super.init(frame: .zero)
-            self.backgroundColor = backgroundColor
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            
-            let path = UIBezierPath(
-                roundedRect: bounds,
-                byRoundingCorners: corners,
-                cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
-            )
-            let mask = CAShapeLayer()
-            mask.path = path.cgPath
-            layer.mask = mask
         }
     }
     
@@ -276,36 +220,120 @@ class MyPageReviewView: UIView {
         walkerReviewTitle.addGestureRecognizer(tapGesture)
         walkerReviewTitle.isUserInteractionEnabled = true
     }
-
+    
     @objc private func walkerReviewTitleTapped() {
-        if let currentViewController = findViewController() {
+        if let currentViewController = getViewController() {
             let walkerReviewVC = MyPageWalkerReviewViewController()
             currentViewController.navigationController?.pushViewController(walkerReviewVC, animated: true)
         }
     }
     
     private func setupOwnerReviewTapAction() {
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ownerReviewTitleTapped))
-//        ownerReviewTitle.addGestureRecognizer(tapGesture)
+        //        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ownerReviewTitleTapped))
+        //        ownerReviewTitle.addGestureRecognizer(tapGesture)
         ownerReviewTitle.isUserInteractionEnabled = true
     }
     
-//    @objc private func ownerReviewTitleTapped() {
-//        if let currentViewController = findViewController() {
-//            let ownerReviewVC = MyPageOwnerReviewViewController()
-//            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
-//        }
-//    }
+    //    @objc private func ownerReviewTitleTapped() {
+    //        if let currentViewController = findViewController() {
+    //            let ownerReviewVC = MyPageOwnerReviewViewController()
+    //            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
+    //        }
+    //    }
     
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while responder != nil {
-            if let viewController = responder as? UIViewController {
-                return viewController
-            }
-            responder = responder?.next
+    private func setupDonutChart() {
+        // 1. 데이터 설정
+        let entries: [PieChartDataEntry] = [
+            PieChartDataEntry(value: 40, label: "친절해요"),
+            PieChartDataEntry(value: 30, label: "연락이 잘 되어요"),
+            PieChartDataEntry(value: 20, label: "반려견 훈련이 잘 되어있어요"),
+            PieChartDataEntry(value: 10, label: "기타")
+        ]
+        
+        let dataSet = PieChartDataSet(entries: entries, label: "")
+        dataSet.colors = [.mainBlue, .gray500, .gray400, .gray300]
+        dataSet.drawValuesEnabled = false
+        dataSet.sliceSpace = 0
+        dataSet.selectionShift = 0
+        
+        let chartData = PieChartData(dataSet: dataSet)
+        
+        // 2. 도넛 차트 설정
+        let donutChart = PieChartView()
+        donutChart.data = chartData
+        donutChart.holeRadiusPercent = 0.36
+        donutChart.transparentCircleRadiusPercent = 0
+        donutChart.legend.enabled = false
+        donutChart.chartDescription.enabled = false
+        donutChart.holeColor = .clear
+        donutChart.drawEntryLabelsEnabled = false
+        donutChart.rotationEnabled = false
+        
+        // 3. 도넛 차트 추가
+        keywordBubbleContainer.addSubview(donutChart)
+        
+        let legendView = createLegendView(for: entries, colors: dataSet.colors)
+        keywordBubbleContainer.addSubview(legendView)
+        
+        donutChart.snp.makeConstraints { make in
+            make.top.equalTo(keywordTitleLabel.snp.bottom).offset(20)
+            make.leading.equalTo(keywordTitleLabel.snp.leading)
+            make.trailing.equalTo(legendView.snp.leading).offset(-16)
+            make.height.equalTo(donutChart.snp.width)
+            make.bottom.equalToSuperview()
         }
-        return nil
+        
+        // 4. LegendView 추가
+        legendView.snp.makeConstraints { make in
+            make.centerY.equalTo(donutChart)
+            make.trailing.equalToSuperview()
+            make.width.equalTo(80)
+        }
+    }
+    
+    // 범례 뷰 생성
+    private func createLegendView(for entries: [PieChartDataEntry], colors: [UIColor]) -> UIView {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        
+        for (index, entry) in entries.enumerated() {
+            let colorView = UIView()
+            colorView.backgroundColor = colors[index]
+            colorView.layer.cornerRadius = 4
+            
+            let labelStackView = UIStackView()
+            labelStackView.axis = .vertical
+            labelStackView.spacing = 2
+            
+            let mainLabel = SmallMainHighlightParagraphLabel(text: entry.label ?? "", textColor: .gray500)
+            mainLabel.numberOfLines = 0
+            mainLabel.lineBreakMode = .byWordWrapping
+            labelStackView.addArrangedSubview(mainLabel)
+            
+            if entry.label != "기타" {
+                let percentLabel = CaptionLabel(text: "\(Int(entry.value))%", textColor: .gray400)
+                percentLabel.numberOfLines = 1
+                percentLabel.lineBreakMode = .byClipping
+                labelStackView.addArrangedSubview(percentLabel)
+            }
+            
+            let horizontalStack = UIStackView()
+            horizontalStack.axis = .horizontal
+            horizontalStack.spacing = 8
+            horizontalStack.alignment = .top
+            horizontalStack.addArrangedSubview(colorView)
+            horizontalStack.addArrangedSubview(labelStackView)
+
+            stackView.addArrangedSubview(horizontalStack)
+
+            colorView.snp.makeConstraints { make in
+                make.size.equalTo(CGSize(width: 8, height: 8))
+                make.top.equalTo(mainLabel.snp.top).inset(5)
+            }
+        }
+        
+        return stackView
     }
 }
 
