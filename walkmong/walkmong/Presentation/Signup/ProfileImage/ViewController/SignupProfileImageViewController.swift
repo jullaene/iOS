@@ -53,17 +53,26 @@ extension SignupProfileImageViewController: SignupProfileImageViewDelegate {
         signupData.profile = image
         showLoading()
         defer { hideLoading() }
+
         Task {
             do {
+                // 회원가입 요청
                 let signupResponse = try await service.signup(request: signupData)
-                print(signupResponse)
-                let response = try await service.login(email: signupData.email, password: signupData.password)
-                print(response)
-                AuthManager.shared.accessToken = response.data.accessToken
-                AuthManager.shared.refreshToken = response.data.refreshToken
-                let postResponse = try await memberService.postAddress(request: addressData)
-                print(postResponse)
-                hideLoading()
+                print("회원가입 성공: \(signupResponse)")
+
+                // 로그인 요청
+                let loginResponse = try await service.login(email: signupData.email, password: signupData.password)
+                print("로그인 성공: \(loginResponse)")
+
+                // 토큰 저장
+                AuthManager.shared.accessToken = loginResponse.data.accessToken
+                AuthManager.shared.refreshToken = loginResponse.data.refreshToken
+
+                // 주소 정보 저장
+                let addressResponse = try await memberService.postAddress(request: addressData)
+                print("주소 정보 저장 성공: \(addressResponse)")
+
+                // 성공 알림 표시 및 화면 전환
                 CustomAlertViewController.CustomAlertBuilder(viewController: self)
                     .setButtonState(.singleButton)
                     .setTitleState(.useTitleOnly)
@@ -76,7 +85,8 @@ extension SignupProfileImageViewController: SignupProfileImageViewDelegate {
                     })
                     .showAlertView()
             } catch {
-                hideLoading()
+                // 실패 처리
+                print("에러 발생: \(error.localizedDescription)")
                 CustomAlertViewController.CustomAlertBuilder(viewController: self)
                     .setButtonState(.singleButton)
                     .setTitleState(.useTitleAndSubTitle)
