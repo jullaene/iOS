@@ -39,7 +39,7 @@ extension AuthAPI: APIEndpoint {
         case .login:
             return "/api/v1/auth/login"
         case .checkEmail:
-            return "/api/v1/auth/email/duplicate/"
+            return "/api/v1/auth/email/duplicate"
         case .checkNickname:
             return "/api/v1/auth/nickname/duplicate"
         case .veryfyEmail:

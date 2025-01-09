@@ -14,7 +14,7 @@ struct AuthService {
     
     func signup(email: String, password: String, nickname: String, name: String, gender: String, birthDate: String, profile: UIImage, phone: String) async throws -> AuthResponse {
         guard let profileData = profile.jpegData(compressionQuality: 1.0) else {
-            throw NetworkError.clientError(message: "프로필 이미지를 변환할 수 없습니다.")
+            throw NetworkError.clientError
         }
         return try await provider.request(
             target: .signup(email: email, password: password, nickname: nickname, name: name, gender: gender, birthDate: birthDate, profile: profileData, phone: phone),
@@ -30,9 +30,7 @@ struct AuthService {
             )
         } catch let error as MoyaError {
             if case .statusCode(let response) = error, (400...499).contains(response.statusCode) {
-                if let errorMessage = String(data: response.data, encoding: .utf8) {
-                    throw NetworkError.clientError(message: errorMessage)
-                }
+                throw NetworkError.clientError
             }
             throw error
         }

@@ -22,25 +22,48 @@ final class NetworkProvider<T: APIEndpoint> {
         responseType: ResponseType.Type
     ) async throws -> ResponseType {
         do {
-            /// 최초로 API 요청
+            /// 최초 API 요청
             let response = try await provider.requestAsync(target)
-            let filteredResponse = try response.filterSuccessfulStatusCodes()
-            return try JSONDecoder().decode(ResponseType.self, from: filteredResponse.data)
-        } catch let error as MoyaError {
-            /// 토큰 만료 시 에러 처리
-            if case .statusCode(let response) = error, response.statusCode == 401 {
-                /// AccessToken 갱신 요청
+            print(response)
+            
+            // 상태 코드 처리
+            switch response.statusCode {
+            case 200...299:
+                // 성공: 데이터 디코딩 후 반환
+                return try JSONDecoder().decode(ResponseType.self, from: response.data)
+            case 401:
+                // 401: 토큰 만료 처리
                 try await refreshAccessToken()
 
-                /// 갱신된 토큰으로 재요청
+                // 갱신된 토큰으로 재요청
                 let retryResponse = try await provider.requestAsync(target)
-                let filteredRetryResponse = try retryResponse.filterSuccessfulStatusCodes()
-                return try JSONDecoder().decode(ResponseType.self, from: filteredRetryResponse.data)
+                if (200...299).contains(retryResponse.statusCode) {
+                    return try JSONDecoder().decode(ResponseType.self, from: retryResponse.data)
+                } else {
+                    throw NetworkError.unauthorized
+                }
+            case 403:
+                // 403: 권한 없음 처리
+                throw NetworkError.forbidden
+            case 400...499:
+                // 클라이언트 에러 처리
+                if let errorMessage = String(data: response.data, encoding: .utf8) {
+                    throw NetworkError.clientError
+                }
+                throw NetworkError.unknown
+            case 500...599:
+                // 서버 에러 처리
+                throw NetworkError.serverError
+            default:
+                throw NetworkError.unknown
             }
-            /// 기타 에러 전달
+        } catch let error as MoyaError {
+            /// 기타 네트워크 관련 에러 처리
             throw error
         }
     }
+
+
 
     /// AccessToken 갱신 메서드
     private func refreshAccessToken() async throws {

@@ -10,6 +10,8 @@ import UIKit
 final class SignupEmailViewController: UIViewController {
     
     private let signupEmailView = SignupEmailView()
+    
+    private let service = AuthService()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -40,6 +42,16 @@ final class SignupEmailViewController: UIViewController {
 }
 
 extension SignupEmailViewController: SignupEmailViewDelegate {
+    func didTapEmailCheckButton(with email: String) async -> Bool {
+        do {
+            let response = try await service.checkEmail(email: email)
+            print(response)
+            return response.statusCode == 200
+        } catch {
+            return false
+        }
+    }
+    
     func didTapNextButton() {
         let nextVC = SignupAuthCodeViewController()
         navigationController?.pushViewController(nextVC, animated: true)

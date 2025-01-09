@@ -9,6 +9,7 @@ import UIKit
 
 protocol SignupEmailViewDelegate: AnyObject {
     func didTapNextButton()
+    func didTapEmailCheckButton(with email: String) async -> Bool 
 }
 
 final class SignupEmailView: UIView {
@@ -103,27 +104,68 @@ extension SignupEmailView: UITextFieldDelegate {
     }
     
     private func validateEmailInput(in textField: UITextField) {
-        if let text = textField.text, isValidEmail(text) {
-            emailTextFieldWithSubtitle.showSubtitleText(false)
-            nextButton.setButtonState(isEnabled: true)
-            
-            //TODO: 이메일 중복 검사 API 호출
-//            if {requestAPI} {
-//                emailTextFieldWithSubtitle.shakeSubtitleLabel()
-//                emailTextFieldWithSubtitle.showSubtitleText(true)
-//                nextButton.setButtonState(isEnabled: true)
-//                emailTextFieldWithSubtitle.setSubtitleText(textColor: .negative, text: "이미 가입된 이메일 주소입니다. 다른 이메일을 입력해주세요.", image: .warningIconNegative)
-//            }else {
-//                nextButton.setButtonState(isEnabled: false)
-//                emailTextFieldWithSubtitle.showSubtitleText(false)
-//            }
-            
+        guard let text = textField.text else { return }
+
+        // 이메일 형식 유효성 검사
+        if isValidEmail(text) {
+            // 이메일 형식이 유효한 경우 네트워크 요청
+            Task {
+                if let isAvailable = await delegate?.didTapEmailCheckButton(with: text) {
+                    print(isAvailable)
+                    handleEmailCheckResult(isAvailable: isAvailable)
+                } else {
+                    // delegate가 nil이거나 응답이 없을 경우
+                    showErrorForEmailCheck()
+                }
+            }
         } else {
-            nextButton.setButtonState(isEnabled: false)
-            emailTextFieldWithSubtitle.shakeSubtitleLabel()
-            emailTextFieldWithSubtitle.showSubtitleText(true)
-            emailTextFieldWithSubtitle.setSubtitleText(textColor: .negative, text: "올바른 이메일 형식을 입력해주세요.", image: .warningIconNegative)
+            // 이메일 형식이 잘못된 경우
+            handleInvalidEmailFormat()
         }
+    }
+
+    private func handleEmailCheckResult(isAvailable: Bool) {
+        if isAvailable {
+            // 이메일 사용 가능
+            emailTextFieldWithSubtitle.setSubtitleText(
+                textColor: .mainBlue,
+                text: "사용 가능한 이메일입니다.",
+                image: .warningIconMainBlue
+            )
+            emailTextFieldWithSubtitle.showSubtitleText(true)
+            nextButton.setButtonState(isEnabled: true)
+        } else {
+            // 이메일 중복
+            emailTextFieldWithSubtitle.setSubtitleText(
+                textColor: .negative,
+                text: "이미 사용 중인 이메일입니다.",
+                image: .warningIconNegative
+            )
+            emailTextFieldWithSubtitle.showSubtitleText(true)
+            emailTextFieldWithSubtitle.shakeSubtitleLabel()
+            nextButton.setButtonState(isEnabled: false)
+        }
+    }
+
+    private func handleInvalidEmailFormat() {
+        emailTextFieldWithSubtitle.setSubtitleText(
+            textColor: .negative,
+            text: "올바른 이메일 형식을 입력해주세요.",
+            image: .warningIconNegative
+        )
+        emailTextFieldWithSubtitle.showSubtitleText(true)
+        emailTextFieldWithSubtitle.shakeSubtitleLabel()
+        nextButton.setButtonState(isEnabled: false)
+    }
+
+    private func showErrorForEmailCheck() {
+        emailTextFieldWithSubtitle.setSubtitleText(
+            textColor: .negative,
+            text: "이메일 확인 중 오류가 발생했습니다. 다시 시도해주세요.",
+            image: .warningIconNegative
+        )
+        emailTextFieldWithSubtitle.showSubtitleText(true)
+        nextButton.setButtonState(isEnabled: false)
     }
     
     private func isValidEmail(_ email: String) -> Bool {
