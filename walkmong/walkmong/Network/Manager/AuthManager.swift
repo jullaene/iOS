@@ -44,4 +44,8 @@ class AuthManager {
             }
         }
     }
+    
+    func isLoggedIn() -> Bool {
+        return accessToken != nil
+    }
 }
