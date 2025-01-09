@@ -14,7 +14,7 @@ protocol SignupDetailViewDelegate: AnyObject {
     func didTapPlaceSelectButton(_ view: SignupDetailView)
 }
 
-class SignupDetailView: UIView {
+final class SignupDetailView: UIView {
     
     private var name: String = ""
     private var didSetGender: Bool = false

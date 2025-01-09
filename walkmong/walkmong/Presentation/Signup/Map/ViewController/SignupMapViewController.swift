@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SignupMapViewController: UIViewController {
+final class SignupMapViewController: UIViewController {
     
     let signupMapview = SignupMapView()
 

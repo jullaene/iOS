@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SignupPasswordViewController: UIViewController {
+final class SignupPasswordViewController: UIViewController {
     
     private let signupPasswordView = SignupPasswordView()
 

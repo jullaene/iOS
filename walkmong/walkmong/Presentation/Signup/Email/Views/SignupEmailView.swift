@@ -11,7 +11,7 @@ protocol SignupEmailViewDelegate: AnyObject {
     func didTapNextButton()
 }
 
-class SignupEmailView: UIView {
+final class SignupEmailView: UIView {
     
     private let titleLabel = MiddleTitleLabel(text: "이메일을 입력해주세요.")
     

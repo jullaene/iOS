@@ -11,7 +11,7 @@ protocol SignupPasswordViewDelegate: AnyObject {
     func didTapNextButton()
 }
 
-class SignupPasswordView: UIView {
+final class SignupPasswordView: UIView {
     
     private let titleLabel = MiddleTitleLabel(text: "비밀번호를 입력해주세요.")
     

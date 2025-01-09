@@ -12,7 +12,7 @@ protocol SignupProfileImageViewDelegate: AnyObject {
     func didTapNextButton(with Image: UIImage)
 }
 
-class SignupProfileImageView: UIView {
+final class SignupProfileImageView: UIView {
     
     private let profileImageLabel = MiddleTitleLabel(text: "내 프로필 사진을 등록해주세요.")
 
