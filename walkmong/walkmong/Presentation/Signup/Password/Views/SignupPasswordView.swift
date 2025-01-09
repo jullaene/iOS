@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SignupPasswordViewDelegate: AnyObject {
-    func didTapNextButton()
+    func didTapNextButton(password: String)
 }
 
 final class SignupPasswordView: UIView {
@@ -114,7 +114,9 @@ final class SignupPasswordView: UIView {
     }
     
     @objc private func didTapNextButton() {
-        delegate?.didTapNextButton()
+        if let password = passwordTextField.text {
+            delegate?.didTapNextButton(password: password)
+        }
     }
 }
 

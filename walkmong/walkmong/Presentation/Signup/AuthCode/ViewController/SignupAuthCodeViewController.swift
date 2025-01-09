@@ -9,7 +9,20 @@ import UIKit
 
 final class SignupAuthCodeViewController: UIViewController {
     
-    private let signupAuthCodeView = SignupAuthCodeView()
+    private lazy var signupAuthCodeView = SignupAuthCodeView(email: self.email ?? "이메일 오류")
+    
+    private let service = AuthService()
+    
+    private var email: String?
+    
+    init(email: String) {
+        super.init(nibName: nil, bundle: nil)
+        self.email = email
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +33,11 @@ final class SignupAuthCodeViewController: UIViewController {
         addProgressBar(currentStep: 2, totalSteps: 7)
         dismissKeyboardOnTap()
         signupAuthCodeView.delegate = self
+        Task {
+            if let email = email {
+                await verifyEmail(email: email)
+            }
+        }
     }
     
     private func addSubview() {
@@ -36,11 +54,43 @@ final class SignupAuthCodeViewController: UIViewController {
 }
 
 extension SignupAuthCodeViewController: SignupAuthCodeViewDelegate {
-    func didEnterCode(_ code: String) {
-        //TODO: 코드 인증 API 호출
-        print(code)
-        let nextVC = SignupPasswordViewController()
-        self.navigationController?.pushViewController(nextVC, animated: true)
+    func didEnterCode(_ code: String) async {
+        await checkEmailAuthCode(email: email ?? "이메일 오류", code: code)
+    }
+    private func checkEmailAuthCode(email: String, code: String) async {
+        showLoading()
+        defer { hideLoading() }
+        do {
+            let response = try await service.checkEmailAuthCode(email: email, code: code)
+            print(code)
+            let nextVC = SignupPasswordViewController(email: email)
+            self.navigationController?.pushViewController(nextVC, animated: true)
+        }catch {
+            CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                .setButtonState(.singleButton)
+                .setTitleState(.useTitleAndSubTitle)
+                .setSingleButtonTitle("돌아가기")
+                .setTitleText("인증 실패")
+                .setSubTitleText("인증 코드를 확인해주세요.")
+                .showAlertView()
+            return
+        }
     }
     
+    private func verifyEmail(email: String) async {
+        do {
+            try await service.verifyEmail(email: email)
+        }catch {
+            CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                .setButtonState(.singleButton)
+                .setTitleState(.useTitleAndSubTitle)
+                .setSingleButtonTitle("돌아가기")
+                .setTitleText("인증코드 발송 실패")
+                .setSubTitleText("인증코드 발송에 실패했습니다.")
+                .setSingleButtonAction({
+                    self.navigationController?.popViewController(animated: true)
+                })
+                .showAlertView()
+        }
+    }
 }

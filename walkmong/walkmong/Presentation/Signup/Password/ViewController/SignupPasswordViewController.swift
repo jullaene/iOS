@@ -10,7 +10,18 @@ import UIKit
 final class SignupPasswordViewController: UIViewController {
     
     private let signupPasswordView = SignupPasswordView()
-
+    private var email: String?
+    private var password: String?
+    
+    init(email: String?) {
+        super.init(nibName: nil, bundle: nil)
+        self.email = email
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -36,8 +47,10 @@ final class SignupPasswordViewController: UIViewController {
 }
 
 extension SignupPasswordViewController: SignupPasswordViewDelegate {
-    func didTapNextButton() {
-        let nextVC = SignupDetailViewController()
-        navigationController?.pushViewController(nextVC, animated: true)
+    func didTapNextButton(password: String) {
+        if let email = email {
+            let nextVC = SignupDetailViewController(email: email, password: password)
+            navigationController?.pushViewController(nextVC, animated: true)
+        }
     }
 }

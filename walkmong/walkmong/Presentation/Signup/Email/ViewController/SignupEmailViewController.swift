@@ -52,8 +52,8 @@ extension SignupEmailViewController: SignupEmailViewDelegate {
         }
     }
     
-    func didTapNextButton() {
-        let nextVC = SignupAuthCodeViewController()
+    func didTapNextButton(with email: String) async {
+        let nextVC = await SignupAuthCodeViewController(email: email)
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

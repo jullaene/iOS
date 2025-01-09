@@ -16,6 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
+        logout()
 
         if AuthManager.shared.isLoggedIn() {
             // 로그인 상태: 메인 화면

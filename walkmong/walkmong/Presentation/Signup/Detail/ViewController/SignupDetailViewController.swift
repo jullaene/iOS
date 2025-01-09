@@ -14,6 +14,18 @@ final class SignupDetailViewController: UIViewController {
     private var isNicknamechecked = false
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
+    private var email: String?
+    private var password: String?
+    
+    init(email: String, password: String){
+        super.init(nibName: nil, bundle: nil)
+        self.email = email
+        self.password = password
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

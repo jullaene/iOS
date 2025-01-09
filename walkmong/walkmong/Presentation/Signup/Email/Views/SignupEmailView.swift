@@ -8,8 +8,8 @@
 import UIKit
 
 protocol SignupEmailViewDelegate: AnyObject {
-    func didTapNextButton()
-    func didTapEmailCheckButton(with email: String) async -> Bool 
+    func didTapNextButton(with email: String) async
+    func didTapEmailCheckButton(with email: String) async -> Bool
 }
 
 final class SignupEmailView: UIView {
@@ -72,14 +72,14 @@ final class SignupEmailView: UIView {
     }
     
     @objc private func didTapNextButton() {
-        //TODO: 인증 코드 API 호출 + 화면 전환
         debounceTimer?.invalidate()
         validateEmailInput(in: emailTextField)
         
         if nextButton.isEnabled {
-            // TODO: 인증 코드 API 호출 + 화면 전환
             print("nextButton Action")
-            delegate?.didTapNextButton()
+            Task {
+                await delegate?.didTapNextButton(with: emailTextField.text ?? "")
+            }
         } else {
             print("이메일이 유효하지 않아 동작하지 않습니다.")
         }

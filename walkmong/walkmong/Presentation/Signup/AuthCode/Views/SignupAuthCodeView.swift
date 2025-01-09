@@ -8,11 +8,11 @@
 import UIKit
 
 protocol SignupAuthCodeViewDelegate: AnyObject {
-    func didEnterCode(_ code: String)
+    func didEnterCode(_ code: String) async
 }
 
 final class SignupAuthCodeView: UIView {
-    private let userEmail: String = "이메일 오류"
+    private let userEmail: String!
     
     private let titleLabel = MiddleTitleLabel(text: "계정 인증 코드를 확인해주세요")
     private let subtitleLabel = SubtitleLabel()
@@ -34,12 +34,15 @@ final class SignupAuthCodeView: UIView {
         return textField
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(email: String) {
+        userEmail = email
+        super.init(frame: .zero)
         addSubview()
         setUI()
         setConstraints()
-        subtitleLabel.setContent("\(userEmail)으로 보내드린 인증코드로 로그인 하실 수 있습니다.", textColor: .mainBlue, image: .warningIconMainBlue)
+        if let userEmail = userEmail {
+            subtitleLabel.setContent("\(userEmail)으로 보내드린 인증코드로 로그인 하실 수 있습니다.", textColor: .mainBlue, image: .warningIconMainBlue)
+        }
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
@@ -117,7 +120,9 @@ final class SignupAuthCodeView: UIView {
     }
     
     @objc private func nextButtonTapped() {
-        delegate?.didEnterCode(getCode())
+        Task {
+            await delegate?.didEnterCode(getCode())
+        }
     }
 }
 
@@ -134,7 +139,9 @@ extension SignupAuthCodeView: UITextFieldDelegate {
             } else {
                 textField.resignFirstResponder()
                 nextButton.setButtonState(isEnabled: true)
-                delegate?.didEnterCode(getCode())
+                Task {
+                    await delegate?.didEnterCode(getCode())
+                }
             }
             return false
         } else if string.isEmpty {
