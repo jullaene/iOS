@@ -16,22 +16,21 @@ class SignupProfileImageView: UIView {
     
     private let profileImageLabel = MiddleTitleLabel(text: "내 프로필 사진을 등록해주세요.")
 
-    private let profileImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .profileImageNil
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 107.5
-        return imageView
+    private let profileImageView: UIButton = {
+        let button = UIButton()
+        button.setImage(.profileImageNil, for: .normal)
+        button.imageView?.contentMode = .scaleAspectFill
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 107.5
+        return button
     }()
     
-    private let profileImageIconView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .profileImageIcon
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 17.5
-        return imageView
+    private let profileImageIconButton: UIButton = {
+        let button = UIButton()
+        button.setImage(.profileImageIcon, for: .normal)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 17.5
+        return button
     }()
     
     private let nextButton = NextButton(text: "다음으로")
@@ -54,7 +53,7 @@ class SignupProfileImageView: UIView {
     }
     
     private func addSubview() {
-        addSubviews(profileImageLabel, profileImageView, profileImageIconView, nextButton)
+        addSubviews(profileImageLabel, profileImageView, profileImageIconButton, nextButton)
     }
     
     private func setConstraints() {
@@ -69,9 +68,9 @@ class SignupProfileImageView: UIView {
             make.width.height.equalTo(215)
         }
         
-        profileImageIconView.snp.makeConstraints { make in
+        profileImageIconButton.snp.makeConstraints { make in
             make.bottom.equalTo(profileImageView.snp.bottom)
-            make.trailing.equalTo(profileImageView.snp.trailing).offset(20)
+            make.trailing.equalTo(profileImageView.snp.trailing).offset(-20)
             make.width.height.equalTo(35)
         }
         
@@ -84,21 +83,23 @@ class SignupProfileImageView: UIView {
     
     private func setButtonAction() {
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+        profileImageView.addTarget(self, action: #selector(setPHPicker), for: .touchUpInside)
+        profileImageIconButton.addTarget(self, action: #selector(setPHPicker), for: .touchUpInside)
     }
     
     @objc private func nextButtonTapped() {
-        if let image = self.profileImageView.image {
+        if let image = self.profileImageView.imageView?.image {
             delegate?.didTapNextButton(with: image)
         }
     }
     
-    private func setPHPicker() {
+    @objc private func setPHPicker() {
         configuration.filter = .any(of: [.images])
         configuration.selectionLimit = 1
         picker = PHPickerViewController(configuration: configuration)
         picker?.delegate = self
         if let vc = self.getViewController() {
-            picker?.present(vc, animated: true)
+            vc.present(picker!, animated: true)
         }
     }
     
@@ -116,7 +117,9 @@ extension SignupProfileImageView: PHPickerViewControllerDelegate {
            itemProvider.canLoadObject(ofClass: UIImage.self) {
             itemProvider.loadObject(ofClass: UIImage.self) { (image, error) in
                 DispatchQueue.main.async {
-                    self.profileImageView.image = image as? UIImage
+                    self.profileImageView.setImage(image as? UIImage, for: .normal)
+                    self.nextButton.setButtonState(isEnabled: true)
+                    return
                 }
             }
         } else {
@@ -130,6 +133,8 @@ extension SignupProfileImageView: PHPickerViewControllerDelegate {
                     .showAlertView()
             }
         }
+        self.profileImageView.setImage(.profileImageNil, for: .normal)
+        self.nextButton.setButtonState(isEnabled: false)
     }
     
 }
