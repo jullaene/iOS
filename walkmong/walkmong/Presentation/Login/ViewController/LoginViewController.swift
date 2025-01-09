@@ -39,7 +39,7 @@ final class LoginViewController: UIViewController {
 }
 
 extension LoginViewController: LoginViewDelegate {
-    func didTapLoginButton(email: String, password: String) async {
+    func didTapLoginButton(email: String, password: String, keepLogin: Bool, keepEmail: String?) async {
         showLoading()
         defer { hideLoading() }
         
@@ -48,7 +48,7 @@ extension LoginViewController: LoginViewDelegate {
             let response = try await service.login(email: email, password: password)
             
             // 로그인 성공 처리
-            handleLoginSuccess(response: response)
+            handleLoginSuccess(response: response, keepLogin: keepLogin, keepEmail: keepEmail)
         } catch let error as NetworkError {
             // 로그인 관련 오류 처리
             CustomAlertViewController.CustomAlertBuilder(viewController: self)
@@ -70,7 +70,14 @@ extension LoginViewController: LoginViewDelegate {
         }
     }
     
-    private func handleLoginSuccess(response: RefreshAccessTokenResponse) {
+    private func handleLoginSuccess(response: RefreshAccessTokenResponse, keepLogin: Bool, keepEmail: String? = nil) {
+        if keepLogin {
+            AuthManager.shared.accessToken = response.data.accessToken
+            AuthManager.shared.refreshToken = response.data.refreshToken
+        }
+        if let keepEmail = keepEmail {
+            UserDefaults.setValue(keepEmail, forKey: "USER_EMAIL")
+        }
         let mainTabBarController = MainTabBarController()
         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
         sceneDelegate?.changeRootViewController(mainTabBarController, animated: true)

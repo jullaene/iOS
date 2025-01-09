@@ -8,7 +8,7 @@
 import UIKit
 
 protocol LoginViewDelegate: AnyObject {
-    func didTapLoginButton(email: String, password: String) async
+    func didTapLoginButton(email: String, password: String, keepLogin: Bool, keepEmail: String?) async
 }
 
 final class LoginView: UIView {
@@ -62,6 +62,7 @@ final class LoginView: UIView {
         addSubview()
         setConstraints()
         setButtonActions()
+        setSavedEmail()
     }
     
     required init?(coder: NSCoder) {
@@ -111,7 +112,7 @@ final class LoginView: UIView {
     @objc private func loginButtonTapped() {
         if let email = emailTextField.text, let password = passwordTextField.text {
             Task {
-                await delegate?.didTapLoginButton(email: email, password: password)
+                await delegate?.didTapLoginButton(email: email, password: password, keepLogin: keepLoginButton.isSelected, keepEmail: keepEmailButton.isSelected ? emailTextField.text : nil)
             }
         }
     }
@@ -122,6 +123,12 @@ final class LoginView: UIView {
     
     @objc private func keepLoginButtonTapped() {
         keepLoginButton.isSelected.toggle()
+    }
+    
+    private func setSavedEmail() {
+        if let email = UserDefaults.standard.string(forKey: "USER_EMAIL"){
+            emailTextField.text = email
+        }
     }
     
 }
