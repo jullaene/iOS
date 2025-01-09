@@ -17,7 +17,8 @@ class SignupProfileImageViewController: UIViewController {
         addSubview()
         setConstraints()
         addCustomNavigationBar(titleText: "가입하기", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
-        addProgressBar(currentStep: 4, totalSteps: 7)
+        addProgressBar(currentStep: 6, totalSteps: 7)
+        signupProfileImageView.delegate = self
     }
     
     private func addSubview() {
@@ -32,4 +33,10 @@ class SignupProfileImageViewController: UIViewController {
         }
     }
 
+}
+
+extension SignupProfileImageViewController: SignupProfileImageViewDelegate {
+    func didTapNextButton(with Image: UIImage) {
+        //TODO: 이미지 데이터 넘김
+    }
 }

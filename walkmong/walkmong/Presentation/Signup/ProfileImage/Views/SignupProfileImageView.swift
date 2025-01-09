@@ -6,6 +6,11 @@
 //
 
 import UIKit
+import PhotosUI
+
+protocol SignupProfileImageViewDelegate: AnyObject {
+    func didTapNextButton(with Image: UIImage)
+}
 
 class SignupProfileImageView: UIView {
     
@@ -31,10 +36,17 @@ class SignupProfileImageView: UIView {
     
     private let nextButton = NextButton(text: "다음으로")
     
+    private var configuration = PHPickerConfiguration()
+    
+    private var picker: PHPickerViewController?
+    
+    weak var delegate: SignupProfileImageViewDelegate?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview()
         setConstraints()
+        setButtonAction()
     }
     
     required init?(coder: NSCoder) {
@@ -67,6 +79,56 @@ class SignupProfileImageView: UIView {
             make.height.equalTo(54)
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(58)
+        }
+    }
+    
+    private func setButtonAction() {
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func nextButtonTapped() {
+        if let image = self.profileImageView.image {
+            delegate?.didTapNextButton(with: image)
+        }
+    }
+    
+    private func setPHPicker() {
+        configuration.filter = .any(of: [.images])
+        configuration.selectionLimit = 1
+        picker = PHPickerViewController(configuration: configuration)
+        picker?.delegate = self
+        if let vc = self.getViewController() {
+            picker?.present(vc, animated: true)
+        }
+    }
+    
+}
+
+extension SignupProfileImageView: PHPickerViewControllerDelegate {
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        
+        picker.dismiss(animated: true)
+        
+        let itemProvider = results.first?.itemProvider
+        
+        if let itemProvider = itemProvider,
+           itemProvider.canLoadObject(ofClass: UIImage.self) {
+            itemProvider.loadObject(ofClass: UIImage.self) { (image, error) in
+                DispatchQueue.main.async {
+                    self.profileImageView.image = image as? UIImage
+                }
+            }
+        } else {
+            if let vc = self.getViewController() {
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: vc)
+                    .setTitleState(.useTitleOnly)
+                    .setTitleText("이미지 불러오기 실패")
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .showAlertView()
+            }
         }
     }
     
