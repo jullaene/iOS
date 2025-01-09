@@ -29,7 +29,7 @@ final class MatchingApplyWalkRequestView: UIView, KeyboardObserverDelegate, UISc
         return view
     }()
     
-    private let checkBoxIcon: UIImageView = {
+    let checkBoxIcon: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "check-box-lined"))
         return imageView
     }()

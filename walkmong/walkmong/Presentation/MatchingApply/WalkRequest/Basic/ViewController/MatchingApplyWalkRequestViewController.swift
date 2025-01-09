@@ -75,14 +75,28 @@ final class MatchingApplyWalkRequestViewController: UIViewController {
 
         walkRequestView.middleTitleLabel.text = currentController.stepTitle
         walkRequestView.actionButton.setTitle(currentController.buttonTitle, for: .normal)
-        updateActionButtonState(isEnabled: currentController.isButtonEnabled)
+        
+        resetCheckBoxAndButtonState()
+        
+        if currentController is MatchingApplyWalkRequestViewSummarizeViewController ||
+           currentController is MatchingApplyWalkRequestCautionViewController {
+            walkRequestView.backgroundColor = .gray100
+        } else {
+            walkRequestView.backgroundColor = .white
+        }
+        
+        if currentController is MatchingApplyWalkRequestTextInputViewController {
+            walkRequestView.updateWarningText("산책 지원 요청 내용을 확인했습니다.")
+        } else {
+            walkRequestView.updateWarningText("주의사항을 모두 확인했습니다.")
+        }
 
         if currentController.isWarningVisible {
             walkRequestView.showWarningSection()
         } else {
             walkRequestView.hideWarningSection()
         }
-        
+
         currentController.buttonStateChanged = { [weak self] isEnabled in
             self?.updateActionButtonState(isEnabled: isEnabled)
         }
@@ -91,5 +105,11 @@ final class MatchingApplyWalkRequestViewController: UIViewController {
     private func updateActionButtonState(isEnabled: Bool) {
         walkRequestView.actionButton.isEnabled = isEnabled
         walkRequestView.actionButton.setStyle(isEnabled ? .dark : .light, type: .large)
+    }
+    
+    private func resetCheckBoxAndButtonState() {
+        walkRequestView.checkBoxIcon.image = UIImage(named: "check-box-lined")
+        walkRequestView.actionButton.isEnabled = false
+        walkRequestView.actionButton.setStyle(.light, type: .large)
     }
 }

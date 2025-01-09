@@ -10,7 +10,7 @@ import UIKit
 final class MatchingApplyWalkRequestInformationInputViewController: UIViewController, StepConfigurable {
 
     private let informationInputView = MatchingApplyWalkRequestInformationInputView()
-    private var allFieldsFilled: Bool = true {
+    private var allFieldsFilled: Bool = false {
         didSet {
             buttonStateChanged?(allFieldsFilled)
         }

@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window = UIWindow(windowScene: windowScene)
         
-        let splashViewController = SplashViewController()
+        let splashViewController = MatchingApplyWalkRequestViewController()
         window?.rootViewController = splashViewController
         
         window?.overrideUserInterfaceStyle = .light

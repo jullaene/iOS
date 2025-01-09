@@ -24,6 +24,5 @@ final class MatchingApplyWalkRequestCautionViewController: UIViewController, Ste
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .gray100
     }
 }

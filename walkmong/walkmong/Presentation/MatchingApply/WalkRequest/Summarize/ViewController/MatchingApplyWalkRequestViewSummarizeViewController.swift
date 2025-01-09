@@ -23,6 +23,5 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .gray100
     }
 }

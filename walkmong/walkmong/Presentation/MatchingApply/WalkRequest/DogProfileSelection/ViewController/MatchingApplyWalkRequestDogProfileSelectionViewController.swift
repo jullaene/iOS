@@ -10,7 +10,7 @@ import UIKit
 final class MatchingApplyWalkRequestDogProfileSelectionViewController: UIViewController, StepConfigurable {
 
     private let dogProfileSelectionView = MatchingApplyWalkRequestDogProfileSelectionView()
-    private var isDogSelected: Bool = true {
+    private var isDogSelected: Bool = false {
         didSet {
             buttonStateChanged?(isDogSelected)
         }

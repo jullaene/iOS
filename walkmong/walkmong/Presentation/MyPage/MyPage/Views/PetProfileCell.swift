@@ -81,7 +81,6 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     func configure(with profile: PetProfile) {
         profileButton.isHidden = false
         profileButton.isUserInteractionEnabled = true
-        print("profileButton isHidden: \(profileButton.isHidden), isUserInteractionEnabled: \(profileButton.isUserInteractionEnabled)")
         
         if let url = URL(string: profile.imageURL ?? "") {
             petImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
