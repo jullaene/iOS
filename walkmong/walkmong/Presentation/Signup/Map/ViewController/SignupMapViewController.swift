@@ -32,11 +32,12 @@ final class SignupMapViewController: UIViewController {
     }
 }
 extension SignupMapViewController: SignupMapViewDelegate {
-    func didTapNextButton(dongAddress: String, latitude: Double, longitude: Double) {
+    
+    func didTapNextButton(postAddressData: PostAddressRequest) {
         let controllers = self.navigationController?.viewControllers
         for vc in controllers! {
             if let signupVC = vc as? SignupDetailViewController {
-                signupVC.signupDetailView.updatePlaceState(place: dongAddress, latitude: latitude, longitude: longitude)
+                signupVC.signupDetailView.updatePlaceState(postAddressData: postAddressData)
                 self.navigationController?.popToViewController(signupVC, animated: true)
                 break
             }

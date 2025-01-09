@@ -11,7 +11,6 @@ import SnapKit
 final class SignupDetailViewController: UIViewController {
     
     let signupDetailView = SignupDetailView()
-    private var isNicknamechecked = false
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
     private let service = AuthService()
@@ -66,16 +65,15 @@ extension SignupDetailViewController: SignupDetailViewDelegate {
     }
     
     func didTapNextButton(_ view: SignupDetailView) {
-        if isNicknamechecked {
-            let detailData = view.getSignupDetailData()
-            signupData.name = detailData.name
-            signupData.nickname = detailData.nickname
-            signupData.phone = detailData.phone
-            signupData.birthDate = detailData.birthDate
-            signupData.gender = detailData.gender
-            let nextVC = SignupProfileImageViewController(signupData: signupData)
-            navigationController?.pushViewController(nextVC, animated: true)
-        }
+        let detailData = view.getSignupDetailData()
+        signupData.name = detailData.name
+        signupData.nickname = detailData.nickname
+        signupData.phone = detailData.phone
+        signupData.birthDate = detailData.birthDate
+        signupData.gender = detailData.gender
+        let addressData = view.getAddressData()
+        let nextVC = SignupProfileImageViewController(signupData: signupData, addressData: addressData)
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 }
 

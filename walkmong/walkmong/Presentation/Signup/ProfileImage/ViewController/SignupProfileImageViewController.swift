@@ -11,9 +11,11 @@ final class SignupProfileImageViewController: UIViewController {
     
     private let signupProfileImageView = SignupProfileImageView()
     private let service = AuthService()
+    private let memberService = MemberService()
     private var signupData: SignupRequest!
+    private var addressData: PostAddressRequest!
     
-    init(signupData: SignupRequest) {
+    init(signupData: SignupRequest, addressData: PostAddressRequest) {
         super.init(nibName: nil, bundle: nil)
         self.signupData = signupData
     }
@@ -53,7 +55,26 @@ extension SignupProfileImageViewController: SignupProfileImageViewDelegate {
         defer { hideLoading() }
         Task {
             do {
-                try await service.signup(request: signupData)
+                let signupResponse = try await service.signup(request: signupData)
+                print(signupResponse)
+                let response = try await service.login(email: signupData.email, password: signupData.password)
+                print(response)
+                AuthManager.shared.accessToken = response.data.accessToken
+                AuthManager.shared.refreshToken = response.data.refreshToken
+                let postResponse = try await memberService.postAddress(request: addressData)
+                print(postResponse)
+                hideLoading()
+                CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                    .setButtonState(.singleButton)
+                    .setTitleState(.useTitleOnly)
+                    .setSingleButtonTitle("워크멍 시작하기")
+                    .setTitleText("회원가입 성공")
+                    .setSingleButtonAction({
+                        let mainTabBarController = MainTabBarController()
+                        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+                        sceneDelegate?.changeRootViewController(mainTabBarController, animated: true)
+                    })
+                    .showAlertView()
             } catch {
                 hideLoading()
                 CustomAlertViewController.CustomAlertBuilder(viewController: self)

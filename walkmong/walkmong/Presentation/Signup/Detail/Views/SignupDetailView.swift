@@ -24,7 +24,8 @@ final class SignupDetailView: UIView {
     private var nickname: String = ""
     private var place: String = ""
     private var latitude: Double = 0
-    private var longtitude: Double = 0
+    private var longitude: Double = 0
+    private var addressData = PostAddressRequest(dongAddress: "", roadAddress: "", latitude: 0, longitude: 0, distanceRange: "", basicAddressYn: "")
     
     private var errorMessage: String = ""
     
@@ -413,15 +414,20 @@ final class SignupDetailView: UIView {
         }
     }
     
-    func updatePlaceState(place: String, latitude: Double, longitude: Double) {
-        self.place = place
-        self.latitude = latitude
-        self.longtitude = longitude
+    func updatePlaceState(postAddressData: PostAddressRequest) {
+        self.place = postAddressData.dongAddress
+        self.latitude = postAddressData.latitude
+        self.longitude = postAddressData.longitude
         placeSelectButtonLabel.text = place
+        addressData = postAddressData
     }
     
     func getSignupDetailData() -> SignupRequest {
         return SignupRequest(nickname: nickname, name: name, gender: isMale ? "MALE" : "FEMALE", birthDate: birthday, phone: number)
+    }
+    
+    func getAddressData() -> PostAddressRequest {
+        return addressData
     }
 }
 

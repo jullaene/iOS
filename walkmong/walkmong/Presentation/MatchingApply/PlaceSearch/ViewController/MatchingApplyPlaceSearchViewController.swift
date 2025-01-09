@@ -93,7 +93,7 @@ extension MatchingApplyPlaceSearchViewController: MatchingApplyPlaceSearchViewDe
             print(lat, lng)
             if isSignUp, let nextVC = nextVC as? SignupMapViewController{
                 if let dongmyunElement = selectedPlace.addressElements.first(where: { $0.types.contains("DONGMYUN") }), !dongmyunElement.longName.isEmpty {
-                    nextVC.signupMapview.setupMap(initialPosition: NMGLatLng(lat: lat, lng: lng), dongAddress: dongmyunElement.longName)
+                    nextVC.signupMapview.setupMap(initialPosition: NMGLatLng(lat: lat, lng: lng), dongAddress: dongmyunElement.longName, roadAddress: selectedPlace.roadAddress)
                 }else {
                     CustomAlertViewController.CustomAlertBuilder(viewController: self)
                         .setTitleState(.useTitleOnly)

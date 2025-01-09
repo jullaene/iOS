@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 struct MemberService {
-    private let provider: NetworkProvider<MemberAPI>
+    private let provider = NetworkProvider<MemberAPI>()
     
     func postAddress(request: PostAddressRequest) async throws -> APIResponse<String> {
         return try await provider.request(

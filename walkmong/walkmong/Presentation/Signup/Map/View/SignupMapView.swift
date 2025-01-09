@@ -9,7 +9,7 @@ import UIKit
 import NMapsMap
 
 protocol SignupMapViewDelegate: AnyObject {
-    func didTapNextButton(dongAddress: String, latitude: Double, longitude: Double)
+    func didTapNextButton(postAddressData: PostAddressRequest)
 }
 
 final class SignupMapView: UIView {
@@ -52,7 +52,7 @@ final class SignupMapView: UIView {
     private var distanceDots: [UIView] = []
     private var distanceLabels: [UILabel] = []
     private let distanceFilterKey = "DistanceFilter"
-    
+    private var roadAddress: String?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -124,9 +124,10 @@ final class SignupMapView: UIView {
         setupDistanceSelection(sliderLine: sliderLine, container: distanceSliderFrame)
     }
     
-    func setupMap(initialPosition: NMGLatLng, dongAddress: String) {
+    func setupMap(initialPosition: NMGLatLng, dongAddress: String, roadAddress: String) {
         self.initialPosition = initialPosition
         self.dongAddressLabel.text = dongAddress
+        self.roadAddress = roadAddress
         let cameraUpdate = NMFCameraUpdate(scrollTo: initialPosition, zoomTo: 17)
         mapView.mapView.moveCamera(cameraUpdate)
         mapView.showScaleBar = false
@@ -241,8 +242,18 @@ final class SignupMapView: UIView {
     }
     
     @objc private func nextButtonTapped() {
-        if let dongAddress = dongAddressLabel.text, let lat = initialPosition?.lat, let lng = initialPosition?.lng {
-            delegate?.didTapNextButton(dongAddress: dongAddress, latitude: lat, longitude: lng)
+        if let dongAddress = dongAddressLabel.text,
+           let lat = initialPosition?.lat,
+           let lng = initialPosition?.lng {
+            let distanceRange = { () -> String in
+                switch self.selectedDistanceIndex {
+                case 0: return "SMALL"
+                case 1: return "MEDIUM"
+                default: return "BIG"
+                }
+            }
+            delegate?.didTapNextButton(postAddressData: PostAddressRequest(dongAddress: dongAddress, roadAddress: roadAddress ?? "주소 변환 오류", latitude: lat, longitude: lng, distanceRange: distanceRange(), basicAddressYn: "Y"))
         }
+        
     }
 }
