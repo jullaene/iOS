@@ -62,18 +62,12 @@ class MyPageView: UIView {
     
     // MARK: - Setup Methods
     private func setupSubviews() {
-        addSubview(safeAreaBackgroundView)
-        addSubview(scrollView)
+        addSubviews(safeAreaBackgroundView, scrollView)
         scrollView.addSubview(contentView)
         
         let topBackgroundView = createTopBackgroundView()
-        contentView.addSubview(topBackgroundView)
         
-        contentView.addSubview(alertIcon)
-        contentView.addSubview(profileView)
-        contentView.addSubview(contentViewSection)
-        contentView.addSubview(spacerView)
-        contentView.addSubview(settingsView)
+        contentView.addSubviews(topBackgroundView, alertIcon, profileView, contentViewSection, spacerView, settingsView)
         
         topBackgroundView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
