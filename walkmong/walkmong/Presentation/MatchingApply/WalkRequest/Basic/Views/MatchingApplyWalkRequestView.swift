@@ -8,8 +8,7 @@
 import UIKit
 import SnapKit
 
-final class MatchingApplyWalkRequestView: UIView {
-
+final class MatchingApplyWalkRequestView: UIView, KeyboardObserverDelegate, UIScrollViewDelegate {
     let scrollView = UIScrollView()
     let contentView = UIView()
 
@@ -26,6 +25,7 @@ final class MatchingApplyWalkRequestView: UIView {
         view.backgroundColor = .white
         view.layer.cornerRadius = 20
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        view.isHidden = true
         return view
     }()
     
@@ -39,14 +39,26 @@ final class MatchingApplyWalkRequestView: UIView {
         label.isUserInteractionEnabled = true
         return label
     }()
+    
+    private(set) var isWarningSectionVisible: Bool = false
+    private var keyboardEventManager: KeyboardEventManager?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
+        setupKeyboardManager()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupKeyboardManager() {
+        keyboardEventManager = KeyboardEventManager(delegate: self)
+    }
+
+    deinit {
+        keyboardEventManager = nil
     }
 
     private func setupViews() {
@@ -54,6 +66,7 @@ final class MatchingApplyWalkRequestView: UIView {
         warningBackgroundView.addSubviews(checkBoxIcon, checkBoxText)
 
         scrollView.addSubview(contentView)
+        scrollView.delegate = self
         contentView.addSubview(middleTitleLabel)
         
         setupLayout()
@@ -149,5 +162,22 @@ final class MatchingApplyWalkRequestView: UIView {
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.lessThanOrEqualToSuperview()
         }
+    }
+    
+    // MARK: - UIScrollViewDelegate
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.endEditing(true)
+    }
+
+    // MARK: - KeyboardObserverDelegate
+    func keyboardWillShow(keyboardHeight: CGFloat) {
+        let keyboardInset = keyboardHeight - safeAreaInsets.bottom
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardInset, right: 0)
+        scrollView.scrollIndicatorInsets = scrollView.contentInset
+    }
+
+    func keyboardWillHide() {
+        scrollView.contentInset = .zero
+        scrollView.scrollIndicatorInsets = .zero
     }
 }

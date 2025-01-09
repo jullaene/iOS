@@ -17,7 +17,6 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
     private var saveLabels: [UILabel] = []
     
     var textViewDidUpdate: ((Bool) -> Void)?
-    private var keyboardEventManager: KeyboardEventManager?
     
     private let titles = [
         "산책 요청 사항 (필수)",
@@ -40,7 +39,8 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        fatalError("init(coder:) has not been implemented")
+        setupViews()
+        setupGesture()
     }
     
     // MARK: - Setup Methods
@@ -105,21 +105,13 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
         textView.delegate = self
         textView.backgroundColor = .clear
         
-        let countLabel = MainParagraphLabel(text: "(0/250)", textColor: .gray600)
-        
         containerView.addSubview(textView)
-        containerView.addSubview(countLabel)
-        
         textView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(104)
         }
         
-        countLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(12)
-            make.bottom.equalToSuperview().inset(9.5)
-        }
-        
+        // Icon
         let iconImageView = UIImageView(image: UIImage(named: "check444444"))
         iconImageView.contentMode = .scaleAspectFit
         iconImageViews.append(iconImageView)
@@ -142,6 +134,13 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
         let saveTapGesture = UITapGestureRecognizer(target: self, action: #selector(saveTapped(_:)))
         saveLabel.addGestureRecognizer(saveTapGesture)
         saveLabel.tag = index
+        
+        let countLabel = MainParagraphLabel(text: "(0/250)", textColor: .gray600)
+        containerView.addSubview(countLabel)
+        countLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(12)
+            make.bottom.equalToSuperview().inset(9.5)
+        }
         
         return containerView
     }
@@ -166,15 +165,6 @@ extension MatchingApplyWalkRequestTextInputView: UITextViewDelegate {
         let index = textView.tag
         guard index < textViewStates.count else { return }
         textViewStates[index] = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        
-        if let countLabel = textView.superview?.subviews.compactMap({ $0 as? UILabel }).first {
-            CharacterCountManager.updateCountLabel(
-                textView: textView,
-                remainLabel: countLabel,
-                button: UIButton()
-            )
-        }
-        
         checkIfAllRequiredFieldsAreFilled()
     }
     
