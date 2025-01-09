@@ -10,7 +10,6 @@ import UIKit
 
 protocol KeyboardObserverDelegate: AnyObject {
     func keyboardWillShow(keyboardHeight: CGFloat)
-    func keyboardWillHide()
 }
 
 class KeyboardEventManager {
@@ -31,7 +30,7 @@ class KeyboardEventManager {
                                                name: UIResponder.keyboardWillShowNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide(_:)),
+                                               selector: #selector(dismissKeyboard),
                                                name: UIResponder.keyboardWillHideNotification,
                                                object: nil)
     }
@@ -45,13 +44,17 @@ class KeyboardEventManager {
                                                   object: nil)
     }
 
+    private func addKeyboardObserver(selector: Selector, name: NSNotification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+
     @objc private func keyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         let keyboardHeight = keyboardFrame.cgRectValue.height
         delegate?.keyboardWillShow(keyboardHeight: keyboardHeight)
     }
 
-    @objc private func keyboardWillHide(_ notification: Notification) {
-        delegate?.keyboardWillHide()
+    @objc func dismissKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

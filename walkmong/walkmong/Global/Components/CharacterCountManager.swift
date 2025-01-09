@@ -13,10 +13,13 @@ class CharacterCountManager {
     static func updateCountLabel(
         textView: UITextView,
         remainLabel: UILabel,
-        button: UIButton
+        button: UIButton? = nil
     ) {
         let characterCount = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).count
-        button.backgroundColor = characterCount > 0 ? .gray600 : .gray300
+        
+        if let button = button {
+            button.backgroundColor = characterCount > 0 ? .gray600 : .gray300
+        }
         
         let fullText = "(\(characterCount)/\(maxCharacterCount))"
         let attributedString = NSMutableAttributedString(string: fullText)
@@ -24,7 +27,8 @@ class CharacterCountManager {
         attributedString.addAttribute(.foregroundColor, value: UIColor.gray400, range: remainingRange)
         
         let countRange = (fullText as NSString).range(of: "\(characterCount)")
-        attributedString.addAttribute(.foregroundColor, value: UIColor.mainBlue, range: countRange)
+        let countColor = characterCount == 0 ? UIColor.gray500 : UIColor.mainBlue
+        attributedString.addAttribute(.foregroundColor, value: countColor, range: countRange)
         
         remainLabel.attributedText = attributedString
     }

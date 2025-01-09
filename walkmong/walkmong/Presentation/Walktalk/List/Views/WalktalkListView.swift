@@ -194,9 +194,14 @@ extension WalktalkListView: UICollectionViewDelegate {
             walktalkListTabBarCollectionView.reloadData()
             walktalkListPageCollectionView.reloadData()
         }else if collectionView == walktalkListMatchingStateCollectionView {
+            if let previousCell = collectionView.cellForItem(at: IndexPath(item: selectedMatchingStateIndex, section: 0)) as? WalktalkListMatchingStateCollectionViewCell{
+                previousCell.setSelected(textColor: .gray500, backgroundColor: .gray200)
+            }
+            if let currentCell = collectionView.cellForItem(at: indexPath) as? WalktalkListMatchingStateCollectionViewCell {
+                currentCell.setSelected(textColor: .gray100, backgroundColor: .gray600)
+            }
             selectedMatchingStateIndex = indexPath.row
             delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex),status: Status.from(index: selectedMatchingStateIndex))
-            walktalkListMatchingStateCollectionView.reloadData()
             walktalkListPageCollectionView.reloadData()
         }
     }

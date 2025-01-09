@@ -12,3 +12,9 @@ struct APIResponse<DTO: Decodable>: Decodable {
     let statusCode: Int
     let data: DTO
 }
+
+enum WalkmongError: Error {
+    case unknownError
+}
+
+struct EmptyDTO: Decodable {}

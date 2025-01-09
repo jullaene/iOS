@@ -22,6 +22,7 @@ extension UIButton {
         case homeFilter
         case customFilter
         case largeSelectionCheck
+        case tag
     }
     
     static func createStyledButton(
@@ -44,6 +45,8 @@ extension UIButton {
             }
         case .largeSelectionCheck:
             configureLargeSelectionCheck(button: button, style: style, title: title)
+        case .tag:
+            configureTagButton(button: button, style: style, title: title)
         default:
             let label = labelForCategory(type: type, text: title, style: style)
             button.titleLabel?.font = label.font
@@ -53,7 +56,7 @@ extension UIButton {
         }
         
         configureStyle(for: button, type: type, style: style)
-
+        
         if type == .smallSelection {
             let textWidth = calculateTextWidth(text: title, font: button.titleLabel!.font)
             let buttonWidth = textWidth + 32
@@ -86,6 +89,8 @@ extension UIButton {
             return MainHighlightParagraphLabel(text: text, textColor: textColor)
         case .largeSelection, .smallSelection:
             return MainParagraphLabel(text: text, textColor: textColor)
+        case .tag:
+            return SmallMainHighlightParagraphLabel(text: text, textColor: textColor)
         }
     }
     
@@ -120,6 +125,9 @@ extension UIButton {
         case .largeSelectionCheck:
             button.layer.cornerRadius = 5
             button.backgroundColor = style == .light ? .gray100 : .mainBlue
+        case .tag:
+            button.layer.cornerRadius = 15
+            button.backgroundColor = style == .light ? .gray200 : .mainBlue
         }
     }
     
@@ -178,12 +186,11 @@ extension UIButton {
         let textColor: UIColor = style == .dark ? .white : .gray500
         let label = MainHighlightParagraphLabel(text: title, textColor: textColor)
         label.translatesAutoresizingMaskIntoConstraints = false
-
+        
         button.addSubview(label)
         label.snp.makeConstraints { make in
             make.edges.equalTo(button).inset(UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
         }
-
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray200 : .gray600
     }
@@ -194,7 +201,7 @@ extension UIButton {
                 subview.removeFromSuperview()
             }
         }
-
+        
         let label = MainHighlightParagraphLabel(text: title, textColor: style == .light ? .gray500 : .white)
         label.translatesAutoresizingMaskIntoConstraints = false
         button.addSubview(label)
@@ -205,7 +212,7 @@ extension UIButton {
         
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray100 : .gray600
-
+        
         if title.isEmpty {
             let icon = UIImage(named: "filterIcon")?.withRenderingMode(.alwaysTemplate)
             var configuration = UIButton.Configuration.plain()
@@ -253,5 +260,21 @@ extension UIButton {
     
     func setStyle(_ style: ButtonStyle, type: ButtonCategory) {
         self.updateStyle(type: type, style: style)
+    }
+  
+    private static func configureTagButton(button: UIButton, style: ButtonStyle, title: String) {
+        let textColor: UIColor = .mainBlack
+        let backgroundColor: UIColor = style == .light ? .gray200 : .mainBlue
+        
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(textColor, for: .normal)
+        button.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 14)
+        button.backgroundColor = backgroundColor
+        
+        let textWidth = calculateTextWidth(text: title, font: button.titleLabel!.font)
+        let buttonWidth = textWidth + 18
+        setButtonSizeConstraints(button: button, width: buttonWidth, height: 32)
+        
+        button.layer.cornerRadius = 15
     }
 }
