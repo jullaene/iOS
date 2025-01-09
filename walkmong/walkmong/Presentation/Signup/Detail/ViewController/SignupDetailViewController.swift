@@ -14,6 +14,7 @@ final class SignupDetailViewController: UIViewController {
     private var isNicknamechecked = false
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
+    private let service = AuthService()
     private var email: String?
     private var password: String?
     
@@ -61,7 +62,9 @@ extension SignupDetailViewController: SignupDetailViewDelegate {
     func shouldCheckNickname(_ textfield: UITextField) {
         if let nickname = textfield.text, nickname.count <= 6 {
             //TODO: 닉네임 중복 검사
-            signupDetailView.updateNicknameState(isVaild: true, nickname: nickname)
+            Task {
+                try await checkNickname(nickname: nickname)
+            }
         }
     }
     
@@ -71,10 +74,6 @@ extension SignupDetailViewController: SignupDetailViewDelegate {
             navigationController?.pushViewController(nextVC, animated: true)
         }
     }
-}
-
-extension SignupEmailViewController {
-    //TODO: 닉네임 중복 검사 API 호출
 }
 
 extension SignupDetailViewController: KeyboardObserverDelegate {
@@ -89,6 +88,20 @@ extension SignupDetailViewController: KeyboardObserverDelegate {
         containerBottomConstraint?.update(offset: 0)
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
+        }
+    }
+}
+
+extension SignupDetailViewController {
+    private func checkNickname(nickname: String) async throws {
+        showLoading()
+        defer { hideLoading() }
+        do {
+            try await service.checkNickname(nickname: nickname)
+            signupDetailView.updateNicknameState(isVaild: true, nickname: nickname)
+        }catch {
+            signupDetailView.updateNicknameState(isVaild: false, nickname: nickname)
+            return
         }
     }
 }

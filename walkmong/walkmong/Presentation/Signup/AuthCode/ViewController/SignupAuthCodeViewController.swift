@@ -61,11 +61,12 @@ extension SignupAuthCodeViewController: SignupAuthCodeViewDelegate {
         showLoading()
         defer { hideLoading() }
         do {
-            let response = try await service.checkEmailAuthCode(email: email, code: code)
+            try await service.checkEmailAuthCode(email: email, code: code)
             print(code)
             let nextVC = SignupPasswordViewController(email: email)
             self.navigationController?.pushViewController(nextVC, animated: true)
         }catch {
+            hideLoading()
             CustomAlertViewController.CustomAlertBuilder(viewController: self)
                 .setButtonState(.singleButton)
                 .setTitleState(.useTitleAndSubTitle)
@@ -78,9 +79,12 @@ extension SignupAuthCodeViewController: SignupAuthCodeViewDelegate {
     }
     
     private func verifyEmail(email: String) async {
+        showLoading()
+        defer { hideLoading() }
         do {
             try await service.verifyEmail(email: email)
         }catch {
+            hideLoading()
             CustomAlertViewController.CustomAlertBuilder(viewController: self)
                 .setButtonState(.singleButton)
                 .setTitleState(.useTitleAndSubTitle)

@@ -43,6 +43,8 @@ final class SignupEmailViewController: UIViewController {
 
 extension SignupEmailViewController: SignupEmailViewDelegate {
     func didTapEmailCheckButton(with email: String) async -> Bool {
+        showLoading()
+        defer { hideLoading() }
         do {
             let response = try await service.checkEmail(email: email)
             print(response)
@@ -53,7 +55,7 @@ extension SignupEmailViewController: SignupEmailViewDelegate {
     }
     
     func didTapNextButton(with email: String) async {
-        let nextVC = await SignupAuthCodeViewController(email: email)
+        let nextVC = SignupAuthCodeViewController(email: email)
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }
