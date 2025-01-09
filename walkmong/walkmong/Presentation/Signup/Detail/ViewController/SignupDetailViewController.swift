@@ -61,7 +61,6 @@ extension SignupDetailViewController: SignupDetailViewDelegate {
     
     func shouldCheckNickname(_ textfield: UITextField) {
         if let nickname = textfield.text, nickname.count <= 6 {
-            //TODO: 닉네임 중복 검사
             Task {
                 try await checkNickname(nickname: nickname)
             }

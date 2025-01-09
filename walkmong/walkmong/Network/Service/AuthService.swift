@@ -6,21 +6,30 @@
 //
 
 import Foundation
-import UIKit
 import Moya
 
 struct AuthService {
     private let provider = NetworkProvider<AuthAPI>()
     
-    func signup(email: String, password: String, nickname: String, name: String, gender: String, birthDate: String, profile: UIImage, phone: String) async throws -> AuthResponse {
-        guard let profileData = profile.jpegData(compressionQuality: 1.0) else {
+    func signup(request: SignupRequest) async throws -> APIResponse<String> {
+        guard let profileData = request.profile!.jpegData(compressionQuality: 1.0) else {
             throw NetworkError.clientError
         }
         return try await provider.request(
-            target: .signup(email: email, password: password, nickname: nickname, name: name, gender: gender, birthDate: birthDate, profile: profileData, phone: phone),
-            responseType: AuthResponse.self
+            target: .signup(
+                email: request.email!,
+                password: request.password!,
+                nickname: request.nickname!,
+                name: request.name!,
+                gender: request.gender!,
+                birthDate: request.birthDate!,
+                profile: profileData,
+                phone: request.phone!
+            ),
+            responseType: APIResponse<String>.self
         )
     }
+
 
     func login(email: String, password: String) async throws -> RefreshAccessTokenResponse {
         do {
@@ -37,31 +46,31 @@ struct AuthService {
     }
 
     
-    func checkEmail(email: String) async throws -> AuthResponse {
+    func checkEmail(email: String) async throws -> APIResponse<String> {
         return try await provider.request(
             target: .checkEmail(email: email),
-            responseType: AuthResponse.self
+            responseType: APIResponse<String>.self
         )
     }
     
-    func checkNickname(nickname: String) async throws -> AuthResponse {
+    func checkNickname(nickname: String) async throws -> APIResponse<String> {
         return try await provider.request(
             target: .checkNickname(nickname: nickname),
-            responseType: AuthResponse.self
+            responseType: APIResponse<String>.self
         )
     }
     
-    func verifyEmail(email: String) async throws -> AuthResponse {
+    func verifyEmail(email: String) async throws -> APIResponse<String> {
         return try await provider.request(
             target: .veryfyEmail(email: email),
-            responseType: AuthResponse.self
+            responseType: APIResponse<String>.self
         )
     }
     
-    func checkEmailAuthCode(email: String, code: String) async throws -> AuthResponse {
+    func checkEmailAuthCode(email: String, code: String) async throws -> APIResponse<String> {
         return try await provider.request(
             target: .checkEmailAuthCode(email: email, code: code),
-            responseType: AuthResponse.self
+            responseType: APIResponse<String>.self
         )
     }
     
