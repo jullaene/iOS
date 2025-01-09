@@ -12,13 +12,7 @@ class OwnerInfoView: UIView {
     )
     
     private let nameLabel = UpperTitleLabel(text: "", textColor: .gray600)
-    
-    private let ageLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
-    
-    private let separatorLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
-    
-    private let genderLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
-    
+    private let infoLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     private let starIcon = UIImage.createImageView(named: "starIcon.png")
     
     private let ratingLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainBlue)
@@ -44,8 +38,7 @@ class OwnerInfoView: UIView {
         layer.cornerRadius = 20
         
         let subviews = [
-            titleLabel, profileImageView, nameLabel, ageLabel, separatorLabel,
-            genderLabel, starIcon, ratingLabel, locationIcon, locationLabel
+            titleLabel, profileImageView, nameLabel, infoLabel, starIcon, ratingLabel, locationIcon, locationLabel
         ]
         subviews.forEach { addSubview($0) }
         setupConstraints()
@@ -68,23 +61,13 @@ class OwnerInfoView: UIView {
             make.leading.equalTo(profileImageView.snp.trailing).offset(12)
         }
         
-        ageLabel.snp.makeConstraints { make in
-            make.leading.equalTo(nameLabel.snp.trailing).offset(8)
-            make.centerY.equalTo(nameLabel.snp.centerY)
-        }
-        
-        separatorLabel.snp.makeConstraints { make in
-            make.leading.equalTo(ageLabel.snp.trailing).offset(4)
-            make.centerY.equalTo(ageLabel.snp.centerY)
-        }
-        
-        genderLabel.snp.makeConstraints { make in
-            make.leading.equalTo(separatorLabel.snp.trailing).offset(4)
-            make.centerY.equalTo(separatorLabel.snp.centerY)
+        infoLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(nameLabel)
+            make.leading.equalTo(nameLabel.snp.trailing).offset(24)
         }
         
         starIcon.snp.makeConstraints { make in
-            make.top.equalTo(ageLabel.snp.bottom).offset(16)
+            make.top.equalTo(infoLabel.snp.bottom).offset(16)
             make.leading.equalTo(nameLabel.snp.leading)
             make.width.height.equalTo(17)
         }
@@ -119,8 +102,8 @@ class OwnerInfoView: UIView {
     ) {
         profileImageView.setImage(from: ownerProfile, placeholder: "profileExample")
         nameLabel.text = ownerName
-        ageLabel.text = formatAge(ownerAge)
-        genderLabel.text = ownerGender == "FEMALE" ? "여성" : "남성"
+        let genderText = ownerGender == "FEMALE" ? "여성" : "남성"
+        infoLabel.text = "\(ownerAge)살 · \(genderText)"
         ratingLabel.text = String(format: "%.1f", ownerRate)
         locationLabel.text = "\(dongAddress) \(formatDistance(distance))"
     }
@@ -132,22 +115,6 @@ class OwnerInfoView: UIView {
         label.textColor = textColor
         label.font = font
         return label
-    }
-    
-    private func formatAge(_ age: Int) -> String {
-        let ageGroup = (age / 10) * 10
-        let ageCategory: String
-        switch age % 10 {
-        case 0...2:
-            ageCategory = "초반"
-        case 3...6:
-            ageCategory = "중반"
-        case 7...9:
-            ageCategory = "후반"
-        default:
-            ageCategory = ""
-        }
-        return "\(ageGroup)대 \(ageCategory)"
     }
     
     private func formatDistance(_ distance: Double) -> String {

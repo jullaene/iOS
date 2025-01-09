@@ -44,7 +44,7 @@ final class MatchingStatusApplicantListViewController: UIViewController {
     
     // MARK: - Data Management
     private func loadData() {
-        matchingData = MatchingData(
+        let dogProfileData = MatchingData(
             boardId: 1,
             startTime: "2025-01-03T00:32:40",
             endTime: "2025-01-03T14:32:30",
@@ -60,9 +60,37 @@ final class MatchingStatusApplicantListViewController: UIViewController {
             distance: 1000,
             createdAt: "2025-01-02T00:32:40"
         )
+        applicantListView.configureDogProfile(with: dogProfileData)
         
-        if let data = matchingData {
-            applicantListView.configureContent(with: data)
-        }
+        let applicants: [MatchingStatusApplicantDetail] = [
+            MatchingStatusApplicantDetail(
+                ownerProfile: "https://img.freepik.com/free-photo/expressive-asian-girl-posing-indoor_344912-1234.jpg?semt=ais_hybrid",
+                ownerName: "홍길동",
+                ownerAge: 32,
+                ownerGender: "MALE",
+                ownerRate: 4.8,
+                dongAddress: "서울시 강남구",
+                distance: 500
+            ),
+            MatchingStatusApplicantDetail(
+                ownerProfile: "https://img.freepik.com/free-photo/expressive-asian-girl-posing-indoor_344912-1234.jpg?semt=ais_hybrid",
+                ownerName: "김영희",
+                ownerAge: 28,
+                ownerGender: "FEMALE",
+                ownerRate: 4.9,
+                dongAddress: "서울시 마포구",
+                distance: 800
+            ),
+            MatchingStatusApplicantDetail(
+                ownerProfile: "https://img.freepik.com/free-photo/expressive-asian-girl-posing-indoor_344912-1234.jpg?semt=ais_hybrid",
+                ownerName: "김영희",
+                ownerAge: 28,
+                ownerGender: "FEMALE",
+                ownerRate: 4.9,
+                dongAddress: "서울시 마포구",
+                distance: 800
+            )
+        ]
+        applicantListView.configureApplicantsList(with: applicants)
     }
 }
