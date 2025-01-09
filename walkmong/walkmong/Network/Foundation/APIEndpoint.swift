@@ -32,4 +32,7 @@ extension APIEndpoint {
         ]
     }
 
+    var validate: Bool {
+        return false // 모든 statusCode를 허용
+    }
 }

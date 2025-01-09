@@ -49,11 +49,19 @@ final class NetworkProvider<T: APIEndpoint> {
             throw NetworkError.unauthorized
         }
 
-        let service = AuthService()
-        let response = try await service.refreshAccessToken(refreshToken: refreshToken)
-        AuthManager.shared.accessToken = response.data.accessToken
-        AuthManager.shared.refreshToken = response.data.refreshToken
+        do {
+            let service = AuthService()
+            let response = try await service.refreshAccessToken(refreshToken: refreshToken)
+            
+            /// 갱신된 토큰 저장
+            AuthManager.shared.accessToken = response.data.accessToken
+            AuthManager.shared.refreshToken = response.data.refreshToken
+        } catch {
+            /// 갱신 실패 처리
+            throw NetworkError.tokenRefreshFailed
+        }
     }
+
 }
 
 extension MoyaProvider {

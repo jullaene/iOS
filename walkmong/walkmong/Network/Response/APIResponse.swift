@@ -14,6 +14,9 @@ struct APIResponse<DTO: Decodable>: Decodable {
 }
 
 enum NetworkError: Error {
-    case unauthorized // RefreshToken 없음
-    case tokenRefreshFailed // RefreshToken으로 갱신 실패
+    case clientError(message: String)
+    case serverError(message: String)
+    case unauthorized
+    case tokenRefreshFailed
+    case unknown
 }

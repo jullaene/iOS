@@ -14,20 +14,30 @@ struct AuthService {
     
     func signup(email: String, password: String, nickname: String, name: String, gender: String, birthDate: String, profile: UIImage, phone: String) async throws -> AuthResponse {
         guard let profileData = profile.jpegData(compressionQuality: 1.0) else {
-            throw MoyaError.parameterEncoding("Failed to convert profile image to JPEG data." as! Error)
+            throw NetworkError.clientError(message: "프로필 이미지를 변환할 수 없습니다.")
         }
         return try await provider.request(
             target: .signup(email: email, password: password, nickname: nickname, name: name, gender: gender, birthDate: birthDate, profile: profileData, phone: phone),
             responseType: AuthResponse.self
         )
     }
-    
-    func login(email: String, password: String) async throws -> AuthResponse {
-        return try await provider.request(
-            target: .login(email: email, password: password),
-            responseType: AuthResponse.self
-        )
+
+    func login(email: String, password: String) async throws -> RefreshAccessTokenResponse {
+        do {
+            return try await provider.request(
+                target: .login(email: email, password: password),
+                responseType: RefreshAccessTokenResponse.self
+            )
+        } catch let error as MoyaError {
+            if case .statusCode(let response) = error, (400...499).contains(response.statusCode) {
+                if let errorMessage = String(data: response.data, encoding: .utf8) {
+                    throw NetworkError.clientError(message: errorMessage)
+                }
+            }
+            throw error
+        }
     }
+
     
     func checkEmail(email: String) async throws -> AuthResponse {
         return try await provider.request(

@@ -7,8 +7,4 @@
 
 import Foundation
 
-typealias AuthResponse = APIResponse<AuthData>
-
-struct AuthData: Codable {
-    let data: String
-}
+typealias AuthResponse = APIResponse<String>
