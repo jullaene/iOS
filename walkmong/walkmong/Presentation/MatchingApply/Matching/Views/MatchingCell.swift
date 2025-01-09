@@ -234,6 +234,13 @@ class MatchingCell: UIView {
         genderIcon.image = genderIconImage(for: data.dogGender)
     }
     
+    func setCustomViewAppearance(hideSizeLabel: Bool, hideDistanceLabel: Bool, hideTimeLabel: Bool, backgroundColor: UIColor) {
+        sizeLabel.isHidden = hideSizeLabel
+        distanceLabel.isHidden = hideDistanceLabel
+        timeLabel.isHidden = hideTimeLabel
+        mainView.backgroundColor = backgroundColor
+    }
+    
     func configureDateLabel(selectedDate: String, startTime: String, endTime: String) {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
