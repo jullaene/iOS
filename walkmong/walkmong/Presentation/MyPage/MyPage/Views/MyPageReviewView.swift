@@ -234,13 +234,6 @@ class MyPageReviewView: UIView {
         ownerReviewTitle.isUserInteractionEnabled = true
     }
     
-    //    @objc private func ownerReviewTitleTapped() {
-    //        if let currentViewController = findViewController() {
-    //            let ownerReviewVC = MyPageOwnerReviewViewController()
-    //            currentViewController.navigationController?.pushViewController(ownerReviewVC, animated: true)
-    //        }
-    //    }
-    
     private func setupDonutChart() {
         // 1. 데이터 설정
         let entries: [PieChartDataEntry] = [
