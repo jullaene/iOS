@@ -12,20 +12,8 @@ struct AuthService {
     private let provider = NetworkProvider<AuthAPI>()
     
     func signup(request: SignupRequest) async throws -> APIResponse<String> {
-        guard let profileData = request.profile!.jpegData(compressionQuality: 1.0) else {
-            throw NetworkError.clientError
-        }
         return try await provider.request(
-            target: .signup(
-                email: request.email!,
-                password: request.password!,
-                nickname: request.nickname!,
-                name: request.name!,
-                gender: request.gender!,
-                birthDate: request.birthDate!,
-                profile: profileData,
-                phone: request.phone!
-            ),
+            target: .signup(request: request),
             responseType: APIResponse<String>.self
         )
     }

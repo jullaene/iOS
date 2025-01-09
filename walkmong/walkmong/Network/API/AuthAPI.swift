@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum AuthAPI {
-    case signup(email: String, password: String, nickname: String, name: String, gender: String, birthDate: String, profile: Data, phone: String)
+    case signup(request: SignupRequest)
     case login(email: String, password: String)
     case checkEmail(email: String)
     case checkNickname(nickname: String)
@@ -55,18 +55,8 @@ extension AuthAPI: APIEndpoint {
         switch self {
         case .login(let email, let password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
-        case .signup(email: let email, password: let password, nickname: let nickname, let name, gender: let gender, birthDate: let birthDate, profile: let profile, phone: let phone):
-            let multipartData: [MultipartFormData] = [
-                MultipartFormData(provider: .data(email.data(using: .utf8)!), name: "email"),
-                MultipartFormData(provider: .data(password.data(using: .utf8)!), name: "password"),
-                MultipartFormData(provider: .data(nickname.data(using: .utf8)!), name: "nickname"),
-                MultipartFormData(provider: .data(name.data(using: .utf8)!), name: "name"),
-                MultipartFormData(provider: .data(gender.data(using: .utf8)!), name: "gender"),
-                MultipartFormData(provider: .data(birthDate.data(using: .utf8)!), name: "birthDate"),
-                MultipartFormData(provider: .data(phone.data(using: .utf8)!), name: "phone"),
-                MultipartFormData(provider: .data(profile), name: "profile", fileName: "profile.png", mimeType: "image/png")
-            ]
-            return .uploadMultipart(multipartData)
+        case .signup(let request):
+                return .uploadMultipart(request.toMultipartData())
         case .checkEmail(let email), .veryfyEmail(let email):
             return .requestParameters(parameters: ["email": email], encoding: URLEncoding.queryString)
         case .checkNickname(let nickname):

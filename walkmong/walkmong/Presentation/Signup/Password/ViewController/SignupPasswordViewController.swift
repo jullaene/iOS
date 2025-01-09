@@ -10,12 +10,11 @@ import UIKit
 final class SignupPasswordViewController: UIViewController {
     
     private let signupPasswordView = SignupPasswordView()
-    private var email: String?
-    private var password: String?
+    private var signupData: SignupRequest!
     
-    init(email: String?) {
+    init(signupData: SignupRequest) {
         super.init(nibName: nil, bundle: nil)
-        self.email = email
+        self.signupData = signupData
     }
     
     required init?(coder: NSCoder) {
@@ -48,9 +47,8 @@ final class SignupPasswordViewController: UIViewController {
 
 extension SignupPasswordViewController: SignupPasswordViewDelegate {
     func didTapNextButton(password: String) {
-        if let email = email {
-            let nextVC = SignupDetailViewController(email: email, password: password)
-            navigationController?.pushViewController(nextVC, animated: true)
-        }
+        signupData.password = password
+        let nextVC = SignupDetailViewController(signupData: signupData)
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 }

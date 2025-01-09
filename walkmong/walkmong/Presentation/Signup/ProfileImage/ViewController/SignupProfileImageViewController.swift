@@ -11,7 +11,17 @@ final class SignupProfileImageViewController: UIViewController {
     
     private let signupProfileImageView = SignupProfileImageView()
     private let service = AuthService()
-
+    private var signupData: SignupRequest!
+    
+    init(signupData: SignupRequest) {
+        super.init(nibName: nil, bundle: nil)
+        self.signupData = signupData
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -37,7 +47,23 @@ final class SignupProfileImageViewController: UIViewController {
 }
 
 extension SignupProfileImageViewController: SignupProfileImageViewDelegate {
-    func didTapNextButton(with Image: UIImage) {
-        //TODO: 이미지 데이터 넘김
+    func didTapNextButton(with image: UIImage) {
+        signupData.profile = image
+        showLoading()
+        defer { hideLoading() }
+        Task {
+            do {
+                try await service.signup(request: signupData)
+            } catch {
+                hideLoading()
+                CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                    .setButtonState(.singleButton)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setSingleButtonTitle("돌아가기")
+                    .setTitleText("회원가입 실패")
+                    .setSubTitleText("다시 시도해주세요.")
+                    .showAlertView()
+            }
+        }
     }
 }

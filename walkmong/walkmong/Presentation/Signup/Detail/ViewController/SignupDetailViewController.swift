@@ -15,13 +15,11 @@ final class SignupDetailViewController: UIViewController {
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
     private let service = AuthService()
-    private var email: String?
-    private var password: String?
+    private var signupData: SignupRequest!
     
-    init(email: String, password: String){
+    init(signupData: SignupRequest){
         super.init(nibName: nil, bundle: nil)
-        self.email = email
-        self.password = password
+        self.signupData = signupData
     }
     
     required init?(coder: NSCoder) {
@@ -69,7 +67,13 @@ extension SignupDetailViewController: SignupDetailViewDelegate {
     
     func didTapNextButton(_ view: SignupDetailView) {
         if isNicknamechecked {
-            let nextVC = UIViewController() //FIXME: 프로필 사진 등록 화면
+            let detailData = view.getSignupDetailData()
+            signupData.name = detailData.name
+            signupData.nickname = detailData.nickname
+            signupData.phone = detailData.phone
+            signupData.birthDate = detailData.birthDate
+            signupData.gender = detailData.gender
+            let nextVC = SignupProfileImageViewController(signupData: signupData)
             navigationController?.pushViewController(nextVC, animated: true)
         }
     }

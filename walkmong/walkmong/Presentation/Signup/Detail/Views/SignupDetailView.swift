@@ -292,7 +292,7 @@ final class SignupDetailView: UIView {
            let day = Int(dayTextField.text ?? ""),
            (1...31).contains(day),    // 일 범위 검사
            isValidDate(year: year, month: month, day: day) { // 날짜 유효성 검사
-            self.birthday = "\(year)\(String(format: "%02d", month))\(String(format: "%02d", day))"
+            self.birthday = "\(year)-\(String(format: "%02d", month))-\(String(format: "%02d", day))"
         } else {
             showErrorAlert(message: "정확한 생년월일을 입력해주세요")
             return false
@@ -418,6 +418,10 @@ final class SignupDetailView: UIView {
         self.latitude = latitude
         self.longtitude = longitude
         placeSelectButtonLabel.text = place
+    }
+    
+    func getSignupDetailData() -> SignupRequest {
+        return SignupRequest(nickname: nickname, name: name, gender: isMale ? "MALE" : "FEMALE", birthDate: birthday, phone: number)
     }
 }
 

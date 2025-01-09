@@ -12,6 +12,8 @@ final class SignupEmailViewController: UIViewController {
     private let signupEmailView = SignupEmailView()
     
     private let service = AuthService()
+    
+    private var signupData = SignupRequest()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -55,7 +57,8 @@ extension SignupEmailViewController: SignupEmailViewDelegate {
     }
     
     func didTapNextButton(with email: String) async {
-        let nextVC = SignupAuthCodeViewController(email: email)
+        signupData.email = email
+        let nextVC = SignupAuthCodeViewController(signupData: signupData)
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

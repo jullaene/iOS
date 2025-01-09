@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 
 protocol SignupProfileImageViewDelegate: AnyObject {
-    func didTapNextButton(with Image: UIImage)
+    func didTapNextButton(with image: UIImage)
 }
 
 final class SignupProfileImageView: UIView {
@@ -33,7 +33,7 @@ final class SignupProfileImageView: UIView {
         return button
     }()
     
-    private let nextButton = NextButton(text: "다음으로")
+    private let nextButton = NextButton(text: "가입하기")
     
     private var configuration = PHPickerConfiguration()
     

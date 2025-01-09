@@ -9,15 +9,15 @@ import UIKit
 
 final class SignupAuthCodeViewController: UIViewController {
     
-    private lazy var signupAuthCodeView = SignupAuthCodeView(email: self.email ?? "이메일 오류")
+    private lazy var signupAuthCodeView = SignupAuthCodeView(email: signupData.email)
     
     private let service = AuthService()
     
-    private var email: String?
+    private var signupData: SignupRequest!
     
-    init(email: String) {
+    init(signupData: SignupRequest) {
         super.init(nibName: nil, bundle: nil)
-        self.email = email
+        self.signupData = signupData
     }
     
     required init?(coder: NSCoder) {
@@ -34,9 +34,7 @@ final class SignupAuthCodeViewController: UIViewController {
         dismissKeyboardOnTap()
         signupAuthCodeView.delegate = self
         Task {
-            if let email = email {
-                await verifyEmail(email: email)
-            }
+            await verifyEmail(email: signupData.email)
         }
     }
     
@@ -55,7 +53,7 @@ final class SignupAuthCodeViewController: UIViewController {
 
 extension SignupAuthCodeViewController: SignupAuthCodeViewDelegate {
     func didEnterCode(_ code: String) async {
-        await checkEmailAuthCode(email: email ?? "이메일 오류", code: code)
+        await checkEmailAuthCode(email: signupData.email, code: code)
     }
     private func checkEmailAuthCode(email: String, code: String) async {
         showLoading()
@@ -63,7 +61,7 @@ extension SignupAuthCodeViewController: SignupAuthCodeViewDelegate {
         do {
             try await service.checkEmailAuthCode(email: email, code: code)
             print(code)
-            let nextVC = SignupPasswordViewController(email: email)
+            let nextVC = SignupPasswordViewController(signupData: signupData)
             self.navigationController?.pushViewController(nextVC, animated: true)
         }catch {
             hideLoading()
