@@ -190,6 +190,9 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             make.center.equalToSuperview()
             make.width.height.equalTo(32)
         }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(floatingButtonTapped))
+        floatingButton.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Matching Cells Management
@@ -258,5 +261,10 @@ private extension MatchingView {
         ])
         return label
     }
-    
+
+    @objc private func floatingButtonTapped() {
+        if let viewController = findViewController() as? MatchingViewController {
+            viewController.navigateToWalkRequestView()
+        }
+    }
 }

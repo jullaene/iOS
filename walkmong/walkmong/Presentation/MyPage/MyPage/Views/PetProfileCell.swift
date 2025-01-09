@@ -7,12 +7,15 @@
 
 import UIKit
 
-class PetProfileCell: UICollectionViewCell {
+class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     private let petImageView = UIImageView()
     private let petNameLabel = UpperTitleLabel(text: "")
     private let petDetailsLabel = SmallMainParagraphLabel(text: "")
     private let profileButton = UIButton()
     private let genderIcon = UIImageView()
+    
+    var didTapProfileButton: (() -> Void)?
+    var didTapAddPetCell: (() -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -21,6 +24,10 @@ class PetProfileCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
     }
     
     private func setupView() {
@@ -72,7 +79,14 @@ class PetProfileCell: UICollectionViewCell {
     }
     
     func configure(with profile: PetProfile) {
-        petImageView.setImage(from: profile.imageURL, placeholder: "placeholder_image_name")
+        profileButton.isHidden = false
+        profileButton.isUserInteractionEnabled = true
+        
+        if let url = URL(string: profile.imageURL ?? "") {
+            petImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
+        } else {
+            petImageView.image = UIImage(named: "placeholder")
+        }
         petNameLabel.text = profile.name
         petDetailsLabel.text = profile.details
 
@@ -117,5 +131,62 @@ class PetProfileCell: UICollectionViewCell {
         petDetailsLabel.isHidden = true
         profileButton.isHidden = true
         genderIcon.isHidden = true
+    }
+    
+    private func setupActions() {
+        profileButton.addTarget(self, action: #selector(handleProfileButtonTap), for: .touchUpInside)
+        print("프로필 버튼의 addTarget 설정 완료") // 디버깅 로그 추가
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleCellTap))
+        tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false // 버튼 터치 이벤트를 방해하지 않음
+        contentView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func handleProfileButtonTap() {
+        print("프로필 버튼 클릭 이벤트가 호출되었습니다.") // 디버깅 로그 추가
+        didTapProfileButton?()
+    }
+    
+    @objc private func handleCellTap() {
+        didTapAddPetCell?()
+    }
+}
+
+extension PetProfileCell {
+    func setSelectedStyle() {
+        contentView.backgroundColor = .mainBlue
+        petNameLabel.textColor = .white
+        petDetailsLabel.textColor = .white
+        
+        if let icon = genderIcon.image?.withRenderingMode(.alwaysTemplate) {
+            genderIcon.image = icon
+        }
+        genderIcon.tintColor = .white
+
+        profileButton.setTitleColor(.mainBlue, for: .normal)
+        profileButton.backgroundColor = .lightBlue
+    }
+
+    func setDefaultStyle() {
+        contentView.backgroundColor = .gray100
+        petNameLabel.textColor = .black
+        petDetailsLabel.textColor = .gray
+
+        if let icon = genderIcon.image?.withRenderingMode(.alwaysTemplate) {
+            genderIcon.image = icon
+        }
+        genderIcon.tintColor = .black
+        
+        profileButton.setTitleColor(.white, for: .normal)
+        profileButton.backgroundColor = .mainBlue
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if let touchedView = touch.view, touchedView.isDescendant(of: profileButton) {
+            print("프로필 버튼에서 제스처가 차단되었습니다.")
+            return false // 버튼에서 터치가 발생하면 제스처를 차단
+        }
+        return true // 다른 영역에서는 제스처 인식
     }
 }

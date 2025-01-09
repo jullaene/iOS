@@ -9,9 +9,13 @@ import UIKit
 
 extension UIViewController {
     func addProgressBar(currentStep:Int, totalSteps:Int, backgroundColor: UIColor = .white){
+        
+        view.subviews.filter { $0.tag == 9999 }.forEach { $0.removeFromSuperview() }
+
         let backgroundView: UIView = {
             let view = UIView()
-            view.backgroundColor = backgroundColor
+            view.backgroundColor = .clear
+            view.tag = 9999
             return view
         }()
         let progressBackgroundView: UIView = {
@@ -33,7 +37,7 @@ extension UIViewController {
         
         backgroundView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
-            make.top.equalToSuperview().offset(119)
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(66)
             make.height.equalTo(35)
         }
         progressBackgroundView.snp.makeConstraints { make in
@@ -44,7 +48,7 @@ extension UIViewController {
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
             make.top.equalToSuperview().offset(7)
-            make.width.equalTo((view.bounds.width-40)*CGFloat(currentStep)/CGFloat(totalSteps))
+            make.width.equalToSuperview().inset(20).multipliedBy(CGFloat(currentStep) / CGFloat(totalSteps))
             make.height.equalTo(4)
         }
     }

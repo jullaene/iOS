@@ -59,7 +59,7 @@ final class SplashView: UIView {
         }
         
         splashIllustration.snp.makeConstraints { make in
-            make.top.equalTo(splashText.snp.bottom).offset(118)
+            make.top.equalTo(splashText.snp.bottom).offset(117)
             make.centerX.equalToSuperview()
         }
         

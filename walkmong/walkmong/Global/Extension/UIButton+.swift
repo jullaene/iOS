@@ -21,6 +21,7 @@ extension UIButton {
         case smallSelection
         case homeFilter
         case customFilter
+        case largeSelectionCheck
         case tag
     }
     
@@ -42,6 +43,8 @@ extension UIButton {
             } else {
                 configureHomeFilter(button: button, style: style, title: title)
             }
+        case .largeSelectionCheck:
+            configureLargeSelectionCheck(button: button, style: style, title: title)
         case .tag:
             configureTagButton(button: button, style: style, title: title)
         default:
@@ -82,7 +85,7 @@ extension UIButton {
         : (type == .large ? .gray100 : .white)
         
         switch type {
-        case .large, .homeFilter, .customFilter:
+        case .large, .homeFilter, .customFilter, .largeSelectionCheck:
             return MainHighlightParagraphLabel(text: text, textColor: textColor)
         case .largeSelection, .smallSelection:
             return MainParagraphLabel(text: text, textColor: textColor)
@@ -97,10 +100,10 @@ extension UIButton {
     }
     
     private static func setButtonSizeConstraints(button: UIButton, width: CGFloat, height: CGFloat) {
-        NSLayoutConstraint.activate([
-            button.widthAnchor.constraint(equalToConstant: width),
-            button.heightAnchor.constraint(equalToConstant: height)
-        ])
+        button.snp.makeConstraints { make in
+            make.width.equalTo(width)
+            make.height.equalTo(height)
+        }
     }
     
     private static func configureStyle(for button: UIButton, type: ButtonCategory, style: ButtonStyle) {
@@ -119,6 +122,9 @@ extension UIButton {
             button.backgroundColor = style == .dark ? .gray600 : .gray100
         case .customFilter:
             break
+        case .largeSelectionCheck:
+            button.layer.cornerRadius = 5
+            button.backgroundColor = style == .light ? .gray100 : .mainBlue
         case .tag:
             button.layer.cornerRadius = 15
             button.backgroundColor = style == .light ? .gray200 : .mainBlue
@@ -147,13 +153,9 @@ extension UIButton {
         
         button.addSubview(stackView)
         
-        NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            stackView.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            stackView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8),
-            icon.centerYAnchor.constraint(equalTo: label.centerYAnchor)
-        ])
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+        }
         
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray100 : .gray600
@@ -162,6 +164,8 @@ extension UIButton {
     func updateStyle(type: ButtonCategory, style: ButtonStyle) {
         if type == .customFilter {
             UIButton.configureCustomFilter(button: self, style: style, title: self.title(for: .normal) ?? "")
+        } else if type == .largeSelectionCheck {
+            UIButton.configureLargeSelectionCheck(button: self, style: style, title: self.title(for: .normal) ?? "")
         } else {
             let label = UIButton.labelForCategory(type: type, text: self.title(for: .normal) ?? "", style: style)
             self.titleLabel?.font = label.font
@@ -184,13 +188,9 @@ extension UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         button.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
-        ])
-        
+        label.snp.makeConstraints { make in
+            make.edges.equalTo(button).inset(UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+        }
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray200 : .gray600
     }
@@ -206,12 +206,9 @@ extension UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         button.addSubview(label)
         
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -8)
-        ])
+        label.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16))
+        }
         
         button.layer.cornerRadius = 18
         button.backgroundColor = style == .light ? .gray100 : .gray600
@@ -227,6 +224,44 @@ extension UIButton {
         }
     }
     
+    private static func configureLargeSelectionCheck(button: UIButton, style: ButtonStyle, title: String) {
+        let textColor: UIColor = style == .light ? .gray500 : .white
+        let customFont = UIFont(name: "Pretendard-SemiBold", size: 16)!
+
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(textColor, for: .normal)
+        button.titleLabel?.font = customFont
+        button.contentHorizontalAlignment = .leading
+        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 0)
+
+        let icon = UIImageView()
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.image = UIImage(named: style == .light ? "myPageReportUnchecked" : "checkWhiteIcon")
+        icon.contentMode = .scaleAspectFit
+
+        button.subviews
+            .filter { $0 is UIImageView }
+            .forEach { $0.removeFromSuperview() }
+        button.addSubview(icon)
+        
+        icon.snp.makeConstraints { make in
+            make.trailing.equalTo(button).offset(-24)
+            make.centerY.equalTo(button)
+            make.width.height.equalTo(24)
+        }
+
+        button.snp.makeConstraints { make in
+            make.height.equalTo(46)
+        }
+
+        button.layer.cornerRadius = 5
+        button.backgroundColor = style == .light ? .gray100 : .mainBlue
+    }
+    
+    func setStyle(_ style: ButtonStyle, type: ButtonCategory) {
+        self.updateStyle(type: type, style: style)
+    }
+  
     private static func configureTagButton(button: UIButton, style: ButtonStyle, title: String) {
         let textColor: UIColor = .mainBlack
         let backgroundColor: UIColor = style == .light ? .gray200 : .mainBlue

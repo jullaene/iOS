@@ -252,12 +252,13 @@ final class CustomAlertViewController: UIViewController {
         }
         
         func showAlertView() {
-            let viewController = buildAlertView()
-            viewController.modalPresentationStyle = .overFullScreen
-            viewController.modalTransitionStyle = .crossDissolve
-            viewController.setupView()
-            viewController.setConstraints()
-            baseViewController.present(viewController, animated: true)
+                baseViewController.view.endEditing(true)
+                let viewController = buildAlertView()
+                viewController.modalPresentationStyle = .overFullScreen
+                viewController.modalTransitionStyle = .crossDissolve
+                viewController.setupView()
+                viewController.setConstraints()
+                baseViewController.present(viewController, animated: true)
         }
     }
 }

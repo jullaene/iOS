@@ -181,6 +181,40 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     private func animateConstraints(_ animations: @escaping () -> Void, completion: ((Bool) -> Void)? = nil) {
         UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseInOut], animations: animations, completion: completion)
     }
+    
+    func navigateToWalkRequestView() {
+        // 서버에서 반려견 조회 (현재 주석 처리)
+        // 예: let hasDogs = fetchDogProfiles() > 0
+        let hasDogs = true // 서버가 동작하지 않으므로 임시값 사용
+
+        if hasDogs {
+            let walkRequestVC = MatchingApplyWalkRequestViewController()
+            navigationController?.pushViewController(walkRequestVC, animated: true)
+        } else {
+            showNoDogsAlert()
+        }
+    }
+    
+    private func showNoDogsAlert() {
+        let alertBuilder = CustomAlertViewController.CustomAlertBuilder(viewController: self)
+            .setTitleState(.useTitleAndSubTitle)
+            .setButtonState(.doubleButton)
+            .setTitleText("등록된 반려견이 없어요")
+            .setSubTitleText("산책 지원 요청을 위해 반려견 프로필을 먼저 등록하시겠어요?")
+            .setLeftButtonTitle("취소")
+            .setRightButtonTitle("등록하기")
+            .setRightButtonAction {
+                self.navigateToDogProfileRegistration()
+            }
+        
+        alertBuilder.showAlertView()
+    }
+    
+    private func navigateToDogProfileRegistration() {
+        /// 반려견 등록하기 페이지
+//        let dogProfileVC = DogProfileRegistrationViewController()
+//        navigationController?.pushViewController(dogProfileVC, animated: true)
+    }
 }
 
 extension MatchingViewController: MatchingFilterViewDelegate {

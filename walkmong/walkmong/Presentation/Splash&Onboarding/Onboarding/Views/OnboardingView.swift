@@ -47,6 +47,8 @@ final class OnboardingView: UIView, UIScrollViewDelegate {
     }
     
     private func setupSlides() {
+        var previousContainer: UIView? = nil
+        
         for (index, slide) in slides.enumerated() {
             let containerView = UIView()
             scrollView.addSubview(containerView)
@@ -66,26 +68,35 @@ final class OnboardingView: UIView, UIScrollViewDelegate {
             
             containerView.snp.makeConstraints { make in
                 make.width.equalToSuperview()
-                make.height.equalToSuperview()
-                make.leading.equalTo(scrollView.snp.leading).offset(CGFloat(index) * UIScreen.main.bounds.width)
-                make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(42)
-                make.bottom.equalTo(pageControl.snp.top).offset(-16)
+                make.top.bottom.equalToSuperview()
+                if let previous = previousContainer {
+                    make.leading.equalTo(previous.snp.trailing)
+                } else {
+                    make.leading.equalToSuperview()
+                }
             }
             
             imageView.snp.makeConstraints { make in
-                make.top.equalToSuperview()
+                make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(42)
                 make.leading.trailing.equalToSuperview().inset(20)
             }
             
             titleLabel.snp.makeConstraints { make in
-                make.bottom.equalTo(descriptionLabel.snp.top).offset(-24)
+                make.top.equalTo(imageView.snp.bottom).offset(24)
                 make.leading.trailing.equalToSuperview().inset(20)
             }
             
             descriptionLabel.snp.makeConstraints { make in
-                make.bottom.equalToSuperview()
+                make.top.equalTo(titleLabel.snp.bottom).offset(16)
                 make.leading.trailing.equalToSuperview().inset(20)
+                make.bottom.equalToSuperview().inset(42)
             }
+            
+            previousContainer = containerView
+        }
+        
+        previousContainer?.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
         }
     }
     
@@ -112,13 +123,6 @@ final class OnboardingView: UIView, UIScrollViewDelegate {
             make.centerX.equalToSuperview()
             make.bottom.equalTo(nextButton.snp.top).offset(-48)
         }
-    }
-    
-    private func setupScrollViewContentSize() {
-        scrollView.contentSize = CGSize(
-            width: UIScreen.main.bounds.width * CGFloat(slides.count),
-            height: scrollView.frame.height
-        )
     }
     
     // MARK: - Actions
