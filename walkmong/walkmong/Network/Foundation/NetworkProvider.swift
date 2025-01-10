@@ -24,8 +24,10 @@ final class NetworkProvider<T: APIEndpoint> {
         do {
             /// 최초 API 요청
             let response = try await provider.requestAsync(target)
-            print(response)
-            
+            print(response.statusCode)
+            if let data = try? JSONDecoder().decode(ResponseType.self, from: response.data){
+                print(data)
+            }
             // 상태 코드 처리
             switch response.statusCode {
             case 200...299:
@@ -48,7 +50,7 @@ final class NetworkProvider<T: APIEndpoint> {
             case 400...499:
                 // 클라이언트 에러 처리
                 if let errorMessage = String(data: response.data, encoding: .utf8) {
-                    throw NetworkError.clientError
+                    throw NetworkError.clientError(message: errorMessage)
                 }
                 throw NetworkError.unknown
             case 500...599:

@@ -14,7 +14,7 @@ struct APIResponse<DTO: Decodable>: Decodable {
 }
 
 enum NetworkError: Error {
-    case clientError
+    case clientError(message: String)
     case serverError
     case unauthorized
     case tokenRefreshFailed

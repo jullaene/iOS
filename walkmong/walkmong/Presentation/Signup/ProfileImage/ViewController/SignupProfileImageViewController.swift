@@ -56,37 +56,46 @@ extension SignupProfileImageViewController: SignupProfileImageViewDelegate {
 
         Task {
             do {
-                // 회원가입 요청
+                print("회원가입 요청 시작: \(String(describing: signupData))")
                 let signupResponse = try await service.signup(request: signupData)
                 print("회원가입 성공: \(signupResponse)")
 
-                // 로그인 요청
+                print("로그인 요청 시작:\(signupData.email)/\(signupData.password)")
                 let loginResponse = try await service.login(email: signupData.email, password: signupData.password)
                 print("로그인 성공: \(loginResponse)")
 
-                // 토큰 저장
+                print("토큰 저장")
                 AuthManager.shared.accessToken = loginResponse.data.accessToken
                 AuthManager.shared.refreshToken = loginResponse.data.refreshToken
 
-                // 주소 정보 저장
+                print("주소 정보 저장 시작:\(String(describing: self.addressData))")
+
                 let addressResponse = try await memberService.postAddress(request: addressData)
                 print("주소 정보 저장 성공: \(addressResponse)")
 
-                // 성공 알림 표시 및 화면 전환
+                // 성공 알림 표시
                 CustomAlertViewController.CustomAlertBuilder(viewController: self)
                     .setButtonState(.singleButton)
                     .setTitleState(.useTitleOnly)
                     .setSingleButtonTitle("워크멍 시작하기")
-                    .setTitleText("회원가입 성공")
+                    .setTitleText("모든 로직 성공")
                     .setSingleButtonAction({
                         let mainTabBarController = MainTabBarController()
                         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
                         sceneDelegate?.changeRootViewController(mainTabBarController, animated: true)
                     })
                     .showAlertView()
+            } catch let error as NetworkError {
+                // 실패 알림 표시
+                CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                    .setButtonState(.singleButton)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setSingleButtonTitle("돌아가기")
+                    .setTitleText("회원가입 실패")
+                    .setSubTitleText("다시 시도해주세요.")
+                    .showAlertView()
             } catch {
-                // 실패 처리
-                print("에러 발생: \(error.localizedDescription)")
+                print("알 수 없는 에러 발생: \(error.localizedDescription)")
                 CustomAlertViewController.CustomAlertBuilder(viewController: self)
                     .setButtonState(.singleButton)
                     .setTitleState(.useTitleAndSubTitle)

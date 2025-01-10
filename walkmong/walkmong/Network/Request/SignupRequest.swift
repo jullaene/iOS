@@ -49,8 +49,19 @@ struct SignupRequest {
         multipartData.append(MultipartFormData(provider: .data(birthDate.data(using: .utf8)!), name: "birthDate"))
         multipartData.append(MultipartFormData(provider: .data(phone.data(using: .utf8)!), name: "phone"))
         if let profileData = profile.jpegData(compressionQuality: 1.0) {
-            multipartData.append(MultipartFormData(provider: .data(profileData), name: "profile", fileName: "profile.jpg", mimeType: "image/jpeg"))
-        }
+                let uniqueFileName = "\(UUID().uuidString).jpg"
+                multipartData.append(
+                    MultipartFormData(
+                        provider: .data(profileData),
+                        name: "profile",
+                        fileName: uniqueFileName,
+                        mimeType: "image/jpeg"
+                    )
+                )
+            } else {
+                print("프로필 이미지 압축 실패")
+            }
+        print(multipartData)
         return multipartData
     }
 }

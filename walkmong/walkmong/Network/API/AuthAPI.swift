@@ -56,7 +56,7 @@ extension AuthAPI: APIEndpoint {
         case .login(let email, let password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
         case .signup(let request):
-                return .uploadMultipart(request.toMultipartData())
+            return .uploadMultipart(request.toMultipartData())
         case .checkEmail(let email), .veryfyEmail(let email):
             return .requestParameters(parameters: ["email": email], encoding: URLEncoding.queryString)
         case .checkNickname(let nickname):
