@@ -19,7 +19,7 @@ class StompService {
               let url = URL(string: urlString) else {
             fatalError("Initialization failed: Missing URL")
         }
-        if let token = AuthManager.shared.token {
+        if let token = AuthManager.shared.accessToken {
             self.connectionHeaders = ["Authorization": "Bearer \(token)"]
         }else {
             guard let testToken = SecretManager.shared.TEST_TOKEN else {
