@@ -62,18 +62,12 @@ class MyPageView: UIView {
     
     // MARK: - Setup Methods
     private func setupSubviews() {
-        addSubview(safeAreaBackgroundView)
-        addSubview(scrollView)
+        addSubviews(safeAreaBackgroundView, scrollView)
         scrollView.addSubview(contentView)
         
         let topBackgroundView = createTopBackgroundView()
-        contentView.addSubview(topBackgroundView)
         
-        contentView.addSubview(alertIcon)
-        contentView.addSubview(profileView)
-        contentView.addSubview(contentViewSection)
-        contentView.addSubview(spacerView)
-        contentView.addSubview(settingsView)
+        contentView.addSubviews(topBackgroundView, alertIcon, profileView, contentViewSection, spacerView, settingsView)
         
         topBackgroundView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
@@ -142,20 +136,9 @@ class MyPageView: UIView {
     }
     
     @objc private func alertIconTapped() {
-        if let viewController = findViewController() {
+        if let viewController = getViewController() {
             let alertVC = AlertViewController()
             viewController.navigationController?.pushViewController(alertVC, animated: true)
         }
-    }
-
-    private func findViewController() -> UIViewController? {
-        var nextResponder: UIResponder? = self
-        while let responder = nextResponder {
-            if let viewController = responder as? UIViewController {
-                return viewController
-            }
-            nextResponder = responder.next
-        }
-        return nil
     }
 }

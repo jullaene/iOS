@@ -21,3 +21,5 @@ enum NetworkError: Error {
     case forbidden
     case unknown
 }
+
+struct EmptyDTO: Decodable {}

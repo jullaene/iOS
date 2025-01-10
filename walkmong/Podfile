@@ -8,5 +8,6 @@ target 'walkmong' do
   # Pods for walkmong
   pod 'NMapsMap'
   pod 'Charts'
+  pod 'StompClientLib'
 
 end

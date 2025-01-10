@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-
+      
         if AuthManager.shared.isLoggedIn() {
             // 로그인 상태: 메인 화면
             let rootViewController = MainTabBarController()
@@ -28,7 +28,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window?.rootViewController = navigationController
         }
         
-        window?.overrideUserInterfaceStyle = .light  // 라이트모드
+        let splashViewController = MatchingApplyWalkRequestViewController()
+        window?.rootViewController = splashViewController
+        
+        window?.overrideUserInterfaceStyle = .light
         window?.makeKeyAndVisible()
     }
 

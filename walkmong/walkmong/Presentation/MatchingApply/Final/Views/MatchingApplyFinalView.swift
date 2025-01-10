@@ -33,7 +33,7 @@ class MatchingApplyFinalView: UIView {
     private let titleLabel = MiddleTitleLabel(text: "산책 신청 확인", textColor: .mainBlack)
     private var dogInformationView = DogProfileInformationView()
     private var walkerInformationView = BaseProfileInformationView()
-    private let planTitleLabel = MiddleTitleLabel(text: "산책 일정")
+    private let planTitleLabel = SmallTitleLabel(text: "산책 일정")
     private let planStartInformationView: UIView = {
         let view = UIView()
         view.backgroundColor = .white

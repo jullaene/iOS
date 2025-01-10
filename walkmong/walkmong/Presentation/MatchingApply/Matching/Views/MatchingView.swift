@@ -103,6 +103,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
+            make.height.equalToSuperview()
         }
     }
 
@@ -189,6 +190,9 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             make.center.equalToSuperview()
             make.width.height.equalTo(32)
         }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(floatingButtonTapped))
+        floatingButton.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - Matching Cells Management
@@ -226,21 +230,10 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     }
     
     @objc private func alertIconTapped() {
-        if let viewController = findViewController() {
+        if let viewController = getViewController() {
             let alertVC = AlertViewController()
             viewController.navigationController?.pushViewController(alertVC, animated: true)
         }
-    }
-    
-    private func findViewController() -> UIViewController? {
-        var nextResponder: UIResponder? = self
-        while let responder = nextResponder {
-            if let viewController = responder as? UIViewController {
-                return viewController
-            }
-            nextResponder = responder.next
-        }
-        return nil
     }
 }
 
@@ -268,5 +261,10 @@ private extension MatchingView {
         ])
         return label
     }
-    
+
+    @objc private func floatingButtonTapped() {
+        if let viewController = findViewController() as? MatchingViewController {
+            viewController.navigateToWalkRequestView()
+        }
+    }
 }

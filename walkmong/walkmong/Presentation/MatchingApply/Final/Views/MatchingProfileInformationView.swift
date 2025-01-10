@@ -26,12 +26,12 @@ class BaseProfileInformationView: UIView {
     
     internal let locationImageView: UIImageView = {
         let imageview = UIImageView()
-        imageview.image = .locationIcon
+        imageview.image = .meetingPlace
         imageview.contentMode = .center
         return imageview
     }()
     
-    internal let locationLabel = SmallMainParagraphLabel(text: "장소", textColor: .gray400)
+    internal let locationLabel = SmallMainHighlightParagraphLabel(text: "장소", textColor: .gray400)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,7 +63,7 @@ class BaseProfileInformationView: UIView {
         }
         locationLabel.snp.makeConstraints { make in
             make.leading.equalTo(profileImageview.snp.trailing).offset(32)
-            make.top.equalTo(nameLabel.snp.bottomMargin).offset(8)
+            make.top.equalTo(nameLabel.snp.bottom).offset(8)
         }
         locationImageView.snp.makeConstraints { make in
             make.centerY.equalTo(locationLabel.snp.centerY)

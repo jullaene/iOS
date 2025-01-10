@@ -9,9 +9,13 @@ import UIKit
 
 extension UIViewController {
     func addProgressBar(currentStep:Int, totalSteps:Int, backgroundColor: UIColor = .white){
+        
+        view.subviews.filter { $0.tag == 9999 }.forEach { $0.removeFromSuperview() }
+
         let backgroundView: UIView = {
             let view = UIView()
-            view.backgroundColor = backgroundColor
+            view.backgroundColor = .clear
+            view.tag = 9999
             return view
         }()
         let progressBackgroundView: UIView = {
