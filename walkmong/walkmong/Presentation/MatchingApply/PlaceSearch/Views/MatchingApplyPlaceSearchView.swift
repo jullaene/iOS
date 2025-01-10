@@ -202,6 +202,7 @@ extension MatchingApplyPlaceSearchView: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let keyword = textField.text, !keyword.trimmingCharacters(in: .whitespaces).isEmpty {
             self.placeSearchKeywordLabel.text = "'\(keyword)' 검색 결과"
+            placeSearchResults = []
             delegate?.matchingApplyPlaceSearchView(textField, willSearchKeywords: keyword)
             self.didSearch = true
             return true

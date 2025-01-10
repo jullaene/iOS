@@ -6,6 +6,7 @@ class BaseTitleLabel: UILabel {
         self.text = text
         self.font = font
         self.textColor = textColor
+        self.numberOfLines = 0
         setupStyle()
     }
     

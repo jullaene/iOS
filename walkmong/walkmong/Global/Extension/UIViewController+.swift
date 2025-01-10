@@ -15,7 +15,20 @@ extension UIViewController {
         view.addGestureRecognizer(tapGesture)
     }
     
-    @objc func dismissKeyboard() {
+    @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func showLoading() {
+        let loadingView = UIActivityIndicatorView(style: .large)
+        loadingView.color = .gray
+        loadingView.startAnimating()
+        loadingView.tag = 999 // 로딩 뷰 식별용 태그
+        loadingView.center = self.view.center
+        self.view.addSubview(loadingView)
+    }
+    
+    func hideLoading() {
+        self.view.viewWithTag(999)?.removeFromSuperview()
     }
 }

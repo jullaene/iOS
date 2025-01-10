@@ -13,15 +13,21 @@ final class MatchingApplyPlaceSearchViewController: UIViewController {
     let placeSearchView = walkmong.MatchingApplyPlaceSearchView()
     var placeSearchResult: [GeoAddress] = []
     var model = MatchingApplyPlaceSearchModel()
+    var isSignUp: Bool = false
     
-    override func viewWillAppear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(true, animated: animated)
+    init(isSignUp: Bool = false) {
+        super.init(nibName: nil, bundle: nil)
+        self.isSignUp = isSignUp
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         dismissKeyboardOnTap()
-        addCustomNavigationBar(titleText: "만남장소", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
+        addCustomNavigationBar(titleText: isSignUp ? "동네 설정" : "만남장소", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         setUpViews()
         setConstraints()
     }
@@ -58,7 +64,8 @@ extension MatchingApplyPlaceSearchViewController: MatchingApplyPlaceSearchViewDe
     }
     
     func matchingApplyPlaceSearchView(_ textField: UITextField, willSearchKeywords keyword: String) {
-        DispatchQueue.global(qos: .background).async {
+        showLoading()
+        DispatchQueue.global(qos: .utility).async {
             Task {
                 do {
                     let data = try await callRequest(query: keyword)
@@ -68,10 +75,11 @@ extension MatchingApplyPlaceSearchViewController: MatchingApplyPlaceSearchViewDe
                     print("Error: \(error)")
                 }
             }
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [self] in
                 textField.endEditing(true)
-                self.placeSearchView.setNeedsLayout()
-                self.placeSearchView.layoutIfNeeded()
+                placeSearchView.setNeedsLayout()
+                placeSearchView.layoutIfNeeded()
+                hideLoading()
             }
         }
     }
@@ -80,10 +88,24 @@ extension MatchingApplyPlaceSearchViewController: MatchingApplyPlaceSearchViewDe
         // 터치 이벤트 처리
         let selectedPlace = self.placeSearchResult[indexPath.row]
         print(selectedPlace.jibunAddress)
-        let nextVC = MatchingApplyMapViewController()
+        let nextVC = isSignUp ? SignupMapViewController() : MatchingApplyMapViewController()
         if let lat = Double(selectedPlace.y), let lng = Double(selectedPlace.x) {
             print(lat, lng)
-            nextVC.matchingApplyMapView.setupMap(initialPosition: NMGLatLng(lat: lat, lng: lng))
+            if isSignUp, let nextVC = nextVC as? SignupMapViewController{
+                if let dongmyunElement = selectedPlace.addressElements.first(where: { $0.types.contains("DONGMYUN") }), !dongmyunElement.longName.isEmpty {
+                    nextVC.signupMapview.setupMap(initialPosition: NMGLatLng(lat: lat, lng: lng), dongAddress: dongmyunElement.longName, roadAddress: selectedPlace.roadAddress)
+                }else {
+                    CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                        .setTitleState(.useTitleOnly)
+                        .setTitleText("동/면 주소를 선택해주세요.")
+                        .setButtonState(.singleButton)
+                        .setSingleButtonTitle("돌아가기")
+                        .showAlertView()
+                    return
+                }
+            }else if let nextVC = nextVC as? MatchingApplyMapViewController{
+                nextVC.matchingApplyMapView.setupMap(initialPosition: NMGLatLng(lat: lat, lng: lng))
+            }
         }
         self.navigationController?.pushViewController(nextVC, animated: true)
     }

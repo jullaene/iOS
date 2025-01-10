@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Security
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -15,6 +16,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
+      
+        if AuthManager.shared.isLoggedIn() {
+            // 로그인 상태: 메인 화면
+            let rootViewController = MainTabBarController()
+            window?.rootViewController = rootViewController
+        } else {
+            // 비로그인 상태: 로그인 화면
+            let rootViewController = SignupFirstViewController()
+            let navigationController = UINavigationController(rootViewController: rootViewController)
+            window?.rootViewController = navigationController
+        }
         
         let splashViewController = MatchingApplyWalkRequestViewController()
         window?.rootViewController = splashViewController
@@ -22,6 +34,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.overrideUserInterfaceStyle = .light
         window?.makeKeyAndVisible()
     }
+
     
     func sceneDidDisconnect(_ scene: UIScene) { }
 
@@ -32,4 +45,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) { }
 
     func sceneDidEnterBackground(_ scene: UIScene) { }
+    
+    func changeRootViewController(_ viewController: UIViewController, animated: Bool) {
+        guard let window = window else { return }
+        window.rootViewController = viewController
+        
+        if animated {
+            UIView.transition(with: window, duration: 0.5, options: .transitionCrossDissolve, animations: nil)
+        }
+    }
+    
+    func logout() {
+        do {
+            try KeychainManager.deleteTokens()
+        } catch {
+            if let vc = window?.getViewController() {
+                CustomAlertViewController.CustomAlertBuilder(viewController: vc)
+                    .setButtonState(.singleButton)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setSingleButtonTitle("돌아가기")
+                    .setTitleText("오류 발생")
+                    .setSubTitleText("알 수 없는 오류가 발생했습니다.\n다시 시도해주세요.")
+                    .showAlertView()
+                return
+            }
+        }
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            let loginViewController = LoginViewController()
+            sceneDelegate.changeRootViewController(loginViewController, animated: true)
+        }
+    }
 }

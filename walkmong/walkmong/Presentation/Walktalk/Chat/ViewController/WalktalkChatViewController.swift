@@ -209,3 +209,21 @@ extension WalktalkChatViewController: WalktalkChatViewDelegate {
         stompService.sendMessage(body: message, to: "/sub/chat/room/\(String(describing: roomId))", with: "no receipt")
     }
 }
+
+
+extension WalktalkChatViewController: KeyboardObserverDelegate {
+    func keyboardWillShow(keyboardHeight: CGFloat) {
+        containerBottomConstraint?.update(offset: -keyboardHeight)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+            self.walktalkChatView.scrollToBottom()
+        }
+    }
+
+    func keyboardWillHide() {
+        containerBottomConstraint?.update(offset: -38)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+}
