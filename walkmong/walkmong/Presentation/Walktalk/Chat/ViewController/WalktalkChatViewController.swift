@@ -162,18 +162,6 @@ extension WalktalkChatViewController {
             return nil
         }
     }
-    func showLoading() {
-        let loadingView = UIActivityIndicatorView(style: .large)
-        loadingView.color = .gray
-        loadingView.startAnimating()
-        loadingView.tag = 999 // 로딩 뷰 식별용 태그
-        loadingView.center = self.view.center
-        self.view.addSubview(loadingView)
-    }
-    func hideLoading() {
-        self.view.viewWithTag(999)?.removeFromSuperview()
-    }
-
 }
 
 extension WalktalkChatViewController: StompServiceDelegate {
@@ -207,23 +195,5 @@ extension WalktalkChatViewController: StompServiceDelegate {
 extension WalktalkChatViewController: WalktalkChatViewDelegate {
     func didSendMessage(_ message: String) {
         stompService.sendMessage(body: message, to: "/sub/chat/room/\(String(describing: roomId))", with: "no receipt")
-    }
-}
-
-
-extension WalktalkChatViewController: KeyboardObserverDelegate {
-    func keyboardWillShow(keyboardHeight: CGFloat) {
-        containerBottomConstraint?.update(offset: -keyboardHeight)
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-            self.walktalkChatView.scrollToBottom()
-        }
-    }
-
-    func keyboardWillHide() {
-        containerBottomConstraint?.update(offset: -38)
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
     }
 }
