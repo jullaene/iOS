@@ -125,6 +125,13 @@ final class OnboardingView: UIView, UIScrollViewDelegate {
         }
     }
     
+    private func setupScrollViewContentSize() {
+        scrollView.contentSize = CGSize(
+            width: UIScreen.main.bounds.width * CGFloat(slides.count),
+            height: scrollView.frame.height
+        )
+    }
+    
     // MARK: - Actions
     @objc private func pageControlTapped(_ sender: UIPageControl) {
         let xOffset = CGFloat(sender.currentPage) * scrollView.frame.width
