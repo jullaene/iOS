@@ -263,7 +263,7 @@ private extension MatchingView {
     }
 
     @objc private func floatingButtonTapped() {
-        if let viewController = findViewController() as? MatchingViewController {
+        if let viewController = getViewController() as? MatchingViewController {
             viewController.navigateToWalkRequestView()
         }
     }
