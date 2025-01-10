@@ -56,7 +56,7 @@ final class MatchingStatusWalkInfoForWalkerViewController: UIViewController {
             breed: "말티즈",
             weight: 4,
             dogSize: "SMALL",
-            content: "Helloworld",
+            content: "HelloworldHelloworldHelloworldHelloworldHelloworldHelloworldHelloworld",
             dongAddress: "마포구 공덕동",
             distance: 1000,
             createdAt: "2025-01-02T00:32:40"

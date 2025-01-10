@@ -46,7 +46,7 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
         dogProfileView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview().inset(12)
-            make.height.equalTo(151)
+            make.height.equalTo(187)
         }
     }
     
@@ -74,7 +74,6 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
         dogProfileCell.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(20)
             make.leading.trailing.equalToSuperview().inset(12)
-            make.height.equalTo(151)
         }
     }
 }

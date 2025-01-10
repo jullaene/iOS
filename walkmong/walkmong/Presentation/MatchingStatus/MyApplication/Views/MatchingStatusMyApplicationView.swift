@@ -40,13 +40,13 @@ final class MatchingStatusMyApplicationView: UIView {
     
     private let buttonFrame = UIView()
     private let walkTalkButton = CustomButtonView(
-        backgroundColor: UIColor.gray100,
+        backgroundColor: UIColor.gray200,
         cornerRadius: 15,
         text: "워크톡",
         textColor: UIColor.gray400,
         iconName: "messageIcon"
     )
-    private let applyWalkButton = UIButton.createStyledButton(type: .large, style: .dark, title: "산책 지원하기")
+    private let applyWalkButton = UIButton.createStyledButton(type: .large, style: .dark, title: "지원 취소")
 
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -123,7 +123,7 @@ final class MatchingStatusMyApplicationView: UIView {
         sendMessage.snp.makeConstraints { make in
             make.top.equalTo(preMeeting.snp.bottom).offset(48)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().inset(87)
+            make.bottom.equalToSuperview().inset(43)
         }
     }
     

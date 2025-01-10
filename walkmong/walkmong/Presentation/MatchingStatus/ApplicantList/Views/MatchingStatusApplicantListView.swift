@@ -60,6 +60,7 @@ final class MatchingStatusApplicantListView: UIView {
         dogProfileView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(32)
             make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(187)
         }
         
         let dogProfileCell = MatchingCell()
@@ -74,7 +75,6 @@ final class MatchingStatusApplicantListView: UIView {
         dogProfileCell.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(20)
             make.leading.trailing.equalToSuperview().inset(12)
-            make.height.equalTo(151)
         }
         
         applicantsLabel.snp.makeConstraints { make in
