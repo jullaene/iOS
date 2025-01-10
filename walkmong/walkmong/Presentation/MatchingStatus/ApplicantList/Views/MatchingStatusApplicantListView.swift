@@ -14,7 +14,7 @@ final class MatchingStatusApplicantListView: UIView {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     private let dogProfileView = UIView()
-    private let applicantsLabel = SmallTitleLabel(text: "지원한 산책자 (2)")
+    private let applicantsLabel = SmallTitleLabel(text: "지원한 산책자 (n)")
     
     private let cellContainerView: UIView = {
         let view = UIView()
@@ -84,6 +84,8 @@ final class MatchingStatusApplicantListView: UIView {
     }
 
     func configureApplicantsList(with applicants: [MatchingStatusApplicantDetail]) {
+        applicantsLabel.text = "지원한 산책자 (\(applicants.count))"
+        
         contentView.subviews.filter { $0 !== dogProfileView && $0 !== applicantsLabel }.forEach { $0.removeFromSuperview() }
         
         var previousContainer: UIView?

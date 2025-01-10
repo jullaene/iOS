@@ -161,13 +161,6 @@ final class MatchingStatusApplicantListCell: UIView {
     }
     
     // MARK: - Helper Methods
-    private static func createLabel(text: String, textColor: UIColor, font: UIFont?) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.textColor = textColor
-        label.font = font
-        return label
-    }
     
     private func formatDistance(_ distance: Double) -> String {
         if distance < 1000 {
