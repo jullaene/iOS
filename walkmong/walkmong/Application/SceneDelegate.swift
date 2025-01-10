@@ -28,9 +28,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window?.rootViewController = navigationController
         }
         
-        let splashViewController = MatchingApplyWalkRequestViewController()
-        window?.rootViewController = splashViewController
-        
         window?.overrideUserInterfaceStyle = .light
         window?.makeKeyAndVisible()
     }
