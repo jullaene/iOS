@@ -47,6 +47,10 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
     private let walkItemleadPoopBagButton = UIButton.createStyledButton(type: .largeSelectionCheck, style: .light, title: "배변봉투")
     private let walkItemleadMuzzleButton = UIButton.createStyledButton(type: .largeSelectionCheck, style: .light, title: "입마개")
 
+    private var isLeadLineButtonDark = false
+    private var isPoopBagButtonDark = false
+    private var isMuzzleButtonDark = false
+    
     private let buttonFrame = UIView()
     private let walkTalkButton = CustomButtonView(
         backgroundColor: UIColor.gray200,
@@ -196,6 +200,11 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
             make.height.equalTo(46)
         }
         
+        setupInitialButtonStyle(walkItemleadLineButton)
+        setupInitialButtonStyle(walkItemleadPoopBagButton)
+        setupInitialButtonStyle(walkItemleadMuzzleButton)
+        setupWalkItemButtons()
+        
     }
     
     // MARK: - 데이터 설정
@@ -230,5 +239,49 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
             dongAddress: applicant.dongAddress,
             distance: applicant.distance
         )
+    }
+    
+    private func setupWalkItemButtons() {
+        walkItemleadLineButton.addTarget(self, action: #selector(didTapLeadLineButton), for: .touchUpInside)
+        walkItemleadPoopBagButton.addTarget(self, action: #selector(didTapPoopBagButton), for: .touchUpInside)
+        walkItemleadMuzzleButton.addTarget(self, action: #selector(didTapMuzzleButton), for: .touchUpInside)
+    }
+
+    @objc private func didTapLeadLineButton() {
+        isLeadLineButtonDark.toggle()
+        if isLeadLineButtonDark {
+            walkItemleadLineButton.backgroundColor = .mainBlue
+            walkItemleadLineButton.setTitleColor(.white, for: .normal)
+        } else {
+            walkItemleadLineButton.backgroundColor = .white
+            walkItemleadLineButton.setTitleColor(.gray500, for: .normal)
+        }
+    }
+
+    @objc private func didTapPoopBagButton() {
+        isPoopBagButtonDark.toggle()
+        if isPoopBagButtonDark {
+            walkItemleadPoopBagButton.backgroundColor = .mainBlue
+            walkItemleadPoopBagButton.setTitleColor(.white, for: .normal)
+        } else {
+            walkItemleadPoopBagButton.backgroundColor = .white
+            walkItemleadPoopBagButton.setTitleColor(.gray500, for: .normal)
+        }
+    }
+
+    @objc private func didTapMuzzleButton() {
+        isMuzzleButtonDark.toggle()
+        if isMuzzleButtonDark {
+            walkItemleadMuzzleButton.backgroundColor = .mainBlue
+            walkItemleadMuzzleButton.setTitleColor(.white, for: .normal)
+        } else {
+            walkItemleadMuzzleButton.backgroundColor = .white
+            walkItemleadMuzzleButton.setTitleColor(.gray500, for: .normal)
+        }
+    }
+    
+    private func setupInitialButtonStyle(_ button: UIButton) {
+        button.backgroundColor = .white
+        button.setTitleColor(.gray500, for: .normal)
     }
 }
