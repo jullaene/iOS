@@ -142,3 +142,22 @@ class MyPageView: UIView {
         }
     }
 }
+
+extension MyPageView {
+    
+    func updateProfileName(_ name: String) {
+        profileView.updateName(name)
+    }
+    
+    func updateProfileImage(_ urlString: String) {
+        profileView.updateProfileImage(with: urlString)
+    }
+    
+    func updateWalkInfo(dogOwnership: DogOwnership, dogWalkingExperience: Int, availabilityWithSize: String) {
+        contentViewSection.updateWalkInfo(
+            dogOwnership: dogOwnership,
+            dogWalkingExperience: dogWalkingExperience,
+            avilablityWithSize: availabilityWithSize
+        )
+    }
+}

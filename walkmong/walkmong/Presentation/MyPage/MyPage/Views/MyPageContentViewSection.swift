@@ -57,3 +57,13 @@ class MyPageContentViewSection: UIView {
         }
     }
 }
+
+extension MyPageContentViewSection {
+    func updateWalkInfo(dogOwnership: DogOwnership, dogWalkingExperience: Int, avilablityWithSize: String) {
+        walkInfoView.updateExperienceInfo(
+            dogOwnership: dogOwnership,
+            dogWalkingExperience: dogWalkingExperience,
+            availabilityWithSize: avilablityWithSize
+        )
+    }
+}

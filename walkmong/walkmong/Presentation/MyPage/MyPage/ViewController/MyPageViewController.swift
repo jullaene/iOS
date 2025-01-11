@@ -11,6 +11,7 @@ class MyPageViewController: UIViewController {
     
     private let myPageView = MyPageView()
     private let dogService = DogService()
+    private let memberService = MemberService()
     
     override func loadView() {
         self.view = UIView()
@@ -25,6 +26,7 @@ class MyPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         fetchDogList()
+        fetchUserProfile()
     }
     
     private func fetchDogList() {
@@ -49,6 +51,27 @@ class MyPageViewController: UIViewController {
     
     private func updatePetView(with petProfiles: [PetProfile]) {
         myPageView.contentViewSection.petView.update(with: petProfiles)
+    }
+    
+    private func fetchUserProfile() {
+        Task {
+            do {
+                let response = try await memberService.getMemberWalking()
+                let memberWalking = response.data
+                DispatchQueue.main.async {
+                    self.myPageView.updateProfileName(memberWalking.name)
+                    self.myPageView.updateProfileImage(memberWalking.profile)
+                    
+                    self.myPageView.updateWalkInfo(
+                        dogOwnership: memberWalking.dogOwnership,
+                        dogWalkingExperience: memberWalking.dogWalkingExperience,
+                        availabilityWithSize: memberWalking.availabilityWithSize
+                    )
+                }
+            } catch {
+                print("Error fetching user profile: \(error)")
+            }
+        }
     }
 }
 

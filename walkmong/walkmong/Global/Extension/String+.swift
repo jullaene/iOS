@@ -37,6 +37,15 @@ extension String {
         }
     }
     
+    func generateAvailabilityText() -> String {
+        // 쉼표를 기준으로 분리하여 각각 변환
+        let sizes = self.split(separator: ",").map { String($0).localizedDogSize() }
+        if sizes.isEmpty {
+            return "산책 가능 여부 알 수 없음"
+        }
+        return sizes.joined(separator: " / ") + " 산책 가능"
+    }
+    
     func genderIconName(for gender: String) -> String {
         switch gender.uppercased() {
         case "FEMALE":

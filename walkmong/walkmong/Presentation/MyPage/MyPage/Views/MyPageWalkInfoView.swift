@@ -68,7 +68,7 @@ class MyPageWalkInfoView: UIView {
     private let nurtureExperienceBadgeImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "defaultImage")
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         return imageView
@@ -96,7 +96,7 @@ class MyPageWalkInfoView: UIView {
     private let walkExperienceBadgeImage: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "defaultImage")
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         return imageView
@@ -275,5 +275,38 @@ class MyPageWalkInfoView: UIView {
                 make.center.equalToSuperview()
             }
         }
+    }
+    
+    func updateExperienceInfo(dogOwnership: DogOwnership, dogWalkingExperience: Int, availabilityWithSize: String) {
+        nurtureExperienceContentLabel.text = dogOwnership.description
+
+        switch dogOwnership {
+        case .none:
+            nurtureExperienceBadgeImage.image = UIImage(named: "walkingIllustration00")
+        case .lessThan3:
+            nurtureExperienceBadgeImage.image = UIImage(named: "walkingIllustration01")
+        case .moreThan3:
+            nurtureExperienceBadgeImage.image = UIImage(named: "walkingIllustration02")
+        case .moreThan5:
+            nurtureExperienceBadgeImage.image = UIImage(named: "walkingIllustration03")
+        case .moreThan10:
+            nurtureExperienceBadgeImage.image = UIImage(named: "walkingIllustration04")
+        }
+
+        if dogWalkingExperience <= 3 {
+            walkExperienceContentLabel.text = "첫걸음 산책자"
+            walkExperienceBadgeImage.image = UIImage(named: "nutureIllustration01")
+        } else if dogWalkingExperience <= 9 {
+            walkExperienceContentLabel.text = "도약 산책자"
+            walkExperienceBadgeImage.image = UIImage(named: "nutureIllustration02")
+        } else if dogWalkingExperience <= 20 {
+            walkExperienceContentLabel.text = "리더 산책자"
+            walkExperienceBadgeImage.image = UIImage(named: "nutureIllustration03")
+        } else {
+            walkExperienceContentLabel.text = "챔피언 산책자"
+            walkExperienceBadgeImage.image = UIImage(named: "nutureIllustration04")
+        }
+        
+        serviceFrameLabel.text = availabilityWithSize.generateAvailabilityText()
     }
 }

@@ -18,10 +18,10 @@ struct MemberService {
         )
     }
     
-    func getMemberWalkiing() async throws -> APIResponse<MemberWalking> {
+    func getMemberWalking() async throws -> APIResponse<MemberWalkingItem> {
         return try await provider.request(
             target: .getMemberWalkiing,
-            responseType: APIResponse<MemberWalking>.self
+            responseType: APIResponse<MemberWalkingItem>.self
         )
     }
     
