@@ -16,6 +16,7 @@ class CustomView: UIView {
         centerLabelText: String? = nil,
         contentText: String? = nil,
         contentTextColor: UIColor = .gray600,
+        contentTextAlignment: NSTextAlignment = .left,
         layoutOption: LayoutOption = .default
     ) -> UIView {
         let containerView = UIView()
@@ -79,7 +80,7 @@ class CustomView: UIView {
                 let contentLabel = MainParagraphLabel(text: contentText, textColor: contentTextColor)
                 contentLabel.numberOfLines = 0
                 contentLabel.lineBreakMode = .byWordWrapping
-                contentLabel.textAlignment = .left
+                contentLabel.textAlignment = contentTextAlignment
                 whiteBackgroundView.addSubview(contentLabel)
                 contentLabel.snp.makeConstraints { make in
                     make.top.bottom.equalToSuperview().inset(12)
@@ -109,6 +110,7 @@ class CustomView: UIView {
                     let contentLabel = MainParagraphLabel(text: contentText, textColor: contentTextColor)
                     contentLabel.numberOfLines = 0
                     contentLabel.lineBreakMode = .byWordWrapping
+                    contentLabel.textAlignment = contentTextAlignment
                     whiteBackgroundView.addSubview(contentLabel)
                     contentLabel.snp.makeConstraints { make in
                         make.top.equalTo(centerLabel.snp.bottom).offset(10)

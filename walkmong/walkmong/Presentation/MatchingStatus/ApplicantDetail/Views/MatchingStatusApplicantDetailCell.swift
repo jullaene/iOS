@@ -29,7 +29,7 @@ final class MatchingStatusApplicantDetailCell: UIView {
         return button
     }()
     
-    private let locationIcon = UIImage.createImageView(named: "meetingPlace")
+    private let locationIcon = UIImage.createImageView(named: "meetingPlace", tintColor: .gray400)
     
     private let locationLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .gray400)
     

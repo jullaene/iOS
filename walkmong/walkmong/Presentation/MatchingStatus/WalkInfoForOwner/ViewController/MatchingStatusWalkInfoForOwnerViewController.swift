@@ -62,6 +62,16 @@ final class MatchingStatusWalkInfoForOwnerViewController: UIViewController {
             createdAt: "2025-01-02T00:32:40"
         )
         matchingStatusWalkInfoForOwnerView.updateDogProfile(with: dogProfileData)
+        
+        let applicant = MatchingStatusApplicantInfo(
+            ownerProfile: "https://img.freepik.com/free-photo/expressive-asian-girl-posing-indoor_344912-1234.jpg?semt=ais_hybrid",
+            ownerName: "홍길동",
+            ownerAge: 32,
+            ownerGender: "MALE",
+            dongAddress: "서울시 강남구",
+            distance: 500
+        )
+        matchingStatusWalkInfoForOwnerView.configureApplicantsList(with: applicant)
     }
     
 }

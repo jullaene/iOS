@@ -100,7 +100,7 @@ final class MatchingStatusMyApplicationView: UIView {
         contentView.addSubviews(dogProfileView, meetingPlace, walkSuppliesProvided, preMeeting, sendMessage)
         
         dogProfileView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
+            make.top.equalToSuperview().offset(32)
             make.leading.trailing.equalToSuperview().inset(12)
             make.height.equalTo(187)
         }

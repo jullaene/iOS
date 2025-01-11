@@ -17,7 +17,8 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
     
     private let preMeeting: UIView = CustomView.createCustomView(
         titleText: "사전 만남",
-        contentText: "2024.10.23 (수) 16:00"
+        contentText: "2024.10.23 (수) 16:00",
+        contentTextAlignment: .center
     )
     
     private let walkRequestTitle = SmallTitleLabel(text: "산책 요청 사항")
