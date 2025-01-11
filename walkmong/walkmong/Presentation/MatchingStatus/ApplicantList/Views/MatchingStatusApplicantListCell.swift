@@ -20,11 +20,11 @@ final class MatchingStatusApplicantListCell: UIView {
     private let nameLabel = UpperTitleLabel(text: "", textColor: .gray600)
     private let infoLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     private let profileButton = UIButton()
-    private let starIcon = UIImage.createImageView(named: "starIcon.png")
+    private let starIcon = UIImage.createImageView(named: "starIcon.png", tintColor: .mainBlue)
     
     private let ratingLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainBlue)
     
-    private let locationIcon = UIImage.createImageView(named: "locationIcon.png")
+    private let locationIcon = UIImage.createImageView(named: "locationIcon.png", tintColor: .gray400)
     
     private let locationLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .gray400)
         
