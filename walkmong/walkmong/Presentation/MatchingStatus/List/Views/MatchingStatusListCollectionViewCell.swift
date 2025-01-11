@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 protocol MatchingStatusListCollectionViewCellDelegate: AnyObject {
     func didTapMatchingStatusListCollectionViewCell(matchingResponseData: MatchingStatusListResponseData, record: Record, status: Status)
@@ -43,9 +44,18 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     private let addressLabel = SmallMainHighlightParagraphLabel(text: "주소", textColor: .gray500)
-    private let addressIcon: UIImageView = {
+    private lazy var addressIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = .locationIcon
+        return imageView
+    }()
+    private lazy var walkerNameLabel = SmallMainHighlightParagraphLabel(text: "주소", textColor: .mainBlack)
+    private lazy var walkerProfileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .defaultProfile
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 16
         return imageView
     }()
     private let seeInfoButtonViewFrame: UIView = {
@@ -104,8 +114,13 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
 
     private func addSubview() {
         self.addSubview(containerView)
-        containerView.addSubviews(dateLabel, matchingStateView, profileImageView, dogNameLabel, dogGenderIcon, addressIcon, addressLabel, seeInfoButtonViewFrame)
+        containerView.addSubviews(dateLabel, matchingStateView, profileImageView, dogNameLabel, dogGenderIcon, addressLabel, seeInfoButtonViewFrame)
         matchingStateView.addSubview(matchingStateLabel)
+        if record == .requested && status != .PENDING {
+            containerView.addSubviews(walkerNameLabel, walkerProfileImageView)
+        }else {
+            containerView.addSubviews(addressIcon)
+        }
         if record == .requested && status == .PENDING {
             // 지원한 산책자 목록 보여줌
             seeInfoButtonViewFrame.addSubview(seeInfoLabelFrame)
@@ -113,9 +128,6 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         }else{
             // 기본 버튼 보여줌
             seeInfoButtonViewFrame.addSubview(seeInfoLabel)
-        }
-        if record == .requested && status == .CONFIRMED {
-            //TODO: "산책자 김도비님" 라벨 + 이미지뷰 추가
         }
         // 진짜 동작할 버튼
         containerView.addSubview(seeInfoButton)
@@ -158,14 +170,30 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
             make.centerY.equalTo(dogNameLabel.snp.centerY)
             make.height.equalTo(16)
         }
-        addressIcon.snp.makeConstraints { make in
-            make.leading.equalTo(profileImageView.snp.trailing).offset(12)
-            make.height.equalTo(14)
-            make.top.equalTo(dogNameLabel.snp.bottom).offset(7)
-        }
-        addressLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(addressIcon.snp.centerY)
-            make.leading.equalTo(addressIcon.snp.trailing).offset(2.5)
+        if record == .requested && status != .PENDING {
+            addressLabel.snp.makeConstraints { make in
+                make.leading.equalTo(profileImageView.snp.trailing).offset(12)
+                make.top.equalTo(dogNameLabel.snp.bottom).offset(8)
+            }
+            walkerNameLabel.snp.makeConstraints { make in
+                make.centerY.equalTo(addressLabel)
+                make.leading.equalTo(addressLabel.snp.trailing).offset(4)
+            }
+            walkerProfileImageView.snp.makeConstraints { make in
+                make.leading.equalTo(walkerNameLabel.snp.trailing).offset(4)
+                make.centerY.equalTo(addressLabel)
+                make.width.height.equalTo(32)
+            }
+        }else {
+            addressIcon.snp.makeConstraints { make in
+                make.leading.equalTo(profileImageView.snp.trailing).offset(12)
+                make.height.equalTo(14)
+                make.top.equalTo(dogNameLabel.snp.bottom).offset(7)
+            }
+            addressLabel.snp.makeConstraints { make in
+                make.centerY.equalTo(addressIcon.snp.centerY)
+                make.leading.equalTo(addressIcon.snp.trailing).offset(2.5)
+            }
         }
         if record == .requested && status == .PENDING {
             // 지원한 산책자 목록 보여줌
@@ -194,35 +222,8 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
                 make.center.equalToSuperview()
             }
         }
-        if record == .requested && status == .CONFIRMED {
-            //TODO: "산책자 김도비님" 라벨 + 이미지뷰 추가
-        }
         seeInfoButton.snp.makeConstraints { make in
             make.edges.equalTo(seeInfoButtonViewFrame)
-        }
-    }
-    
-    private func setUI() {
-        matchingStateLabel.text = status.rawValue
-        switch status {
-        case .PENDING:
-            matchingStateView.backgroundColor = .lightBlue
-            matchingStateLabel.textColor = .mainBlue
-            dateLabel.textColor = .gray600
-        case .CONFIRMED:
-            matchingStateView.backgroundColor = .mainBlue
-            matchingStateLabel.textColor = .white
-            dateLabel.textColor = .gray600
-        case .COMPLETED:
-            matchingStateView.backgroundColor = .gray400
-            matchingStateLabel.textColor = .white
-            dateLabel.textColor = .gray300
-        case .REJECTED:
-            matchingStateView.backgroundColor = .gray200
-            matchingStateLabel.textColor = .gray400
-            dateLabel.textColor = .gray300
-        case .none:
-            return
         }
     }
     
@@ -233,13 +234,25 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         addSubview()
         setConstraints()
         setButtonAction()
-        setUI()
+        matchingStateLabel.text = status.rawValue
+        matchingStateView.backgroundColor = status.backgroundColor
+        matchingStateLabel.textColor = status.textColor
+//        self.profileImageView.kf.setImage(with: URL(string:data.dogProfile))
         self.profileImageView.image = .puppyImage01
         self.dogNameLabel.text = data.dogName
-        if status == .PENDING {
+        self.dogGenderIcon.image = data.dogGender == "MALE" ? .maleIcon : .femaleIcon
+        
+        // 주소 혹은 산책자 정보 설정
+        if record == .requested && status != .PENDING {
+            self.addressLabel.text = "산책자"
+            self.walkerNameLabel.text = data.walkerNickname
+            if let profileURL = data.walkerProfile {
+//                self.walkerProfileImageView.kf.setImage(with: URL(string: profileURL))
+            }
+        } else if status == .PENDING {
             self.addressLabel.text = data.dongAddress + String(format: " %.1f", data.distance) + "km"
             if record == .requested {
-                self.peopleCountLabel.text = "2"
+                self.peopleCountLabel.text = "2" //FIXME: 지원한 산책자 개수
             }
         }else {
             self.addressLabel.text = data.dongAddress + " " + data.addressDetail
@@ -255,9 +268,6 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
             seeInfoLabel.textColor = .white
         }else {
             seeInfoLabel.textColor = .gray600
-        }
-        if record == .requested, status != .PENDING, let walkerName = data.walkerNickname, let profile = data.walkerProfile {
-            //TODO: "산책자 김도비님" 라벨 + 이미지뷰 추가
         }
         self.dateLabel.text = formatDateRange(start: data.startTime, end: data.endTime)
     }
