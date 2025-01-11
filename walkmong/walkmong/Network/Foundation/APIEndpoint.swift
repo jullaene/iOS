@@ -22,7 +22,7 @@ extension APIEndpoint {
 
     /// TargetType 중 header의 토큰을 미리 설정합니다.
     var headers: [String: String]? {
-        guard let token = AuthManager.shared.accessToken else {
+        guard let token = SecretManager.shared.TEST_TOKEN else {
             /// Access Token이 없는 경우
             return ["Content-Type": "application/json"]
         }

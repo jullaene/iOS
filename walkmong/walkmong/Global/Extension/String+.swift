@@ -23,4 +23,17 @@ extension String {
         // 계산된 크기 반환
         return CGRect(origin: .zero, size: sizeThatFits)
     }
+    
+    func localizedDogSize() -> String {
+        switch self.uppercased() {
+        case "SMALL":
+            return "소형견"
+        case "MIDDLE":
+            return "중형견"
+        case "BIG":
+            return "대형견"
+        default:
+            return "알 수 없음"
+        }
+    }
 }

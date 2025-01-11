@@ -225,7 +225,7 @@ class MatchingCell: UIView {
         configurePuppyImage(with: data.safeDogProfile)
         
         nameLabel.text = data.dogName
-        sizeLabel.text = data.translatedDogSize
+        sizeLabel.text = data.dogSize.localizedDogSize()
         postContentLabel.text = data.content
         locationLabel.text = data.dongAddress
         distanceLabel.text = data.formattedDistance

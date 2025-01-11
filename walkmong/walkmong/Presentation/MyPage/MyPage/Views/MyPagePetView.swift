@@ -151,3 +151,11 @@ class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegat
         pageControl.currentPage = page
     }
 }
+
+extension MyPagePetView {
+    func update(with profiles: [PetProfile]) {
+        self.petProfiles = profiles
+        self.pageControl.numberOfPages = profiles.count + 1
+        self.collectionView.reloadData()
+    }
+}

@@ -56,15 +56,6 @@ struct MatchingData: Codable {
         dogProfile ?? "puppyImage01.png"
     }
 
-    var translatedDogSize: String {
-        switch dogSize.uppercased() {
-        case "SMALL": return "소형견"
-        case "MEDIUM": return "중형견"
-        case "BIG": return "대형견"
-        default: return "알 수 없음"
-        }
-    }
-
     var readableCreatedAt: String {
         guard let createdDate = MatchingData.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: createdAt ?? "2024-11-16 04:30:00.000000") else {
             return "알 수 없음"

@@ -81,12 +81,19 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     func configure(with profile: PetProfile) {
         profileButton.isHidden = false
         profileButton.isUserInteractionEnabled = true
-        
-        if let url = URL(string: profile.imageURL ?? "") {
-            petImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
+
+        if let encodedURL = profile.imageURL,
+           let decodedURLString = encodedURL.removingPercentEncoding,
+           let url = URL(string: decodedURLString) {
+            petImageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "puppyImage01"),
+                options: [.cacheOriginalImage, .transition(.fade(0.2))]
+            )
         } else {
-            petImageView.image = UIImage(named: "placeholder")
+            petImageView.image = UIImage(named: "puppyImage01")
         }
+
         petNameLabel.text = profile.name
         petDetailsLabel.text = profile.details
 
@@ -98,7 +105,6 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         default:
             genderIcon.image = UIImage(named: "defaultIcon")
         }
-        
         genderIcon.isHidden = false
     }
     
