@@ -11,15 +11,6 @@ final class MatchingApplyPetWalkExperienceViewController: UIViewController {
     
     private let matchingApplyPetWalkExperienceView = MatchingApplyPetWalkExperienceView()
 
-    private let skipButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("건너뛰기", for: .normal)
-        button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 16)
-        button.setTitleColor(.mainBlack, for: .normal)
-        button.backgroundColor = .clear
-        return button
-    }()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -42,18 +33,6 @@ final class MatchingApplyPetWalkExperienceViewController: UIViewController {
         addCustomNavigationBar(titleText: "", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         addProgressBar(currentStep: 2, totalSteps: 7)
         matchingApplyPetWalkExperienceView.delegate = self
-        view.addSubview(skipButton)
-        skipButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-20)
-            make.height.equalTo(22)
-            make.centerY.equalTo(view.safeAreaLayoutGuide.snp.top).offset(26)
-        }
-        skipButton.addTarget(self, action: #selector(skipButtonTapped), for: .touchUpInside)
-    }
-    
-    @objc private func skipButtonTapped() {
-        let nextVC = UIViewController()
-        self.navigationController?.pushViewController(nextVC, animated: true)
     }
 }
 
