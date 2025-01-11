@@ -43,9 +43,9 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
     }()
     private let mapView = UIView.createRoundedView(backgroundColor: .red, cornerRadius: 15)
     private let walkItemTitle = SmallTitleLabel(text: "산책 준비물")
-    private let walkItemleadLineButton = UIButton.createStyledButton(type: .largeSelection, style: .light, title: "리드줄(목줄)")
-    private let walkItemleadPoopBagButton = UIButton.createStyledButton(type: .largeSelection, style: .light, title: "배변봉투")
-    private let walkItemleadMuzzleButton = UIButton.createStyledButton(type: .largeSelection, style: .light, title: "입마개")
+    private let walkItemleadLineButton = UIButton.createStyledButton(type: .largeSelectionCheck, style: .light, title: "리드줄(목줄)")
+    private let walkItemleadPoopBagButton = UIButton.createStyledButton(type: .largeSelectionCheck, style: .light, title: "배변봉투")
+    private let walkItemleadMuzzleButton = UIButton.createStyledButton(type: .largeSelectionCheck, style: .light, title: "입마개")
 
     private let buttonFrame = UIView()
     private let walkTalkButton = CustomButtonView(
