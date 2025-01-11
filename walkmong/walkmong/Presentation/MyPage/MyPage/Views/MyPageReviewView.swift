@@ -34,6 +34,10 @@ class MyPageReviewView: UIView {
     private let participantLabel = SmallMainParagraphLabel(text: "참여자수", textColor: .gray400)
     private let chartView = UIView.createRoundedView(backgroundColor: .clear, cornerRadius: 10)
     
+    private let leftView = UIView()
+    private let rightView = UIView()
+    private let rightLabel = SmallTitleLabel(text: "90%")
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -158,47 +162,44 @@ class MyPageReviewView: UIView {
     }
     
     private func setupChartView() {
-        let leftView = UIView()
         leftView.backgroundColor = .gray400
         leftView.layer.cornerRadius = 10
         leftView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         leftView.clipsToBounds = true
-
-        let rightView = UIView()
+        
         rightView.backgroundColor = .mainBlue
         rightView.layer.cornerRadius = 10
         rightView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
         rightView.clipsToBounds = true
-
+        
         let leftIcon = UIImageView(image: UIImage(named: "dislikeIcon"))
         leftIcon.contentMode = .scaleAspectFit
-
+        
         let rightIcon = UIImageView(image: UIImage(named: "likeIcon"))
         rightIcon.contentMode = .scaleAspectFit
         
-        let rightLabel = SmallTitleLabel(text: "90%")
         rightLabel.textColor = .white
         rightLabel.textAlignment = .center
-
+        
         leftView.addSubview(leftIcon)
         rightView.addSubviews(rightIcon, rightLabel)
         chartView.addSubviews(leftView, rightView)
-
+        
         leftView.snp.makeConstraints { make in
             make.leading.top.bottom.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.1)
         }
-
+        
         rightView.snp.makeConstraints { make in
             make.trailing.top.bottom.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.9)
         }
-
+        
         leftIcon.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.width.height.equalTo(24)
         }
-
+        
         rightIcon.snp.makeConstraints { make in
             make.trailing.equalTo(rightLabel.snp.leading).offset(-8)
             make.centerY.equalToSuperview()
@@ -318,9 +319,9 @@ class MyPageReviewView: UIView {
             horizontalStack.alignment = .top
             horizontalStack.addArrangedSubview(colorView)
             horizontalStack.addArrangedSubview(labelStackView)
-
+            
             stackView.addArrangedSubview(horizontalStack)
-
+            
             colorView.snp.makeConstraints { make in
                 make.size.equalTo(CGSize(width: 8, height: 8))
                 make.top.equalTo(mainLabel.snp.top).inset(5)
@@ -405,7 +406,91 @@ extension MyPageReviewView {
         starRatingLabel.text = formattedScore
     }
     
-    func updateParticipantCount(_ count: Int) {
+    func updateWalkerParticipantCount(_ count: Int) {
         participantCountLabel.text = "\(count)명 참여"
+        
+        // 후기가 0개인 경우 chartView를 숨김
+        chartView.isHidden = (count == 0)
+    }
+    
+    func updateOwnerParticipantCount(_ count: Int) {
+        participantLabel.text = "\(count)명 참여"
+    }
+    
+    func configureKeywords(name: String, tags: [MemberWalkingItem.Tag]) {
+        keywordTitleLabel.text = "\(name)님의 키워드 TOP 3"
+        ownerReviewTitleLabel.text = "\(name)님의 반려인 후기"
+        
+        let sortedTags = tags.sorted { $0.keywordPercent > $1.keywordPercent }
+        let topTags = sortedTags.prefix(3)
+        let otherPercent = 100 - topTags.reduce(0) { $0 + $1.keywordPercent }
+        
+        var entries: [PieChartDataEntry] = topTags.map {
+            PieChartDataEntry(value: Double($0.keywordPercent), label: $0.hashtagNm.description)
+        }
+        
+        if otherPercent > 0 {
+            entries.append(PieChartDataEntry(value: Double(otherPercent), label: "기타"))
+        }
+        
+        updateDonutChart(with: entries)
+    }
+    
+    private func updateDonutChart(with entries: [PieChartDataEntry]) {
+        let dataSet = PieChartDataSet(entries: entries, label: "")
+        dataSet.colors = [.mainBlue, .gray500, .gray400, .gray300]
+        dataSet.drawValuesEnabled = false
+        dataSet.sliceSpace = 0
+        dataSet.selectionShift = 0
+        
+        let chartData = PieChartData(dataSet: dataSet)
+        let donutChart = PieChartView()
+        donutChart.data = chartData
+        donutChart.holeRadiusPercent = 0.36
+        donutChart.transparentCircleRadiusPercent = 0
+        donutChart.legend.enabled = false
+        donutChart.chartDescription.enabled = false
+        donutChart.holeColor = .clear
+        donutChart.drawEntryLabelsEnabled = false
+        donutChart.rotationEnabled = false
+        
+        keywordBubbleContainer.subviews.forEach { $0.removeFromSuperview() }
+        keywordBubbleContainer.addSubview(donutChart)
+        
+        let legendView = createLegendView(for: entries, colors: dataSet.colors)
+        keywordBubbleContainer.addSubview(legendView)
+        
+        donutChart.snp.makeConstraints { make in
+            make.top.equalTo(keywordTitleLabel.snp.bottom).offset(20)
+            make.leading.equalTo(keywordTitleLabel.snp.leading)
+            make.trailing.equalTo(legendView.snp.leading).offset(-16)
+            make.height.equalTo(donutChart.snp.width)
+            make.bottom.equalToSuperview()
+        }
+        
+        legendView.snp.makeConstraints { make in
+            make.centerY.equalTo(donutChart)
+            make.trailing.equalToSuperview()
+            make.width.equalTo(80)
+        }
+    }
+    
+    func updateOwnerReviewSection(goodPercent: CGFloat, participantCount: Int) {
+        // 참여자 수에 따라 chartView 가시성 제어
+        chartView.isHidden = (participantCount == 0)
+        guard participantCount > 0 else { return }
+        
+        let formattedGoodPercent = String(format: "%.0f", goodPercent * 100)
+        rightLabel.text = "\(formattedGoodPercent)%"
+        
+        leftView.snp.remakeConstraints { make in
+            make.leading.top.bottom.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(1 - goodPercent)
+        }
+        
+        rightView.snp.remakeConstraints { make in
+            make.trailing.top.bottom.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(goodPercent)
+        }
     }
 }

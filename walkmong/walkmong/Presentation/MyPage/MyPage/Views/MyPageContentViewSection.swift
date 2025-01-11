@@ -67,9 +67,11 @@ extension MyPageContentViewSection {
         )
     }
     
-    func updateReviewView(radarScores: [CGFloat], walkerReviewCount: Int) {
+    func updateReviewView(radarScores: [CGFloat], walkerReviewCount: Int, ownerReviewCount: Int, goodPercent: Int) {
         reviewView.updateChartData(scores: radarScores)
         reviewView.updateWalkerReviewCount(walkerReviewCount)
-        reviewView.updateParticipantCount(walkerReviewCount)
+        reviewView.updateWalkerParticipantCount(walkerReviewCount)
+        reviewView.updateOwnerParticipantCount(ownerReviewCount)
+        reviewView.updateOwnerReviewSection(goodPercent: CGFloat(goodPercent), participantCount: ownerReviewCount)
     }
 }

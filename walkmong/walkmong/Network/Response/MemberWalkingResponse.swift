@@ -27,7 +27,7 @@ struct MemberWalkingItem: Codable {
 
     struct Tag: Codable {
         let hashtagNm: MemberWalkingTagEnum
-        let goodPercent: Int
+        let keywordPercent: Int
     }
 }
 

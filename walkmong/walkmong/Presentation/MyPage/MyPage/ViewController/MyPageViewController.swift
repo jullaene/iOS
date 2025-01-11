@@ -76,10 +76,16 @@ class MyPageViewController: UIViewController {
                         CGFloat(memberWalking.taskCompletion)
                     ]
                     self.myPageView.contentViewSection.reviewView.updateWalkerReviewCount(memberWalking.walkerReviewCount)
-                    self.myPageView.contentViewSection.reviewView.updateParticipantCount(memberWalking.walkerReviewCount)
+                    self.myPageView.contentViewSection.reviewView.updateWalkerParticipantCount(memberWalking.walkerReviewCount)
+                    self.myPageView.contentViewSection.reviewView.updateOwnerParticipantCount(memberWalking.ownerReviewCount)
                     self.myPageView.contentViewSection.reviewView.updateChartData(scores: radarScores)
                     let averageScore = radarScores.reduce(0, +) / CGFloat(radarScores.count)
                     self.myPageView.contentViewSection.reviewView.updateStarRating(averageScore: averageScore)
+                    self.myPageView.contentViewSection.reviewView.configureKeywords(
+                        name: memberWalking.name,
+                        tags: memberWalking.tags
+                    )
+                    self.myPageView.contentViewSection.reviewView.updateOwnerReviewSection(goodPercent: CGFloat(memberWalking.goodPercent) / 100, participantCount: memberWalking.ownerReviewCount)
                 }
             } catch {
                 print("Error fetching user profile: \(error)")
