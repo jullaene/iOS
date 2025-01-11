@@ -5,6 +5,8 @@ import Moya
 
 class MatchingViewController: UIViewController, MatchingCellDelegate {
 
+    private let service = BoardService()
+    
     // MARK: - Properties
     private var matchingFilterView: MatchingFilterView?
     private var locationSelectView: UIView!
@@ -17,7 +19,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     private var dimView: UIView? {
         return (self.tabBarController as? MainTabBarController)?.dimView
     }
-    private var matchingData: [MatchingData] = []
+    private var matchingData: [BoardList] = []
     private var isNavigationBarHidden: Bool = true
 
     // MARK: - Lifecycle
@@ -152,7 +154,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     }
 
     // MARK: - MatchingCellDelegate
-    func didSelectMatchingCell(data: MatchingData) {
+    func didSelectMatchingCell(data: BoardList) {
         let detailViewController = MatchingDogInformationViewController()
         detailViewController.configure(with: data)
         navigationController?.pushViewController(detailViewController, animated: true)
@@ -236,5 +238,29 @@ extension MatchingViewController: DropdownViewDelegate {
         matchingView.updateLocationLabel(with: location)
         dropdownView?.updateSelection(selectedLocation: location)
         hideDropdownView()
+    }
+}
+
+extension MatchingViewController {
+    func getBoardList() async {
+        do {
+            let response = try await service.getBoardList()
+            DispatchQueue.main.async {
+                print("Decoded Response: \(response)") // 확인용 디코딩된 응답 출력
+                print("Response Data Count: \(response.data.count)") // 데이터 개수 출력
+
+                if response.data.isEmpty {
+                    print("No data available.")
+                } else {
+                    self.matchingData = response.data
+                    self.matchingView.updateMatchingCells(with: self.matchingData)
+                    print("Data sent to MatchingView: \(self.matchingData)")
+                }
+            }
+        } catch {
+            DispatchQueue.main.async {
+                print("Error fetching board list: \(error.localizedDescription)")
+            }
+        }
     }
 }

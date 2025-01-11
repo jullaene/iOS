@@ -97,7 +97,7 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView {
                         dogId: item.dogId,
                         imageURL: item.dogProfile ?? "",
                         name: item.dogName,
-                        details: "\(item.dogSize.localizedDogSize()) · \(item.breed) · \(item.weight)kg",
+                        details: "\(item.dogSize.localizedDogSize()) · \(item.breed) · \(Int(item.weight))kg",
                         gender: item.dogGender
                     )
                 }
