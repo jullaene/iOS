@@ -56,7 +56,7 @@ final class MatchingApplyPetExperienceView: UIView {
     private func setConstraints() {
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(15)
-            make.leading.equalToSuperview().offset(18)
+            make.horizontalEdges.equalToSuperview().inset(18)
         }
         stackView.snp.makeConstraints { make in
             make.height.equalTo(278)
