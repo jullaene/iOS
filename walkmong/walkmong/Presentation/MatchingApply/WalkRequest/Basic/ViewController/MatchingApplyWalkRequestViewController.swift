@@ -50,6 +50,11 @@ final class MatchingApplyWalkRequestViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        addProgressBar(currentStep: currentStep, totalSteps: totalSteps)
+    }
+    
     private func setupUI() {
         view.backgroundColor = .white
         addCustomNavigationBar(
