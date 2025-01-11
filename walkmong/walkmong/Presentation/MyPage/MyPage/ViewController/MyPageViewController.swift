@@ -67,6 +67,19 @@ class MyPageViewController: UIViewController {
                         dogWalkingExperience: memberWalking.dogWalkingExperience,
                         availabilityWithSize: memberWalking.availabilityWithSize
                     )
+                    
+                    let radarScores: [CGFloat] = [
+                        CGFloat(memberWalking.photoSharing),
+                        CGFloat(memberWalking.attitude),
+                        CGFloat(memberWalking.communication),
+                        CGFloat(memberWalking.timePunctuality),
+                        CGFloat(memberWalking.taskCompletion)
+                    ]
+                    self.myPageView.contentViewSection.reviewView.updateWalkerReviewCount(memberWalking.walkerReviewCount)
+                    self.myPageView.contentViewSection.reviewView.updateParticipantCount(memberWalking.walkerReviewCount)
+                    self.myPageView.contentViewSection.reviewView.updateChartData(scores: radarScores)
+                    let averageScore = radarScores.reduce(0, +) / CGFloat(radarScores.count)
+                    self.myPageView.contentViewSection.reviewView.updateStarRating(averageScore: averageScore)
                 }
             } catch {
                 print("Error fetching user profile: \(error)")

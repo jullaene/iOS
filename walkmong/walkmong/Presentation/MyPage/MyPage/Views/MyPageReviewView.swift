@@ -12,26 +12,26 @@ import Charts
 class MyPageReviewView: UIView {
     
     // MARK: - Properties
-    private let walkerReviewTitle = ReviewTitleView(title: "받은 산책자 후기", count: 5, showArrow: true)
+    private let walkerReviewTitle = ReviewTitleView(title: "받은 산책자 후기", count: 0, showArrow: true)
     private let ownerReviewTitle = ReviewTitleView(title: "받은 반려인 후기")
     
     // User Rating
     private let userRatingView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
     private let userRatingTitleLabel = SmallTitleLabel(text: "전체 사용자 평가", textColor: .gray600)
-    private let participantCountLabel = SmallMainParagraphLabel(text: "2명 참여", textColor: .gray400)
-    private let starRatingLabel = MainHighlightParagraphLabel(text: "4.9", textColor: .gray600)
+    private let participantCountLabel = SmallMainParagraphLabel(text: "참여자수", textColor: .gray400)
+    private let starRatingLabel = MainHighlightParagraphLabel(text: "평점", textColor: .gray600)
     private let radarChart = CustomRadarChartView()
     private let starIcon = UIImage.createImageView(named: "MyPageStarIcon")
     
     // Keyword
     private let keywordView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
-    private let keywordTitleLabel = SmallTitleLabel(text: "김철수님의 키워드 TOP 3", textColor: .gray600)
+    private let keywordTitleLabel = SmallTitleLabel(text: "()님의 키워드 TOP 3", textColor: .gray600)
     private let keywordBubbleContainer = UIView()
     
     // Owner Review
     private let ownerReviewView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
-    private let ownerReviewTitleLabel = SmallTitleLabel(text: "김철수님의 반려인 후기", textColor: .gray600)
-    private let participantLabel = SmallMainParagraphLabel(text: "10명 참여", textColor: .gray400)
+    private let ownerReviewTitleLabel = SmallTitleLabel(text: "()님의 반려인 후기", textColor: .gray600)
+    private let participantLabel = SmallMainParagraphLabel(text: "참여자수", textColor: .gray400)
     private let chartView = UIView.createRoundedView(backgroundColor: .clear, cornerRadius: 10)
     
     // MARK: - Initializer
@@ -386,5 +386,26 @@ class ReviewTitleView: UIView {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(20)
         }
+    }
+}
+
+extension ReviewTitleView {
+    func updateCount(_ count: Int) {
+        countLabel?.text = "\(count)개"
+    }
+}
+
+extension MyPageReviewView {
+    func updateWalkerReviewCount(_ count: Int) {
+        walkerReviewTitle.updateCount(count)
+    }
+    
+    func updateStarRating(averageScore: CGFloat) {
+        let formattedScore = String(format: "%.1f", averageScore)
+        starRatingLabel.text = formattedScore
+    }
+    
+    func updateParticipantCount(_ count: Int) {
+        participantCountLabel.text = "\(count)명 참여"
     }
 }

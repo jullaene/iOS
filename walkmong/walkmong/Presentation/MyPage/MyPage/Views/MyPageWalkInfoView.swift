@@ -124,7 +124,7 @@ class MyPageWalkInfoView: UIView {
 
     private let serviceFrameLabel: MainHighlightParagraphLabel = {
         let label = MainHighlightParagraphLabel(
-            text: "소형견 / 중형견 산책 가능", textColor: .mainBlue)
+            text: "산책 가능 견종", textColor: .mainBlue)
         return label
     }()
 

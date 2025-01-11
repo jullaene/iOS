@@ -66,4 +66,10 @@ extension MyPageContentViewSection {
             availabilityWithSize: avilablityWithSize
         )
     }
+    
+    func updateReviewView(radarScores: [CGFloat], walkerReviewCount: Int) {
+        reviewView.updateChartData(scores: radarScores)
+        reviewView.updateWalkerReviewCount(walkerReviewCount)
+        reviewView.updateParticipantCount(walkerReviewCount)
+    }
 }
