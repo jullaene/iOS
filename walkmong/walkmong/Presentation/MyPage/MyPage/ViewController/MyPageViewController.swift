@@ -23,11 +23,6 @@ class MyPageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateReviewData()
-    }
-    
-    private func updateReviewData() {
-        myPageView.contentViewSection.reviewView.updateChartData(scores: [5.0, 5.0, 5.0, 5.0, 5.0])
     }
 }
 

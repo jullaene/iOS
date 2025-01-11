@@ -1,25 +1,37 @@
+//
+//  MatchingStatusApplicantDetailCell.swift
+//  walkmong
+//
+//  Created by 신호연 on 1/9/25.
+//
+
 import UIKit
 import SnapKit
 
-class OwnerInfoView: UIView {
+final class MatchingStatusApplicantDetailCell: UIView {
     
     // MARK: - UI Components
-    private let titleLabel = SmallTitleLabel(text: "반려인 정보", textColor: .gray600)
     
     private let profileImageView = UIImage.createImageView(
-        named: "profileExample.png",
+        named: "profileExample",
         cornerRadius: 41
     )
     
     private let nameLabel = UpperTitleLabel(text: "", textColor: .gray600)
     private let infoLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
-    private let starIcon = UIImage.createImageView(named: "starIcon.png")
+    private let profileButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("프로필", for: .normal)
+        button.backgroundColor = .mainBlue
+        button.layer.cornerRadius = 5
+        button.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 12)
+        button.setTitleColor(.white, for: .normal)
+        return button
+    }()
     
-    private let ratingLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainBlue)
+    private let locationIcon = UIImage.createImageView(named: "meetingPlace", tintColor: .gray400)
     
-    private let locationIcon = UIImage.createImageView(named: "locationIconBlue.png")
-    
-    private let locationLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainBlue)
+    private let locationLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .gray400)
     
     // MARK: - Initializer
     override init(frame: CGRect) {
@@ -28,8 +40,7 @@ class OwnerInfoView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupView()
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Setup
@@ -37,27 +48,20 @@ class OwnerInfoView: UIView {
         backgroundColor = .gray100
         layer.cornerRadius = 20
         
-        let subviews = [
-            titleLabel, profileImageView, nameLabel, infoLabel, starIcon, ratingLabel, locationIcon, locationLabel
-        ]
-        subviews.forEach { addSubview($0) }
+        addSubviews(profileImageView, nameLabel, infoLabel, profileButton, locationIcon, locationLabel)
         setupConstraints()
     }
     
     private func setupConstraints() {
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.leading.equalToSuperview().offset(20)
-        }
-        
+        profileImageView.contentMode = .scaleAspectFill
         profileImageView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.leading.equalToSuperview().offset(20)
+            make.top.bottom.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(12)
             make.width.height.equalTo(82)
         }
         
         nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(profileImageView.snp.top)
+            make.top.equalTo(profileImageView)
             make.leading.equalTo(profileImageView.snp.trailing).offset(12)
         }
         
@@ -66,27 +70,22 @@ class OwnerInfoView: UIView {
             make.leading.equalTo(nameLabel.snp.trailing).offset(24)
         }
         
-        starIcon.snp.makeConstraints { make in
-            make.top.equalTo(infoLabel.snp.bottom).offset(16)
+        profileButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(12)
+            make.top.equalTo(profileImageView)
+            make.width.equalTo(54)
+            make.height.equalTo(25)
+        }
+        
+        locationIcon.snp.makeConstraints { make in
+            make.centerY.equalTo(locationLabel)
             make.leading.equalTo(nameLabel.snp.leading)
             make.width.height.equalTo(17)
         }
         
-        ratingLabel.snp.makeConstraints { make in
-            make.leading.equalTo(starIcon.snp.trailing).offset(8)
-            make.centerY.equalTo(starIcon.snp.centerY)
-        }
-        
-        locationIcon.snp.makeConstraints { make in
-            make.centerX.equalTo(starIcon.snp.centerX)
-            make.top.equalTo(starIcon.snp.bottom).offset(16)
-            make.height.equalTo(14)
-        }
-        
         locationLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(locationIcon.snp.centerY)
-            make.leading.equalTo(ratingLabel.snp.leading)
-            make.bottom.equalToSuperview().offset(-20)
+            make.leading.equalTo(locationIcon.snp.trailing).offset(4)
+            make.top.equalTo(nameLabel.snp.bottom).offset(8)
         }
     }
     
@@ -96,7 +95,6 @@ class OwnerInfoView: UIView {
         ownerName: String,
         ownerAge: Int,
         ownerGender: String,
-        ownerRate: Double,
         dongAddress: String,
         distance: Double
     ) {
@@ -104,18 +102,10 @@ class OwnerInfoView: UIView {
         nameLabel.text = ownerName
         let genderText = ownerGender == "FEMALE" ? "여성" : "남성"
         infoLabel.text = "\(ownerAge)살 · \(genderText)"
-        ratingLabel.text = String(format: "%.1f", ownerRate)
         locationLabel.text = "\(dongAddress) \(formatDistance(distance))"
     }
     
     // MARK: - Helper Methods
-    private static func createLabel(text: String, textColor: UIColor, font: UIFont?) -> UILabel {
-        let label = UILabel()
-        label.text = text
-        label.textColor = textColor
-        label.font = font
-        return label
-    }
     
     private func formatDistance(_ distance: Double) -> String {
         if distance < 1000 {

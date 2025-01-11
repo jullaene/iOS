@@ -6,7 +6,7 @@ protocol MatchingDogInformationViewDelegate: AnyObject {
     func applyWalkButtonTapped()
 }
 
-class MatchingDogInformationView: UIView, UIScrollViewDelegate {
+final class MatchingDogInformationView: UIView, UIScrollViewDelegate {
 
     // MARK: - Delegate
     weak var delegate: MatchingDogInformationViewDelegate?
@@ -23,9 +23,7 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     private let ownerInfoFrame = OwnerInfoView()
     private let buttonFrame = UIView()
 
-    private let walkTalkButton: UIView = MatchingDogInformationView.createRoundedButton(
-        backgroundColor: UIColor.gray100, cornerRadius: 15
-    )
+    private let walkTalkButton: UIView = UIView.createRoundedView(backgroundColor: UIColor.gray100, cornerRadius: 15)
     
     private let applyWalkButton = UIButton.createStyledButton(type: .large, style: .dark, title: "산책 지원하기")
     // MARK: - Initializer
@@ -244,13 +242,6 @@ class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     }
 
     // MARK: - Helper Methods
-    private static func createRoundedButton(backgroundColor: UIColor, cornerRadius: CGFloat) -> UIView {
-        let view = UIView()
-        view.backgroundColor = backgroundColor
-        view.layer.cornerRadius = cornerRadius
-        return view
-    }
-
     func configureImages(with imageUrls: [String?]) {
         guard let firstImageUrl = imageUrls.first else {
             imageView.image = UIImage(named: "placeholder")

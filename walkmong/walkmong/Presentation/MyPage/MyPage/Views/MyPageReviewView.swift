@@ -116,6 +116,7 @@ class MyPageReviewView: UIView {
         
         keywordTitleLabel.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().inset(20)
+            make.height.equalTo(28)
         }
         
         keywordBubbleContainer.snp.makeConstraints { make in
