@@ -54,12 +54,22 @@ final class MatchingApplyFirstIntroductionView: UIView {
     }
     
     private func setButtonAction() {
+        nextButton.setButtonState(isEnabled: true)
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
 
     @objc private func nextButtonTapped() {
         if textView.text.count >= 20 {
             delegate?.didTapNextButton(textView.text)
+        }else {
+            if let vc = self.getViewController() {
+                CustomAlertViewController.CustomAlertBuilder(viewController: vc)
+                    .setButtonState(.singleButton)
+                    .setTitleState(.useTitleOnly)
+                    .setSingleButtonTitle("돌아가기")
+                    .setTitleText("20자 이상 입력해주세요")
+                    .showAlertView()
+            }
         }
     }
     

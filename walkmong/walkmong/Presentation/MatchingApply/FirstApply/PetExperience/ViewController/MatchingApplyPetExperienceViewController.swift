@@ -38,6 +38,7 @@ final class MatchingApplyPetExperienceViewController: UIViewController {
 
 extension MatchingApplyPetExperienceViewController: MatchingApplyPetExperienceViewDelegate {
     func didSelectExperience(_ experienceYn: String) {
-        print(experienceYn)
+        let nextVC = MatchingApplyPetWalkExperienceViewController()
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 }
