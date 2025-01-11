@@ -39,7 +39,17 @@ final class MatchingApplyWalkRequestViewController: UIViewController {
         setupActions()
         updateViewForCurrentStep()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
     private func setupUI() {
         view.backgroundColor = .white
         addCustomNavigationBar(

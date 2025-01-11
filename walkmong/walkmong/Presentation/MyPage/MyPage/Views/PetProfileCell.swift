@@ -13,7 +13,8 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     private let petDetailsLabel = SmallMainParagraphLabel(text: "")
     private let profileButton = UIButton()
     private let genderIcon = UIImageView()
-    
+
+    private let plusIcon = UIImageView()
     var didTapProfileButton: (() -> Void)?
     var didTapAddPetCell: (() -> Void)?
     
@@ -76,9 +77,22 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             make.trailing.equalToSuperview().offset(-16)
             make.centerY.equalTo(petNameLabel)
         }
+        
+        plusIcon.image = UIImage(named: "MyPagePlusIcon")
+        plusIcon.contentMode = .scaleAspectFit
+        plusIcon.isHidden = true
+        contentView.addSubview(plusIcon)
+        plusIcon.snp.makeConstraints { make in
+            make.size.equalTo(CGSize(width: 14, height: 14))
+            make.top.equalToSuperview().offset(20)
+            make.centerX.equalToSuperview()
+        }
     }
     
     func configure(with profile: PetProfile) {
+        resetToDefault()
+
+        plusIcon.isHidden = true
         profileButton.isHidden = false
         profileButton.isUserInteractionEnabled = true
 
@@ -92,6 +106,11 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             )
         } else {
             petImageView.image = UIImage(named: "puppyImage01")
+        }
+        
+        petNameLabel.snp.remakeConstraints { make in
+            make.leading.equalTo(petImageView.snp.trailing).offset(16)
+            make.top.equalToSuperview().offset(16)
         }
 
         petNameLabel.text = profile.name
@@ -109,22 +128,13 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     func configureAsAddPet() {
+        resetToDefault()
+
         contentView.backgroundColor = UIColor(red: 0.978, green: 0.978, blue: 0.978, alpha: 0.3)
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = UIColor.gray200.cgColor
-        contentView.layer.cornerRadius = 10
-        contentView.clipsToBounds = true
 
-        let plusIcon = UIImageView()
-        plusIcon.image = UIImage(named: "MyPagePlusIcon")
-        plusIcon.contentMode = .scaleAspectFit
-        contentView.addSubview(plusIcon)
-        plusIcon.snp.makeConstraints { make in
-            make.size.equalTo(CGSize(width: 14, height: 14))
-            make.top.equalToSuperview().offset(20)
-            make.centerX.equalToSuperview()
-        }
-
+        plusIcon.isHidden = false
         petNameLabel.text = "반려견 등록하기"
         petNameLabel.textColor = .gray400
         petNameLabel.font = UIFont(name: "Pretendard-SemiBold", size: 20)
@@ -132,25 +142,18 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
             make.centerX.equalToSuperview()
             make.top.equalTo(plusIcon.snp.bottom).offset(12)
         }
-
-        petImageView.isHidden = true
-        petDetailsLabel.isHidden = true
-        profileButton.isHidden = true
-        genderIcon.isHidden = true
     }
     
     private func setupActions() {
         profileButton.addTarget(self, action: #selector(handleProfileButtonTap), for: .touchUpInside)
-        print("프로필 버튼의 addTarget 설정 완료") // 디버깅 로그 추가
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleCellTap))
         tapGesture.delegate = self
-        tapGesture.cancelsTouchesInView = false // 버튼 터치 이벤트를 방해하지 않음
+        tapGesture.cancelsTouchesInView = false
         contentView.addGestureRecognizer(tapGesture)
     }
     
     @objc private func handleProfileButtonTap() {
-        print("프로필 버튼 클릭 이벤트가 호출되었습니다.") // 디버깅 로그 추가
         didTapProfileButton?()
     }
     
@@ -191,8 +194,26 @@ extension PetProfileCell {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         if let touchedView = touch.view, touchedView.isDescendant(of: profileButton) {
             print("프로필 버튼에서 제스처가 차단되었습니다.")
-            return false // 버튼에서 터치가 발생하면 제스처를 차단
+            return false
         }
-        return true // 다른 영역에서는 제스처 인식
+        return true
+    }
+}
+
+extension PetProfileCell {
+    func resetToDefault() {
+        petImageView.isHidden = false
+        petImageView.image = nil
+        petNameLabel.text = nil
+        petNameLabel.textColor = .black
+        plusIcon.isHidden = true
+        petDetailsLabel.text = nil
+        petDetailsLabel.textColor = .gray
+        profileButton.isHidden = true
+        profileButton.isUserInteractionEnabled = false
+        genderIcon.isHidden = true
+        genderIcon.image = nil
+        contentView.backgroundColor = .gray100
+        contentView.layer.borderWidth = 0
     }
 }

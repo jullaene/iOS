@@ -36,4 +36,24 @@ extension String {
             return "알 수 없음"
         }
     }
+    
+    func genderIconName(for gender: String) -> String {
+        switch gender.uppercased() {
+        case "FEMALE":
+            return "femaleIcon"
+        case "MALE":
+            return "maleIcon"
+        default:
+            return "defaultIcon"
+        }
+    }
+    
+    func formattedDistance(_ distance: Double) -> String {
+        if distance < 1000 {
+            return "\(Int(distance))m"
+        } else {
+            let km = distance / 1000
+            return km.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(km))km" : String(format: "%.1fkm", km)
+        }
+    }
 }
