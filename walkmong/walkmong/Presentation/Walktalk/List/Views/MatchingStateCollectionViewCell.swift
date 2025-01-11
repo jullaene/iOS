@@ -1,5 +1,5 @@
 //
-//  WalkTalkListMatchingStateCollectionViewCell.swift
+//  MatchingStateCollectionViewCell.swift
 //  walkmong
 //
 //  Created by 황채웅 on 12/18/24.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WalktalkListMatchingStateCollectionViewCell: UICollectionViewCell {
+final class MatchingStateCollectionViewCell: UICollectionViewCell {
     
     private let frameView: UIView = {
         let view = UIView()

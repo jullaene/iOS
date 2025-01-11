@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WalktalkListCollectionViewCell: UICollectionViewCell {
+final class WalktalkListCollectionViewCell: UICollectionViewCell {
     
     private let matchingStateView: UIView = {
         let view = UIView()

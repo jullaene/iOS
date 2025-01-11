@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WalktalkListTabBarCollectionViewCell: UICollectionViewCell {
+final class RecordTabBarCollectionViewCell: UICollectionViewCell {
     
     private let tabBarLabel = MainHighlightParagraphLabel(text: "탭바 목록")
     
