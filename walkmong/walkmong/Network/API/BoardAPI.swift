@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum BoardAPI {
-    case getBoardList
+    case getBoardList(parameters: [String: String])
 }
 
 extension BoardAPI: APIEndpoint {
@@ -29,8 +29,8 @@ extension BoardAPI: APIEndpoint {
     
     var task: Task {
         switch self {
-        case .getBoardList:
-            return .requestPlain
+        case .getBoardList(let parameters):
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
         }
     }
 }
