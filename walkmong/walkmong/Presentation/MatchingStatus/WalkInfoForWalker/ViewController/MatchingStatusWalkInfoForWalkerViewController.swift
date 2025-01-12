@@ -12,7 +12,7 @@ final class MatchingStatusWalkInfoForWalkerViewController: UIViewController {
     
     // MARK: - Properties
     private let matchingStatusWalkInfoForWalkerView = MatchingStatusWalkInfoForWalkerView()
-    private var matchingData: MatchingData?
+    private var matchingData: BoardList?
     
     // MARK: - Life Cycle
     
@@ -45,7 +45,7 @@ final class MatchingStatusWalkInfoForWalkerViewController: UIViewController {
     
     // MARK: - Data Management
     private func loadData() {
-        let dogProfileData = MatchingData(
+        let dogProfileData = BoardList(
             boardId: 1,
             startTime: "2025-01-03T00:32:40",
             endTime: "2025-01-03T14:32:30",

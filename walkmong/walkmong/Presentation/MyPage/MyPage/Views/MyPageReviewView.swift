@@ -421,12 +421,12 @@ extension MyPageReviewView {
         keywordTitleLabel.text = "\(name)님의 키워드 TOP 3"
         ownerReviewTitleLabel.text = "\(name)님의 반려인 후기"
         
-        let sortedTags = tags.sorted { $0.keywordPercent > $1.keywordPercent }
+        let sortedTags = tags.sorted { $0.goodPercent > $1.goodPercent }
         let topTags = sortedTags.prefix(3)
-        let otherPercent = 100 - topTags.reduce(0) { $0 + $1.keywordPercent }
+        let otherPercent = 100 - topTags.reduce(0) { $0 + $1.goodPercent }
         
         var entries: [PieChartDataEntry] = topTags.map {
-            PieChartDataEntry(value: Double($0.keywordPercent), label: $0.hashtagNm.description)
+            PieChartDataEntry(value: Double($0.goodPercent), label: $0.hashtagNm.description)
         }
         
         if otherPercent > 0 {

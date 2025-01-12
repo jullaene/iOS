@@ -37,8 +37,9 @@ extension UIImage {
         
         // 이미지 설정
         if let imageName = imageName {
-            let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
-            imageView.image = image
+            if let image = UIImage(named: imageName) {
+                imageView.image = tintColor != nil ? image.withRenderingMode(.alwaysTemplate) : image
+            }
         }
         
         // 공통 속성
@@ -57,5 +58,5 @@ extension UIImage {
         
         return imageView
     }
-
+    
 }

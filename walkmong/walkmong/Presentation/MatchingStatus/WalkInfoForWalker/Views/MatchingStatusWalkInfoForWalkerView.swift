@@ -192,7 +192,7 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
     }
     
     // MARK: - 데이터 설정
-    func updateDogProfile(with data: MatchingData) {
+    func updateDogProfile(with data: BoardList) {
         
         let dogProfileCell = MatchingCell()
         dogProfileCell.configure(with: data)
