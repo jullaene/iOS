@@ -37,7 +37,8 @@ extension UIImage {
         
         // 이미지 설정
         if let imageName = imageName {
-            imageView.image = UIImage(named: imageName)
+            let image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
+            imageView.image = image
         }
         
         // 공통 속성
