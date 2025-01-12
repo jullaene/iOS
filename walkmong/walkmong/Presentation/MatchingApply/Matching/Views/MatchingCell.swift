@@ -119,14 +119,13 @@ class MatchingCell: UIView {
         mainView.addSubview(bottomFrame)
         bottomFrame.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
-            make.height.equalTo(109)
+            make.top.equalTo(topFrame.snp.bottom).offset(16)
         }
         
         bottomFrame.addSubview(puppyImageView)
         puppyImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(112)
-            make.leading.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.width.equalTo(puppyImageView.snp.height)
+            make.top.leading.bottom.equalToSuperview()
         }
         
         bottomFrame.addSubview(contentFrame)
@@ -151,13 +150,15 @@ class MatchingCell: UIView {
         
         dogInfoFrame.addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
-            make.leading.centerY.equalToSuperview()
+            make.top.equalTo(puppyImageView)
+            make.leading.equalToSuperview()
+            make.height.equalTo(25)
         }
         
         dogInfoFrame.addSubview(genderIcon)
         genderIcon.snp.makeConstraints { make in
             make.leading.equalTo(nameLabel.snp.trailing).offset(5)
-            make.centerY.equalToSuperview()
+            make.centerY.equalTo(nameLabel)
             make.height.equalTo(16)
         }
         
@@ -174,7 +175,7 @@ class MatchingCell: UIView {
         postContentLabel.lineBreakMode = .byTruncatingTail
         postContentLabel.numberOfLines = 2
         postContentLabel.snp.makeConstraints { make in
-            make.top.equalTo(dogInfoFrame.snp.bottom).offset(8)
+            make.top.equalTo(nameLabel.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview()
         }
     }
@@ -189,14 +190,15 @@ class MatchingCell: UIView {
         
         locationTimeFrame.addSubview(locationIcon)
         locationIcon.snp.makeConstraints { make in
-            make.leading.centerY.equalToSuperview()
-            make.width.height.equalTo(14)
+            make.leading.equalToSuperview()
+            make.bottom.equalTo(locationTimeFrame)
+            make.width.size.equalTo(14)
         }
         
         locationTimeFrame.addSubview(locationLabel)
         locationLabel.snp.makeConstraints { make in
             make.leading.equalTo(locationIcon.snp.trailing).offset(4)
-            make.centerY.equalToSuperview()
+            make.centerY.equalTo(locationIcon)
         }
         
         locationTimeFrame.addSubview(distanceLabel)
@@ -232,6 +234,13 @@ class MatchingCell: UIView {
         timeLabel.text = data.readableCreatedAt
         
         genderIcon.image = genderIconImage(for: data.dogGender)
+    }
+    
+    func setCustomViewAppearance(hideSizeLabel: Bool, hideDistanceLabel: Bool, hideTimeLabel: Bool, backgroundColor: UIColor) {
+        sizeLabel.isHidden = hideSizeLabel
+        distanceLabel.isHidden = hideDistanceLabel
+        timeLabel.isHidden = hideTimeLabel
+        mainView.backgroundColor = backgroundColor
     }
     
     func configureDateLabel(selectedDate: String, startTime: String, endTime: String) {
