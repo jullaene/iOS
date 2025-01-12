@@ -13,10 +13,10 @@ protocol MatchingApplyWalkRequestDogProfileSelectionViewDelegate: AnyObject {
     func didTapProfileButton(for profile: PetProfile)
 }
 
-final class MatchingApplyWalkRequestDogProfileSelectionView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+final class MatchingApplyWalkRequestDogProfileSelectionView: UIView {
+    // MARK: - Properties
     weak var delegate: MatchingApplyWalkRequestDogProfileSelectionViewDelegate?
     
-    // MARK: - Properties
     private var profiles: [PetProfile] = []
     private var selectedIndexPath: IndexPath?
     var onDogSelected: ((Bool) -> Void)?
@@ -35,7 +35,7 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView, UICollectio
         
         setupView()
         observeCollectionViewHeight()
-        fetchDogProfiles() // 데이터를 가져오는 함수 호출
+        fetchDogProfiles()
     }
     
     required init?(coder: NSCoder) {
@@ -66,11 +66,13 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView, UICollectio
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .white
+        collectionView.isScrollEnabled = false
         collectionView.register(PetProfileCell.self, forCellWithReuseIdentifier: "PetProfileCell")
     }
     
     private func observeCollectionViewHeight() {
         DispatchQueue.main.async {
+            self.collectionView.layoutIfNeeded()
             let contentHeight = self.collectionView.contentSize.height
             self.collectionView.snp.remakeConstraints { make in
                 make.top.equalTo(self.smallTitle.snp.bottom).offset(20)
@@ -95,18 +97,23 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView, UICollectio
                         dogId: item.dogId,
                         imageURL: item.dogProfile ?? "",
                         name: item.dogName,
-                        details: "\(item.dogSize) · \(item.breed) · \(item.weight)kg",
+                        details: "\(item.dogSize.localizedDogSize()) · \(item.breed) · \(Int(item.weight))kg",
                         gender: item.dogGender
                     )
                 }
-                collectionView.reloadData()
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                    self.observeCollectionViewHeight()
+                }
             } catch {
                 print("Failed to fetch dog profiles: \(error)")
             }
         }
     }
-    
-    // MARK: - UICollectionViewDataSource
+}
+
+// MARK: - UICollectionViewDataSource
+extension MatchingApplyWalkRequestDogProfileSelectionView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return profiles.count + 1
     }
@@ -129,8 +136,10 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView, UICollectio
         
         return cell
     }
-    
-    // MARK: - UICollectionViewDelegate
+}
+
+// MARK: - UICollectionViewDelegate
+extension MatchingApplyWalkRequestDogProfileSelectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == profiles.count {
             return
@@ -147,8 +156,10 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView, UICollectio
         selectedIndexPath = indexPath
         onDogSelected?(true)
     }
-    
-    // MARK: - UICollectionViewDelegateFlowLayout
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension MatchingApplyWalkRequestDogProfileSelectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width
         return CGSize(width: width, height: 94)

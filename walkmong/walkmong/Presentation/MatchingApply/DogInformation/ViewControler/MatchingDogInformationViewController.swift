@@ -4,7 +4,7 @@ import SnapKit
 class MatchingDogInformationViewController: UIViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
 
     // MARK: - Properties
-    private var matchingData: MatchingData?
+    private var matchingData: BoardList?
     private let dogInfoView = MatchingDogInformationView()
     private var boardDetail: BoardDetail?
     private var isLoading: Bool = false
@@ -37,7 +37,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     }
     
     // MARK: - Public Methods
-    func configure(with data: MatchingData) {
+    func configure(with data: BoardList) {
         self.matchingData = data
         fetchBoardDetailData(boardId: data.boardId ?? 1)
     }

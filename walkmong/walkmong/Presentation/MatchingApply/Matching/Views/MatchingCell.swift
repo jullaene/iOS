@@ -3,14 +3,14 @@ import SnapKit
 import Kingfisher
 
 protocol MatchingCellDelegate: AnyObject {
-    func didSelectMatchingCell(data: MatchingData)
+    func didSelectMatchingCell(data: BoardList)
 }
 
 class MatchingCell: UIView {
     
     // MARK: - Properties
     weak var delegate: MatchingCellDelegate?
-    var matchingData: MatchingData?
+    var matchingData: BoardList?
     
     // MARK: - UI Components
     private let mainView: UIView = {
@@ -220,14 +220,14 @@ class MatchingCell: UIView {
     }
     
     // MARK: - Configuration
-    func configure(with data: MatchingData) {
+    func configure(with data: BoardList) {
         matchingData = data
         configureDateLabel(selectedDate: data.date, startTime: data.startTime, endTime: data.endTime)
         configureMatchingStatus(for: data.matchingYn)
         configurePuppyImage(with: data.safeDogProfile)
         
         nameLabel.text = data.dogName
-        sizeLabel.text = data.translatedDogSize
+        sizeLabel.text = data.dogSize.localizedDogSize()
         postContentLabel.text = data.content
         locationLabel.text = data.dongAddress
         distanceLabel.text = data.formattedDistance

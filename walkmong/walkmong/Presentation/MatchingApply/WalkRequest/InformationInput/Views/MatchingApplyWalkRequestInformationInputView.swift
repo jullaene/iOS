@@ -152,12 +152,12 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
         }
         
         locationWarningIcon.snp.makeConstraints { make in
-            make.top.equalTo(locationTitle.snp.bottom).offset(Metrics.smallInset)
+            make.top.equalTo(locationTitle.snp.bottom).offset(8)
             make.leading.equalToSuperview()
         }
         
         locationWarningText.snp.makeConstraints { make in
-            make.centerY.equalTo(locationWarningIcon.snp.centerY)
+            make.top.equalTo(locationWarningIcon.snp.top).offset(-3)
             make.leading.equalTo(locationWarningIcon.snp.trailing).offset(Metrics.smallInset)
             make.trailing.equalToSuperview()
         }

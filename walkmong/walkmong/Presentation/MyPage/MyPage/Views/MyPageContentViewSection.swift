@@ -57,3 +57,21 @@ class MyPageContentViewSection: UIView {
         }
     }
 }
+
+extension MyPageContentViewSection {
+    func updateWalkInfo(dogOwnership: DogOwnership, dogWalkingExperience: Int, avilablityWithSize: String) {
+        walkInfoView.updateExperienceInfo(
+            dogOwnership: dogOwnership,
+            dogWalkingExperience: dogWalkingExperience,
+            availabilityWithSize: avilablityWithSize
+        )
+    }
+    
+    func updateReviewView(radarScores: [CGFloat], walkerReviewCount: Int, ownerReviewCount: Int, goodPercent: Int) {
+        reviewView.updateChartData(scores: radarScores)
+        reviewView.updateWalkerReviewCount(walkerReviewCount)
+        reviewView.updateWalkerParticipantCount(walkerReviewCount)
+        reviewView.updateOwnerParticipantCount(ownerReviewCount)
+        reviewView.updateOwnerReviewSection(goodPercent: CGFloat(goodPercent), participantCount: ownerReviewCount)
+    }
+}

@@ -35,7 +35,7 @@ class ProfileView: UIView {
         button.setTitleColor(.white, for: .normal)
         return button
     }()
-    private let dogInfoLabel = ProfileView.createLabel(
+    private let dogInfoLabel = createLabel(
         text: "",
         font: UIFont(name: "Pretendard-Regular", size: 16),
         textColor: .gray500
@@ -122,9 +122,9 @@ class ProfileView: UIView {
         dogGender: String
     ) {
         nameLabel.text = dogName
-        genderIconView.image = UIImage(named: genderIconName(for: dogGender))
-        dogInfoLabel.text = "\(sizeText(for: dogSize)) · \(breed) \(formattedWeight(weight)) · \(dogAge)살"
-        locationLabel.text = "\(dongAddress) \(formattedDistance(distance))"
+        genderIconView.image = UIImage(named: dogGender.genderIconName(for: dogGender))
+        dogInfoLabel.text = "\(dogSize.localizedDogSize()) · \(breed) \(Int(weight)) · \(dogAge)살"
+        locationLabel.text = "\(dongAddress) \(String().formattedDistance(distance))"
     }
     
     // MARK: - Actions
@@ -140,42 +140,5 @@ class ProfileView: UIView {
         label.font = font
         label.textColor = textColor
         return label
-    }
-    
-    private func genderIconName(for gender: String) -> String {
-        switch gender.uppercased() {
-        case "FEMALE":
-            return "femaleIcon"
-        case "MALE":
-            return "maleIcon"
-        default:
-            return "defaultIcon"
-        }
-    }
-    
-    private func sizeText(for size: String) -> String {
-        switch size.uppercased() {
-        case "SMALL":
-            return "소형견"
-        case "MIDDLE":
-            return "중형견"
-        case "BIG":
-            return "대형견"
-        default:
-            return "알 수 없음"
-        }
-    }
-    
-    private func formattedWeight(_ weight: Double) -> String {
-        return weight.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(weight))kg" : "\(weight)kg"
-    }
-    
-    private func formattedDistance(_ distance: Double) -> String {
-        if distance < 1000 {
-            return "\(Int(distance))m"
-        } else {
-            let km = distance / 1000
-            return km.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(km))km" : String(format: "%.1fkm", km)
-        }
     }
 }

@@ -19,7 +19,7 @@ class MyPageProfileView: UIView {
         return imageView
     }()
     
-    private let nameLabel = MiddleTitleLabel(text: "김철수 님")
+    private let nameLabel = MiddleTitleLabel(text: "이름 없음")
     
     private let arrowImageView: UIImageView = {
         let imageView = UIImageView()
@@ -60,6 +60,26 @@ class MyPageProfileView: UIView {
             make.leading.equalTo(nameLabel.snp.trailing).offset(8)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(20)
+        }
+    }
+    
+    func updateName(_ name: String) {
+        nameLabel.text = "\(name)님"
+    }
+    
+    func updateProfileImage(with urlString: String) {
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL string for profile image.")
+            return
+        }
+        DispatchQueue.global().async {
+            if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.profileImageView.image = image
+                }
+            } else {
+                print("Failed to load image from URL.")
+            }
         }
     }
 }

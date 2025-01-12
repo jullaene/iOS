@@ -46,7 +46,8 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     }
     
     // MARK: - Public Methods
-    func updateMatchingCells(with data: [MatchingData]) {
+    func updateMatchingCells(with data: [BoardList]) {
+        print("Updating with data: \(data)")
         clearMatchingCells()
         createMatchingCells(from: data)
         layoutMatchingCells()
@@ -201,9 +202,10 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         matchingCells.removeAll()
     }
     
-    private func createMatchingCells(from data: [MatchingData]) {
+    private func createMatchingCells(from data: [BoardList]) {
         data.forEach { item in
             let cell = MatchingCell()
+            print("Creating cell for: \(item)")
             cell.configure(with: item)
             matchingCells.append(cell)
             contentView.addSubview(cell)
@@ -221,7 +223,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         }
 
         matchingCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-110)
+            make.bottom.equalToSuperview().inset(110)
         }
     }
 

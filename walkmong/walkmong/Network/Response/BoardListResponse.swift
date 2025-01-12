@@ -1,24 +1,21 @@
 //
-//  MatchingData.swift
+//  BoardListResponse.swift
+//  walkmong
 //
-//  Created by 신호연 on 11/15/24.
+//  Created by 신호연 on 1/11/25.
 //
 
 import Foundation
 
-struct BoardResponse: Codable {
-    let message: String
-    let statusCode: Int
-    let data: [MatchingData]
-}
+typealias BoardListResponse = APIResponse<[BoardList]>
 
-struct MatchingData: Codable {
-    let boardId: Int?
+struct BoardList: Codable {
+    let boardId: Int
     let startTime: String
     let endTime: String
     let matchingYn: String
     let dogName: String
-    let dogProfile: String?
+    let dogProfile: String
     let dogGender: String
     let breed: String
     let weight: Double
@@ -26,13 +23,16 @@ struct MatchingData: Codable {
     let content: String
     let dongAddress: String
     let distance: Double
-    let createdAt: String?
+    let createdAt: String
+}
 
-    // 계산 프로퍼티
+extension BoardList {
+
     var date: String {
-        return MatchingData.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS")
-            .date(from: startTime)
-            .flatMap { MatchingData.dateFormatter("MM. dd (EEE)").string(from: $0) } ?? "날짜 변환 오류"
+        guard let date = BoardList.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: startTime) else {
+            return "날짜 변환 오류"
+        }
+        return BoardList.dateFormatter("MM. dd (EEE)").string(from: date)
     }
 
     var matchingStatus: String {
@@ -53,26 +53,20 @@ struct MatchingData: Codable {
     }
     
     var safeDogProfile: String {
-        dogProfile ?? "puppyImage01.png"
-    }
-
-    var translatedDogSize: String {
-        switch dogSize.uppercased() {
-        case "SMALL": return "소형견"
-        case "MEDIUM": return "중형견"
-        case "BIG": return "대형견"
-        default: return "알 수 없음"
-        }
+        dogProfile
     }
 
     var readableCreatedAt: String {
-        guard let createdDate = MatchingData.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: createdAt ?? "2024-11-16 04:30:00.000000") else {
+        guard let createdDate = BoardList.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: createdAt) else {
             return "알 수 없음"
         }
-        
+        return BoardList.elapsedTime(from: createdDate)
+    }
+
+    private static func elapsedTime(from date: Date) -> String {
         let now = Date()
-        let elapsed = now.timeIntervalSince(createdDate)
-        
+        let elapsed = now.timeIntervalSince(date)
+
         if elapsed < 600 {
             return "\(Int(elapsed / 60))분 전"
         } else if elapsed < 3600 {
@@ -84,10 +78,17 @@ struct MatchingData: Codable {
         }
     }
 
+    private static var formatters: [String: DateFormatter] = [:]
+
     private static func dateFormatter(_ format: String) -> DateFormatter {
+        if let formatter = formatters[format] {
+            return formatter
+        }
+        
         let formatter = DateFormatter()
         formatter.dateFormat = format
         formatter.locale = Locale(identifier: "ko_KR")
+        formatters[format] = formatter
         return formatter
     }
 }

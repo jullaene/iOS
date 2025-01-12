@@ -23,4 +23,46 @@ extension String {
         // 계산된 크기 반환
         return CGRect(origin: .zero, size: sizeThatFits)
     }
+    
+    func localizedDogSize() -> String {
+        switch self.uppercased() {
+        case "SMALL":
+            return "소형견"
+        case "MIDDLE":
+            return "중형견"
+        case "BIG":
+            return "대형견"
+        default:
+            return "알 수 없음"
+        }
+    }
+    
+    func generateAvailabilityText() -> String {
+        // 쉼표를 기준으로 분리하여 각각 변환
+        let sizes = self.split(separator: ",").map { String($0).localizedDogSize() }
+        if sizes.isEmpty {
+            return "산책 가능 여부 알 수 없음"
+        }
+        return sizes.joined(separator: " / ") + " 산책 가능"
+    }
+    
+    func genderIconName(for gender: String) -> String {
+        switch gender.uppercased() {
+        case "FEMALE":
+            return "femaleIcon"
+        case "MALE":
+            return "maleIcon"
+        default:
+            return "defaultIcon"
+        }
+    }
+    
+    func formattedDistance(_ distance: Double) -> String {
+        if distance < 1000 {
+            return "\(Int(distance))m"
+        } else {
+            let km = distance / 1000
+            return km.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(km))km" : String(format: "%.1fkm", km)
+        }
+    }
 }
