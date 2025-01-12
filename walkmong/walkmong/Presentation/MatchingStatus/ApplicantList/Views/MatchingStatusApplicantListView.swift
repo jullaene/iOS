@@ -52,7 +52,7 @@ final class MatchingStatusApplicantListView: UIView {
     }
     
     // MARK: - Configure Content
-    func configureDogProfile(with data: MatchingData) {
+    func configureDogProfile(with data: BoardList) {
         dogProfileView.backgroundColor = .gray100
         dogProfileView.layer.cornerRadius = 10
         contentView.addSubviews(dogProfileView, applicantsLabel, cellContainerView)
