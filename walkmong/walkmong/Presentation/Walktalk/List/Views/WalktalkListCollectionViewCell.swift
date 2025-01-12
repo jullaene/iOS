@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WalktalkListCollectionViewCell: UICollectionViewCell {
+final class WalktalkListCollectionViewCell: UICollectionViewCell {
     
     private let matchingStateView: UIView = {
         let view = UIView()
@@ -133,20 +133,8 @@ class WalktalkListCollectionViewCell: UICollectionViewCell {
     
     func setContent(with datamodel: ChatroomResponseData, status: Status, record: Record) {
         matchingStateLabel.text = status.rawValue
-        switch status {
-        case .PENDING:
-            matchingStateView.backgroundColor = .lightBlue
-            matchingStateLabel.textColor = .mainBlue
-        case .CONFIRMED:
-            matchingStateView.backgroundColor = .mainBlue
-            matchingStateLabel.textColor = .white
-        case .COMPLETED:
-            matchingStateView.backgroundColor = .gray400
-            matchingStateLabel.textColor = .white
-        case .REJECTED:
-            matchingStateView.backgroundColor = .gray200
-            matchingStateLabel.textColor = .gray400
-        }
+        matchingStateView.backgroundColor = status.backgroundColor
+        matchingStateLabel.textColor = status.textColor
         dateLabel.text = formatDateRange(start: datamodel.startTime, end: datamodel.endTime)
         walkerIconView.isHidden = record != .requested
         nameLabel.text = datamodel.targetName

@@ -65,7 +65,7 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func createMatchingStateViewController() -> UIViewController {
-        let vc = UIViewController()
+        let vc = MatchingStatusListViewController()
         vc.view.backgroundColor = .white
         vc.tabBarItem = UITabBarItem(title: "매칭 현황", image: UIImage(named: "MatchingStateIcon"), tag: 1)
         return vc

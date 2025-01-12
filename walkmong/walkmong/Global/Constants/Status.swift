@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum Status: String {
     case PENDING = "매칭중"
@@ -22,4 +23,21 @@ enum Status: String {
         default: return .PENDING
         }
     }
+    var backgroundColor: UIColor {
+        switch self {
+        case .PENDING: return .lightBlue
+        case .CONFIRMED: return .mainBlue
+        case .COMPLETED: return .gray400
+        case .REJECTED: return .gray200
+        }
+    }
+    
+    var textColor: UIColor {
+        switch self {
+        case .PENDING: return .mainBlue
+        case .CONFIRMED, .COMPLETED: return .white
+        case .REJECTED: return .gray400
+        }
+    }
+
 }
