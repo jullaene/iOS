@@ -94,6 +94,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
         scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.bounces = false
         
         scrollView.snp.makeConstraints { make in
@@ -102,9 +103,8 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         }
         
         contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalToSuperview()
+            make.width.horizontalEdges.top.equalToSuperview()
+            make.bottom.equalTo(matchingCells.last?.snp.bottom ?? UIView())
         }
     }
 

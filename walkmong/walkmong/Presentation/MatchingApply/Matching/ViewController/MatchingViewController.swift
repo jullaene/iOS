@@ -6,6 +6,7 @@ import Moya
 class MatchingViewController: UIViewController, MatchingCellDelegate {
     
     private let service = BoardService()
+    private let provider = NetworkProvider<BoardAPI>()
     
     // MARK: - Properties
     private var matchingFilterView: MatchingFilterView?
@@ -26,6 +27,14 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(isNavigationBarHidden, animated: animated)
+        showLoading()
+        defer { hideLoading() }
+        _Concurrency.Task {
+            await getBoardList()
+        }
+        _Concurrency.Task {
+            await getAddressList()
+        }
         updateUILayout()
     }
     
@@ -52,6 +61,8 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         view.addSubview(matchingView)
         updateUILayout()
         locationSelectView = matchingView.locationSelectView
+        
+        matchingView.filterSelectView.delegate = self
     }
     
     private func setupGestures() {
@@ -71,6 +82,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     }
     
     // MARK: - Fetch Data
+    
     private func updateMatchingView() {
         guard let selectedDate = matchingView.selectedDate else {
             print("No selected date available")
@@ -232,7 +244,7 @@ extension MatchingViewController: DropdownViewDelegate {
         hideDropdownView()
     }
 }
-
+ 
 extension MatchingViewController {
     func getBoardList() async {
         let parameters: [String: String] = [
@@ -259,5 +271,23 @@ extension MatchingViewController {
                 print("Error fetching board list: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func getAddressList() async {
+        do {
+            let response = try await service.getAddressList()
+            let addressList = response.data
+            DispatchQueue.main.async {
+                //
+            }
+        } catch {
+            print("Error fetching address list: \(error)")
+        }
+    }
+}
+
+extension MatchingViewController: FilterSelectViewDelegate {
+    func didTapFilterButton() {
+        showMatchingFilterView()
     }
 }

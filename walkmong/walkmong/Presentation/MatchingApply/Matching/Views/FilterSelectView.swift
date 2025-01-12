@@ -1,6 +1,10 @@
 import UIKit
 import SnapKit
 
+protocol FilterSelectViewDelegate: AnyObject {
+    func didTapFilterButton()
+}
+
 class FilterSelectView: UIView {
 
     // MARK: - Buttons
@@ -9,10 +13,13 @@ class FilterSelectView: UIView {
     let breedButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "견종")
     let matchStatusButton = UIButton.createStyledButton(type: .homeFilter, style: .light, title: "매칭여부")
 
+    weak var delegate: FilterSelectViewDelegate?
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -48,5 +55,16 @@ class FilterSelectView: UIView {
         }
         filterButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
         filterButton.layer.cornerRadius = 16.5
+    }
+    
+    private func setupActions() {
+        let buttons = [filterButton, distanceButton, breedButton, matchStatusButton]
+        buttons.forEach { button in
+            button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        }
+    }
+
+    @objc private func filterButtonTapped() {
+        delegate?.didTapFilterButton()
     }
 }

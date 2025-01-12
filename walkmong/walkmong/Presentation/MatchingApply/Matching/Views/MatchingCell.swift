@@ -295,6 +295,7 @@ class MatchingCell: UIView {
         if let url = URL(string: urlString) {
             puppyImageView.kf.setImage(with: url)
         } else {
+            print("이미지 변환 실패")
             puppyImageView.image = nil
         }
     }

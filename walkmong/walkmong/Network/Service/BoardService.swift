@@ -21,4 +21,16 @@ struct BoardService {
             throw error
         }
     }
+    
+    func getAddressList() async throws -> AddressListResponse {
+        do {
+            let response = try await provider.request(
+                target: .getAddressList,
+                responseType: AddressListResponse.self
+            )
+            return response
+        } catch {
+            throw error
+        }
+    }
 }
