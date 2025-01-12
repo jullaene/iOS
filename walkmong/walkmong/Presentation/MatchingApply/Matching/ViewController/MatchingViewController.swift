@@ -244,7 +244,7 @@ extension MatchingViewController: DropdownViewDelegate {
         hideDropdownView()
     }
 }
- 
+
 extension MatchingViewController {
     func getBoardList() async {
         let parameters: [String: String] = [
@@ -277,11 +277,16 @@ extension MatchingViewController {
         do {
             let response = try await service.getAddressList()
             let addressList = response.data
+            
+            let dongAddresses = addressList.map { $0.dongAddress }
+            
             DispatchQueue.main.async {
-                //
+                self.dropdownView?.updateLocations(locations: dongAddresses)
             }
         } catch {
-            print("Error fetching address list: \(error)")
+            DispatchQueue.main.async {
+                print("Error fetching address list: \(error.localizedDescription)")
+            }
         }
     }
 }

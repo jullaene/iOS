@@ -52,7 +52,7 @@ class MatchingCell: UIView {
         let label = PaddingLabel()
         label.textColor = .mainGreen
         label.backgroundColor = .paleGreen
-        label.layer.cornerRadius = 20
+        label.layer.cornerRadius = 14
         label.clipsToBounds = true
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
@@ -222,9 +222,6 @@ class MatchingCell: UIView {
     
     // MARK: - Configuration
     func configure(with data: BoardList) {
-        
-        print("❤️‍🔥❤️‍🔥❤️‍🔥❤️‍🔥Configure with data: \(data)") // 전체 데이터 로그
-        print("❤️‍🔥❤️‍🔥❤️‍🔥❤️‍🔥Date: \(data.date), Start Time: \(data.startTime), End Time: \(data.endTime)") // 개별 로그
 
         matchingData = data
         configureDateLabel(selectedDate: data.date, startTime: data.startTime, endTime: data.endTime)

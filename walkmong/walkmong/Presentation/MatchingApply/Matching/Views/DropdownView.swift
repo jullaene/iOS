@@ -28,7 +28,6 @@ class DropdownView: UIView {
     }
     
     func updateLocations(locations: [String]) {
-        // 기존 라벨 제거
         labels.forEach { $0.removeFromSuperview() }
         labels.removeAll()
 
