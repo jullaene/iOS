@@ -62,7 +62,6 @@ final class LoginView: UIView {
         addSubview()
         setConstraints()
         setButtonActions()
-        setSavedEmail()
     }
     
     required init?(coder: NSCoder) {
@@ -125,10 +124,8 @@ final class LoginView: UIView {
         keepLoginButton.isSelected.toggle()
     }
     
-    private func setSavedEmail() {
-        if let email = UserDefaults.standard.string(forKey: "USER_EMAIL"){
-            emailTextField.text = email
-        }
+    func setSavedEmail(email: String) {
+        emailTextField.text = email
     }
     
 }

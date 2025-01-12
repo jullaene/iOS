@@ -24,6 +24,9 @@ final class LoginViewController: UIViewController {
         addCustomNavigationBar(titleText: "로그인", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         dismissKeyboardOnTap()
         loginView.delegate = self
+        if let email = UserDefaults.standard.value(forKey: "USER_EMAIL") as? String {
+            loginView.setSavedEmail(email: email)
+        }
     }
     
     private func addSubview() {
@@ -39,6 +42,7 @@ final class LoginViewController: UIViewController {
 }
 
 extension LoginViewController: LoginViewDelegate {
+    
     func didTapLoginButton(email: String, password: String, keepLogin: Bool, keepEmail: String?) async {
         showLoading()
         defer { hideLoading() }
@@ -76,7 +80,9 @@ extension LoginViewController: LoginViewDelegate {
             AuthManager.shared.refreshToken = response.data.refreshToken
         }
         if let keepEmail = keepEmail {
-            UserDefaults.setValue(keepEmail, forKey: "USER_EMAIL")
+            UserDefaults.standard.set(keepEmail, forKey: "USER_EMAIL")
+        }else {
+            UserDefaults.standard.removeObject(forKey: "USER_EMAIL")
         }
         let mainTabBarController = MainTabBarController()
         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
