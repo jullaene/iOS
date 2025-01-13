@@ -134,8 +134,30 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
 
     // MARK: - MatchingDogInformationViewDelegate
     func applyWalkButtonTapped() {
-        let detailSelectVC = MatchingApplyDetailSelectViewController()
-        navigationController?.pushViewController(detailSelectVC, animated: true)
+        showLoading()
+        defer { hideLoading() }
+        Task {
+            let service = MemberService()
+            do {
+                let response = try await service.getMemberWalking()
+                if response.data.dogOwnership.rawValue == "NONE" {
+                    let nextVC = MatchingApplyPetExperienceViewController()
+                    navigationController?.pushViewController(nextVC, animated: true)
+                }else {
+                    let detailSelectVC = MatchingApplyDetailSelectViewController()
+                    navigationController?.pushViewController(detailSelectVC, animated: true)
+                }
+            }catch {
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setTitleText("산책 관련 정보 조회 실패")
+                    .setSubTitleText("네트워크 상태를 확인해주세요.")
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .showAlertView()
+            }
+        }
     }
 
     // MARK: - Navigation
