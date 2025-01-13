@@ -10,7 +10,7 @@ import SnapKit
 
 final class RegisterPetSocialityViewController: UIViewController {
 
-    private let mainView = RegisterPetMessageView()
+    private let mainView = RegisterPetSocialityView()
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
 
@@ -20,7 +20,7 @@ final class RegisterPetSocialityViewController: UIViewController {
         addSubview()
         setConstraints()
         addCustomNavigationBar(titleText: "반려견 등록하기", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
-        addProgressBar(currentStep: 3, totalSteps: 3)
+        addProgressBar(currentStep: 2, totalSteps: 3)
         dismissKeyboardOnTap()
         mainView.delegate = self
         keyboardManager = KeyboardEventManager(delegate: self)
@@ -55,8 +55,8 @@ extension RegisterPetSocialityViewController: KeyboardObserverDelegate {
     }
 }
 
-extension RegisterPetSocialityViewController: RegisterPetMessageViewDelegate {
+extension RegisterPetSocialityViewController: RegisterPetSocialityViewProtocol {
     func didTapNextButton() {
-        // TODO: API 호출
+        // TODO: 데이터 전달 및 화면 전환
     }
 }

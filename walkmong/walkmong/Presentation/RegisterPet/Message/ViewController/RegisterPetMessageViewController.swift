@@ -20,7 +20,7 @@ final class RegisterPetMessageViewController: UIViewController {
         addSubview()
         setConstraints()
         addCustomNavigationBar(titleText: "반려견 등록하기", showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
-        addProgressBar(currentStep: 2, totalSteps: 3)
+        addProgressBar(currentStep: 3, totalSteps: 3)
         dismissKeyboardOnTap()
         mainView.delegate = self
         keyboardManager = KeyboardEventManager(delegate: self)
@@ -59,6 +59,6 @@ extension RegisterPetMessageViewController: KeyboardObserverDelegate {
 
 extension RegisterPetMessageViewController: RegisterPetMessageViewDelegate {
     func didTapNextButton() {
-        // TODO: 데이터 전달 및 화면 전환
+        // TODO: API 호출
     }
 }

@@ -13,14 +13,30 @@ protocol RegisterPetMessageViewDelegate: AnyObject {
 
 final class RegisterPetMessageView: UIView {
     
-    private let titleLabel = MiddleTitleLabel(text: "반려견의 사회성 및 성향을 알려주세요.")
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.backgroundColor = .white
+        scrollView.contentInsetAdjustmentBehavior = .never
+        return scrollView
+    }()
+    
+    private let scrollContentView: UIView = {
+        let contentView = UIView()
+        contentView.backgroundColor = .white
+        return contentView
+    }()
+    
+    private let titleLabel = MiddleTitleLabel(text: "산책자에게 전달할 메시지")
+    
+    private let nextButton = NextButton(text: "등록하기")
     
     weak var delegate: RegisterPetMessageViewDelegate?
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubView()
         setConstraints()
+        setUI()
     }
     
     required init?(coder: NSCoder) {
@@ -28,12 +44,33 @@ final class RegisterPetMessageView: UIView {
     }
 
     private func addSubView() {
-        
+        addSubviews(scrollView)
+        scrollView.addSubviews(scrollContentView, nextButton)
+        scrollContentView.addSubviews(titleLabel)
+
     }
     
     private func setConstraints() {
-        
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        scrollContentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+//            make.bottom.equalTo(shotYesButton.snp.bottom).offset(144)
+        }
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(15)
+            make.horizontalEdges.equalToSuperview().inset(16)
+        }
+        nextButton.snp.makeConstraints { make in
+            make.height.equalTo(54)
+            make.horizontalEdges.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(46)
+        }
     }
 
-    
+    private func setUI() {
+        nextButton.setButtonState(isEnabled: true)
+    }
 }
