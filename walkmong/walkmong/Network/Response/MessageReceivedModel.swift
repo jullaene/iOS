@@ -7,10 +7,16 @@
 
 import Foundation
 
-struct MessageSendModel: Codable {
+struct MessageReceivedModel: Codable {
     let messageType: String
     let roomNumber: Int
     let msg: String
     let sendTime: String
+}
+
+struct MessageSendModel: Codable {
+    let roomId: Int
+    let type: String
+    let message: String
 }
 

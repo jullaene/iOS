@@ -193,7 +193,7 @@ extension WalktalkChatViewController: StompServiceDelegate {
 }
 
 extension WalktalkChatViewController: WalktalkChatViewDelegate {
-    func didSendMessage(_ message: String) {
-        stompService.sendMessage(body: message, to: "/sub/chat/room/\(String(describing: roomId))", with: "no receipt")
+    func didSendMessage(_ message: String, to roomId: Int) {
+        stompService.sendMessage(message: "message", to: roomId)
     }
 }

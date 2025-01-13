@@ -19,11 +19,11 @@ extension WalktalkAPI: APIEndpoint {
     var path: String {
         switch self {
         case .createChatroom(boardId: let boardId):
-            return "/chatroom/\(boardId)"
+            return "/api/v1/chatroom/\(boardId)"
         case .getHistory(roomId: let roomId):
-            return "/chatroom/history/\(roomId)"
+            return "/api/v1/chatroom/history/\(roomId)"
         case .getChatroom:
-            return "/chatroom/list"
+            return "/api/v1/chatroom/list"
         }
     }
     

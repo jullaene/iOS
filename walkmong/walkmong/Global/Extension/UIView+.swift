@@ -26,6 +26,17 @@ extension UIView {
         return nil
     }
     
+    func getViewController1() -> UIViewController? {
+        var nextResponder: UIResponder? = self
+        while let responder = nextResponder {
+            if let viewController = responder as? UIViewController {
+                return viewController
+            }
+            nextResponder = responder.next
+        }
+        return nil
+    }
+    
     // Show a view with animation
     func animateShow(withDuration duration: TimeInterval = 0.3, offset: CGFloat = 0, cornerRadius: CGFloat? = nil) {
         if let cornerRadius = cornerRadius {
