@@ -63,8 +63,30 @@ final class CountingTextView: UIView {
     }
     
     private func configureTextView() {
+        textView.text = placeHolderText
+        textView.textColor = .gray400
+        applyTextAttributes()
         updateCountingLabel()
     }
+    
+    private func applyTextAttributes() {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = (textView.font?.lineHeight ?? 0) * 0.4 // 행간 140%
+
+        let attributedText = NSMutableAttributedString(
+            string: textView.text,
+            attributes: [
+                .font: textView.font ?? UIFont.systemFont(ofSize: 16),
+                .foregroundColor: textView.textColor ?? .gray400,
+                .paragraphStyle: paragraphStyle,
+                .kern: -0.32 // 자간 설정
+            ]
+        )
+
+        textView.attributedText = attributedText
+    }
+
+
     
     private func updateCountingLabel() {
         let currentCount = textView.text == placeHolderText ? 0 : textView.text.count
@@ -108,6 +130,7 @@ extension CountingTextView: UITextViewDelegate {
         if textView.text.count > maxCharacter {
             textView.text = String(textView.text.prefix(maxCharacter))
         }
+        applyTextAttributes()
         updateCountingLabel()
     }
     
@@ -123,6 +146,7 @@ extension CountingTextView: UITextViewDelegate {
             textView.text = placeHolderText
             textView.textColor = .gray400
         }
+        applyTextAttributes()
         updateCountingLabel()
     }
 }
