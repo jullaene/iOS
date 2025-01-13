@@ -99,11 +99,18 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView {
                     responseType: DogListResponse.self
                 )
                 profiles = response.data.map { item in
-                    PetProfile(
+                    let weightString: String
+                    if item.weight == floor(item.weight) {
+                        weightString = "\(Int(item.weight))"
+                    } else {
+                        weightString = String(format: "%.1f", item.weight)
+                    }
+
+                    return PetProfile(
                         dogId: item.dogId,
                         imageURL: item.dogProfile ?? "",
                         name: item.dogName,
-                        details: "\(item.dogSize.localizedDogSize()) · \(item.breed) · \(String(format: "%.1f", item.weight))kg",
+                        details: "\(item.dogSize.localizedDogSize()) · \(item.breed) · \(weightString)kg",
                         gender: item.dogGender
                     )
                 }

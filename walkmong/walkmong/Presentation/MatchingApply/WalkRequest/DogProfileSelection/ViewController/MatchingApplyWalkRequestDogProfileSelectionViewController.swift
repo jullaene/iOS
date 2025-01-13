@@ -31,6 +31,8 @@ final class MatchingApplyWalkRequestDogProfileSelectionViewController: UIViewCon
         
         setupUI()
         setupActions()
+        
+        isDogSelected = false
     }
     
     override func viewDidLayoutSubviews() {

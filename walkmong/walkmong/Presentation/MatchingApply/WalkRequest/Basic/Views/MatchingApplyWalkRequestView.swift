@@ -79,6 +79,7 @@ final class MatchingApplyWalkRequestView: UIView, KeyboardObserverDelegate, UISc
         
         setupLayout()
         addGestureRecognizers()
+        initializeButtonState()
     }
 
     private func setupLayout() {
@@ -187,5 +188,10 @@ final class MatchingApplyWalkRequestView: UIView, KeyboardObserverDelegate, UISc
     func keyboardWillHide() {
         scrollView.contentInset = .zero
         scrollView.scrollIndicatorInsets = .zero
+    }
+    
+    func initializeButtonState() {
+        actionButton.setStyle(.light, type: .large)
+        actionButton.isEnabled = false
     }
 }
