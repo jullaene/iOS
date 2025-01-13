@@ -9,6 +9,9 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     private let provider = NetworkProvider<BoardAPI>()
     var selectedAddress: String?
     var selectedAddressId: String?
+    private var isFetchingBoardList = false
+    private var isDataLoaded = false
+    private var isFetchingData = false
     
     // MARK: - Properties
     private var matchingFilterView: MatchingFilterView?
@@ -29,15 +32,34 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(isNavigationBarHidden, animated: animated)
-        showLoading()
-        defer { hideLoading() }
-        _Concurrency.Task {
-            await getBoardList()
-        }
-        _Concurrency.Task {
-            await getAddressList()
+        
+        if shouldReloadData() {
+            showLoading()
+            _Concurrency.Task {
+                await fetchData {
+                    await self.getBoardList()
+                }
+                
+                await fetchData {
+                    await self.getAddressList()
+                }
+                self.saveCurrentState()
+            }
         }
         updateUILayout()
+    }
+    
+    private func saveCurrentState() {
+        UserDefaults.standard.set(matchingView.selectedDate, forKey: "selectedDate")
+        UserDefaults.standard.set(selectedAddressId, forKey: "selectedAddressId")
+    }
+
+    private func shouldReloadData() -> Bool {
+        let currentSelectedDate = matchingView.selectedDate ?? ""
+        let savedDate = UserDefaults.standard.string(forKey: "selectedDate") ?? ""
+        let savedAddressId = UserDefaults.standard.string(forKey: "selectedAddressId") ?? ""
+        
+        return currentSelectedDate != savedDate || selectedAddressId != savedAddressId || !isDataLoaded
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -248,6 +270,31 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         //        let dogProfileVC = DogProfileRegistrationViewController()
         //        navigationController?.pushViewController(dogProfileVC, animated: true)
     }
+    
+    private func fetchData(_ task: @escaping () async throws -> Void, retryCount: Int = 3) async {
+        guard !isFetchingData else { return }
+        isFetchingData = true
+        
+        defer { isFetchingData = false }
+        
+        var attempts = 0
+        while attempts < retryCount {
+            do {
+                try await task()
+                return
+            } catch let error as NetworkError {
+                attempts += 1
+                if attempts >= retryCount {
+                    print("Max retry attempts reached: \(error.localizedDescription)")
+                    return
+                }
+                print("Retrying... (\(attempts))")
+            } catch {
+                print("Error fetching data: \(error.localizedDescription)")
+                return
+            }
+        }
+    }
 }
 
 extension MatchingViewController: MatchingFilterViewDelegate {
@@ -266,9 +313,15 @@ extension MatchingViewController: MatchingFilterViewDelegate {
 
 extension MatchingViewController {
     func getBoardList() async {
+        guard !isFetchingBoardList else { return }
+        isFetchingBoardList = true
+        
+        defer { isFetchingBoardList = false }
+        
+        let selectedDate = matchingView.selectedDate ?? ""
         let parameters: [String: String] = [
-            "date": "",
-            "addressId": "",
+            "date": selectedDate,
+            "addressId": selectedAddressId ?? "",
             "distance": "",
             "dogSize": "",
             "matchingYn": ""
@@ -277,13 +330,8 @@ extension MatchingViewController {
         do {
             let response = try await service.getBoardList(parameters: parameters)
             DispatchQueue.main.async {
-                if response.data.isEmpty {
-                    print("No data available.")
-                } else {
-                    self.matchingData = response.data
-                    self.matchingView.updateMatchingCells(with: self.matchingData)
-                    print("Data sent to MatchingView: \(self.matchingData)")
-                }
+                self.matchingData = response.data
+                self.matchingView.updateMatchingCells(with: self.matchingData)
             }
         } catch {
             DispatchQueue.main.async {
@@ -302,7 +350,7 @@ extension MatchingViewController {
             
             DispatchQueue.main.async {
                 self.dropdownView?.updateLocations(locations: addressList)
-
+                
                 let savedLocation = UserDefaults.standard.string(forKey: "selectedLocation") ?? addressList.first?.dongAddress
                 if let defaultLocation = savedLocation {
                     self.matchingView.updateLocationLabel(with: defaultLocation)
@@ -325,10 +373,20 @@ extension MatchingViewController: FilterSelectViewDelegate {
 
 extension MatchingViewController: DropdownViewDelegate {
     func didSelectLocation(_ location: String) {
+        guard location != UserDefaults.standard.string(forKey: "selectedLocation") else {
+            hideDropdownView()
+            return
+        }
+
         matchingView.updateLocationLabel(with: location)
         dropdownView?.updateSelection(selectedLocation: location)
         hideDropdownView()
         
         UserDefaults.standard.set(location, forKey: "selectedLocation")
+        _Concurrency.Task {
+            await fetchData {
+                await self.getBoardList()
+            }
+        }
     }
 }

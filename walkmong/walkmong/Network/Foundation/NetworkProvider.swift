@@ -24,7 +24,6 @@ final class NetworkProvider<T: APIEndpoint> {
         do {
             /// 최초 API 요청
             let response = try await provider.requestAsync(target)
-            print("Raw JSON Response: \(String(data: response.data, encoding: .utf8) ?? "nil")") // JSON 응답 확인
 
             print(response.statusCode)
             if let data = try? JSONDecoder().decode(ResponseType.self, from: response.data){
