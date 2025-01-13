@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import NMapsMap
 
 final class MatchingStatusWalkInfoForWalkerView: UIView {
     
@@ -40,7 +41,22 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
         label.textColor = UIColor(hexCode: "#444444")
         return label
     }()
-    private let mapView = UIView.createRoundedView(backgroundColor: .red, cornerRadius: 15)
+    private let mapView: NMFNaverMapView = {
+        let mapView = NMFNaverMapView()
+        return mapView
+    }()
+    private let mapBlockerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    private let centerMarker: CustomMarker = {
+        let marker = CustomMarker()
+        marker.height = 60
+        marker.width = 47
+        return marker
+    }()
 
     private let buttonFrame = UIView()
     private let walkTalkButton = CustomButtonView(
@@ -168,7 +184,7 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
             make.bottom.equalToSuperview().inset(43)
         }
         
-        meetingPlaceView.addSubviews(locationIcon, locationLabel, locationDescriptionLabel, mapView)
+        meetingPlaceView.addSubviews(locationIcon, locationLabel, locationDescriptionLabel, mapView, mapBlockerView)
         locationIcon.snp.makeConstraints { make in
             make.centerY.equalTo(locationLabel)
             make.leading.equalToSuperview().offset(12)
@@ -185,6 +201,11 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
         }
         
         mapView.snp.makeConstraints { make in
+            make.top.equalTo(locationDescriptionLabel.snp.bottom).offset(10)
+            make.leading.trailing.bottom.equalToSuperview().inset(12)
+            make.height.equalTo(mapView.snp.width)
+        }
+        mapBlockerView.snp.makeConstraints { make in
             make.top.equalTo(locationDescriptionLabel.snp.bottom).offset(10)
             make.leading.trailing.bottom.equalToSuperview().inset(12)
             make.height.equalTo(mapView.snp.width)
@@ -208,4 +229,15 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
             make.leading.trailing.equalToSuperview().inset(12)
         }
     }
+    
+    func setupMap(initialPosition: NMGLatLng) {
+        let cameraUpdate = NMFCameraUpdate(scrollTo: initialPosition, zoomTo: 15)
+        mapView.mapView.moveCamera(cameraUpdate)
+        mapView.showScaleBar = false
+        mapView.showZoomControls = false
+        mapView.isUserInteractionEnabled = false
+        centerMarker.position = initialPosition
+        centerMarker.mapView = mapView.mapView
+    }
+
 }

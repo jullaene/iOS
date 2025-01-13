@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import NMapsMap
 
 final class MatchingStatusWalkInfoForOwnerView: UIView {
     
@@ -41,7 +42,22 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
         label.textColor = UIColor(hexCode: "#444444")
         return label
     }()
-    private let mapView = UIView.createRoundedView(backgroundColor: .red, cornerRadius: 15)
+    private let mapView: NMFNaverMapView = {
+        let mapView = NMFNaverMapView()
+        return mapView
+    }()
+    private let mapBlockerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    private let centerMarker: CustomMarker = {
+        let marker = CustomMarker()
+        marker.height = 60
+        marker.width = 47
+        return marker
+    }()
     private let walkItemTitle = SmallTitleLabel(text: "산책 준비물")
     private let walkItemleadLineButton = UIButton.createStyledButton(type: .largeSelectionCheck, style: .light, title: "리드줄(목줄)")
     private let walkItemleadPoopBagButton = UIButton.createStyledButton(type: .largeSelectionCheck, style: .light, title: "배변봉투")
@@ -149,7 +165,7 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
             make.leading.trailing.equalToSuperview().inset(20)
         }
         
-        meetingPlaceView.addSubviews(locationIcon, locationLabel, locationDescriptionLabel, mapView)
+        meetingPlaceView.addSubviews(locationIcon, locationLabel, locationDescriptionLabel, mapView, mapBlockerView)
         locationIcon.snp.makeConstraints { make in
             make.centerY.equalTo(locationLabel)
             make.leading.equalToSuperview().offset(12)
@@ -166,6 +182,13 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
         }
         
         mapView.snp.makeConstraints { make in
+            make.top.equalTo(locationDescriptionLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.height.equalTo(mapView.snp.width)
+            make.bottom.equalToSuperview().inset(12)
+        }
+        
+        mapBlockerView.snp.makeConstraints { make in
             make.top.equalTo(locationDescriptionLabel.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(12)
             make.height.equalTo(mapView.snp.width)
@@ -283,5 +306,15 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
     private func setupInitialButtonStyle(_ button: UIButton) {
         button.backgroundColor = .white
         button.setTitleColor(.gray500, for: .normal)
+    }
+    
+    func setupMap(initialPosition: NMGLatLng) {
+        let cameraUpdate = NMFCameraUpdate(scrollTo: initialPosition, zoomTo: 15)
+        mapView.mapView.moveCamera(cameraUpdate)
+        mapView.showScaleBar = false
+        mapView.showZoomControls = false
+        mapView.isUserInteractionEnabled = false
+        centerMarker.position = initialPosition
+        centerMarker.mapView = mapView.mapView
     }
 }
