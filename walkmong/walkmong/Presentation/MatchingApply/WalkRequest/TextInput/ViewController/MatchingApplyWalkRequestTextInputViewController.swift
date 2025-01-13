@@ -8,7 +8,7 @@
 import UIKit
 
 final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
-
+    var selectionTexts: [String] = []
     private let containerView = MatchingApplyWalkRequestView()
     private let textInputView = MatchingApplyWalkRequestTextInputView()
 
@@ -76,6 +76,7 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
     @objc private func handleNextButtonTapped() {
         let nextVC = MatchingApplyWalkRequestViewSummarizeViewController()
         nextVC.receivedTexts = inputTexts
+        nextVC.selectionTexts = selectionTexts
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

@@ -70,6 +70,11 @@ final class MatchingApplyWalkRequestInformationInputViewController: UIViewContro
 
     @objc private func handleNextButtonTapped() {
         let nextVC = MatchingApplyWalkRequestTextInputViewController()
+
+        let selection1Text = informationInputView.getSelectedText(from: informationInputView.selectionView1)
+        let selection3Text = informationInputView.getSelectedText(from: informationInputView.selectionView3)
+
+        nextVC.selectionTexts = [selection1Text, selection3Text]
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

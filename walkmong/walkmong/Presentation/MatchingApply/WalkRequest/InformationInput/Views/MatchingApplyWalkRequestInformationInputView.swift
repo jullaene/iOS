@@ -64,9 +64,9 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
     private let endMinuteLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
     private var selectedTime: String = ""
     
-    private let selectionView1 = UIView()
+    let selectionView1 = UIView()
     private let selectionView2 = UIView()
-    private let selectionView3 = UIView()
+    let selectionView3 = UIView()
     
     weak var delegate: MatchingApplyWalkRequestInformationInputViewDelegate?
     
@@ -659,5 +659,14 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
         } else {
             print("viewController를 찾을 수 없음")
         }
+    }
+    
+    func getSelectedText(from view: UIView) -> String {
+        guard let button = view.subviews
+                .compactMap({ $0 as? UIButton })
+                .first(where: { $0.isSelected }) else {
+            return "선택되지 않음"
+        }
+        return button.titleLabel?.text ?? "선택되지 않음"
     }
 }

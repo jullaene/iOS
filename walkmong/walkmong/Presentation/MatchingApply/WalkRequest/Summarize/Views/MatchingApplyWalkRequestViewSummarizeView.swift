@@ -63,9 +63,9 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         return label
     }()
     
-    private let setView1 = UIView()
+    let setView1 = UIView()
     private let setView2 = UIView()
-    private let setView3 = UIView()
+    let setView3 = UIView()
     
     private var sectionView1 = UIView()
     private var sectionView2 = UIView()
@@ -328,6 +328,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             make.top.equalTo(titleLabel.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
+            make.height.greaterThanOrEqualTo(46)
         }
 
         let contentLabel = MainParagraphLabel(text: contentText, textColor: .gray500)
@@ -369,6 +370,16 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             .compactMap({ $0 as? MainParagraphLabel })
             .first {
             contentLabel.text = newText.isEmpty ? "" : newText
+        }
+    }
+    
+    func updateLocationText(for view: UIView, with text: String) {
+        if let centerLabel = view.subviews
+            .compactMap({ $0 as? UIView })
+            .flatMap({ $0.subviews })
+            .compactMap({ $0 as? MainParagraphLabel })
+            .first {
+            centerLabel.text = text
         }
     }
 }

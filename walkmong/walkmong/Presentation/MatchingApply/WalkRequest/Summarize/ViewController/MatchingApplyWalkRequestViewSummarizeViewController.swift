@@ -8,7 +8,7 @@
 import UIKit
 
 final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewController {
-
+    var selectionTexts: [String] = []
     private let containerView = MatchingApplyWalkRequestView()
     private let summarizeView = MatchingApplyWalkRequestViewSummarizeView()
 
@@ -69,5 +69,12 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
     }
     private func updateSummaryView() {
         summarizeView.updateSectionView(texts: receivedTexts)
+
+        if selectionTexts.count > 0 {
+            summarizeView.updateLocationText(for: summarizeView.setView1, with: selectionTexts[0])
+        }
+        if selectionTexts.count > 1 {
+            summarizeView.updateLocationText(for: summarizeView.setView3, with: selectionTexts[1])
+        }
     }
 }
