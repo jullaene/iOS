@@ -7,9 +7,9 @@ protocol DropdownViewDelegate: AnyObject {
 
 class DropdownView: UIView {
     weak var delegate: DropdownViewDelegate?
-
-    private var locations: [String] = []
-    private var selectedLocation: String?
+    private var locations: [(dongAddress: String, addressId: String)] = []
+    var selectedAddressId: String?
+    var selectedLocation: String?
     private var labels: [UILabel] = []
 
     override init(frame: CGRect) {
@@ -27,19 +27,16 @@ class DropdownView: UIView {
         self.layer.cornerRadius = 20
     }
     
-    func updateLocations(locations: [String]) {
-        // 기존 라벨 제거
+    func updateLocations(locations: [(dongAddress: String, addressId: String)]) {
         labels.forEach { $0.removeFromSuperview() }
         labels.removeAll()
 
-        // 주소 데이터를 "동" 단위로 포맷팅
-        let formattedLocations = locations.compactMap { extractDong(from: $0) }
-        self.locations = formattedLocations + ["동네 설정"]
-        self.selectedLocation = formattedLocations.first
+        self.locations = locations + [("동네 설정", "")]
+        self.selectedLocation = locations.first?.dongAddress
+        self.selectedAddressId = locations.first?.addressId
 
-        // 라벨 생성 및 추가
         for (index, location) in self.locations.enumerated() {
-            let label = createLabel(text: location, isSelected: index == 0)
+            let label = createLabel(text: location.dongAddress, isSelected: index == 0)
             addSubview(label)
             labels.append(label)
 
@@ -76,9 +73,12 @@ class DropdownView: UIView {
     }
     
     func updateSelection(selectedLocation: String) {
+        guard let selectedIndex = locations.firstIndex(where: { $0.dongAddress == selectedLocation }) else { return }
         self.selectedLocation = selectedLocation
+        self.selectedAddressId = locations[selectedIndex].addressId
+
         for (index, label) in labels.enumerated() {
-            let isSelected = selectedLocation == locations[safe: index] ?? ""
+            let isSelected = index == selectedIndex
             setupLabel(label, text: label.text ?? "", isSelected: isSelected)
         }
     }
@@ -88,13 +88,12 @@ class DropdownView: UIView {
               let index = labels.firstIndex(of: tappedLabel),
               index < locations.count else { return }
         let selected = locations[index]
+        if selected.dongAddress == "동네 설정" { return }
 
-        // "동네 설정"은 선택하지 않음
-        if selected == "동네 설정" { return }
-
-        selectedLocation = selected
-        delegate?.didSelectLocation(selected)
-        updateSelection(selectedLocation: selected)
+        selectedLocation = selected.dongAddress
+        selectedAddressId = selected.addressId
+        delegate?.didSelectLocation(selectedLocation ?? "")
+        updateSelection(selectedLocation: selectedLocation ?? "")
     }
 }
 

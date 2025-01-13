@@ -97,6 +97,18 @@ class CalendarView: UIView {
 
         return result
     }
+    
+    func getSelectedDateComponents() -> DateComponents? {
+        guard let indexPath = selectedIndexPath else { return nil }
+        let day = days[indexPath.item]
+
+        let currentYear = calendar.component(.year, from: today)
+        let currentMonth = calendar.component(.month, from: today)
+
+        guard let dayInt = Int(day.date) else { return nil }
+
+        return DateComponents(year: currentYear, month: currentMonth, day: dayInt)
+    }
 }
 
 // MARK: - UICollectionViewDataSource & Delegate

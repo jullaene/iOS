@@ -4,8 +4,11 @@ import SnapKit
 import Moya
 
 class MatchingViewController: UIViewController, MatchingCellDelegate {
-
+    
     private let service = BoardService()
+    private let provider = NetworkProvider<BoardAPI>()
+    var selectedAddress: String?
+    var selectedAddressId: String?
     
     // MARK: - Properties
     private var matchingFilterView: MatchingFilterView?
@@ -21,29 +24,35 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     }
     private var matchingData: [BoardList] = []
     private var isNavigationBarHidden: Bool = true
-
+    
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(isNavigationBarHidden, animated: animated)
+        showLoading()
+        defer { hideLoading() }
+        _Concurrency.Task {
+            await getBoardList()
+        }
+        _Concurrency.Task {
+            await getAddressList()
+        }
         updateUILayout()
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         extendedLayoutIncludesOpaqueBars = true
         setupUI()
         setupGestures()
-        fetchMatchingData()
-        fetchAddressList()
         updateMatchingView()
     }
-
+    
     // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white
@@ -54,13 +63,18 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         view.addSubview(matchingView)
         updateUILayout()
         locationSelectView = matchingView.locationSelectView
+        
+        matchingView.filterSelectView.delegate = self
+        if let savedLocation = UserDefaults.standard.string(forKey: "selectedLocation") {
+            matchingView.updateLocationLabel(with: savedLocation)
+        }
     }
-
+    
     private func setupGestures() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showDropdownView))
         locationSelectView.addGestureRecognizer(tapGesture)
     }
-
+    
     private func updateUILayout() {
         matchingView.snp.remakeConstraints { make in
             if isNavigationBarHidden {
@@ -71,14 +85,9 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             }
         }
     }
-
+    
     // MARK: - Fetch Data
-    private func fetchMatchingData() {
-    }
-
-    private func fetchAddressList() {
-    }
-
+    
     private func updateMatchingView() {
         guard let selectedDate = matchingView.selectedDate else {
             print("No selected date available")
@@ -96,7 +105,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             }
         }
     }
-
+    
     // MARK: - DropdownView Logic
     @objc private func showDropdownView() {
         guard let dropdownView = dropdownView else { return }
@@ -111,26 +120,26 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             make.top.equalTo(locationSelectView.snp.bottom).offset(10)
         }
     }
-
+    
     @objc private func hideDropdownView() {
         dropdownView?.isHidden = true
         updateDimViewVisibility(isHidden: matchingFilterView == nil)
     }
-
+    
     // MARK: - MatchingFilterView Logic
     private func showMatchingFilterView() {
         guard matchingFilterView == nil else { return }
         hideDropdownView()
-
+        
         let filterView = MatchingFilterView()
         filterView.delegate = self
         matchingFilterView = filterView
-
+        
         if let window = UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene,
            let rootWindow = window.windows.first {
             rootWindow.addSubview(filterView)
         }
-
+        
         filterView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(572)
@@ -140,7 +149,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         updateDimViewVisibility(isHidden: false)
         filterView.animateShow(withDuration: 0.4, offset: 0, cornerRadius: 30)
     }
-
+    
     private func hideMatchingFilterView() {
         guard let filterView = matchingFilterView else { return }
         
@@ -152,19 +161,19 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             }
         }
     }
-
+    
     // MARK: - MatchingCellDelegate
     func didSelectMatchingCell(data: BoardList) {
         let detailViewController = MatchingDogInformationViewController()
         detailViewController.configure(with: data)
         navigationController?.pushViewController(detailViewController, animated: true)
     }
-
+    
     @objc func hideFilterAndDropdown() {
         hideDropdownView()
         hideMatchingFilterView()
     }
-
+    
     // MARK: - UI Helpers
     private func updateDimViewVisibility(isHidden: Bool) {
         dimView?.isHidden = isHidden
@@ -175,26 +184,48 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
             dimView?.gestureRecognizers?.forEach { dimView?.removeGestureRecognizer($0) }
         }
     }
-
+    
     private func bringViewToFront(_ views: [UIView?]) {
         views.forEach { $0?.superview?.bringSubviewToFront($0!) }
     }
-
+    
     private func animateConstraints(_ animations: @escaping () -> Void, completion: ((Bool) -> Void)? = nil) {
         UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseInOut], animations: animations, completion: completion)
     }
     
     func navigateToWalkRequestView() {
-        // 서버에서 반려견 조회 (현재 주석 처리)
-        // 예: let hasDogs = fetchDogProfiles() > 0
-        let hasDogs = true // 서버가 동작하지 않으므로 임시값 사용
-
-        if hasDogs {
-            let walkRequestVC = MatchingApplyWalkRequestViewController()
-            navigationController?.pushViewController(walkRequestVC, animated: true)
-        } else {
-            showNoDogsAlert()
+        _Concurrency.Task {
+            do {
+                let dogList = try await DogService().getDogList()
+                let hasDogs = !dogList.data.isEmpty
+                
+                DispatchQueue.main.async {
+                    if hasDogs {
+                        self.navigateToWalkRequestViewController()
+                    } else {
+                        self.showNoDogsAlert()
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    print("Error fetching dog list: \(error.localizedDescription)")
+                    self.showNoDogsAlert()
+                }
+            }
         }
+    }
+    
+    private func navigateToWalkRequestViewController() {
+        guard let dropdownView = dropdownView else { return }
+        
+        let selectedLocation = dropdownView.selectedLocation
+        let selectedAddressId = dropdownView.selectedAddressId
+        
+        let walkRequestVC = MatchingApplyWalkRequestDogProfileSelectionViewController()
+        walkRequestVC.selectedAddress = selectedLocation
+        walkRequestVC.selectedAddressId = selectedAddressId
+        
+        navigationController?.pushViewController(walkRequestVC, animated: true)
     }
     
     private func showNoDogsAlert() {
@@ -214,8 +245,8 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     
     private func navigateToDogProfileRegistration() {
         /// 반려견 등록하기 페이지
-//        let dogProfileVC = DogProfileRegistrationViewController()
-//        navigationController?.pushViewController(dogProfileVC, animated: true)
+        //        let dogProfileVC = DogProfileRegistrationViewController()
+        //        navigationController?.pushViewController(dogProfileVC, animated: true)
     }
 }
 
@@ -226,29 +257,26 @@ extension MatchingViewController: MatchingFilterViewDelegate {
         updateFilterButtonState(filterView.matchStatusButton, isSelected: !matchingStatus.isEmpty)
         hideMatchingFilterView()
     }
-
+    
     private func updateFilterButtonState(_ button: UIButton, isSelected: Bool) {
         button.backgroundColor = isSelected ? .gray600 : .gray100
         button.setTitleColor(isSelected ? .white : .gray500, for: .normal)
     }
 }
 
-extension MatchingViewController: DropdownViewDelegate {
-    func didSelectLocation(_ location: String) {
-        matchingView.updateLocationLabel(with: location)
-        dropdownView?.updateSelection(selectedLocation: location)
-        hideDropdownView()
-    }
-}
-
 extension MatchingViewController {
     func getBoardList() async {
+        let parameters: [String: String] = [
+            "date": "",
+            "addressId": "",
+            "distance": "",
+            "dogSize": "",
+            "matchingYn": ""
+        ]
+        
         do {
-            let response = try await service.getBoardList()
+            let response = try await service.getBoardList(parameters: parameters)
             DispatchQueue.main.async {
-                print("Decoded Response: \(response)") // 확인용 디코딩된 응답 출력
-                print("Response Data Count: \(response.data.count)") // 데이터 개수 출력
-
                 if response.data.isEmpty {
                     print("No data available.")
                 } else {
@@ -262,5 +290,45 @@ extension MatchingViewController {
                 print("Error fetching board list: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func getAddressList() async {
+        do {
+            let response = try await service.getAddressList()
+            
+            let addressList: [(dongAddress: String, addressId: String)] = response.data.map {
+                (dongAddress: $0.dongAddress, addressId: String($0.addressId))
+            }
+            
+            DispatchQueue.main.async {
+                self.dropdownView?.updateLocations(locations: addressList)
+
+                let savedLocation = UserDefaults.standard.string(forKey: "selectedLocation") ?? addressList.first?.dongAddress
+                if let defaultLocation = savedLocation {
+                    self.matchingView.updateLocationLabel(with: defaultLocation)
+                    self.dropdownView?.updateSelection(selectedLocation: defaultLocation)
+                }
+            }
+        } catch {
+            DispatchQueue.main.async {
+                print("Error fetching address list: \(error.localizedDescription)")
+            }
+        }
+    }
+}
+
+extension MatchingViewController: FilterSelectViewDelegate {
+    func didTapFilterButton() {
+        showMatchingFilterView()
+    }
+}
+
+extension MatchingViewController: DropdownViewDelegate {
+    func didSelectLocation(_ location: String) {
+        matchingView.updateLocationLabel(with: location)
+        dropdownView?.updateSelection(selectedLocation: location)
+        hideDropdownView()
+        
+        UserDefaults.standard.set(location, forKey: "selectedLocation")
     }
 }

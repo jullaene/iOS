@@ -48,8 +48,24 @@ class MatchingCell: UIView {
         return label
     }()
     private let genderIcon: UIImageView = UIImageView()
-    private let sizeLabel = SmallMainHighlightParagraphLabel(text: "", textColor: .mainGreen)
-    private let postContentLabel = SmallMainParagraphLabel(text: "", textColor: .gray500)
+    private let sizeLabel: PaddingLabel = {
+        let label = PaddingLabel()
+        label.textColor = .mainGreen
+        label.backgroundColor = .paleGreen
+        label.layer.cornerRadius = 14
+        label.clipsToBounds = true
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        label.padding = UIEdgeInsets(top: 4, left: 12, bottom: 4, right: 12)
+        return label
+    }()
+    private let postContentLabel: SmallMainParagraphLabel = {
+        let label = SmallMainParagraphLabel(text: "", textColor: .gray500)
+        label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingTail
+        label.textAlignment = .left
+        return label
+    }()
     
     private let locationTimeFrame = UIView()
     private let locationIcon: UIImageView = {
@@ -58,9 +74,7 @@ class MatchingCell: UIView {
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    private let locationLabel = CaptionLabel(text: "", textColor: .gray500)
-    private let distanceLabel = CaptionLabel(text: "", textColor: .gray500)
-    private let timeLabel = CaptionLabel(text: "", textColor: .gray500)
+    private let locationTimeLabel = CaptionLabel(text: "", textColor: .gray500)
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -195,22 +209,9 @@ class MatchingCell: UIView {
             make.width.size.equalTo(14)
         }
         
-        locationTimeFrame.addSubview(locationLabel)
-        locationLabel.snp.makeConstraints { make in
-            make.leading.equalTo(locationIcon.snp.trailing).offset(4)
+        contentFrame.addSubview(locationTimeLabel)
+        locationTimeLabel.snp.makeConstraints { make in            make.leading.equalTo(locationIcon.snp.trailing).offset(4)
             make.centerY.equalTo(locationIcon)
-        }
-        
-        locationTimeFrame.addSubview(distanceLabel)
-        distanceLabel.snp.makeConstraints { make in
-            make.leading.equalTo(locationLabel.snp.trailing).offset(4)
-            make.centerY.equalToSuperview()
-        }
-        
-        locationTimeFrame.addSubview(timeLabel)
-        timeLabel.snp.makeConstraints { make in
-            make.leading.equalTo(distanceLabel.snp.trailing).offset(4)
-            make.centerY.equalToSuperview()
         }
     }
     
@@ -221,6 +222,7 @@ class MatchingCell: UIView {
     
     // MARK: - Configuration
     func configure(with data: BoardList) {
+
         matchingData = data
         configureDateLabel(selectedDate: data.date, startTime: data.startTime, endTime: data.endTime)
         configureMatchingStatus(for: data.matchingYn)
@@ -229,73 +231,64 @@ class MatchingCell: UIView {
         nameLabel.text = data.dogName
         sizeLabel.text = data.dogSize.localizedDogSize()
         postContentLabel.text = data.content
-        locationLabel.text = data.dongAddress
-        distanceLabel.text = data.formattedDistance
-        timeLabel.text = data.readableCreatedAt
+        locationTimeLabel.text = "\(data.dongAddress) \(data.formattedDistance) · \(data.readableCreatedAt)"
         
         genderIcon.image = genderIconImage(for: data.dogGender)
     }
     
-    func setCustomViewAppearance(hideSizeLabel: Bool, hideDistanceLabel: Bool, hideTimeLabel: Bool, backgroundColor: UIColor) {
+    func setCustomViewAppearance(
+        hideSizeLabel: Bool,
+        backgroundColor: UIColor,
+        showOnlyDongAddress: Bool = false
+    ) {
         sizeLabel.isHidden = hideSizeLabel
-        distanceLabel.isHidden = hideDistanceLabel
-        timeLabel.isHidden = hideTimeLabel
         mainView.backgroundColor = backgroundColor
+        
+        if showOnlyDongAddress, let data = matchingData {
+            locationTimeLabel.text = data.dongAddress
+        }
     }
     
     func configureDateLabel(selectedDate: String, startTime: String, endTime: String) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        
-        let currentYear = Calendar.current.component(.year, from: Date())
-        let currentMonth = Calendar.current.component(.month, from: Date())
-        
-        let components = selectedDate.split(separator: ".")
-        guard components.count >= 1, let day = Int(components[0].trimmingCharacters(in: .whitespaces)) else {
-            dateLabel.text = "날짜 변환 오류"
-            return
-        }
-        
-        var dateComponents = DateComponents()
-        dateComponents.year = currentYear
-        dateComponents.month = currentMonth
-        dateComponents.day = day
-        
-        guard let datePart = Calendar.current.date(from: dateComponents) else {
-            print("Failed to create date from components: \(dateComponents)")
-            dateLabel.text = "날짜 변환 오류"
-            return
-        }
-        
-        dateFormatter.dateFormat = "MM. dd (EEE)"
-        let formattedDate = dateFormatter.string(from: datePart)
-        
-        dateFormatter.dateFormat = "HH:mm"
-        guard let startTimeDate = dateFormatter.date(from: startTime),
-              let endTimeDate = dateFormatter.date(from: endTime) else {
-            print("Failed to parse startTime or endTime: \(startTime), \(endTime)")
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+
+        formatter.dateFormat = "MM. dd (EEE)"
+        let formattedDate = selectedDate.isEmpty ? formatter.string(from: Date()) : selectedDate
+
+        formatter.dateFormat = "HH:mm"
+        guard let startTimeDate = formatter.date(from: startTime),
+              let endTimeDate = formatter.date(from: endTime) else {
             dateLabel.text = "시간 변환 오류"
             return
         }
-        
-        let formattedStartTime = dateFormatter.string(from: startTimeDate)
-        let formattedEndTime = dateFormatter.string(from: endTimeDate)
-        
+
+        let formattedStartTime = formatter.string(from: startTimeDate)
+        let formattedEndTime = formatter.string(from: endTimeDate)
+
         dateLabel.text = "\(formattedDate) \(formattedStartTime) ~ \(formattedEndTime)"
     }
     
     private func configureMatchingStatus(for status: String) {
         let isMatched = (status == "Y")
-        matchingStatusView.backgroundColor = isMatched ? .gray100 : .mainGreen
-        matchingStatusLabel.textColor = isMatched ? .gray400 : .white
+        matchingStatusView.backgroundColor = isMatched ? .lightBlue : .mainBlue
+        matchingStatusLabel.textColor = isMatched ? .mainBlue : .white
         matchingStatusLabel.text = isMatched ? "매칭확정" : "매칭중"
     }
     
     private func configurePuppyImage(with urlString: String) {
         if let url = URL(string: urlString) {
-            puppyImageView.kf.setImage(with: url)
+            puppyImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholderImage")) { result in
+                switch result {
+                case .success(let value):
+                    print("Successfully loaded image: \(value.source.url?.absoluteString ?? "")")
+                case .failure(let error):
+                    print("Error loading image: \(error.localizedDescription)")
+                    self.puppyImageView.image = UIImage(named: "defaultDogImage")
+                }
+            }
         } else {
-            puppyImageView.image = nil
+            puppyImageView.image = UIImage(named: "defaultDogImage")
         }
     }
     
@@ -312,5 +305,20 @@ class MatchingCell: UIView {
         if let data = matchingData {
             delegate?.didSelectMatchingCell(data: data)
         }
+    }
+}
+
+class PaddingLabel: UILabel {
+    var padding = UIEdgeInsets(top: 4, left: 12, bottom: 4, right: 12)
+
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: padding))
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        let width = size.width + padding.left + padding.right
+        let height = size.height + padding.top + padding.bottom
+        return CGSize(width: width, height: height)
     }
 }

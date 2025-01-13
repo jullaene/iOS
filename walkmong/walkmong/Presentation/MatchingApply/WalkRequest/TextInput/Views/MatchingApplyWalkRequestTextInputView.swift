@@ -11,12 +11,13 @@ import SnapKit
 final class MatchingApplyWalkRequestTextInputView: UIView {
     // MARK: - Properties
     private var iconStates: [Bool] = [false, false, false]
-    private var textViewStates: [Bool] = [false, false]
+    private var textViewStates: [Bool] = Array(repeating: false, count: 3)
     private var isInitialState: Bool = true
     private var iconImageViews: [UIImageView] = []
     private var saveLabels: [UILabel] = []
+    private var texts: [String] = Array(repeating: "", count: 3)
     
-    var textViewDidUpdate: ((Bool) -> Void)?
+    var textViewDidUpdate: ((Bool, [String]) -> Void)?
     
     private let titles = [
         "산책 요청 사항 (필수)",
@@ -163,14 +164,21 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
 extension MatchingApplyWalkRequestTextInputView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let index = textView.tag
-        guard index < textViewStates.count else { return }
-        textViewStates[index] = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        guard texts.indices.contains(index), textViewStates.indices.contains(index) else { return }
+        
+        let text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        textViewStates[index] = !text.isEmpty
+        texts[index] = text
         checkIfAllRequiredFieldsAreFilled()
+        
+        if let countLabel = textView.superview?.subviews.compactMap({ $0 as? UILabel }).last {
+            CharacterCountManager.updateCountLabel(textView: textView, remainLabel: countLabel)
+        }
     }
-    
+
     private func checkIfAllRequiredFieldsAreFilled() {
-        let allRequiredFieldsFilled = textViewStates[..<2].allSatisfy { $0 }
-        textViewDidUpdate?(allRequiredFieldsFilled)
+        let allRequiredFieldsFilled = textViewStates.prefix(2).allSatisfy { $0 }
+        textViewDidUpdate?(allRequiredFieldsFilled, texts)
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {

@@ -11,7 +11,7 @@ import SnapKit
 final class MatchingApplyWalkRequestViewSummarizeView: UIView {
 
     private let profileContainerView = UIView()
-    private let profileInformationView = DogProfileInformationView()
+    let profileInformationView = DogProfileInformationView()
 
     private let smallTitle = SmallTitleLabel(text: "소제목", textColor: .gray600)
     private let warningIcon: UIImageView = {
@@ -35,7 +35,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         return view
     }()
     private let planStartLabel = CaptionLabel(text: "산책 시작", textColor: .gray400)
-    private let planStartDateLabel: UILabel = {
+    let planStartDateLabel: UILabel = {
         let label = MainHighlightParagraphLabel(
             text: "2024.10.25 (금)\n16:00",
             textColor: .mainBlue
@@ -52,7 +52,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         return view
     }()
     private let planEndLabel = CaptionLabel(text: "산책 종료", textColor: .gray400)
-    private let planEndDateLabel: UILabel = {
+    let planEndDateLabel: UILabel = {
         let label = MainHighlightParagraphLabel(
             text: "2024.10.25 (금)\n16:40",
             textColor: .mainBlue
@@ -63,9 +63,13 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         return label
     }()
     
-    private let setView1 = UIView()
+    let setView1 = UIView()
     private let setView2 = UIView()
-    private let setView3 = UIView()
+    let setView3 = UIView()
+    
+    private var sectionView1 = UIView()
+    private var sectionView2 = UIView()
+    private var sectionView3 = UIView()
     
     private let sendMessage = SmallTitleLabel(text: "산책자에게 전달할 메시지", textColor: .gray600)
     
@@ -128,7 +132,8 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             make.centerX.equalToSuperview()
         }
         
-        planEndInformationView.snp.makeConstraints { make in     make.top.equalTo(planTitleLabel.snp.bottom).offset(16)
+        planEndInformationView.snp.makeConstraints { make in
+            make.top.equalTo(planTitleLabel.snp.bottom).offset(16)
             make.trailing.equalToSuperview()
             make.height.equalTo(89)
             make.width.equalToSuperview().multipliedBy(0.5).offset(-4)
@@ -140,7 +145,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         }
         
         planEndDateLabel.snp.makeConstraints { make in
-            make.top.equalTo(planStartLabel.snp.bottom).offset(4)
+            make.top.equalTo(planEndLabel.snp.bottom).offset(4)
             make.bottom.equalToSuperview().inset(12)
             make.centerX.equalToSuperview()
         }
@@ -187,31 +192,31 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             make.leading.trailing.equalToSuperview()
         }
         
-        let sectionView1 = createSectionView(
+        
+        sectionView1 = createSectionView(
             titleText: "산책 요청 사항(필수)",
-            contentText: "으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아 으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"
+            contentText: "기본 텍스트"
         )
-        addSubview(sectionView1)
+        sectionView2 = createSectionView(
+            titleText: "산책 유의 사항(필수)",
+            contentText: "기본 텍스트"
+        )
+        sectionView3 = createSectionView(
+            titleText: "추가 안내 사항(선택)",
+            contentText: "기본 텍스트"
+        )
+        
+        addSubviews(sectionView1, sectionView2, sectionView3)
         sectionView1.snp.makeConstraints { make in
             make.top.equalTo(sendMessage.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview()
         }
         
-        let sectionView2 = createSectionView(
-            titleText: "산책 유의 사항(필수)",
-            contentText: "으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아 으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"
-        )
-        addSubview(sectionView2)
         sectionView2.snp.makeConstraints { make in
             make.top.equalTo(sectionView1.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
         }
         
-        let sectionView3 = createSectionView(
-            titleText: "추가 안내 사항(선택)",
-            contentText: "으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아 으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ아아아아아아으아아아아아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"
-        )
-        addSubview(sectionView3)
         sectionView3.snp.makeConstraints { make in
             make.top.equalTo(sectionView2.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview()
@@ -324,6 +329,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             make.top.equalTo(titleLabel.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
+            make.height.greaterThanOrEqualTo(46)
         }
 
         let contentLabel = MainParagraphLabel(text: contentText, textColor: .gray500)
@@ -348,5 +354,37 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             location: "노원구 공릉동",
             profileImage: UIImage(named: "puppyImage01") ?? UIImage()
         )
+    }
+    
+    func updateSectionView(texts: [String]) {
+        updateContentText(for: sectionView1, newText: texts[0])
+        updateContentText(for: sectionView2, newText: texts[1])
+        updateContentText(for: sectionView3, newText: texts[2])
+    }
+
+    private func updateContentText(for sectionView: UIView?, newText: String) {
+        guard let sectionView = sectionView else { return }
+
+        if let contentLabel = sectionView.subviews
+            .compactMap({ $0 as? UIView })
+            .flatMap({ $0.subviews })
+            .compactMap({ $0 as? MainParagraphLabel })
+            .first {
+            contentLabel.text = newText.isEmpty ? "" : newText
+        }
+    }
+    
+    func updateLocationText(for view: UIView, with text: String) {
+        if let centerLabel = view.subviews
+            .compactMap({ $0 as? UIView })
+            .flatMap({ $0.subviews })
+            .compactMap({ $0 as? MainParagraphLabel })
+            .first {
+            centerLabel.text = text
+        }
+    }
+    
+    func updateWithDogInfo(_ dogInfo: DogInfo, location: String?) {
+        profileInformationView.updateWithDogInfo(dogInfo, location: location)
     }
 }

@@ -8,6 +8,14 @@
 import UIKit
 import SnapKit
 
+protocol StepConfigurable {
+    var stepTitle: String { get }
+    var buttonTitle: String { get }
+    var isButtonEnabled: Bool { get }
+    var isWarningVisible: Bool { get }
+    var buttonStateChanged: ((Bool) -> Void)? { get set }
+}
+
 final class MatchingApplyWalkRequestView: UIView, KeyboardObserverDelegate, UIScrollViewDelegate {
     let scrollView = UIScrollView()
     let contentView = UIView()
@@ -71,6 +79,7 @@ final class MatchingApplyWalkRequestView: UIView, KeyboardObserverDelegate, UISc
         
         setupLayout()
         addGestureRecognizers()
+        initializeButtonState()
     }
 
     private func setupLayout() {
@@ -179,5 +188,10 @@ final class MatchingApplyWalkRequestView: UIView, KeyboardObserverDelegate, UISc
     func keyboardWillHide() {
         scrollView.contentInset = .zero
         scrollView.scrollIndicatorInsets = .zero
+    }
+    
+    func initializeButtonState() {
+        actionButton.setStyle(.light, type: .large)
+        actionButton.isEnabled = false
     }
 }

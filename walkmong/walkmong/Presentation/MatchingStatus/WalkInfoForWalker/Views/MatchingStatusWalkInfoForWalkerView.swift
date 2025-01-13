@@ -198,8 +198,6 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
         dogProfileCell.configure(with: data)
         dogProfileCell.setCustomViewAppearance(
             hideSizeLabel: true,
-            hideDistanceLabel: true,
-            hideTimeLabel: true,
             backgroundColor: .clear
         )
         dogProfileView.addSubview(dogProfileCell)

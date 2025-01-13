@@ -8,11 +8,9 @@
 import UIKit
 import SnapKit
 
-protocol MatchingApplyWalkRequestInformationInputViewDelegate: AnyObject {
-    func updateActionButtonState(isEnabled: Bool)
-}
-
 final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDelegate {
+    private var startTime: String = ""
+    private var endTime: String = ""
     
     private var isStartTimeSelected: Bool = false
     private var isEndTimeSelected: Bool = false
@@ -64,9 +62,9 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
     private let endMinuteLabel = MainHighlightParagraphLabel(text: "", textColor: .gray600)
     private var selectedTime: String = ""
     
-    private let selectionView1 = UIView()
+    let selectionView1 = UIView()
     private let selectionView2 = UIView()
-    private let selectionView3 = UIView()
+    let selectionView3 = UIView()
     
     weak var delegate: MatchingApplyWalkRequestInformationInputViewDelegate?
     
@@ -192,47 +190,47 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
     
     @objc private func toggleSelection(_ sender: UIButton) {
         sender.isSelected.toggle()
-
-
+        
+        
         if sender.isSelected {
             sender.setStyle(.dark, type: .largeSelectionCheck)
         } else {
             sender.setStyle(.light, type: .largeSelectionCheck)
         }
-
+        
         updateSelectionCompletionState(for: sender.superview)
     }
-
+    
     private func updateSelectionCompletionState(for view: UIView?) {
         guard let view = view else { return }
-
+        
         if view == selectionView1 {
             isSelection1Complete = view.subviews.contains {
                 guard let button = $0 as? UIButton else { return false }
                 return button.isSelected
             }
         }
-
+        
         if view == selectionView2 {
             isSelection2Complete = view.subviews.contains {
                 guard let button = $0 as? UIButton else { return false }
                 return button.isSelected
             }
         }
-
+        
         if view == selectionView3 {
             isSelection3Complete = view.subviews.contains {
                 guard let button = $0 as? UIButton else { return false }
                 return button.isSelected
             }
         }
-
+        
         updateActionButtonState()
     }
-
+    
     private func updateActionButtonState() {
         let isAllConditionsMet = isStartTimeSelected && isEndTimeSelected &&
-            isSelection1Complete && isSelection2Complete && isSelection3Complete
+        isSelection1Complete && isSelection2Complete && isSelection3Complete
         delegate?.updateActionButtonState(isEnabled: isAllConditionsMet)
     }
     
@@ -409,7 +407,7 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
         timePicker.timeZone = TimeZone.current
         timePicker.date = Date()
         
-        timePicker.locale = Locale(identifier: "en_GB") // 24시간제
+        timePicker.locale = Locale(identifier: "en_GB")
         timePicker.calendar = Calendar(identifier: .gregorian)
         
         let confirmButton = UIButton(type: .system)
@@ -457,47 +455,42 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
             return
         }
         
-        var shouldShowError = false
-        var errorMessage = ""
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = TimeZone.current
+        formatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
         
-        if sender.tag == 1 || sender.tag == 2 { // 시작 시간
+        if sender.tag == 1 || sender.tag == 2 { // Start time
             isStartTimeSelected = true
             startHourLabel.text = String(format: "%02d", selectedHour)
             startMinuteLabel.text = String(format: "%02d", selectedMinute)
             
-            // 종료 시간이 이미 설정된 경우 검증
-            if let endHour = Int(endHourLabel.text ?? ""),
-               let endMinute = Int(endMinuteLabel.text ?? "") {
-                if selectedHour > endHour || (selectedHour == endHour && selectedMinute >= endMinute) {
-                    shouldShowError = true
-                    errorMessage = "시작 시간은 종료 시간보다 빨라야 합니다."
+            if let dateComponents = calendarView.getSelectedDateComponents() {
+                var updatedComponents = dateComponents
+                updatedComponents.hour = selectedHour
+                updatedComponents.minute = selectedMinute
+                if let date = Calendar.current.date(from: updatedComponents) {
+                    startTime = formatter.string(from: date)
+                    print("Start time set: \(startTime)")
                 }
             }
-        } else if sender.tag == 3 || sender.tag == 4 { // 종료 시간
+        } else if sender.tag == 3 || sender.tag == 4 { // End time
             isEndTimeSelected = true
             endHourLabel.text = String(format: "%02d", selectedHour)
             endMinuteLabel.text = String(format: "%02d", selectedMinute)
             
-            // 시작 시간이 이미 설정된 경우 검증
-            if let startHour = Int(startHourLabel.text ?? ""),
-               let startMinute = Int(startMinuteLabel.text ?? "") {
-                if selectedHour < startHour || (selectedHour == startHour && selectedMinute <= startMinute) {
-                    shouldShowError = true
-                    errorMessage = "종료 시간은 시작 시간보다 늦어야 합니다."
+            if let dateComponents = calendarView.getSelectedDateComponents() {
+                var updatedComponents = dateComponents
+                updatedComponents.hour = selectedHour
+                updatedComponents.minute = selectedMinute
+                if let date = Calendar.current.date(from: updatedComponents) {
+                    endTime = formatter.string(from: date)
+                    print("End time set: \(endTime)")
                 }
             }
         }
         
-        if shouldShowError {
-            print("시간 검증 실패: \(errorMessage)")
-            showTimeValidationError(message: errorMessage)
-        } else {
-            print("시간 검증 통과: 시작 시간 = \(startHourLabel.text ?? "없음"), 종료 시간 = \(endHourLabel.text ?? "없음")")
-        }
-        
-        updateActionButtonState()
+        delegate?.updateTimeSelection(startTime: startTime, endTime: endTime)
     }
-    
     
     private func setupTimeViewConstraints(
         _ hourView: UIView, _ separator: UILabel, _ minuteView: UIView,
@@ -639,7 +632,6 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
             return
         }
         
-        print("현재 선택 중인 시간: \(selectedHour):\(selectedMinute) (태그: \(sender.tag == 1 || sender.tag == 2 ? "시작 시간" : "종료 시간"))")
     }
     
     private func showTimeValidationError(message: String) {
@@ -659,5 +651,14 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
         } else {
             print("viewController를 찾을 수 없음")
         }
+    }
+    
+    func getSelectedText(from view: UIView) -> String {
+        guard let button = view.subviews
+            .compactMap({ $0 as? UIButton })
+            .first(where: { $0.isSelected }) else {
+            return "선택되지 않음"
+        }
+        return button.titleLabel?.text ?? "선택되지 않음"
     }
 }

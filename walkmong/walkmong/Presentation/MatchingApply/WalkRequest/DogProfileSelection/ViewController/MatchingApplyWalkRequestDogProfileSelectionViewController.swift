@@ -7,33 +7,83 @@
 
 import UIKit
 
-final class MatchingApplyWalkRequestDogProfileSelectionViewController: UIViewController, StepConfigurable {
-
+final class MatchingApplyWalkRequestDogProfileSelectionViewController: UIViewController {
+    private var selectedIndexPath: IndexPath?
+    var selectedAddress: String?
+    var selectedAddressId: String?
+    
+    private let containerView = MatchingApplyWalkRequestView()
     private let dogProfileSelectionView = MatchingApplyWalkRequestDogProfileSelectionView()
+
     private var isDogSelected: Bool = false {
         didSet {
-            buttonStateChanged?(isDogSelected)
+            containerView.actionButton.isEnabled = isDogSelected
+            containerView.actionButton.setStyle(isDogSelected ? .dark : .light, type: .large)
         }
     }
 
-    var stepTitle: String { "산책이 필요한 반려견을 선택해요." }
-    var buttonTitle: String { "다음으로" }
-    var isButtonEnabled: Bool { isDogSelected }
-    var isWarningVisible: Bool { false }
-    var buttonStateChanged: ((Bool) -> Void)?
-
     override func loadView() {
-        self.view = dogProfileSelectionView
+        self.view = containerView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
+        setupActions()
+        
+        isDogSelected = false
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        addProgressBar(currentStep: 1, totalSteps: 5)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+
+    private func setupUI() {
+        view.backgroundColor = .white
+        addCustomNavigationBar(
+            titleText: "산책 지원 요청",
+            showLeftBackButton: true,
+            showLeftCloseButton: false,
+            showRightCloseButton: false,
+            showRightRefreshButton: false
+        )
+        
+        containerView.middleTitleLabel.text = "산책이 필요한 반려견을 선택해요."
+        containerView.actionButton.setTitle("다음으로", for: .normal)
+        containerView.updateContentView(with: dogProfileSelectionView)
+    }
+
+    private func setupActions() {
+        containerView.actionButton.addTarget(self, action: #selector(handleNextButtonTapped), for: .touchUpInside)
         dogProfileSelectionView.onDogSelected = { [weak self] isSelected in
             self?.isDogSelected = isSelected
-            if !isSelected {
-                let profileVC = DogProfileViewController()
-                self?.navigationController?.pushViewController(profileVC, animated: true)
-            }
         }
+    }
+
+    @objc private func handleNextButtonTapped() {
+        guard let selectedDogId = dogProfileSelectionView.selectedDogId else {
+            print("강아지를 선택하지 않았습니다.")
+            return
+        }
+
+        let nextVC = MatchingApplyWalkRequestInformationInputViewController()
+        nextVC.selectedDogId = selectedDogId
+        nextVC.selectedAddress = selectedAddress
+        nextVC.selectedAddressId = selectedAddressId
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 }
