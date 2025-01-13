@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol RegisterPetSocialityViewProtocol: AnyObject {
+protocol RegisterPetSocialityViewDelegate: AnyObject {
     func didTapNextButton()
 }
 
@@ -39,7 +39,7 @@ final class RegisterPetSocialityView: UIView {
 
     private let nextButton = NextButton(text: "다음으로")
     
-    weak var delegate: RegisterPetSocialityViewProtocol?
+    weak var delegate: RegisterPetSocialityViewDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)

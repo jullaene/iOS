@@ -55,7 +55,7 @@ extension RegisterPetSocialityViewController: KeyboardObserverDelegate {
     }
 }
 
-extension RegisterPetSocialityViewController: RegisterPetSocialityViewProtocol {
+extension RegisterPetSocialityViewController: RegisterPetSocialityViewDelegate {
     func didTapNextButton() {
         // TODO: 데이터 전달 및 화면 전환
     }
