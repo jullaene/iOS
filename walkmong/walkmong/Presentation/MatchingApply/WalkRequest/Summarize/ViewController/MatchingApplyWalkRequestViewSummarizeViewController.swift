@@ -112,7 +112,7 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
         }
         
         let outputFormatter = DateFormatter()
-        outputFormatter.dateFormat = "yyyy.MM.dd (EEE)nㅜHH:mm"
+        outputFormatter.dateFormat = "yyyy.MM.dd (EEE)\nHH:mm"
         outputFormatter.locale = Locale(identifier: "ko_KR")
         outputFormatter.timeZone = TimeZone.current
         

@@ -459,18 +459,25 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
         formatter.timeZone = TimeZone.current
         formatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
         
-        if sender.tag == 1 || sender.tag == 2 {
+        if sender.tag == 1 || sender.tag == 2 { // Start time
             isStartTimeSelected = true
+            startHourLabel.text = String(format: "%02d", selectedHour)
+            startMinuteLabel.text = String(format: "%02d", selectedMinute)
+            
             if let dateComponents = calendarView.getSelectedDateComponents() {
                 var updatedComponents = dateComponents
                 updatedComponents.hour = selectedHour
                 updatedComponents.minute = selectedMinute
                 if let date = Calendar.current.date(from: updatedComponents) {
                     startTime = formatter.string(from: date)
+                    print("Start time set: \(startTime)")
                 }
             }
-        } else if sender.tag == 3 || sender.tag == 4 {
+        } else if sender.tag == 3 || sender.tag == 4 { // End time
             isEndTimeSelected = true
+            endHourLabel.text = String(format: "%02d", selectedHour)
+            endMinuteLabel.text = String(format: "%02d", selectedMinute)
+            
             if let dateComponents = calendarView.getSelectedDateComponents() {
                 var updatedComponents = dateComponents
                 updatedComponents.hour = selectedHour
@@ -483,9 +490,7 @@ final class MatchingApplyWalkRequestInformationInputView: UIView, CalendarViewDe
         }
         
         delegate?.updateTimeSelection(startTime: startTime, endTime: endTime)
-        
     }
-    
     
     private func setupTimeViewConstraints(
         _ hourView: UIView, _ separator: UILabel, _ minuteView: UIView,
