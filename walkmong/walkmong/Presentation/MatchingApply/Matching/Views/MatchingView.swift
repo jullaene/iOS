@@ -213,17 +213,23 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     }
     
     private func layoutMatchingCells() {
-        for (index, cell) in matchingCells.enumerated() {
-            cell.snp.makeConstraints { make in
-                make.height.equalTo(151)
-                make.centerX.equalToSuperview()
-                make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
-                make.leading.trailing.equalToSuperview().inset(20)
+        if matchingCells.isEmpty {
+            contentView.snp.makeConstraints { make in
+                make.bottom.equalTo(filterSelectView.snp.bottom)
             }
-        }
-
-        matchingCells.last?.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(110)
+        } else {
+            for (index, cell) in matchingCells.enumerated() {
+                cell.snp.makeConstraints { make in
+                    make.height.equalTo(151)
+                    make.centerX.equalToSuperview()
+                    make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
+                    make.leading.trailing.equalToSuperview().inset(20)
+                }
+            }
+            
+            matchingCells.last?.snp.makeConstraints { make in
+                make.bottom.equalToSuperview().inset(110)
+            }
         }
     }
 
