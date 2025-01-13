@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RegisterPetSocialityViewDelegate: AnyObject {
-    func didTapNextButton()
+    func didTapNextButton(barking: String, bite: String, friendly: String)
 }
 
 final class RegisterPetSocialityView: UIView {
@@ -116,7 +116,9 @@ final class RegisterPetSocialityView: UIView {
     }
     
     @objc private func nextButtonTapped() {
-        //TODO: 데이터 넘기는 로직 구현
-        delegate?.didTapNextButton()
+        let barking = barkTextView.getString()
+        let bite = biteTextView.getString()
+        let friendly = socialityTextView.getString()
+        delegate?.didTapNextButton(barking: barking, bite: bite, friendly: friendly)
     }
 }

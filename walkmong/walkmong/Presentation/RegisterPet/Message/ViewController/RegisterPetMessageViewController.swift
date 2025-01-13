@@ -13,7 +13,17 @@ final class RegisterPetMessageViewController: UIViewController {
     private let mainView = RegisterPetMessageView()
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
-
+    private var requestData: PostDogInfoRequest
+    
+    init(requestData: PostDogInfoRequest){
+        self.requestData = requestData
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -58,7 +68,14 @@ extension RegisterPetMessageViewController: KeyboardObserverDelegate {
 }
 
 extension RegisterPetMessageViewController: RegisterPetMessageViewDelegate {
-    func didTapNextButton() {
-        // TODO: API 호출
+    func didTapNextButton(walkRequest: String, walkNote: String, additionalRequest: String) {
+        self.requestData.walkRequest = walkRequest
+        self.requestData.walkNote = walkNote
+        self.requestData.additionalRequest = additionalRequest
+        Task {
+            //TODO: API 호출
+            let prevVC = MatchingApplyWalkRequestDogProfileSelectionViewController()
+            self.navigationController?.popToViewController(prevVC, animated: true)
+        }
     }
 }

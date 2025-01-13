@@ -7,12 +7,13 @@
 
 import Foundation
 import Moya
+import UIKit
 
 struct PostDogInfoRequest {
     var memberId: String = ""
     var name: String = ""
     var dogSize: String = ""
-    var profile: String = ""
+    var profile: UIImage = UIImage()
     var gender: String = ""
     var birthYear: String = ""
     var breed: String = ""
@@ -44,10 +45,18 @@ extension PostDogInfoRequest {
             formData.append(MultipartFormData(provider: .data(value.data(using: .utf8) ?? Data()), name: key))
         }
         
-        if let fileURL = URL(string: profile), let imageData = try? Data(contentsOf: fileURL) {
+        if let profileData = profile.jpegData(compressionQuality: 1.0) {
+            let uniqueFileName = "\(UUID().uuidString).jpg"
             formData.append(
-                MultipartFormData(provider: .data(imageData), name: "profile", fileName: "\(UUID().uuidString).jpg", mimeType: "image/jpeg")
+                MultipartFormData(
+                    provider: .data(profileData),
+                    name: "profile",
+                    fileName: uniqueFileName,
+                    mimeType: "image/jpeg"
+                )
             )
+        } else {
+            print("프로필 이미지 압축 실패")
         }
         
         return formData

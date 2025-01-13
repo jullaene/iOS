@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RegisterPetMessageViewDelegate: AnyObject {
-    func didTapNextButton()
+    func didTapNextButton(walkRequest: String, walkNote: String, additionalRequest: String)
 }
 
 final class RegisterPetMessageView: UIView {
@@ -116,8 +116,10 @@ final class RegisterPetMessageView: UIView {
     }
     
     @objc private func nextButtonTapped() {
-        //TODO: 데이터 넘기는 로직 구현
-        delegate?.didTapNextButton()
+        let walkRequest = requestTextView.getString()
+        let walkNote = warningTextView.getString()
+        let additionalRequest = additionalInfoTextView.getString()
+        delegate?.didTapNextButton(walkRequest: walkRequest, walkNote: walkNote, additionalRequest: additionalRequest)
     }
 
 }
