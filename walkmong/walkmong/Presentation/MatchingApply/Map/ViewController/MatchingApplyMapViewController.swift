@@ -155,6 +155,9 @@ extension MatchingApplyMapViewController: MatchingApplyMapAddressModalViewDelega
                     matchingVC.detailSelectView.delegate?.updatePlaceSelected(matchingVC.detailSelectView, self.model)
                     self.navigationController?.popToViewController(matchingVC, animated: true)
                     break
+                }else if let chatVC = vc as? WalktalkChatViewController {
+                    chatVC.updatePlace(with: self.model)
+                    self.navigationController?.popToViewController(chatVC, animated: true)
                 }
             }
         }

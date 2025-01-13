@@ -8,7 +8,14 @@
 import UIKit
 import SnapKit
 
-class WalktalkChatUpperView: UIView {
+protocol WalktalkChatUpperViewDelegate: AnyObject {
+    func didTapProfileImageView()
+    func didTapChangePlaceButton()
+}
+
+final class WalktalkChatUpperView: UIView {
+    
+    weak var delegate: WalktalkChatUpperViewDelegate?
 
     private var currentMatchingState: Status!
 
@@ -26,10 +33,10 @@ class WalktalkChatUpperView: UIView {
         return view
     }()
 
-    private let matchingStateProfileImageView: UIImageView = {
-        let view = UIImageView()
-        view.image = .defaultProfile
-        return view
+    private let matchingStateProfileImageView: UIButton = {
+        let button = UIButton()
+        button.imageView?.image = .defaultProfile
+        return button
     }()
 
     private let matchingStateDogNameLabel = MainHighlightParagraphLabel(text: "반려견 이름")
@@ -195,11 +202,11 @@ class WalktalkChatUpperView: UIView {
             matchingStateView.backgroundColor = .mainBlue
             matchingStateLabel.textColor = .white
         case .COMPLETED:
-            matchingStateProfileImageView.toGrayscale()
+            matchingStateProfileImageView.imageView?.toGrayscale()
             matchingStateView.backgroundColor = .gray400
             matchingStateLabel.textColor = .white
         case .REJECTED:
-            matchingStateProfileImageView.toGrayscale()
+            matchingStateProfileImageView.imageView?.toGrayscale()
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400
         default:
@@ -216,7 +223,20 @@ class WalktalkChatUpperView: UIView {
     func setContent(dogName: String, date: String, profileImageURL: String) {
         matchingStateDogNameLabel.text = dogName
         matchingStateDateLabel.text = date
-        matchingStateProfileImageView.image = .defaultProfile //FIXME: 이미지 렌더링 필요
+        matchingStateProfileImageView.imageView?.kf.setImage(with: URL(string: profileImageURL))
+    }
+    
+    private func setButtonActions() {
+        matchingStateSecondButton.addTarget(self, action: #selector(secondButtonTapped), for: .touchUpInside)
+        matchingStateProfileImageView.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
+    }
+    
+    @objc private func secondButtonTapped() {
+        delegate?.didTapChangePlaceButton()
+    }
+    
+    @objc private func profileImageTapped() {
+        delegate?.didTapProfileImageView()
     }
 }
 
