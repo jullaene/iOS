@@ -337,7 +337,6 @@ final class RegisterPetInfoView: UIView {
         let rabiesYn = shotYesButton.isSelected ? "Y" : "N"
         if let profile = profileImageView.imageView?.image {
             delegate?.didTapNextButton(name: name, dogSize: dogSize, profile: profile, gender: gender, birthYear: year, breed: breed, weight: weight, neuteringYn: neuteringYn, rabiesYn: rabiesYn, adultYn: adult)
-            
         }
     }
     

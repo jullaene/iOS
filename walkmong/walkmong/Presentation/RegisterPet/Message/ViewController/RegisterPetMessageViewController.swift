@@ -14,6 +14,7 @@ final class RegisterPetMessageViewController: UIViewController {
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
     private var requestData: PostDogInfoRequest
+    private let service = DogService()
     
     init(requestData: PostDogInfoRequest){
         self.requestData = requestData
@@ -74,8 +75,20 @@ extension RegisterPetMessageViewController: RegisterPetMessageViewDelegate {
         self.requestData.additionalRequest = additionalRequest
         Task {
             //TODO: API 호출
-            let prevVC = MatchingApplyWalkRequestDogProfileSelectionViewController()
-            self.navigationController?.popToViewController(prevVC, animated: true)
+            do {
+                let response = try await service.registerDogProfile(dogProfile: requestData)
+                let prevVC = MatchingApplyWalkRequestDogProfileSelectionViewController()
+                self.navigationController?.popToViewController(prevVC, animated: true)
+            }catch {
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setTitleText("반려견 등록 실패")
+                    .setSubTitleText("네트워크 상태를 확인해주세요")
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .showAlertView()
+            }
         }
     }
 }

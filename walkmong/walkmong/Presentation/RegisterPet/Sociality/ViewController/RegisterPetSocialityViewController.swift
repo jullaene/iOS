@@ -70,7 +70,7 @@ extension RegisterPetSocialityViewController: RegisterPetSocialityViewDelegate {
         self.requestData.barking = barking
         self.requestData.bite = bite
         self.requestData.friendly = friendly
-        let nextVC = RegisterPetMessageViewController()
+        let nextVC = RegisterPetMessageViewController(requestData: requestData)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
 }

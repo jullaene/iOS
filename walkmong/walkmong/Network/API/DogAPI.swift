@@ -37,7 +37,7 @@ extension DogAPI: APIEndpoint {
     }
     
     var headers: [String: String]? {
-        guard let token = SecretManager.shared.TEST_TOKEN else {
+        guard let token = AuthManager.shared.accessToken else {
             /// Access Token이 없는 경우
             return ["Content-Type": "application/json"]
         }
