@@ -38,16 +38,16 @@ final class RegisterPetMessageViewController: UIViewController {
 
 extension RegisterPetMessageViewController: KeyboardObserverDelegate {
     func keyboardWillShow(keyboardHeight: CGFloat) {
-        <#code#>
+        
     }
     
     func keyboardWillHide() {
-        <#code#>
+        
     }
 }
 
 extension RegisterPetMessageViewController: RegisterPetMessageViewDelegate {
     func didTapNextButton() {
-        <#code#>
+        
     }
 }

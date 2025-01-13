@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import SnapKit
 
 final class RegisterPetInfoViewController: UIViewController {
 
     private let mainView = RegisterPetInfoView()
     private var keyboardManager: KeyboardEventManager?
+    private var containerBottomConstraint: Constraint?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,24 +32,31 @@ final class RegisterPetInfoViewController: UIViewController {
     
     private func setConstraints() {
         mainView.snp.makeConstraints { make in
-            make.horizontalEdges.bottom.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
             make.top.equalToSuperview().offset(156)
+            containerBottomConstraint = make.bottom.equalToSuperview().constraint
         }
     }
 }
 
 extension RegisterPetInfoViewController: KeyboardObserverDelegate {
     func keyboardWillShow(keyboardHeight: CGFloat) {
-        <#code#>
+        containerBottomConstraint?.update(offset: -keyboardHeight)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
-    
+
     func keyboardWillHide() {
-        <#code#>
+        containerBottomConstraint?.update(offset: 0)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
 }
 
 extension RegisterPetInfoViewController: RegisterPetInfoViewDelegate {
     func didTapNextButton() {
-        <#code#>
+        // TODO: 데이터 전달 및 화면 전환
     }
 }
