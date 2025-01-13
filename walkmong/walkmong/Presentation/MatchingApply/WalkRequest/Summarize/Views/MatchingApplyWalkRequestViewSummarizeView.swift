@@ -132,7 +132,8 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             make.centerX.equalToSuperview()
         }
         
-        planEndInformationView.snp.makeConstraints { make in     make.top.equalTo(planTitleLabel.snp.bottom).offset(16)
+        planEndInformationView.snp.makeConstraints { make in
+            make.top.equalTo(planTitleLabel.snp.bottom).offset(16)
             make.trailing.equalToSuperview()
             make.height.equalTo(89)
             make.width.equalToSuperview().multipliedBy(0.5).offset(-4)
@@ -144,7 +145,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         }
         
         planEndDateLabel.snp.makeConstraints { make in
-            make.top.equalTo(planStartLabel.snp.bottom).offset(4)
+            make.top.equalTo(planEndLabel.snp.bottom).offset(4)
             make.bottom.equalToSuperview().inset(12)
             make.centerX.equalToSuperview()
         }
