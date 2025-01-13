@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Moya
 
-class MatchingViewController: UIViewController, MatchingCellDelegate {
+class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingViewDelegate {
     
     private let service = BoardService()
     private let provider = NetworkProvider<BoardAPI>()
@@ -79,6 +79,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     private func setupUI() {
         view.backgroundColor = .white
         matchingView = MatchingView()
+        matchingView.delegate = self
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
         }
@@ -326,7 +327,6 @@ extension MatchingViewController {
             "dogSize": "",
             "matchingYn": ""
         ]
-        print("❤️‍🔥❤️‍🔥❤️‍🔥❤️‍🔥\(selectedDate)")
         
         do {
             let response = try await service.getBoardList(parameters: parameters)
@@ -384,6 +384,16 @@ extension MatchingViewController: DropdownViewDelegate {
         hideDropdownView()
         
         UserDefaults.standard.set(location, forKey: "selectedLocation")
+        _Concurrency.Task {
+            await fetchData {
+                await self.getBoardList()
+            }
+        }
+    }
+}
+
+extension MatchingViewController: CalendarViewDelegate {
+    func didSelectDate(_ date: String) {
         _Concurrency.Task {
             await fetchData {
                 await self.getBoardList()

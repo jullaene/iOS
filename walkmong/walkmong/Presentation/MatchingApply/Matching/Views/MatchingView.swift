@@ -5,7 +5,15 @@ protocol MatchingViewLocationProvider: AnyObject {
     var locationText: String { get }
 }
 
+protocol MatchingViewDelegate: AnyObject {
+    func didSelectDate(_ date: String)
+}
+
+
 class MatchingView: UIView, MatchingViewLocationProvider {
+
+    weak var delegate: MatchingViewDelegate?
+    
     var locationText: String {
         return locationLabel.text ?? ""
     }
@@ -105,6 +113,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         contentView.snp.makeConstraints { make in
             make.width.horizontalEdges.top.equalToSuperview()
             make.bottom.equalTo(matchingCells.last?.snp.bottom ?? UIView())
+            make.height.greaterThanOrEqualTo(500)
         }
     }
 
@@ -160,6 +169,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     
     private func setupCalendarView() {
         contentView.addSubview(calendarView)
+        calendarView.delegate = self
         calendarView.snp.makeConstraints { make in
             make.top.equalTo(locationSelectView.snp.bottom).offset(36)
             make.leading.trailing.equalToSuperview()
@@ -213,23 +223,17 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     }
     
     private func layoutMatchingCells() {
-        if matchingCells.isEmpty {
-            contentView.snp.makeConstraints { make in
-                make.bottom.equalTo(filterSelectView.snp.bottom)
+        for (index, cell) in matchingCells.enumerated() {
+            cell.snp.makeConstraints { make in
+                make.height.equalTo(151)
+                make.centerX.equalToSuperview()
+                make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
+                make.leading.trailing.equalToSuperview().inset(20)
             }
-        } else {
-            for (index, cell) in matchingCells.enumerated() {
-                cell.snp.makeConstraints { make in
-                    make.height.equalTo(151)
-                    make.centerX.equalToSuperview()
-                    make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
-                    make.leading.trailing.equalToSuperview().inset(20)
-                }
-            }
-            
-            matchingCells.last?.snp.makeConstraints { make in
-                make.bottom.equalToSuperview().inset(110)
-            }
+        }
+
+        matchingCells.last?.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().inset(110)
         }
     }
 
@@ -274,5 +278,11 @@ private extension MatchingView {
         if let viewController = getViewController() as? MatchingViewController {
             viewController.navigateToWalkRequestView()
         }
+    }
+}
+
+extension MatchingView: CalendarViewDelegate {
+    func didSelectDate(_ date: String) {
+        delegate?.didSelectDate(date)
     }
 }
