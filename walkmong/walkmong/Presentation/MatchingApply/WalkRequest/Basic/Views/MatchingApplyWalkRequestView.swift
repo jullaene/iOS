@@ -8,6 +8,14 @@
 import UIKit
 import SnapKit
 
+protocol StepConfigurable {
+    var stepTitle: String { get }
+    var buttonTitle: String { get }
+    var isButtonEnabled: Bool { get }
+    var isWarningVisible: Bool { get }
+    var buttonStateChanged: ((Bool) -> Void)? { get set }
+}
+
 final class MatchingApplyWalkRequestView: UIView, KeyboardObserverDelegate, UIScrollViewDelegate {
     let scrollView = UIScrollView()
     let contentView = UIView()

@@ -31,4 +31,5 @@ extension UIViewController {
     func hideLoading() {
         self.view.viewWithTag(999)?.removeFromSuperview()
     }
+
 }

@@ -63,6 +63,9 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         locationSelectView = matchingView.locationSelectView
         
         matchingView.filterSelectView.delegate = self
+        if let savedLocation = UserDefaults.standard.string(forKey: "selectedLocation") {
+            matchingView.updateLocationLabel(with: savedLocation)
+        }
     }
     
     private func setupGestures() {
@@ -194,7 +197,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         let hasDogs = true // 서버가 동작하지 않으므로 임시값 사용
         
         if hasDogs {
-            let walkRequestVC = MatchingApplyWalkRequestViewController()
+            let walkRequestVC = MatchingApplyWalkRequestDogProfileSelectionViewController()
             navigationController?.pushViewController(walkRequestVC, animated: true)
         } else {
             showNoDogsAlert()
@@ -237,14 +240,6 @@ extension MatchingViewController: MatchingFilterViewDelegate {
     }
 }
 
-extension MatchingViewController: DropdownViewDelegate {
-    func didSelectLocation(_ location: String) {
-        matchingView.updateLocationLabel(with: location)
-        dropdownView?.updateSelection(selectedLocation: location)
-        hideDropdownView()
-    }
-}
-
 extension MatchingViewController {
     func getBoardList() async {
         let parameters: [String: String] = [
@@ -282,6 +277,12 @@ extension MatchingViewController {
             
             DispatchQueue.main.async {
                 self.dropdownView?.updateLocations(locations: dongAddresses)
+                
+                let savedLocation = UserDefaults.standard.string(forKey: "selectedLocation") ?? dongAddresses.first
+                if let defaultLocation = savedLocation {
+                    self.matchingView.updateLocationLabel(with: defaultLocation)
+                    self.dropdownView?.updateSelection(selectedLocation: defaultLocation)
+                }
             }
         } catch {
             DispatchQueue.main.async {
@@ -294,5 +295,15 @@ extension MatchingViewController {
 extension MatchingViewController: FilterSelectViewDelegate {
     func didTapFilterButton() {
         showMatchingFilterView()
+    }
+}
+
+extension MatchingViewController: DropdownViewDelegate {
+    func didSelectLocation(_ location: String) {
+        matchingView.updateLocationLabel(with: location)
+        dropdownView?.updateSelection(selectedLocation: location)
+        hideDropdownView()
+        
+        UserDefaults.standard.set(location, forKey: "selectedLocation")
     }
 }
