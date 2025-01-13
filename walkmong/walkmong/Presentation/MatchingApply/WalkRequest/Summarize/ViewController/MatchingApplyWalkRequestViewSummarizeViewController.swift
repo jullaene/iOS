@@ -69,7 +69,44 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
     }
     
     @objc private func handleNextButtonTapped() {
+        guard let dogId = selectedDogId,
+              let addressId = Int(selectedAddressId ?? "") else {
+            print("필수 데이터가 누락되었습니다.")
+            return
+        }
+        
+        let locationNegotiationYn: String = {
+            if selectionTexts.indices.contains(0) {
+                return selectionTexts[0] == "산책자가 선택한 장소에서 만나요" ? "Y" : "N"
+            }
+            return "N"
+        }()
+        
+        let preMeetAvailableYn: String = {
+            if selectionTexts.indices.contains(2) {
+                return selectionTexts[2] == "가능해요" ? "Y" : "N"
+            }
+            return "N"
+        }()
+        
+        let walkRequest = receivedTexts.indices.contains(0) ? receivedTexts[0] : ""
+        let walkNote = receivedTexts.indices.contains(1) ? receivedTexts[1] : ""
+        let additionalRequest = receivedTexts.indices.contains(2) ? receivedTexts[2] : ""
+        
+        let requestData = MatchingApplyWalkRequestData(
+            dogId: dogId,
+            addressId: addressId,
+            startTime: startTime,
+            endTime: endTime,
+            locationNegotiationYn: locationNegotiationYn,
+            preMeetAvailableYn: preMeetAvailableYn,
+            walkRequest: walkRequest,
+            walkNote: walkNote,
+            additionalRequest: additionalRequest
+        )
+        
         let nextVC = MatchingApplyWalkRequestCautionViewController()
+        nextVC.requestData = requestData
         navigationController?.pushViewController(nextVC, animated: true)
     }
     private func updateSummaryView() {

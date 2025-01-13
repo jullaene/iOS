@@ -33,4 +33,16 @@ struct BoardService {
             throw error
         }
     }
+    
+    func registerBoard(parameters: [String: Any]) async throws -> BoardRegisterResponse {
+        do {
+            let response = try await provider.request(
+                target: .registerBoard(parameters: parameters),
+                responseType: BoardRegisterResponse.self
+            )
+            return response
+        } catch {
+            throw error
+        }
+    }
 }

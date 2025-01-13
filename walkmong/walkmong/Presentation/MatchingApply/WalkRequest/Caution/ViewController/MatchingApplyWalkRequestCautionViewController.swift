@@ -9,6 +9,8 @@ import UIKit
 
 final class MatchingApplyWalkRequestCautionViewController: UIViewController {
 
+    var requestData: MatchingApplyWalkRequestData?
+    
     private let containerView = MatchingApplyWalkRequestView()
     private let cautionView = MatchingApplyWalkRequestCautionView()
 
@@ -59,7 +61,74 @@ final class MatchingApplyWalkRequestCautionViewController: UIViewController {
     }
 
     @objc private func handleSubmitButtonTapped() {
-        print("산책 지원 요청 완료")
-        navigationController?.popToRootViewController(animated: true)
+        let alertBuilder = CustomAlertViewController.CustomAlertBuilder(viewController: self)
+        alertBuilder
+            .setTitleState(.useTitleOnly)
+            .setButtonState(.doubleButton)
+            .setTitleText("산책 지원을 요청하시겠습니까?")
+            .setLeftButtonTitle("아니오")
+            .setRightButtonTitle("예")
+            .setLeftButtonAction { [weak self] in
+                self?.dismiss(animated: true, completion: nil)
+            }
+            .setRightButtonAction { [weak self] in
+                self?.submitWalkRequest()
+                self?.navigateToMainTabBar()
+            }
+            .showAlertView()
+    }
+    
+    private func navigateToMainTabBar() {
+        if let navigationController = navigationController {
+            navigationController.popToRootViewController(animated: true)
+        } else {
+            let mainTabBarController = MainTabBarController()
+            UIApplication.shared.keyWindow?.rootViewController = mainTabBarController
+            UIApplication.shared.keyWindow?.makeKeyAndVisible()
+        }
+    }
+    
+    private func submitWalkRequest() {
+        guard let requestData = requestData else {
+            print("전송할 데이터가 없습니다.")
+            return
+        }
+
+        let startTime = Date.currentTimestamp()
+        let endTime = Date.currentTimestamp()
+        print("startTime: \(startTime), endTime: \(endTime)")
+        
+        let parameters: [String: Any] = [
+            "dogId": requestData.dogId,
+            "addressId": requestData.addressId,
+            "startTime": startTime,
+            "endTime": endTime,
+            "locationNegotiationYn": requestData.locationNegotiationYn,
+            "preMeetAvailableYn": requestData.preMeetAvailableYn,
+            "walkRequest": requestData.walkRequest,
+            "walkNote": requestData.walkNote,
+            "additionalRequest": requestData.additionalRequest
+        ]
+        
+        Task {
+            do {
+                let response = try await BoardService().registerBoard(parameters: parameters)
+                print("등록 성공: \(response.data.boardId)")
+            } catch {
+                print("등록 실패: \(error)")
+                showErrorAlert(error)
+            }
+        }
+    }
+
+    private func showErrorAlert(_ error: Error) {
+        let alertBuilder = CustomAlertViewController.CustomAlertBuilder(viewController: self)
+        alertBuilder
+            .setTitleState(.useTitleAndSubTitle)
+            .setButtonState(.singleButton)
+            .setTitleText("등록 실패")
+            .setSubTitleText("산책 지원 요청 등록에 실패했습니다. 다시 시도해주세요.\n\(error.localizedDescription)")
+            .setSingleButtonTitle("확인")
+            .showAlertView()
     }
 }
