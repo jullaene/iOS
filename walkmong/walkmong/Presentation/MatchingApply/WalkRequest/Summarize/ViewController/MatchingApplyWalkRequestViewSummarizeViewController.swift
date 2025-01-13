@@ -13,6 +13,8 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
     var endTime: String = ""
     var receivedTexts: [String] = ["", "", ""]
     var selectedDogId: Int?
+    var selectedAddress: String?
+    var selectedAddressId: String?
     
     private let containerView = MatchingApplyWalkRequestView()
     private let summarizeView = MatchingApplyWalkRequestViewSummarizeView()
@@ -20,7 +22,7 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
     override func loadView() {
         self.view = containerView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -37,16 +39,16 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
         navigationController?.setNavigationBarHidden(true, animated: false)
         self.tabBarController?.tabBar.isHidden = true
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
         self.tabBarController?.tabBar.isHidden = false
     }
-
+    
     private func setupUI() {
         view.backgroundColor = .gray100
-
+        
         addCustomNavigationBar(
             titleText: "산책 지원 요청",
             showLeftBackButton: true,
@@ -65,51 +67,55 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
         
         updateSummaryView()
     }
-
+    
     @objc private func handleNextButtonTapped() {
         let nextVC = MatchingApplyWalkRequestCautionViewController()
         navigationController?.pushViewController(nextVC, animated: true)
     }
     private func updateSummaryView() {
         summarizeView.updateSectionView(texts: receivedTexts)
-
+        
         if let formattedStartTime = formatISO8601Date(startTime) {
             summarizeView.planStartDateLabel.text = formattedStartTime
         } else {
             summarizeView.planStartDateLabel.text = "날짜 정보가 없습니다."
             print("Start time is empty or invalid: \(startTime)")
         }
-
+        
         if let formattedEndTime = formatISO8601Date(endTime) {
             summarizeView.planEndDateLabel.text = formattedEndTime
         } else {
             summarizeView.planEndDateLabel.text = "날짜 정보가 없습니다."
             print("End time is empty or invalid: \(endTime)")
         }
-
+        
         if selectionTexts.count > 0 {
             summarizeView.updateLocationText(for: summarizeView.setView1, with: selectionTexts[0])
         }
         if selectionTexts.count > 1 {
             summarizeView.updateLocationText(for: summarizeView.setView3, with: selectionTexts[1])
         }
+        
+        if let selectedAddress = selectedAddress {
+            summarizeView.profileInformationView.locationLabel.text = selectedAddress
+        }
     }
     
     private func formatISO8601Date(_ isoString: String) -> String? {
         let isoFormatter = ISO8601DateFormatter()
         isoFormatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
-        isoFormatter.timeZone = TimeZone.current // 로컬 시간대 설정
-
+        isoFormatter.timeZone = TimeZone.current
+        
         guard let date = isoFormatter.date(from: isoString) else {
             print("Failed to parse date: \(isoString)")
             return nil
         }
-
+        
         let outputFormatter = DateFormatter()
         outputFormatter.dateFormat = "yyyy.MM.dd (EEE)nㅜHH:mm"
         outputFormatter.locale = Locale(identifier: "ko_KR")
         outputFormatter.timeZone = TimeZone.current
-
+        
         return outputFormatter.string(from: date)
     }
     
@@ -118,12 +124,15 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
             print("선택된 강아지 ID가 없습니다.")
             return
         }
-
+        
         Task {
             do {
                 let response = try await DogService().getDogProfile(dogId: dogId)
                 DispatchQueue.main.async {
-                    self.summarizeView.updateWithDogInfo(response.data)
+                    self.summarizeView.profileInformationView.updateWithDogInfo(
+                        response.data,
+                        location: self.selectedAddress
+                    )
                 }
             } catch {
                 print("Failed to fetch dog profile: \(error)")

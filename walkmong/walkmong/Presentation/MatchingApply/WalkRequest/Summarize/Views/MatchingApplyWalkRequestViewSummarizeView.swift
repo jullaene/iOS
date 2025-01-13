@@ -384,7 +384,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         }
     }
     
-    func updateWithDogInfo(_ dogInfo: DogInfo) {
-        profileInformationView.updateWithDogInfo(dogInfo)
+    func updateWithDogInfo(_ dogInfo: DogInfo, location: String?) {
+        profileInformationView.updateWithDogInfo(dogInfo, location: location)
     }
 }

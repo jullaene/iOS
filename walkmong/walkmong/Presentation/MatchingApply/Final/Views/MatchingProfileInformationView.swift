@@ -118,9 +118,10 @@ class DogProfileInformationView: BaseProfileInformationView{
 }
 
 extension DogProfileInformationView {
-    func updateWithDogInfo(_ dogInfo: DogInfo) {
+    func updateWithDogInfo(_ dogInfo: DogInfo, location: String?) {
         nameLabel.text = dogInfo.dogName
         profileInformationLabel.text = dogInfo.profileInformationText
+        locationLabel.text = location ?? "위치 정보 없음"
 
         if let encodedURL = dogInfo.dogProfile.removingPercentEncoding,
            let url = URL(string: encodedURL) {

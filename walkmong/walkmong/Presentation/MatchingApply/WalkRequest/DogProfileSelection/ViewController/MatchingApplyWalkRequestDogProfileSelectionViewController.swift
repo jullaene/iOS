@@ -9,6 +9,8 @@ import UIKit
 
 final class MatchingApplyWalkRequestDogProfileSelectionViewController: UIViewController {
     private var selectedIndexPath: IndexPath?
+    var selectedAddress: String?
+    var selectedAddressId: String?
     
     private let containerView = MatchingApplyWalkRequestView()
     private let dogProfileSelectionView = MatchingApplyWalkRequestDogProfileSelectionView()
@@ -78,6 +80,8 @@ final class MatchingApplyWalkRequestDogProfileSelectionViewController: UIViewCon
 
         let nextVC = MatchingApplyWalkRequestInformationInputViewController()
         nextVC.selectedDogId = selectedDogId
+        nextVC.selectedAddress = selectedAddress
+        nextVC.selectedAddressId = selectedAddressId
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

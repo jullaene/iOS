@@ -14,6 +14,8 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
     var inputTexts: [String] = ["", "", ""]
     var selectionTexts: [String] = []
     var selectedDogId: Int?
+    var selectedAddress: String?
+    var selectedAddressId: String?
     
     private let containerView = MatchingApplyWalkRequestView()
     private let textInputView = MatchingApplyWalkRequestTextInputView()
@@ -82,8 +84,9 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
         nextVC.selectionTexts = selectionTexts
         nextVC.startTime = startTime
         nextVC.endTime = endTime
-        nextVC.selectedDogId = selectedDogId // 전달 추가
-        print("TextInputViewController에서 전달된 dogId: \(String(describing: selectedDogId))") // 디버그 로그
+        nextVC.selectedDogId = selectedDogId
+        nextVC.selectedAddress = selectedAddress
+        nextVC.selectedAddressId = selectedAddressId
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

@@ -7,6 +7,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     
     private let service = BoardService()
     private let provider = NetworkProvider<BoardAPI>()
+    var selectedAddress: String?
     var selectedAddressId: String?
     
     // MARK: - Properties
@@ -193,16 +194,38 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     }
     
     func navigateToWalkRequestView() {
-        // 서버에서 반려견 조회 (현재 주석 처리)
-        // 예: let hasDogs = fetchDogProfiles() > 0
-        let hasDogs = true // 서버가 동작하지 않으므로 임시값 사용
-        
-        if hasDogs {
-            let walkRequestVC = MatchingApplyWalkRequestDogProfileSelectionViewController()
-            navigationController?.pushViewController(walkRequestVC, animated: true)
-        } else {
-            showNoDogsAlert()
+        _Concurrency.Task {
+            do {
+                let dogList = try await DogService().getDogList()
+                let hasDogs = !dogList.data.isEmpty
+                
+                DispatchQueue.main.async {
+                    if hasDogs {
+                        self.navigateToWalkRequestViewController()
+                    } else {
+                        self.showNoDogsAlert()
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    print("Error fetching dog list: \(error.localizedDescription)")
+                    self.showNoDogsAlert()
+                }
+            }
         }
+    }
+    
+    private func navigateToWalkRequestViewController() {
+        guard let dropdownView = dropdownView else { return }
+        
+        let selectedLocation = dropdownView.selectedLocation
+        let selectedAddressId = dropdownView.selectedAddressId
+        
+        let walkRequestVC = MatchingApplyWalkRequestDogProfileSelectionViewController()
+        walkRequestVC.selectedAddress = selectedLocation
+        walkRequestVC.selectedAddressId = selectedAddressId
+        
+        navigationController?.pushViewController(walkRequestVC, animated: true)
     }
     
     private func showNoDogsAlert() {
@@ -272,14 +295,15 @@ extension MatchingViewController {
     func getAddressList() async {
         do {
             let response = try await service.getAddressList()
-            let addressList = response.data
             
-            let dongAddresses = addressList.map { $0.dongAddress }
+            let addressList: [(dongAddress: String, addressId: String)] = response.data.map {
+                (dongAddress: $0.dongAddress, addressId: String($0.addressId))
+            }
             
             DispatchQueue.main.async {
-                self.dropdownView?.updateLocations(locations: dongAddresses)
-                
-                let savedLocation = UserDefaults.standard.string(forKey: "selectedLocation") ?? dongAddresses.first
+                self.dropdownView?.updateLocations(locations: addressList)
+
+                let savedLocation = UserDefaults.standard.string(forKey: "selectedLocation") ?? addressList.first?.dongAddress
                 if let defaultLocation = savedLocation {
                     self.matchingView.updateLocationLabel(with: defaultLocation)
                     self.dropdownView?.updateSelection(selectedLocation: defaultLocation)
