@@ -59,8 +59,8 @@ final class MatchingApplyFirstIntroductionView: UIView {
     }
 
     @objc private func nextButtonTapped() {
-        if textView.text.count >= 20 {
-            delegate?.didTapNextButton(textView.text)
+        if textView.getString().count >= 20 {
+            delegate?.didTapNextButton(textView.getString())
         }else {
             if let vc = self.getViewController() {
                 CustomAlertViewController.CustomAlertBuilder(viewController: vc)
