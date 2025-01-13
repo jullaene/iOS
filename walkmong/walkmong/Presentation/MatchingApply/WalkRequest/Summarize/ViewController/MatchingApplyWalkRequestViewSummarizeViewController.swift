@@ -9,10 +9,12 @@ import UIKit
 
 final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewController {
     var selectionTexts: [String] = []
+    var startTime: String = ""
+    var endTime: String = ""
+    var receivedTexts: [String] = ["", "", ""]
+    
     private let containerView = MatchingApplyWalkRequestView()
     private let summarizeView = MatchingApplyWalkRequestViewSummarizeView()
-
-    var receivedTexts: [String] = ["", "", ""]
     
     override func loadView() {
         self.view = containerView
@@ -20,7 +22,7 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupUI()
     }
     
@@ -70,11 +72,43 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
     private func updateSummaryView() {
         summarizeView.updateSectionView(texts: receivedTexts)
 
+        if let formattedStartTime = formatISO8601Date(startTime) {
+            summarizeView.planStartDateLabel.text = formattedStartTime
+        } else {
+            summarizeView.planStartDateLabel.text = "날짜 정보가 없습니다."
+            print("Start time is empty or invalid: \(startTime)")
+        }
+
+        if let formattedEndTime = formatISO8601Date(endTime) {
+            summarizeView.planEndDateLabel.text = formattedEndTime
+        } else {
+            summarizeView.planEndDateLabel.text = "날짜 정보가 없습니다."
+            print("End time is empty or invalid: \(endTime)")
+        }
+
         if selectionTexts.count > 0 {
             summarizeView.updateLocationText(for: summarizeView.setView1, with: selectionTexts[0])
         }
         if selectionTexts.count > 1 {
             summarizeView.updateLocationText(for: summarizeView.setView3, with: selectionTexts[1])
         }
+    }
+    
+    private func formatISO8601Date(_ isoString: String) -> String? {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
+        isoFormatter.timeZone = TimeZone.current // 로컬 시간대 설정
+
+        guard let date = isoFormatter.date(from: isoString) else {
+            print("Failed to parse date: \(isoString)")
+            return nil
+        }
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "yyyy.MM.dd (EEE)nㅜHH:mm"
+        outputFormatter.locale = Locale(identifier: "ko_KR")
+        outputFormatter.timeZone = TimeZone.current
+
+        return outputFormatter.string(from: date)
     }
 }

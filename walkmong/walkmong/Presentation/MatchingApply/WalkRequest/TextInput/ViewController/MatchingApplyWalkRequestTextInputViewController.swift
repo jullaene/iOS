@@ -8,6 +8,10 @@
 import UIKit
 
 final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
+    var receivedTexts: [String] = []
+    var startTime: String = ""
+    var endTime: String = ""
+    var inputTexts: [String] = ["", "", ""]
     var selectionTexts: [String] = []
     private let containerView = MatchingApplyWalkRequestView()
     private let textInputView = MatchingApplyWalkRequestTextInputView()
@@ -19,15 +23,13 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
         }
     }
 
-    private var inputTexts: [String] = ["", "", ""]
-
     override func loadView() {
         self.view = containerView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupUI()
         setupActions()
     }
@@ -77,6 +79,8 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
         let nextVC = MatchingApplyWalkRequestViewSummarizeViewController()
         nextVC.receivedTexts = inputTexts
         nextVC.selectionTexts = selectionTexts
+        nextVC.startTime = startTime
+        nextVC.endTime = endTime
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

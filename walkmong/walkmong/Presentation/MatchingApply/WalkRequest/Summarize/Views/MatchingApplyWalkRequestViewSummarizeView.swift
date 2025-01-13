@@ -35,7 +35,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         return view
     }()
     private let planStartLabel = CaptionLabel(text: "산책 시작", textColor: .gray400)
-    private let planStartDateLabel: UILabel = {
+    let planStartDateLabel: UILabel = {
         let label = MainHighlightParagraphLabel(
             text: "2024.10.25 (금)\n16:00",
             textColor: .mainBlue
@@ -52,7 +52,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
         return view
     }()
     private let planEndLabel = CaptionLabel(text: "산책 종료", textColor: .gray400)
-    private let planEndDateLabel: UILabel = {
+    let planEndDateLabel: UILabel = {
         let label = MainHighlightParagraphLabel(
             text: "2024.10.25 (금)\n16:40",
             textColor: .mainBlue
