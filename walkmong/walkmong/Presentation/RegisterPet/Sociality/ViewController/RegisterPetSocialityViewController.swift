@@ -13,7 +13,17 @@ final class RegisterPetSocialityViewController: UIViewController {
     private let mainView = RegisterPetSocialityView()
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
-
+    private var requestData: PostDogInfoRequest
+    
+    init(requestData: PostDogInfoRequest){
+        self.requestData = requestData
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -56,7 +66,11 @@ extension RegisterPetSocialityViewController: KeyboardObserverDelegate {
 }
 
 extension RegisterPetSocialityViewController: RegisterPetSocialityViewDelegate {
-    func didTapNextButton() {
-        // TODO: 데이터 전달 및 화면 전환
+    func didTapNextButton(barking: String, bite: String, friendly: String) {
+        self.requestData.barking = barking
+        self.requestData.bite = bite
+        self.requestData.friendly = friendly
+        let nextVC = RegisterPetMessageViewController(requestData: requestData)
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
 }

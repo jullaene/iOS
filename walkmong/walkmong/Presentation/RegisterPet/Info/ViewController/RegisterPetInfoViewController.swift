@@ -13,6 +13,7 @@ final class RegisterPetInfoViewController: UIViewController {
     private let mainView = RegisterPetInfoView()
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
+    private var requestData = PostDogInfoRequest()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +57,18 @@ extension RegisterPetInfoViewController: KeyboardObserverDelegate {
 }
 
 extension RegisterPetInfoViewController: RegisterPetInfoViewDelegate {
-    func didTapNextButton() {
-        // TODO: 데이터 전달 및 화면 전환
+    func didTapNextButton(name: String, dogSize: String, profile: UIImage, gender: String, birthYear: String, breed: String, weight: String, neuteringYn: String, rabiesYn: String, adultYn: String) {
+        self.requestData.name = name
+        self.requestData.dogSize = dogSize
+        self.requestData.profile = profile
+        self.requestData.gender = gender
+        self.requestData.birthYear = birthYear
+        self.requestData.breed = breed
+        self.requestData.weight = weight
+        self.requestData.neuteringYn = neuteringYn
+        self.requestData.rabiesYn = rabiesYn
+        self.requestData.adultYn = adultYn
+        let nextVC = RegisterPetSocialityViewController(requestData: self.requestData)
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
 }

@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 
 protocol RegisterPetInfoViewDelegate: AnyObject {
-    func didTapNextButton()
+    func didTapNextButton(name: String, dogSize: String, profile: UIImage, gender: String, birthYear: String, breed: String, weight: String, neuteringYn: String, rabiesYn: String, adultYn: String)
 }
 
 final class RegisterPetInfoView: UIView {
@@ -244,6 +244,7 @@ final class RegisterPetInfoView: UIView {
         }
         profileImageView.addTarget(self, action: #selector(setPHPicker), for: .touchUpInside)
         profileImageIconButton.addTarget(self, action: #selector(setPHPicker), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
     @objc private func buttonDidTap(_ sender: UIButton) {
@@ -322,6 +323,21 @@ final class RegisterPetInfoView: UIView {
         let isAllValid = isTextFieldValid && isGenderSelected && isAdultSelected && isBreedSizeSelected && isSurgerySelected && isShotSelected && imageSelected
         
         nextButton.setButtonState(isEnabled: isAllValid)
+    }
+    
+    @objc private func nextButtonTapped() {
+        let name = nameTextField.text!
+        let gender = maleButton.isSelected ? "MALE" : "FEMALE"
+        let breed = breedTextField.text!
+        let year = yearTextField.text!
+        let weight = weightTextField.text!
+        let adult = adultYesButton.isSelected ? "Y" : "N"
+        let dogSize = smallBreedButton.isSelected ? "SMALL" : mediumBreedButton.isSelected ? "MEDIUM" : bigBreedButton.isSelected ? "BIG" : ""
+        let neuteringYn = surgeryYesButton.isSelected ? "Y" : "N"
+        let rabiesYn = shotYesButton.isSelected ? "Y" : "N"
+        if let profile = profileImageView.imageView?.image {
+            delegate?.didTapNextButton(name: name, dogSize: dogSize, profile: profile, gender: gender, birthYear: year, breed: breed, weight: weight, neuteringYn: neuteringYn, rabiesYn: rabiesYn, adultYn: adult)
+        }
     }
     
 }
