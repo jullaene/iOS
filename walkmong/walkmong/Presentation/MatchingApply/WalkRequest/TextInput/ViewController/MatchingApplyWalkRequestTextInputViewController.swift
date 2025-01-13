@@ -19,6 +19,8 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
         }
     }
 
+    private var inputTexts: [String] = ["", "", ""]
+
     override func loadView() {
         self.view = containerView
     }
@@ -65,13 +67,15 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
 
     private func setupActions() {
         containerView.actionButton.addTarget(self, action: #selector(handleNextButtonTapped), for: .touchUpInside)
-        textInputView.textViewDidUpdate = { [weak self] isAllFilled in
+        textInputView.textViewDidUpdate = { [weak self] isAllFilled, updatedTexts in
             self?.allRequiredFieldsFilled = isAllFilled
+            self?.inputTexts = updatedTexts
         }
     }
 
     @objc private func handleNextButtonTapped() {
         let nextVC = MatchingApplyWalkRequestViewSummarizeViewController()
+        nextVC.receivedTexts = inputTexts
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

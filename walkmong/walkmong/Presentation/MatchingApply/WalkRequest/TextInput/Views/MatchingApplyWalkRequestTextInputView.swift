@@ -15,8 +15,9 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
     private var isInitialState: Bool = true
     private var iconImageViews: [UIImageView] = []
     private var saveLabels: [UILabel] = []
+    private var texts: [String] = ["", "", ""]
     
-    var textViewDidUpdate: ((Bool) -> Void)?
+    var textViewDidUpdate: ((Bool, [String]) -> Void)?
     
     private let titles = [
         "산책 요청 사항 (필수)",
@@ -163,14 +164,15 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
 extension MatchingApplyWalkRequestTextInputView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let index = textView.tag
-        guard index < textViewStates.count else { return }
-        textViewStates[index] = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        textViewStates[index] = !text.isEmpty
+        texts[index] = text
         checkIfAllRequiredFieldsAreFilled()
     }
-    
+
     private func checkIfAllRequiredFieldsAreFilled() {
         let allRequiredFieldsFilled = textViewStates[..<2].allSatisfy { $0 }
-        textViewDidUpdate?(allRequiredFieldsFilled)
+        textViewDidUpdate?(allRequiredFieldsFilled, texts)
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {

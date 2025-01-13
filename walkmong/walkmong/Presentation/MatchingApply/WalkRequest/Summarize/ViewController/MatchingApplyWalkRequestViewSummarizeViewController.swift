@@ -12,6 +12,8 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
     private let containerView = MatchingApplyWalkRequestView()
     private let summarizeView = MatchingApplyWalkRequestViewSummarizeView()
 
+    var receivedTexts: [String] = ["", "", ""]
+    
     override func loadView() {
         self.view = containerView
     }
@@ -57,10 +59,15 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
         containerView.actionButton.addTarget(self, action: #selector(handleNextButtonTapped), for: .touchUpInside)
         containerView.updateWarningText("산책 지원 요청 내용을 확인했습니다.")
         containerView.showWarningSection()
+        
+        updateSummaryView()
     }
 
     @objc private func handleNextButtonTapped() {
         let nextVC = MatchingApplyWalkRequestCautionViewController()
         navigationController?.pushViewController(nextVC, animated: true)
+    }
+    private func updateSummaryView() {
+        summarizeView.updateSectionView(texts: receivedTexts)
     }
 }
