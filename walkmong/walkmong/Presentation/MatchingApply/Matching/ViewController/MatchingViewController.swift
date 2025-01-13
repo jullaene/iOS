@@ -326,6 +326,7 @@ extension MatchingViewController {
             "dogSize": "",
             "matchingYn": ""
         ]
+        print("❤️‍🔥❤️‍🔥❤️‍🔥❤️‍🔥\(selectedDate)")
         
         do {
             let response = try await service.getBoardList(parameters: parameters)

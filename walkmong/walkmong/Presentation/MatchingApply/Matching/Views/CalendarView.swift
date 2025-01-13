@@ -33,10 +33,20 @@ class CalendarView: UIView {
     private let calendar = Calendar.current
     private let today = Date()
     
+
     var selectedDate: String? {
         guard let indexPath = selectedIndexPath else { return nil }
         let day = days[indexPath.item]
-        return "\(day.date). \(day.dayOfWeek)"
+
+        let currentYear = calendar.component(.year, from: today)
+        let currentMonth = calendar.component(.month, from: today)
+
+        guard let dayInt = Int(day.date) else { return nil }
+
+        let components = DateComponents(year: currentYear, month: currentMonth, day: dayInt)
+        guard let date = calendar.date(from: components) else { return nil }
+
+        return Date.formattedDate(date, format: "yyyy-MM-dd")
     }
     
     // MARK: - Initializer
@@ -196,7 +206,12 @@ extension CalendarView {
         }
 
         let components = DateComponents(year: currentYear, month: currentMonth, day: dayInt)
-        return formatDate(components, with: "MM. dd (EEE)")
+        guard let date = calendar.date(from: components) else {
+            print("Failed to create date from components: \(components)")
+            return nil
+        }
+
+        return Date.formattedDate(date, format: "yyyy-MM-dd")
     }
     
     func getSelectedDateWithFullFormat() -> String? {
