@@ -74,6 +74,7 @@ class WalktalkChatViewController: UIViewController {
         walktalkChatView.setupTextViewDelegate(delegate: self)
         addCustomNavigationBar(titleText: targetName, showLeftBackButton: true, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         walktalkChatView.delegate = self
+        walktalkChatUpperView.delegate = self
     }
     
     private func setupStompService() {
@@ -195,5 +196,20 @@ extension WalktalkChatViewController: StompServiceDelegate {
 extension WalktalkChatViewController: WalktalkChatViewDelegate {
     func didSendMessage(_ message: String) {
         stompService.sendMessage(body: message, to: "/sub/chat/room/\(String(describing: roomId))", with: "no receipt")
+    }
+}
+
+extension WalktalkChatViewController: WalktalkChatUpperViewDelegate {
+    func didTapProfileImageView() {
+        //TODO: 상대방 프로필 UI 구현 이후 연결
+    }
+    
+    func didTapChangePlaceButton() {
+        let nextVC = MatchingApplyMapViewController()
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
+    func updatePlace(with data: MatchingApplyMapModel){
+        //TODO: 만남 장소 변경 API 호출
     }
 }

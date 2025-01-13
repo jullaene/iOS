@@ -77,8 +77,7 @@ extension RegisterPetMessageViewController: RegisterPetMessageViewDelegate {
             //TODO: API 호출
             do {
                 let response = try await service.registerDogProfile(dogProfile: requestData)
-                let prevVC = MatchingApplyWalkRequestDogProfileSelectionViewController()
-                self.navigationController?.popToViewController(prevVC, animated: true)
+                self.navigationController?.popToRootViewController(animated: true)
             }catch {
                 CustomAlertViewController
                     .CustomAlertBuilder(viewController: self)
