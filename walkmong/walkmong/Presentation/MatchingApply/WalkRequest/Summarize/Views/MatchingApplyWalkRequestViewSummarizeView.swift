@@ -11,7 +11,7 @@ import SnapKit
 final class MatchingApplyWalkRequestViewSummarizeView: UIView {
 
     private let profileContainerView = UIView()
-    private let profileInformationView = DogProfileInformationView()
+    let profileInformationView = DogProfileInformationView()
 
     private let smallTitle = SmallTitleLabel(text: "소제목", textColor: .gray600)
     private let warningIcon: UIImageView = {
@@ -382,5 +382,9 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             .first {
             centerLabel.text = text
         }
+    }
+    
+    func updateWithDogInfo(_ dogInfo: DogInfo) {
+        profileInformationView.updateWithDogInfo(dogInfo)
     }
 }

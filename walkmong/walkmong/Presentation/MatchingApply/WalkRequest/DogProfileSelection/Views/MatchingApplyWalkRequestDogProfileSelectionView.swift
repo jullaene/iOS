@@ -17,8 +17,14 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView {
     // MARK: - Properties
     weak var delegate: MatchingApplyWalkRequestDogProfileSelectionViewDelegate?
     
-    private var profiles: [PetProfile] = []
+    var selectedDogId: Int? {
+        guard let selectedIndexPath = selectedIndexPath, selectedIndexPath.item < profiles.count else {
+            return nil
+        }
+        return profiles[selectedIndexPath.item].dogId
+    }
     private var selectedIndexPath: IndexPath?
+    private var profiles: [PetProfile] = []
     var onDogSelected: ((Bool) -> Void)?
     
     private let networkProvider = NetworkProvider<DogAPI>()
@@ -97,7 +103,7 @@ final class MatchingApplyWalkRequestDogProfileSelectionView: UIView {
                         dogId: item.dogId,
                         imageURL: item.dogProfile ?? "",
                         name: item.dogName,
-                        details: "\(item.dogSize.localizedDogSize()) · \(item.breed) · \(Int(item.weight))kg",
+                        details: "\(item.dogSize.localizedDogSize()) · \(item.breed) · \(String(format: "%.1f", item.weight))kg",
                         gender: item.dogGender
                     )
                 }

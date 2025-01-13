@@ -18,6 +18,7 @@ final class MatchingApplyWalkRequestInformationInputViewController: UIViewContro
     private var inputTexts: [String] = ["", "", ""]
     private var selectionTexts: [String] = []
     var receivedTexts: [String] = []
+    var selectedDogId: Int?
 
     private let containerView = MatchingApplyWalkRequestView()
     private let informationInputView = MatchingApplyWalkRequestInformationInputView()
@@ -35,7 +36,6 @@ final class MatchingApplyWalkRequestInformationInputViewController: UIViewContro
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
         setupActions()
     }
@@ -89,6 +89,7 @@ final class MatchingApplyWalkRequestInformationInputViewController: UIViewContro
         let selection1Text = informationInputView.getSelectedText(from: informationInputView.selectionView1)
         let selection3Text = informationInputView.getSelectedText(from: informationInputView.selectionView3)
         nextVC.selectionTexts = [selection1Text, selection3Text]
+        nextVC.selectedDogId = selectedDogId
 
         navigationController?.pushViewController(nextVC, animated: true)
     }

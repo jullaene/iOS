@@ -76,7 +76,7 @@ class BaseProfileInformationView: UIView {
         }
     }
     func configure(name: String, informationText: String, location: String, profileImage: UIImage) {
-        profileImageview.image = profileImage // 임시 이미지
+        profileImageview.image = profileImage
         nameLabel.text = name
         profileInformationLabel.text = informationText
         locationLabel.text = location
@@ -114,5 +114,23 @@ class DogProfileInformationView: BaseProfileInformationView{
         nameLabel.text = name
         profileInformationLabel.text = informationText
         locationLabel.text = location
+    }
+}
+
+extension DogProfileInformationView {
+    func updateWithDogInfo(_ dogInfo: DogInfo) {
+        nameLabel.text = dogInfo.dogName
+        profileInformationLabel.text = dogInfo.profileInformationText
+
+        if let encodedURL = dogInfo.dogProfile.removingPercentEncoding,
+           let url = URL(string: encodedURL) {
+            profileImageview.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "placeholderImage"),
+                options: [.cacheOriginalImage, .transition(.fade(0.2))]
+            )
+        } else {
+            profileImageview.image = UIImage(named: "placeholderImage")
+        }
     }
 }

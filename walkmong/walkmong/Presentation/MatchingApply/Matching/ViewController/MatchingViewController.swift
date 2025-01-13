@@ -7,6 +7,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     
     private let service = BoardService()
     private let provider = NetworkProvider<BoardAPI>()
+    var selectedAddressId: String?
     
     // MARK: - Properties
     private var matchingFilterView: MatchingFilterView?

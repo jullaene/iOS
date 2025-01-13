@@ -13,6 +13,8 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
     var endTime: String = ""
     var inputTexts: [String] = ["", "", ""]
     var selectionTexts: [String] = []
+    var selectedDogId: Int?
+    
     private let containerView = MatchingApplyWalkRequestView()
     private let textInputView = MatchingApplyWalkRequestTextInputView()
 
@@ -26,10 +28,9 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
     override func loadView() {
         self.view = containerView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupUI()
         setupActions()
     }
@@ -81,6 +82,8 @@ final class MatchingApplyWalkRequestTextInputViewController: UIViewController {
         nextVC.selectionTexts = selectionTexts
         nextVC.startTime = startTime
         nextVC.endTime = endTime
+        nextVC.selectedDogId = selectedDogId // 전달 추가
+        print("TextInputViewController에서 전달된 dogId: \(String(describing: selectedDogId))") // 디버그 로그
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

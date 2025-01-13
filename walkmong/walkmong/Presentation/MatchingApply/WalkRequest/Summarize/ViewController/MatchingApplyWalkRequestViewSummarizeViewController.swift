@@ -12,6 +12,7 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
     var startTime: String = ""
     var endTime: String = ""
     var receivedTexts: [String] = ["", "", ""]
+    var selectedDogId: Int?
     
     private let containerView = MatchingApplyWalkRequestView()
     private let summarizeView = MatchingApplyWalkRequestViewSummarizeView()
@@ -22,8 +23,8 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupUI()
+        fetchAndDisplayDogProfile(dogId: selectedDogId)
     }
     
     override func viewDidLayoutSubviews() {
@@ -110,5 +111,23 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
         outputFormatter.timeZone = TimeZone.current
 
         return outputFormatter.string(from: date)
+    }
+    
+    private func fetchAndDisplayDogProfile(dogId: Int?) {
+        guard let dogId = dogId else {
+            print("선택된 강아지 ID가 없습니다.")
+            return
+        }
+
+        Task {
+            do {
+                let response = try await DogService().getDogProfile(dogId: dogId)
+                DispatchQueue.main.async {
+                    self.summarizeView.updateWithDogInfo(response.data)
+                }
+            } catch {
+                print("Failed to fetch dog profile: \(error)")
+            }
+        }
     }
 }

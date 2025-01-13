@@ -8,7 +8,8 @@
 import UIKit
 
 final class MatchingApplyWalkRequestDogProfileSelectionViewController: UIViewController {
-
+    private var selectedIndexPath: IndexPath?
+    
     private let containerView = MatchingApplyWalkRequestView()
     private let dogProfileSelectionView = MatchingApplyWalkRequestDogProfileSelectionView()
 
@@ -70,7 +71,13 @@ final class MatchingApplyWalkRequestDogProfileSelectionViewController: UIViewCon
     }
 
     @objc private func handleNextButtonTapped() {
+        guard let selectedDogId = dogProfileSelectionView.selectedDogId else {
+            print("강아지를 선택하지 않았습니다.")
+            return
+        }
+
         let nextVC = MatchingApplyWalkRequestInformationInputViewController()
+        nextVC.selectedDogId = selectedDogId
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }
