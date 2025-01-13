@@ -24,4 +24,11 @@ struct DogService {
         )
     }
     
+    func registerDogProfile(dogProfile: PostDogInfoRequest) async throws -> APIResponse<String> {
+        return try await provider.request(
+            target: .registerDogProfile(dogProfile: dogProfile),
+            responseType: APIResponse<String>.self
+        )
+    }
+    
 }
