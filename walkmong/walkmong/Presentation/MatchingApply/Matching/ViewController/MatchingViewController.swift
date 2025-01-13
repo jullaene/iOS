@@ -245,8 +245,8 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     
     private func navigateToDogProfileRegistration() {
         /// 반려견 등록하기 페이지
-        //        let dogProfileVC = DogProfileRegistrationViewController()
-        //        navigationController?.pushViewController(dogProfileVC, animated: true)
+        let dogProfileVC = RegisterPetInfoViewController()
+        navigationController?.pushViewController(dogProfileVC, animated: true)
     }
 }
 
