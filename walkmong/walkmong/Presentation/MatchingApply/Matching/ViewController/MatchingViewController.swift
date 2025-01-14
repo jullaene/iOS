@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Moya
 
-class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingViewDelegate {
+class MatchingViewController: UIViewController, MatchingViewDelegate {
     
     private let service = BoardService()
     private let provider = NetworkProvider<BoardAPI>()
@@ -38,6 +38,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingVi
             _Concurrency.Task {
                 await fetchData {
                     await self.getBoardList()
+                    self.updateMatchingView()
                 }
                 
                 await fetchData {
@@ -80,7 +81,6 @@ class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingVi
         
         setupUI()
         setupGestures()
-        updateMatchingView()
     }
 
     @objc private func reloadMatchingData() {
@@ -201,24 +201,6 @@ class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingVi
                 filterView.removeFromSuperview()
                 self?.matchingFilterView = nil
                 self?.updateDimViewVisibility(isHidden: true)
-            }
-        }
-    }
-    
-    // MARK: - MatchingCellDelegate
-    func didSelectMatchingCell(data: BoardList) {
-        let detailViewController = MatchingDogInformationViewController()
-
-        _Concurrency.Task {
-            do {
-                let boardDetail = try await service.getBoardDetail(boardId: data.boardId)
-                detailViewController.configure(with: boardDetail)
-
-                DispatchQueue.main.async { [weak self] in
-                    self?.navigationController?.pushViewController(detailViewController, animated: true)
-                }
-            } catch {
-                print("❌ Error fetching board detail: \(error.localizedDescription)")
             }
         }
     }
@@ -435,6 +417,26 @@ extension MatchingViewController: CalendarViewDelegate {
         _Concurrency.Task {
             await fetchData {
                 await self.getBoardList()
+            }
+        }
+    }
+}
+
+extension MatchingViewController: MatchingCellDelegate {
+    // MARK: - MatchingCellDelegate
+    func didSelectMatchingCell(data: BoardList) {
+        let detailViewController = MatchingDogInformationViewController()
+
+        _Concurrency.Task {
+            do {
+                let boardDetail = try await service.getBoardDetail(boardId: data.boardId)
+                detailViewController.configure(with: boardDetail)
+
+                DispatchQueue.main.async { [weak self] in
+                    self?.navigationController?.pushViewController(detailViewController, animated: true)
+                }
+            } catch {
+                print("❌ Error fetching board detail: \(error.localizedDescription)")
             }
         }
     }
