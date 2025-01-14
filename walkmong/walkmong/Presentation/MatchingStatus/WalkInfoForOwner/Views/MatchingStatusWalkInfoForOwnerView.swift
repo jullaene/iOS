@@ -234,7 +234,7 @@ final class MatchingStatusWalkInfoForOwnerView: UIView {
     func updateDogProfile(with data: BoardList) {
 
         let dogProfileCell = MatchingCell()
-        dogProfileCell.configure(with: data)
+        dogProfileCell.configure(with: data, selectedDate: "수정")
         dogProfileCell.setCustomViewAppearance(
             hideSizeLabel: true,
             backgroundColor: .clear

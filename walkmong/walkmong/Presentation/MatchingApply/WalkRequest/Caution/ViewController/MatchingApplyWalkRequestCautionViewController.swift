@@ -80,6 +80,8 @@ final class MatchingApplyWalkRequestCautionViewController: UIViewController {
     
     private func navigateToMainTabBar() {
         if let navigationController = navigationController {
+            NotificationCenter.default.post(name: .reloadMatchingView, object: nil)
+            
             navigationController.popToRootViewController(animated: true)
         } else {
             let mainTabBarController = MainTabBarController()
@@ -113,7 +115,6 @@ final class MatchingApplyWalkRequestCautionViewController: UIViewController {
         Task {
             do {
                 let response = try await BoardService().registerBoard(parameters: parameters)
-                print("등록 성공: \(response.data.boardId)")
             } catch {
                 print("등록 실패: \(error)")
                 showErrorAlert(error)
@@ -131,4 +132,8 @@ final class MatchingApplyWalkRequestCautionViewController: UIViewController {
             .setSingleButtonTitle("확인")
             .showAlertView()
     }
+}
+
+extension Notification.Name {
+    static let reloadMatchingView = Notification.Name("reloadMatchingView")
 }

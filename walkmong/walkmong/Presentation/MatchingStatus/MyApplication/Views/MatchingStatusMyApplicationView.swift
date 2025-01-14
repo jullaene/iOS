@@ -133,7 +133,7 @@ final class MatchingStatusMyApplicationView: UIView {
         dogProfileView.layer.cornerRadius = 10
         
         let dogProfileCell = MatchingCell()
-        dogProfileCell.configure(with: data)
+        dogProfileCell.configure(with: data, selectedDate: "수정")
         dogProfileCell.setCustomViewAppearance(
             hideSizeLabel: true,
             backgroundColor: .clear

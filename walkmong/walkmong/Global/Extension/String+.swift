@@ -28,7 +28,7 @@ extension String {
         switch self.uppercased() {
         case "SMALL":
             return "소형견"
-        case "MIDDLE":
+        case "MEDIUM":
             return "중형견"
         case "BIG":
             return "대형견"

@@ -12,12 +12,13 @@ enum BoardAPI {
     case getBoardList(parameters: [String: String])
     case getAddressList
     case registerBoard(parameters: [String: Any])
+    case getBoardDetail(boardId: Int)
 }
 
 extension BoardAPI: APIEndpoint {
     var method: Moya.Method {
         switch self {
-        case .getBoardList, .getAddressList:
+        case .getBoardList, .getAddressList, .getBoardDetail:
             return .get
         case .registerBoard:
             return .post
@@ -32,6 +33,8 @@ extension BoardAPI: APIEndpoint {
             return "/api/v1/address/list"
         case .registerBoard:
             return "/api/v1/board/register"
+        case .getBoardDetail(let boardId):
+            return "/api/v1/board/detail/\(boardId)"
         }
     }
     
@@ -39,7 +42,7 @@ extension BoardAPI: APIEndpoint {
         switch self {
         case .getBoardList(let parameters):
             return .requestParameters(parameters: parameters, encoding: URLEncoding.default)
-        case .getAddressList:
+        case .getAddressList,  .getBoardDetail:
             return .requestPlain
         case .registerBoard(let parameters):
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)

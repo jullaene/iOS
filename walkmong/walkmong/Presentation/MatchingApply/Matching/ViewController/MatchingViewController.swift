@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Moya
 
-class MatchingViewController: UIViewController, MatchingCellDelegate {
+class MatchingViewController: UIViewController {
     
     private let service = BoardService()
     private let provider = NetworkProvider<BoardAPI>()
@@ -46,6 +46,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
                 self.saveCurrentState()
             }
         }
+        hideLoading()
         updateUILayout()
     }
     
@@ -69,16 +70,35 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        extendedLayoutIncludesOpaqueBars = true
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadMatchingData),
+            name: .reloadMatchingView,
+            object: nil
+        )
+        
         setupUI()
         setupGestures()
-        updateMatchingView()
+    }
+
+    @objc private func reloadMatchingData() {
+        _Concurrency.Task {
+            await fetchData {
+                await self.getBoardList()
+            }
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .reloadMatchingView, object: nil)
     }
     
     // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white
-        matchingView = MatchingView()
+        matchingView = MatchingView(data: matchingData)
+        matchingView.delegate = self
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
         }
@@ -111,21 +131,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
     // MARK: - Fetch Data
     
     private func updateMatchingView() {
-        guard let selectedDate = matchingView.selectedDate else {
-            print("No selected date available")
-            return
-        }
         matchingView.updateMatchingCells(with: matchingData)
-        for cell in matchingView.matchingCells {
-            cell.delegate = self
-            if let data = cell.matchingData {
-                cell.configureDateLabel(
-                    selectedDate: selectedDate,
-                    startTime: data.startTime,
-                    endTime: data.endTime
-                )
-            }
-        }
     }
     
     // MARK: - DropdownView Logic
@@ -182,13 +188,6 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
                 self?.updateDimViewVisibility(isHidden: true)
             }
         }
-    }
-    
-    // MARK: - MatchingCellDelegate
-    func didSelectMatchingCell(data: BoardList) {
-        let detailViewController = MatchingDogInformationViewController()
-        detailViewController.configure(with: data)
-        navigationController?.pushViewController(detailViewController, animated: true)
     }
     
     @objc func hideFilterAndDropdown() {
@@ -271,7 +270,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate {
         navigationController?.pushViewController(dogProfileVC, animated: true)
     }
     
-    private func fetchData(_ task: @escaping () async throws -> Void, retryCount: Int = 3) async {
+    func fetchData(_ task: @escaping () async throws -> Void, retryCount: Int = 3) async {
         guard !isFetchingData else { return }
         isFetchingData = true
         
@@ -329,13 +328,20 @@ extension MatchingViewController {
         
         do {
             let response = try await service.getBoardList(parameters: parameters)
+            let boardListData = response.data
+
             DispatchQueue.main.async {
-                self.matchingData = response.data
+                self.matchingData = boardListData
                 self.matchingView.updateMatchingCells(with: self.matchingData)
+                
+                if self.matchingData.isEmpty {
+                    print("No matching data available for the selected date and address.")
+                }
             }
         } catch {
             DispatchQueue.main.async {
                 print("Error fetching board list: \(error.localizedDescription)")
+                self.matchingView.updateMatchingCells(with: [])
             }
         }
     }
@@ -383,6 +389,16 @@ extension MatchingViewController: DropdownViewDelegate {
         hideDropdownView()
         
         UserDefaults.standard.set(location, forKey: "selectedLocation")
+        _Concurrency.Task {
+            await fetchData {
+                await self.getBoardList()
+            }
+        }
+    }
+}
+
+extension MatchingViewController: MatchingViewDelegate {
+    func didSelectDate(_ date: String) {
         _Concurrency.Task {
             await fetchData {
                 await self.getBoardList()

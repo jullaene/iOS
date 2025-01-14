@@ -29,10 +29,26 @@ struct BoardList: Codable {
 extension BoardList {
 
     var date: String {
-        guard let date = BoardList.dateFormatter("yyyy-MM-dd HH:mm:ss.SSSSSS").date(from: startTime) else {
+        // 1. 현재 날짜 가져오기
+        let currentDate = Date()
+        
+        // 2. 오늘 날짜와 startTime 결합
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy-MM-dd" // 오늘 날짜
+        let todayString = formatter.string(from: currentDate)
+        let fullStartTime = "\(todayString) \(startTime)" // "yyyy-MM-dd HH:mm"
+
+        // 3. 전체 시간 포맷 설정
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        guard let fullDate = formatter.date(from: fullStartTime) else {
+            print("❌ [ERROR] startTime 변환 실패: \(fullStartTime)")
             return "날짜 변환 오류"
         }
-        return BoardList.dateFormatter("MM. dd (EEE)").string(from: date)
+
+        // 4. 원하는 출력 형식으로 변환
+        formatter.dateFormat = "MM. dd (EEE)"
+        return formatter.string(from: fullDate)
     }
 
     var matchingStatus: String {

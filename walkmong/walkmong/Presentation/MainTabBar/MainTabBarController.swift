@@ -61,7 +61,9 @@ final class MainTabBarController: UITabBarController {
         let vc = MatchingViewController()
         vc.view.backgroundColor = .white
         vc.tabBarItem = UITabBarItem(title: "산책 구하기", image: UIImage(named: "MatchingApplyProcedureIcon"), tag: 0)
-        return UINavigationController(rootViewController: vc)
+
+        let navigationController = UINavigationController(rootViewController: vc)
+        return navigationController
     }
     
     private func createMatchingStateViewController() -> UIViewController {

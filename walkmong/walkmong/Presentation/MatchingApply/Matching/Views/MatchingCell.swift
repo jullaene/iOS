@@ -6,7 +6,7 @@ protocol MatchingCellDelegate: AnyObject {
     func didSelectMatchingCell(data: BoardList)
 }
 
-class MatchingCell: UIView {
+class MatchingCell: UICollectionViewCell {
     
     // MARK: - Properties
     weak var delegate: MatchingCellDelegate?
@@ -79,6 +79,7 @@ class MatchingCell: UIView {
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
+        isUserInteractionEnabled = true
         setupView()
         setupTapGesture()
     }
@@ -221,10 +222,10 @@ class MatchingCell: UIView {
     }
     
     // MARK: - Configuration
-    func configure(with data: BoardList) {
+    func configure(with data: BoardList, selectedDate: String) {
 
         matchingData = data
-        configureDateLabel(selectedDate: data.date, startTime: data.startTime, endTime: data.endTime)
+        configureDateLabel(selectedDate: selectedDate, startTime: data.startTime, endTime: data.endTime)
         configureMatchingStatus(for: data.matchingYn)
         configurePuppyImage(with: data.safeDogProfile)
         
@@ -278,15 +279,7 @@ class MatchingCell: UIView {
     
     private func configurePuppyImage(with urlString: String) {
         if let url = URL(string: urlString) {
-            puppyImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholderImage")) { result in
-                switch result {
-                case .success(let value):
-                    print("Successfully loaded image: \(value.source.url?.absoluteString ?? "")")
-                case .failure(let error):
-                    print("Error loading image: \(error.localizedDescription)")
-                    self.puppyImageView.image = UIImage(named: "defaultDogImage")
-                }
-            }
+            puppyImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholderImage"))
         } else {
             puppyImageView.image = UIImage(named: "defaultDogImage")
         }
@@ -304,6 +297,8 @@ class MatchingCell: UIView {
     @objc private func handleTap() {
         if let data = matchingData {
             delegate?.didSelectMatchingCell(data: data)
+        } else {
+            print("❌ No matching data available.")
         }
     }
 }

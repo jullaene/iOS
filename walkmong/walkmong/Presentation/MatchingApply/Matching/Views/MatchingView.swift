@@ -5,7 +5,20 @@ protocol MatchingViewLocationProvider: AnyObject {
     var locationText: String { get }
 }
 
-class MatchingView: UIView, MatchingViewLocationProvider {
+protocol MatchingViewDelegate: AnyObject {
+    func didSelectDate(_ date: String)
+}
+
+
+class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
+    func didSelectDate(_ date: String) {
+        delegate?.didSelectDate(date)
+    }
+    
+    
+    weak var delegate: MatchingViewDelegate?
+    private var data: [BoardList]
+    
     var locationText: String {
         return locationLabel.text ?? ""
     }
@@ -31,13 +44,22 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     private let calendarView = CalendarView()
     let filterSelectView = FilterSelectView()
     var matchingCells: [MatchingCell] = []
+    private let matchingCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(MatchingCell.self, forCellWithReuseIdentifier: MatchingCell.className)
+        collectionView.backgroundColor = .white
+        return collectionView
+    }()
     
     private let floatingButton = UIView.createRoundedView(backgroundColor: .mainBlue, cornerRadius: 32)
     private let floatingButtonIcon = UIImage.createImageView(named: "pencilIcon")
     
     // MARK: - Initializer
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(data: [BoardList]) {
+        self.data = data
+        super.init(frame: .zero)
         setupViews()
     }
     
@@ -45,16 +67,14 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Public Methods
-    func updateMatchingCells(with data: [BoardList]) {
-        print("Updating with data: \(data)")
-        clearMatchingCells()
-        createMatchingCells(from: data)
-        layoutMatchingCells()
+    private func setCollectionView() {
+        matchingCollectionView.delegate = self
+        matchingCollectionView.dataSource = self
     }
     
     func updateLocationLabel(with location: String) {
-        locationLabel.text = location
+        let lastWord = location.components(separatedBy: " ").last ?? ""
+        locationLabel.text = lastWord
     }
     
     var selectedDate: String? {
@@ -71,6 +91,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         setupCalendarView()
         setupFilterSelectView()
         setupFloatingButton()
+        setCollectionView()
     }
     
     private func setupSafeAreaBackgroundView() {
@@ -93,27 +114,40 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     private func setupScrollView() {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
+        contentView.addSubviews(matchingCollectionView, filterSelectView, customView)
         scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.bounces = false
         
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.height.equalToSuperview().offset(-86)
         }
         
         contentView.snp.makeConstraints { make in
             make.width.horizontalEdges.top.equalToSuperview()
-            make.bottom.equalTo(matchingCells.last?.snp.bottom ?? UIView())
+            make.bottom.equalTo(matchingCollectionView.snp.bottom).offset(24)
         }
-    }
-
-    private func setupCustomView() {
-        contentView.addSubview(customView)
+        
         customView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(226)
         }
+        filterSelectView.snp.makeConstraints { make in
+            make.top.equalTo(customView.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(78)
+        }
+
+        matchingCollectionView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview()
+            make.top.equalTo(filterSelectView.snp.bottom)
+            make.height.equalTo(400)
+        }
+    }
+
+    private func setupCustomView() {
         
         let path = UIBezierPath(
             roundedRect: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 226),
@@ -133,6 +167,23 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(alertIconTapped))
         alertIcon.isUserInteractionEnabled = true
         alertIcon.addGestureRecognizer(tapGesture)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let contentHeight = self.matchingCollectionView.contentSize.height
+            self.matchingCollectionView.snp.updateConstraints { make in
+                make.height.equalTo(contentHeight)
+            }
+            self.contentView.snp.updateConstraints { make in
+                make.bottom.equalTo(self.matchingCollectionView.snp.bottom).offset(24)
+            }
+        }
+        print("CollectionView contentSize: \(matchingCollectionView.contentSize)")
+        print("ScrollView contentSize: \(scrollView.contentSize)")
     }
     
     private func setupLocationSelectView() {
@@ -160,6 +211,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     
     private func setupCalendarView() {
         contentView.addSubview(calendarView)
+        calendarView.delegate = self
         calendarView.snp.makeConstraints { make in
             make.top.equalTo(locationSelectView.snp.bottom).offset(36)
             make.leading.trailing.equalToSuperview()
@@ -168,13 +220,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     }
     
     private func setupFilterSelectView() {
-        contentView.addSubview(filterSelectView)
-        filterSelectView.snp.makeConstraints { make in
-            make.top.equalTo(customView.snp.bottom)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(78)
-        }
-        
+        delegate?.didSelectDate(calendarView.selectedDate ?? "날짜 오류")
         filterSelectView.filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
 
@@ -195,43 +241,6 @@ class MatchingView: UIView, MatchingViewLocationProvider {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(floatingButtonTapped))
         floatingButton.addGestureRecognizer(tapGesture)
     }
-    
-    // MARK: - Matching Cells Management
-    private func clearMatchingCells() {
-        matchingCells.forEach { $0.removeFromSuperview() }
-        matchingCells.removeAll()
-    }
-    
-    private func createMatchingCells(from data: [BoardList]) {
-        data.forEach { item in
-            let cell = MatchingCell()
-            print("Creating cell for: \(item)")
-            cell.configure(with: item)
-            matchingCells.append(cell)
-            contentView.addSubview(cell)
-        }
-    }
-    
-    private func layoutMatchingCells() {
-        if matchingCells.isEmpty {
-            contentView.snp.makeConstraints { make in
-                make.bottom.equalTo(filterSelectView.snp.bottom)
-            }
-        } else {
-            for (index, cell) in matchingCells.enumerated() {
-                cell.snp.makeConstraints { make in
-                    make.height.equalTo(151)
-                    make.centerX.equalToSuperview()
-                    make.top.equalTo(index == 0 ? filterSelectView.snp.bottom : matchingCells[index - 1].snp.bottom).offset(index == 0 ? 12 : 32)
-                    make.leading.trailing.equalToSuperview().inset(20)
-                }
-            }
-            
-            matchingCells.last?.snp.makeConstraints { make in
-                make.bottom.equalToSuperview().inset(110)
-            }
-        }
-    }
 
     @objc private func filterButtonTapped() {
         filterButtonAction?()
@@ -242,6 +251,13 @@ class MatchingView: UIView, MatchingViewLocationProvider {
             let alertVC = AlertViewController()
             viewController.navigationController?.pushViewController(alertVC, animated: true)
         }
+    }
+    
+    func updateMatchingCells(with data: [BoardList]) {
+        print("data !!!!!! : \(data)")
+        self.data = data
+        matchingCollectionView.reloadData()
+        layoutSubviews()
     }
 }
 
@@ -274,5 +290,37 @@ private extension MatchingView {
         if let viewController = getViewController() as? MatchingViewController {
             viewController.navigateToWalkRequestView()
         }
+    }
+}
+
+extension MatchingView: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print("Data count: \(data.count)")
+        return self.data.count //FIXME: 데이터 개수
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.className, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
+        cell.configure(with: self.data[indexPath.row], selectedDate: selectedDate ?? "날짜 오류") // FIXME: 데이터 넣기
+        return cell
+    }
+    
+    
+}
+
+extension MatchingView: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let nextVC = MatchingDogInformationViewController()
+        nextVC.configure(with: data[indexPath.row].boardId)
+        self.getViewController()?.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return CGFloat(32)
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 16, left: 20, bottom: 16, right: 20)
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: matchingCollectionView.bounds.width-40, height: 151)
     }
 }

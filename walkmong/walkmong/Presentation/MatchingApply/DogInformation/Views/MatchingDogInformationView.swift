@@ -182,10 +182,8 @@ final class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.height.equalTo(78)
         }
         
-        // 워크톡 버튼
         setupWalkTalkButton()
 
-        // 산책 지원하기 버튼
         applyWalkButton.removeConstraints(applyWalkButton.constraints)
         buttonFrame.addSubview(applyWalkButton)
         applyWalkButton.snp.makeConstraints { make in
@@ -195,7 +193,6 @@ final class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             make.height.equalTo(54)
         }
 
-        // 버튼 라벨 설정
         setupButtonLabel(applyWalkButton, text: "산책 지원하기", textColor: UIColor.gray100)
     }
     
@@ -247,11 +244,11 @@ final class MatchingDogInformationView: UIView, UIScrollViewDelegate {
             imageView.image = UIImage(named: "placeholder")
             return
         }
+
         if let url = URL(string: firstImageUrl ?? "") {
             imageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
         } else {
             imageView.image = UIImage(named: "placeholder")
         }
     }
-
 }

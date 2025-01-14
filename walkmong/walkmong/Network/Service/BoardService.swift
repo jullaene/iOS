@@ -45,4 +45,16 @@ struct BoardService {
             throw error
         }
     }
+    
+    func getBoardDetail(boardId: Int) async throws -> BoardDetail {
+        do {
+            let response = try await provider.request(
+                target: .getBoardDetail(boardId: boardId),
+                responseType: BoardDetail.self
+            )
+            return response
+        } catch {
+            throw error
+        }
+    }
 }
