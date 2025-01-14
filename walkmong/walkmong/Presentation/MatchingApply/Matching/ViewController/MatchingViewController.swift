@@ -193,20 +193,13 @@ class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingVi
         _Concurrency.Task {
             do {
                 let boardDetail = try await service.getBoardDetail(boardId: data.boardId)
+                detailViewController.configure(with: boardDetail)
 
-                DispatchQueue.main.async {
-                    detailViewController.configure(with: boardDetail)
-
-                    if let navigationController = self.navigationController {
-                        navigationController.pushViewController(detailViewController, animated: true)
-                    } else {
-                        print("❌ NavigationController does not exist")
-                    }
+                DispatchQueue.main.async { [weak self] in
+                    self?.navigationController?.pushViewController(detailViewController, animated: true)
                 }
             } catch {
-                DispatchQueue.main.async {
-                    print("❌ Error fetching board detail: \(error.localizedDescription)")
-                }
+                print("❌ Error fetching board detail: \(error.localizedDescription)")
             }
         }
     }
