@@ -40,5 +40,6 @@ final class MatchingApplyFirstIntroductionViewController: UIViewController {
 extension MatchingApplyFirstIntroductionViewController: MatchingApplyFirstIntroductionViewDelegate {
     func didTapNextButton(_ message: String) {
         //TODO: 산책 추가 정보 등록 API 호출
+        self.navigationController?.popToRootViewController(animated: true)
     }
 }
