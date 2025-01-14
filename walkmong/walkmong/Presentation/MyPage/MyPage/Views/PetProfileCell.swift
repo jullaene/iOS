@@ -155,6 +155,9 @@ class PetProfileCell: UICollectionViewCell, UIGestureRecognizerDelegate {
     
     @objc private func handleProfileButtonTap() {
         didTapProfileButton?()
+//        let vc = self.getViewController()
+//        let nextVC = DogProfileViewController()
+//        vc?.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     @objc private func handleCellTap() {

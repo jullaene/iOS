@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Moya
 
-class MatchingViewController: UIViewController, MatchingViewDelegate {
+class MatchingViewController: UIViewController {
     
     private let service = BoardService()
     private let provider = NetworkProvider<BoardAPI>()
@@ -38,7 +38,6 @@ class MatchingViewController: UIViewController, MatchingViewDelegate {
             _Concurrency.Task {
                 await fetchData {
                     await self.getBoardList()
-                    self.updateMatchingView()
                 }
                 
                 await fetchData {
@@ -98,7 +97,7 @@ class MatchingViewController: UIViewController, MatchingViewDelegate {
     // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white
-        matchingView = MatchingView()
+        matchingView = MatchingView(data: matchingData)
         matchingView.delegate = self
         matchingView.filterButtonAction = { [weak self] in
             self?.showMatchingFilterView()
@@ -132,21 +131,7 @@ class MatchingViewController: UIViewController, MatchingViewDelegate {
     // MARK: - Fetch Data
     
     private func updateMatchingView() {
-        guard let selectedDate = matchingView.selectedDate else {
-            print("No selected date available")
-            return
-        }
         matchingView.updateMatchingCells(with: matchingData)
-        for cell in matchingView.matchingCells {
-            cell.delegate = self
-            if let data = cell.matchingData {
-                cell.configureDateLabel(
-                    selectedDate: selectedDate,
-                    startTime: data.startTime,
-                    endTime: data.endTime
-                )
-            }
-        }
     }
     
     // MARK: - DropdownView Logic
@@ -412,31 +397,11 @@ extension MatchingViewController: DropdownViewDelegate {
     }
 }
 
-extension MatchingViewController: CalendarViewDelegate {
+extension MatchingViewController: MatchingViewDelegate {
     func didSelectDate(_ date: String) {
         _Concurrency.Task {
             await fetchData {
                 await self.getBoardList()
-            }
-        }
-    }
-}
-
-extension MatchingViewController: MatchingCellDelegate {
-    // MARK: - MatchingCellDelegate
-    func didSelectMatchingCell(data: BoardList) {
-        let detailViewController = MatchingDogInformationViewController()
-
-        _Concurrency.Task {
-            do {
-                let boardDetail = try await service.getBoardDetail(boardId: data.boardId)
-                detailViewController.configure(with: boardDetail)
-
-                DispatchQueue.main.async { [weak self] in
-                    self?.navigationController?.pushViewController(detailViewController, animated: true)
-                }
-            } catch {
-                print("❌ Error fetching board detail: \(error.localizedDescription)")
             }
         }
     }

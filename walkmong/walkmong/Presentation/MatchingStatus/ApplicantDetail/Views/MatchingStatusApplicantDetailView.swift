@@ -65,7 +65,7 @@ final class MatchingStatusApplicantDetailView: UIView {
         }
         
         let dogProfileCell = MatchingCell()
-        dogProfileCell.configure(with: data)
+        dogProfileCell.configure(with: data, selectedDate: "수정")
         dogProfileCell.setCustomViewAppearance(
             hideSizeLabel: true,
             backgroundColor: .clear

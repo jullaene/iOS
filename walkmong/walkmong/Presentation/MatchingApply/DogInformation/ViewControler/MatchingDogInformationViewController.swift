@@ -7,20 +7,14 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     // MARK: - Properties
     private var matchingData: BoardList?
     private let dogInfoView = MatchingDogInformationView()
-    private var boardDetail: BoardDetail?
     private var isLoading: Bool = false
+    private var boardDetail: BoardDetail?
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
-
-        if let boardDetail = boardDetail {
-            self.updateUI(with: boardDetail)
-        } else {
-            print("❌ boardDetail이 nil임")
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -35,28 +29,18 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     }
     
     // MARK: - Public Methods
-    func configure(with detail: BoardDetail) {
-        self.boardDetail = detail
-        DispatchQueue.main.async {
-            self.updateUI(with: detail)
-        }
-    }
-
-    func fetchBoardDetailData(boardId: Int?) {
-        guard let boardId = boardId else {
-            print("Error: boardId is nil")
-            return
-        }
-        
+    func configure(with boardId: Int) {
+        self.boardId = boardId
+        showLoading()
+        defer { hideLoading() }
         Task {
             do {
-                let detail = try await BoardService().getBoardDetail(boardId: boardId)
-                self.boardDetail = detail
-                DispatchQueue.main.async {
-                    self.updateUI(with: detail)
-                }
-            } catch {
-                print("Error fetching BoardDetail: \(error.localizedDescription)")
+                let service = BoardService()
+                let response = try await service.getBoardDetail(boardId: boardId)
+                boardDetail = response
+                self.updateUI(with: response)
+            }catch {
+                print("게시글 상세 정보 조회 실패")
             }
         }
     }

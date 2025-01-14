@@ -6,7 +6,7 @@ protocol MatchingCellDelegate: AnyObject {
     func didSelectMatchingCell(data: BoardList)
 }
 
-class MatchingCell: UIView {
+class MatchingCell: UICollectionViewCell {
     
     // MARK: - Properties
     weak var delegate: MatchingCellDelegate?
@@ -222,10 +222,10 @@ class MatchingCell: UIView {
     }
     
     // MARK: - Configuration
-    func configure(with data: BoardList) {
+    func configure(with data: BoardList, selectedDate: String) {
 
         matchingData = data
-        configureDateLabel(selectedDate: data.date, startTime: data.startTime, endTime: data.endTime)
+        configureDateLabel(selectedDate: selectedDate, startTime: data.startTime, endTime: data.endTime)
         configureMatchingStatus(for: data.matchingYn)
         configurePuppyImage(with: data.safeDogProfile)
         
