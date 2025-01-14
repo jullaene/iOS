@@ -46,6 +46,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingVi
                 self.saveCurrentState()
             }
         }
+        hideLoading()
         updateUILayout()
     }
     
@@ -188,8 +189,26 @@ class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingVi
     // MARK: - MatchingCellDelegate
     func didSelectMatchingCell(data: BoardList) {
         let detailViewController = MatchingDogInformationViewController()
-        detailViewController.configure(with: data)
-        navigationController?.pushViewController(detailViewController, animated: true)
+
+        _Concurrency.Task {
+            do {
+                let boardDetail = try await service.getBoardDetail(boardId: data.boardId)
+
+                DispatchQueue.main.async {
+                    detailViewController.configure(with: boardDetail)
+
+                    if let navigationController = self.navigationController {
+                        navigationController.pushViewController(detailViewController, animated: true)
+                    } else {
+                        print("❌ NavigationController does not exist")
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    print("❌ Error fetching board detail: \(error.localizedDescription)")
+                }
+            }
+        }
     }
     
     @objc func hideFilterAndDropdown() {
@@ -330,13 +349,20 @@ extension MatchingViewController {
         
         do {
             let response = try await service.getBoardList(parameters: parameters)
+            let boardListData = response.data
+
             DispatchQueue.main.async {
-                self.matchingData = response.data
+                self.matchingData = boardListData
                 self.matchingView.updateMatchingCells(with: self.matchingData)
+                
+                if self.matchingData.isEmpty {
+                    print("No matching data available for the selected date and address.")
+                }
             }
         } catch {
             DispatchQueue.main.async {
                 print("Error fetching board list: \(error.localizedDescription)")
+                self.matchingView.updateMatchingCells(with: [])
             }
         }
     }

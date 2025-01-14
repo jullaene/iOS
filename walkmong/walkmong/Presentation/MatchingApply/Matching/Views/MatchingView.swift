@@ -55,7 +55,6 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     
     // MARK: - Public Methods
     func updateMatchingCells(with data: [BoardList]) {
-        print("Updating with data: \(data)")
         clearMatchingCells()
         createMatchingCells(from: data)
         layoutMatchingCells()
@@ -64,7 +63,6 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     func updateLocationLabel(with location: String) {
         let lastWord = location.components(separatedBy: " ").last ?? ""
         locationLabel.text = lastWord
-        print("✅ Updated locationLabel.text with last word: '\(lastWord)'")
     }
     
     var selectedDate: String? {
@@ -217,7 +215,7 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     private func createMatchingCells(from data: [BoardList]) {
         data.forEach { item in
             let cell = MatchingCell()
-            print("Creating cell for: \(item)")
+            print("✅✅✅✅Creating cell for: \(item)")
             cell.configure(with: item)
             matchingCells.append(cell)
             contentView.addSubview(cell)

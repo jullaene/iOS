@@ -79,6 +79,7 @@ class MatchingCell: UIView {
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
+        isUserInteractionEnabled = true
         setupView()
         setupTapGesture()
     }
@@ -296,6 +297,8 @@ class MatchingCell: UIView {
     @objc private func handleTap() {
         if let data = matchingData {
             delegate?.didSelectMatchingCell(data: data)
+        } else {
+            print("❌ No matching data available.")
         }
     }
 }
