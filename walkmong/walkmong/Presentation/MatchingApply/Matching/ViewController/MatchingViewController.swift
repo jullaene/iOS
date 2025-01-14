@@ -70,10 +70,29 @@ class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        extendedLayoutIncludesOpaqueBars = true
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadMatchingData),
+            name: .reloadMatchingView,
+            object: nil
+        )
+        
         setupUI()
         setupGestures()
         updateMatchingView()
+    }
+
+    @objc private func reloadMatchingData() {
+        _Concurrency.Task {
+            await fetchData {
+                await self.getBoardList()
+            }
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .reloadMatchingView, object: nil)
     }
     
     // MARK: - UI Setup
@@ -284,7 +303,7 @@ class MatchingViewController: UIViewController, MatchingCellDelegate, MatchingVi
         //        navigationController?.pushViewController(dogProfileVC, animated: true)
     }
     
-    private func fetchData(_ task: @escaping () async throws -> Void, retryCount: Int = 3) async {
+    func fetchData(_ task: @escaping () async throws -> Void, retryCount: Int = 3) async {
         guard !isFetchingData else { return }
         isFetchingData = true
         
