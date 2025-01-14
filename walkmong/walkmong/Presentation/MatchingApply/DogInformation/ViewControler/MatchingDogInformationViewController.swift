@@ -3,6 +3,8 @@ import SnapKit
 
 class MatchingDogInformationViewController: UIViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
 
+    private var boardId: Int?
+    
     // MARK: - Properties
     private var matchingData: BoardList?
     private let dogInfoView = MatchingDogInformationView()
@@ -22,7 +24,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             print("Error: matchingData is nil. Cannot fetch board details.")
             return
         }
-        fetchBoardDetailData(boardId: data.boardId ?? 1)
+        fetchBoardDetailData(boardId: boardId)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,13 +40,26 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     
     // MARK: - Public Methods
     func configure(with data: BoardList) {
-        self.matchingData = data
-        fetchBoardDetailData(boardId: data.boardId ?? 1)
+        self.boardId = data.boardId
     }
 
-    private func fetchBoardDetailData(boardId: Int) {
-        isLoading = true
-
+    func fetchBoardDetailData(boardId: Int?) {
+        guard let boardId = boardId else {
+            print("Error: boardId is nil")
+            return
+        }
+        
+        Task {
+            do {
+                let detail = try await BoardService().getBoardDetail(boardId: boardId)
+                self.boardDetail = detail
+                DispatchQueue.main.async {
+                    self.updateUI(with: detail)
+                }
+            } catch {
+                print("Error fetching BoardDetail: \(error.localizedDescription)")
+            }
+        }
     }
 
     private func updateUI(with detail: BoardDetail) {

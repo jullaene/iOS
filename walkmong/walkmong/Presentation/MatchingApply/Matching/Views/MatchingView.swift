@@ -62,7 +62,9 @@ class MatchingView: UIView, MatchingViewLocationProvider {
     }
     
     func updateLocationLabel(with location: String) {
-        locationLabel.text = location
+        let lastWord = location.components(separatedBy: " ").last ?? ""
+        locationLabel.text = lastWord
+        print("✅ Updated locationLabel.text with last word: '\(lastWord)'")
     }
     
     var selectedDate: String? {

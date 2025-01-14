@@ -1,11 +1,13 @@
 //
-//  BoardDetail.swift
+//  BoardDetailAPI.swift
 //  walkmong
 //
-//  Created by 신호연 on 11/15/24.
+//  Created by 신호연 on 1/14/25.
 //
 
 import Foundation
+
+typealias BoardDetailDetailResponse = APIResponse<[BoardDetail]>
 
 struct BoardDetail: Decodable {
     let dogId: Int

@@ -278,15 +278,7 @@ class MatchingCell: UIView {
     
     private func configurePuppyImage(with urlString: String) {
         if let url = URL(string: urlString) {
-            puppyImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholderImage")) { result in
-                switch result {
-                case .success(let value):
-                    print("Successfully loaded image: \(value.source.url?.absoluteString ?? "")")
-                case .failure(let error):
-                    print("Error loading image: \(error.localizedDescription)")
-                    self.puppyImageView.image = UIImage(named: "defaultDogImage")
-                }
-            }
+            puppyImageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholderImage"))
         } else {
             puppyImageView.image = UIImage(named: "defaultDogImage")
         }
