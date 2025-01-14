@@ -34,6 +34,7 @@ extension BoardAPI: APIEndpoint {
         case .registerBoard:
             return "/api/v1/board/register"
         case .getBoardDetail(let boardId):
+            print("Request URL: /api/v1/board/detail/\(boardId)")
             return "/api/v1/board/detail/\(boardId)"
         }
     }

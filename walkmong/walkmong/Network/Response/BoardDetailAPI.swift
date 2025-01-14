@@ -9,7 +9,7 @@ import Foundation
 
 typealias BoardDetailDetailResponse = APIResponse<[BoardDetail]>
 
-struct BoardDetail: Decodable {
+struct BoardDetail: Codable {
     let dogId: Int
     let dogName: String
     let dogProfile: String?

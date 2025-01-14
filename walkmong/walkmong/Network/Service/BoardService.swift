@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Moya
 
 struct BoardService {
     private let provider = NetworkProvider<BoardAPI>()
@@ -48,12 +49,26 @@ struct BoardService {
     
     func getBoardDetail(boardId: Int) async throws -> BoardDetail {
         do {
+            print("📤 Sending request for boardId: \(boardId)")
             let response = try await provider.request(
                 target: .getBoardDetail(boardId: boardId),
                 responseType: BoardDetail.self
             )
+            print("✅ Response: \(response)")
             return response
         } catch {
+            print("❌ Error during getBoardDetail: \(error.localizedDescription)")
+            if let moyaError = error as? MoyaError {
+                switch moyaError {
+                case .statusCode(let response):
+                    print("❌ Status Code: \(response.statusCode)")
+                    print("❌ Response Data: \(String(data: response.data, encoding: .utf8) ?? "No data")")
+                case .underlying(let nsError, _):
+                    print("❌ Underlying Error: \(nsError.localizedDescription)")
+                default:
+                    print("❌ Moya Error: \(moyaError)")
+                }
+            }
             throw error
         }
     }

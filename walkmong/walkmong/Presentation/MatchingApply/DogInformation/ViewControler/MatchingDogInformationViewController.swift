@@ -1,4 +1,5 @@
 import UIKit
+import Moya
 import SnapKit
 
 class MatchingDogInformationViewController: UIViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
@@ -33,14 +34,27 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         self.boardId = boardId
         showLoading()
         defer { hideLoading() }
-        Task {
+        _Concurrency.Task {
             do {
                 let service = BoardService()
                 let response = try await service.getBoardDetail(boardId: boardId)
+                print("✅ API Response: \(response)")
                 boardDetail = response
                 self.updateUI(with: response)
-            }catch {
-                print("게시글 상세 정보 조회 실패")
+            } catch {
+                print("❌ 게시글 상세 정보 조회 실패: \(error.localizedDescription)")
+                if let apiError = error as? MoyaError {
+                    switch apiError {
+                    case .statusCode(let response):
+                        print("❌ Status Code Error: \(response.statusCode)")
+                    case .underlying(let nsError, _):
+                        print("❌ Underlying Error: \(nsError.localizedDescription)")
+                    default:
+                        print("❌ Unknown API Error")
+                    }
+                } else {
+                    print("❌ Other Error: \(error)")
+                }
             }
         }
     }
@@ -139,7 +153,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     func applyWalkButtonTapped() {
         showLoading()
         defer { hideLoading() }
-        Task {
+        _Concurrency.Task {
             let service = MemberService()
             do {
                 let response = try await service.getMemberWalking()
