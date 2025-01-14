@@ -12,9 +12,9 @@ protocol MatchingViewDelegate: AnyObject {
 
 class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
     func didSelectDate(_ date: String) {
-        delegate?.didSelectDate(date)
+        let formattedDate = configureDateLabel(date)
+        delegate?.didSelectDate(formattedDate)
     }
-    
     
     weak var delegate: MatchingViewDelegate?
     private var data: [BoardList]
@@ -254,10 +254,21 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
     }
     
     func updateMatchingCells(with data: [BoardList]) {
-        print("data !!!!!! : \(data)")
         self.data = data
         matchingCollectionView.reloadData()
         layoutSubviews()
+    }
+    
+    private func configureDateLabel(_ date: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        guard let dateObject = dateFormatter.date(from: date) else {
+            return date
+        }
+        
+        dateFormatter.dateFormat = "MM.dd (E)"
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        return dateFormatter.string(from: dateObject)
     }
 }
 
@@ -296,12 +307,12 @@ private extension MatchingView {
 extension MatchingView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         print("Data count: \(data.count)")
-        return self.data.count //FIXME: 데이터 개수
+        return self.data.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingCell.className, for: indexPath) as? MatchingCell else { return UICollectionViewCell() }
-        cell.configure(with: self.data[indexPath.row], selectedDate: selectedDate ?? "날짜 오류") // FIXME: 데이터 넣기
+        cell.configure(with: self.data[indexPath.row], selectedDate: selectedDate ?? "날짜 오류")
         return cell
     }
     

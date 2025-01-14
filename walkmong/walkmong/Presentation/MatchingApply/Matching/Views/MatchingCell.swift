@@ -211,7 +211,8 @@ class MatchingCell: UICollectionViewCell {
         }
         
         contentFrame.addSubview(locationTimeLabel)
-        locationTimeLabel.snp.makeConstraints { make in            make.leading.equalTo(locationIcon.snp.trailing).offset(4)
+        locationTimeLabel.snp.makeConstraints { make in
+            make.leading.equalTo(locationIcon.snp.trailing).offset(4)
             make.centerY.equalTo(locationIcon)
         }
     }
@@ -254,8 +255,14 @@ class MatchingCell: UICollectionViewCell {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
 
-        formatter.dateFormat = "MM. dd (EEE)"
-        let formattedDate = selectedDate.isEmpty ? formatter.string(from: Date()) : selectedDate
+        formatter.dateFormat = "yyyy-MM-dd"
+        guard let date = formatter.date(from: selectedDate) else {
+            dateLabel.text = "날짜 변환 오류"
+            return
+        }
+
+        formatter.dateFormat = "MM.dd (E)"
+        let formattedDate = formatter.string(from: date)
 
         formatter.dateFormat = "HH:mm"
         guard let startTimeDate = formatter.date(from: startTime),
@@ -267,13 +274,14 @@ class MatchingCell: UICollectionViewCell {
         let formattedStartTime = formatter.string(from: startTimeDate)
         let formattedEndTime = formatter.string(from: endTimeDate)
 
+        // 결과 출력
         dateLabel.text = "\(formattedDate) \(formattedStartTime) ~ \(formattedEndTime)"
     }
     
     private func configureMatchingStatus(for status: String) {
         let isMatched = (status == "Y")
-        matchingStatusView.backgroundColor = isMatched ? .lightBlue : .mainBlue
-        matchingStatusLabel.textColor = isMatched ? .mainBlue : .white
+        matchingStatusView.backgroundColor = isMatched ? .mainBlue : .lightBlue
+        matchingStatusLabel.textColor = isMatched ? .white : .mainBlue
         matchingStatusLabel.text = isMatched ? "매칭확정" : "매칭중"
     }
     

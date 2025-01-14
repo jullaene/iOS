@@ -84,7 +84,9 @@ final class MainTabBarController: UITabBarController {
         let vc = MyPageViewController()
         vc.view.backgroundColor = .white
         vc.tabBarItem = UITabBarItem(title: "마이페이지", image: UIImage(named: "MypageIcon"), tag: 3)
-        return vc
+
+        let navigationController = UINavigationController(rootViewController: vc)
+        return navigationController
     }
     
     private func setTabBarUI() {

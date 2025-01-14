@@ -16,6 +16,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
         super.viewDidLoad()
         setupCustomNavigationBar()
         setupUI()
+        configureProfileDelegate()
     }
     
     override func viewWillAppear(_ animated: Bool) {
