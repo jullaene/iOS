@@ -85,9 +85,7 @@ class MatchingCell: UICollectionViewCell {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupView()
-        setupTapGesture()
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Setup Methods

@@ -28,9 +28,7 @@ class PetOwnerReviewViewController: UIViewController {
     }
     
     required init?(coder: NSCoder) {
-        self.walkerId = []
-        self.boardId = []
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {

@@ -7,6 +7,7 @@ class MatchingDogInformationViewController: UIViewController {
     private var boardDetail: BoardDetail?
     private let dogInfoView = MatchingDogInformationView()
     private let boardService = BoardService()
+    private let memberService = MemberService()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -19,7 +20,7 @@ class MatchingDogInformationViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
         toggleTabBar(isHidden: true)
     }
     
@@ -66,7 +67,7 @@ extension MatchingDogInformationViewController {
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
-
+    
     private func setupNavigationBar() {
         addCustomNavigationBar(
             titleText: nil,
@@ -76,11 +77,11 @@ extension MatchingDogInformationViewController {
             showRightRefreshButton: false
         )
     }
-
+    
     private func toggleTabBar(isHidden: Bool) {
         tabBarController?.tabBar.isHidden = isHidden
     }
-
+    
     private func setupProfileDelegate() {
         dogInfoView.setProfileDelegate(self)
     }
@@ -96,7 +97,7 @@ extension MatchingDogInformationViewController {
         guard let detail = boardDetail else { return }
         configureDogInfoView(with: detail)
     }
-
+    
     private func configureDogInfoView(with detail: BoardDetail) {
         dogInfoView.configureImages(with: [detail.dogProfile])
         
@@ -147,21 +148,58 @@ extension MatchingDogInformationViewController: ProfileViewDelegate {
 
 extension MatchingDogInformationViewController: MatchingDogInformationViewDelegate {
     func applyWalkButtonTapped() {
-        guard let boardDetail = boardDetail else { return }
-        if isUserProfileRegistered() {
-            let detailSelectVC = MatchingApplyDetailSelectViewController()
-            detailSelectVC.configure(with: boardDetail)
-            navigateTo(detailSelectVC)
-        } else {
-            showAlertForProfileRegistration()
+        print("🚀 applyWalkButtonTapped called")
+        guard let boardDetail = boardDetail else {
+            print("❌ boardDetail is nil")
+            return
+        }
+
+        _Concurrency.Task {
+            do {
+                if let memberWalkingResponse = try await fetchMemberWalkingResponse() {
+                    print("✅ User profile: \(memberWalkingResponse)")
+                    let detailSelectVC = MatchingApplyDetailSelectViewController()
+                    detailSelectVC.configure(with: boardDetail)
+                    navigateTo(detailSelectVC)
+                } else {
+                    print("❌ User profile is not registered")
+                    showAlertForProfileRegistration()
+                }
+            } catch {
+                print("🚨 Error fetching MemberWalkingResponse: \(error)")
+                showAlertForProfileRegistration()
+            }
         }
     }
-
+    
     private func isUserProfileRegistered() -> Bool {
-        // 사용자 프로필 등록 상태 확인 로직
-        return false // 실제 구현 필요
+        let memberService = MemberService()
+        var isRegistered = false
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        _Concurrency.Task {
+            do {
+                let response = try await memberService.getMemberWalking()
+                isRegistered = response.data.dogOwnership != .none
+            } catch {
+                print("🚨 Error fetching MemberWalkingResponse: \(error)")
+            }
+            semaphore.signal()
+        }
+        semaphore.wait()
+        
+        return isRegistered
     }
-
+    
+    private func fetchMemberWalkingResponse() async throws -> MemberWalkingItem? {
+        do {
+            let response = try await memberService.getMemberWalking()
+            return response.data
+        } catch {
+            throw error
+        }
+    }
+    
     private func showAlertForProfileRegistration() {
         let alertBuilder = CustomAlertViewController.CustomAlertBuilder(viewController: self)
         alertBuilder
@@ -186,7 +224,7 @@ extension MatchingDogInformationViewController {
     private func navigateTo(_ viewController: UIViewController) {
         navigationController?.pushViewController(viewController, animated: true)
     }
-
+    
     private func navigateToDogProfile() {
         guard let boardDetail = boardDetail else { return }
         let dogProfileVC = DogProfileViewController()

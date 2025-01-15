@@ -39,9 +39,7 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupViews()
-        setupGesture()
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Setup Methods
