@@ -8,7 +8,7 @@
 import UIKit
 
 protocol MatchingApplyMessageViewDelegate: AnyObject {
-    func didTapNextButton()
+    func didTapNextButton(message: String)
 }
 
 class MatchingApplyMessageView: UIView {
@@ -96,7 +96,7 @@ class MatchingApplyMessageView: UIView {
     
     @objc private func nextButtonTapped(){
         if characterCount > 0 {
-            delegate?.didTapNextButton()
+            delegate?.didTapNextButton(message: messageTextView.text)
         }
     }
 }

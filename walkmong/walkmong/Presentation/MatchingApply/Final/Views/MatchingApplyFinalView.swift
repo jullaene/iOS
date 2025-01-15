@@ -16,6 +16,7 @@ protocol MatchingApplyFinalViewDelegate: AnyObject {
 class MatchingApplyFinalView: UIView {
     
     weak var delegate: MatchingApplyFinalViewDelegate?
+    private var requestData: WalkRequestData?
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -139,7 +140,6 @@ class MatchingApplyFinalView: UIView {
         addSubView()
         setConstraints()
         setButtonActions()
-        setUI()
     }
     
     required init?(coder: NSCoder) {
@@ -326,9 +326,19 @@ class MatchingApplyFinalView: UIView {
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
-    private func setUI() {
-        dogInformationView.configure(isFemale: true, name: "봄별이", informationText: "소형견 · 말티즈 · 4kg", location: "노원구 공릉동 1km", profileImage: .puppy)
-        walkerInformationView.configure(name: "김철수", informationText: "30대 초반 · 남성", location: "노원구 공릉동", profileImage: .illustration1)
+    func setUI(boardDetail: BoardDetail, requestData: WalkRequestData) {
+        let dogSize = switch boardDetail.dogSize {
+        case "SMALL" : "소형견"
+        case "MEDIUM" : "중형견"
+        default : "대형견"
+        }
+        dogInformationView.configure(isFemale: boardDetail.dogGender == "MALE" ? false : true, name: boardDetail.dogName, informationText: "\(dogSize) · \(boardDetail.breed) · \(boardDetail.weight)kg", location: "\(boardDetail.dongAddress) \(String(format: "%.2f", (boardDetail.distance)))km", profileImage: boardDetail.dogProfile ?? "프로필 이미지 오류")
+        walkerInformationView.configure(name: boardDetail.ownerName, informationText: "\(boardDetail.ownerAge/10)0대 · 남성", location: requestData.dongAddress, profileImage: boardDetail.ownerProfile ?? "프로필 이미지 오류")
+        planStartDateLabel.text = boardDetail.startTime
+        planEndDateLabel.text = boardDetail.endTime
+        placeAddressLabel.text = requestData.dongAddress + requestData.addressDetail
+        placeMemoLabel.text = requestData.addressMemo
+        messageLabel.text = requestData.memoToOwner
     }
     
     @objc private func checkBoxButtonTapped() {
