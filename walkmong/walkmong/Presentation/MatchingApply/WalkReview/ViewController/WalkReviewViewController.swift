@@ -61,6 +61,7 @@ class WalkReviewViewController: UIViewController {
     }
 
     private func fetchReviewData() {
+        showLoading()
         Task {
             do {
                 let response = try await reviewService.getReviewToWalkerList()
@@ -81,7 +82,9 @@ class WalkReviewViewController: UIViewController {
                     )
                 }
                 walkReviewView.configure(with: mappedData)
+                self.hideLoading()
             } catch {
+                self.hideLoading()
                 print("Error: \(error.localizedDescription)")
             }
         }

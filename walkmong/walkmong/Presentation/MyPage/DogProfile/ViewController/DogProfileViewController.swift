@@ -61,13 +61,16 @@ class DogProfileViewController: UIViewController {
     // MARK: - Data Fetching
     private func fetchDogProfileIfNeeded() {
         guard let dogId = dogId else { return }
+        showLoading()
         Task {
             do {
                 let response: DogInfoResponse = try await dogService.getDogProfile(dogId: dogId)
                 DispatchQueue.main.async {
                     self.handleDogProfileResponse(response)
+                    self.hideLoading()
                 }
             } catch {
+                self.hideLoading()
                 print("🚨 Failed to fetch dog profile: \(error)")
             }
         }
