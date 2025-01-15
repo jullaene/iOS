@@ -1,5 +1,5 @@
 //
-//  BoardDetailAPI.swift
+//  BoardDetailDetailResponse.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/14/25.
@@ -24,7 +24,6 @@ struct BoardDetail: Codable {
     let startTime: String
     let endTime: String
     let locationNegotiationYn: String
-    let suppliesProvidedYn: String
     let preMeetAvailableYn: String
     let walkNote: String
     let walkRequest: String
@@ -34,4 +33,5 @@ struct BoardDetail: Codable {
     let ownerGender: String
     let ownerProfile: String?
     let ownerRate: Double?
+    let createdAt: String
 }

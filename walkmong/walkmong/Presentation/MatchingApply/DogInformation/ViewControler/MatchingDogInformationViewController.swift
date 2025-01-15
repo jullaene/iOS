@@ -2,7 +2,7 @@ import UIKit
 import Moya
 import SnapKit
 
-class MatchingDogInformationViewController: UIViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
+class MatchingDogInformationViewController: UIViewController {
     private var boardId: Int?
     
     // MARK: - Properties
@@ -10,6 +10,7 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     private let dogInfoView = MatchingDogInformationView()
     private var isLoading: Bool = false
     private var boardDetail: BoardDetail?
+    private let boardService = BoardService()
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -33,79 +34,29 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
     // MARK: - Public Methods
     func configure(with boardId: Int) {
         self.boardId = boardId
+        fetchBoardDetails(for: boardId)
+    }
+}
+
+// MARK: - Network Calls
+extension MatchingDogInformationViewController {
+    private func fetchBoardDetails(for boardId: Int) {
         showLoading()
-        defer { hideLoading() }
         _Concurrency.Task {
             do {
-                let service = BoardService()
-                let response = try await service.getBoardDetail(boardId: boardId)
-                print("✅ API Response: \(response)")
-                boardDetail = response
+                let response = try await boardService.getBoardDetail(boardId: boardId)
+                self.boardDetail = response
                 self.updateUI(with: response)
             } catch {
-                print("❌ 게시글 상세 정보 조회 실패: \(error.localizedDescription)")
-                if let apiError = error as? MoyaError {
-                    switch apiError {
-                    case .statusCode(let response):
-                        print("❌ Status Code Error: \(response.statusCode)")
-                    case .underlying(let nsError, _):
-                        print("❌ Underlying Error: \(nsError.localizedDescription)")
-                    default:
-                        print("❌ Unknown API Error")
-                    }
-                } else {
-                    print("❌ Other Error: \(error)")
-                }
+                print("🚨fetchBoardDetails error: \(error)")
             }
+            hideLoading()
         }
     }
+}
 
-    private func updateUI(with detail: BoardDetail) {
-        guard let dogProfile = detail.dogProfile else {
-            print("❌ Dog profile 이미지가 없음")
-            return
-        }
-
-        dogInfoView.configureImages(with: [dogProfile])
-
-        dogInfoView.getProfileFrame().updateProfileView(
-            dogName: detail.dogName,
-            dogSize: detail.dogSize,
-            breed: detail.breed,
-            weight: detail.weight,
-            dogAge: detail.dogAge,
-            dongAddress: detail.dongAddress,
-            distance: detail.distance,
-            dogGender: detail.dogGender
-        )
-
-        dogInfoView.setWalkInfoDelegate(
-            date: detail.date ?? "",
-            startTime: detail.startTime,
-            endTime: detail.endTime,
-            locationNegotiationYn: detail.locationNegotiationYn,
-            suppliesProvidedYn: detail.suppliesProvidedYn,
-            preMeetAvailableYn: detail.preMeetAvailableYn
-        )
-
-        dogInfoView.setRelatedInfoDetails(
-            walkNote: detail.walkNote,
-            walkRequest: detail.walkRequest,
-            additionalRequest: detail.additionalRequest
-        )
-
-        dogInfoView.setOwnerInfoDetails(
-            ownerProfile: detail.ownerProfile,
-            ownerName: detail.ownerName,
-            ownerAge: detail.ownerAge,
-            ownerGender: detail.ownerGender,
-            ownerRate: detail.ownerRate ?? 0.0,
-            dongAddress: detail.dongAddress,
-            distance: detail.distance
-        )
-    }
-    
-    // MARK: - UI Setup
+// MARK: - UI Setup
+extension MatchingDogInformationViewController {
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(dogInfoView)
@@ -124,65 +75,74 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             showRightRefreshButton: false
         )
     }
-    
-    // MARK: - Private Methods
-    private func configureProfileDelegate() {
-        dogInfoView.setProfileDelegate(self)
-    }
 
-    private func configureViewDelegate() {
-        dogInfoView.delegate = self
-    }
-    
-    private func configureMatchingData() {
-        if let data = matchingData {
-            let dogProfile = data.dogProfile ?? "defaultImage"
-            dogInfoView.configureImages(with: [dogProfile])
-        }
-    }
-    
     private func toggleTabBar(isHidden: Bool) {
         tabBarController?.tabBar.isHidden = isHidden
     }
 
-    // MARK: - ProfileViewDelegate
+    private func configureProfileDelegate() {
+        dogInfoView.setProfileDelegate(self)
+    }
+}
+
+// MARK: - ProfileViewDelegate
+extension MatchingDogInformationViewController: ProfileViewDelegate {
     func profileButtonTapped() {
         navigateToDogProfile()
     }
+}
 
-    // MARK: - MatchingDogInformationViewDelegate
-    func applyWalkButtonTapped() {
-        showLoading()
-        defer { hideLoading() }
-        _Concurrency.Task {
-            let service = MemberService()
-            do {
-                let response = try await service.getMemberWalking()
-                if response.data.dogOwnership.rawValue == "NONE" {
-                    let nextVC = MatchingApplyPetExperienceViewController()
-                    navigationController?.pushViewController(nextVC, animated: true)
-                }else {
-                    let detailSelectVC = MatchingApplyDetailSelectViewController()
-                    navigationController?.pushViewController(detailSelectVC, animated: true)
-                }
-            }catch {
-                CustomAlertViewController
-                    .CustomAlertBuilder(viewController: self)
-                    .setTitleState(.useTitleAndSubTitle)
-                    .setTitleText("산책 관련 정보 조회 실패")
-                    .setSubTitleText("네트워크 상태를 확인해주세요.")
-                    .setButtonState(.singleButton)
-                    .setSingleButtonTitle("돌아가기")
-                    .showAlertView()
-            }
-        }
+// MARK: - Navigation
+extension MatchingDogInformationViewController {
+    private func navigateTo(_ viewController: UIViewController) {
+        navigationController?.pushViewController(viewController, animated: true)
     }
 
-    // MARK: - Navigation
     private func navigateToDogProfile() {
+        guard let boardDetail = boardDetail else { return }
         let dogProfileVC = DogProfileViewController()
-//        dogProfileVC.configure(with: boardDetail.dogId)
-        dogProfileVC.configure(with: 1)
-        navigationController?.pushViewController(dogProfileVC, animated: true)
+        dogProfileVC.configure(with: boardDetail.dogId)
+        navigateTo(dogProfileVC)
+    }
+}
+
+// MARK: - Helper Methods
+extension MatchingDogInformationViewController {
+    private func updateUI(with detail: BoardDetail) {
+        let dogProfile = detail.dogProfile
+        
+        dogInfoView.configureImages(with: [dogProfile])
+        dogInfoView.getProfileFrame().updateProfileView(
+            dogName: detail.dogName,
+            dogSize: detail.dogSize,
+            breed: detail.breed,
+            weight: detail.weight,
+            dogAge: detail.dogAge,
+            dongAddress: detail.dongAddress,
+            distance: detail.distance,
+            dogGender: detail.dogGender
+        )
+        dogInfoView.setWalkInfoDelegate(
+            date: detail.date ?? "",
+            startTime: detail.startTime,
+            endTime: detail.endTime,
+            locationNegotiationYn: detail.locationNegotiationYn,
+            suppliesProvidedYn: "Y",
+            preMeetAvailableYn: detail.preMeetAvailableYn
+        )
+        dogInfoView.setRelatedInfoDetails(
+            walkNote: detail.walkNote,
+            walkRequest: detail.walkRequest,
+            additionalRequest: detail.additionalRequest
+        )
+        dogInfoView.setOwnerInfoDetails(
+            ownerProfile: detail.ownerProfile,
+            ownerName: detail.ownerName,
+            ownerAge: detail.ownerAge,
+            ownerGender: detail.ownerGender,
+            ownerRate: detail.ownerRate ?? 0.0,
+            dongAddress: detail.dongAddress,
+            distance: detail.distance
+        )
     }
 }
