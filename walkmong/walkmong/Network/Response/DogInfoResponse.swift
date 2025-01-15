@@ -23,10 +23,10 @@ struct DogInfo: Codable {
     let friendly: String
     let barking: String
     let rabiesYn: String
-    let adultYn: String
-    let walkRequest: String
-    let walkNote: String
-    let additionalRequest: String
+    let adultYn: String?
+    let walkRequest: String?
+    let walkNote: String?
+    let additionalRequest: String?
 
     var formattedSize: String {
         switch dogSize {

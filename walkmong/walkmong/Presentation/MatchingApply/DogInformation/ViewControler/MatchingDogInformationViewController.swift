@@ -4,20 +4,16 @@ import SnapKit
 
 class MatchingDogInformationViewController: UIViewController {
     private var boardId: Int?
-    
-    // MARK: - Properties
-    private var matchingData: BoardList?
-    private let dogInfoView = MatchingDogInformationView()
-    private var isLoading: Bool = false
     private var boardDetail: BoardDetail?
+    private let dogInfoView = MatchingDogInformationView()
     private let boardService = BoardService()
-
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupCustomNavigationBar()
         setupUI()
-        configureProfileDelegate()
+        setupNavigationBar()
+        setupProfileDelegate()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -28,6 +24,7 @@ class MatchingDogInformationViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
         toggleTabBar(isHidden: false)
     }
     
@@ -46,7 +43,9 @@ extension MatchingDogInformationViewController {
             do {
                 let response = try await boardService.getBoardDetail(boardId: boardId)
                 self.boardDetail = response
-                self.updateUI(with: response)
+                DispatchQueue.main.async { [weak self] in
+                    self?.updateUI()
+                }
             } catch {
                 print("🚨Failed to fetch board details error: \(error)")
             }
@@ -61,12 +60,12 @@ extension MatchingDogInformationViewController {
         view.backgroundColor = .white
         view.addSubview(dogInfoView)
         dogInfoView.snp.makeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
 
-    private func setupCustomNavigationBar() {
+    private func setupNavigationBar() {
         addCustomNavigationBar(
             titleText: nil,
             showLeftBackButton: true,
@@ -80,8 +79,56 @@ extension MatchingDogInformationViewController {
         tabBarController?.tabBar.isHidden = isHidden
     }
 
-    private func configureProfileDelegate() {
+    private func setupProfileDelegate() {
         dogInfoView.setProfileDelegate(self)
+    }
+}
+
+// MARK: - UI Updates
+extension MatchingDogInformationViewController {
+    private func updateUI() {
+        guard let detail = boardDetail else { return }
+        configureDogInfoView(with: detail)
+    }
+
+    private func configureDogInfoView(with detail: BoardDetail) {
+        dogInfoView.configureImages(with: [detail.dogProfile])
+        
+        dogInfoView.getProfileFrame().updateProfileView(
+            dogName: detail.dogName,
+            dogSize: detail.dogSize,
+            breed: detail.breed,
+            weight: detail.weight,
+            dogAge: detail.dogAge,
+            dongAddress: detail.dongAddress,
+            distance: detail.distance,
+            dogGender: detail.dogGender
+        )
+        
+        dogInfoView.setWalkInfoDelegate(
+            date: detail.date ?? "",
+            startTime: detail.startTime,
+            endTime: detail.endTime,
+            locationNegotiationYn: detail.locationNegotiationYn,
+            suppliesProvidedYn: "Y",
+            preMeetAvailableYn: detail.preMeetAvailableYn
+        )
+        
+        dogInfoView.setRelatedInfoDetails(
+            walkNote: detail.walkNote,
+            walkRequest: detail.walkRequest ?? "N/A",
+            additionalRequest: detail.additionalRequest ?? ""
+        )
+        
+        dogInfoView.setOwnerInfoDetails(
+            ownerProfile: detail.ownerProfile,
+            ownerName: detail.ownerName,
+            ownerAge: detail.ownerAge,
+            ownerGender: detail.ownerGender,
+            ownerRate: detail.ownerRate ?? 0.0,
+            dongAddress: detail.dongAddress,
+            distance: detail.distance
+        )
     }
 }
 
@@ -103,46 +150,5 @@ extension MatchingDogInformationViewController {
         let dogProfileVC = DogProfileViewController()
         dogProfileVC.configure(with: boardDetail.dogId)
         navigateTo(dogProfileVC)
-    }
-}
-
-// MARK: - Helper Methods
-extension MatchingDogInformationViewController {
-    private func updateUI(with detail: BoardDetail) {
-        let dogProfile = detail.dogProfile
-        
-        dogInfoView.configureImages(with: [dogProfile])
-        dogInfoView.getProfileFrame().updateProfileView(
-            dogName: detail.dogName,
-            dogSize: detail.dogSize,
-            breed: detail.breed,
-            weight: detail.weight,
-            dogAge: detail.dogAge,
-            dongAddress: detail.dongAddress,
-            distance: detail.distance,
-            dogGender: detail.dogGender
-        )
-        dogInfoView.setWalkInfoDelegate(
-            date: detail.date ?? "",
-            startTime: detail.startTime,
-            endTime: detail.endTime,
-            locationNegotiationYn: detail.locationNegotiationYn,
-            suppliesProvidedYn: "Y",
-            preMeetAvailableYn: detail.preMeetAvailableYn
-        )
-        dogInfoView.setRelatedInfoDetails(
-            walkNote: detail.walkNote,
-            walkRequest: "널 수정 필요",
-            additionalRequest: detail.additionalRequest ?? ""
-        )
-        dogInfoView.setOwnerInfoDetails(
-            ownerProfile: detail.ownerProfile,
-            ownerName: detail.ownerName,
-            ownerAge: detail.ownerAge,
-            ownerGender: detail.ownerGender,
-            ownerRate: detail.ownerRate ?? 0.0,
-            dongAddress: detail.dongAddress,
-            distance: detail.distance
-        )
     }
 }

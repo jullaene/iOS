@@ -38,6 +38,7 @@ class DogProfileViewController: UIViewController {
         self.dogId = dogId
     }
 
+    // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(dogProfileView)
@@ -57,21 +58,27 @@ class DogProfileViewController: UIViewController {
         )
     }
 
+    // MARK: - Data Fetching
     private func fetchDogProfileIfNeeded() {
         guard let dogId = dogId else { return }
         Task {
             do {
-                let response = try await dogService.getDogProfile(dogId: dogId)
+                let response: DogInfoResponse = try await dogService.getDogProfile(dogId: dogId)
                 DispatchQueue.main.async {
-                    self.updateDogProfileView(with: response.data)
+                    self.handleDogProfileResponse(response)
                 }
             } catch {
-                print("Failed to fetch dog profile: \(error)")
+                print("🚨 Failed to fetch dog profile: \(error)")
             }
         }
     }
 
+    private func handleDogProfileResponse(_ response: DogInfoResponse) {
+        let dogProfile = response.data
+        updateDogProfileView(with: dogProfile)
+    }
 
+    // MARK: - UI Updates
     private func updateDogProfileView(with dogProfile: DogInfo) {
         dogProfileView.configureProfileImage(with: [dogProfile.dogProfile])
         dogProfileView.configureBasicInfo(
