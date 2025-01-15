@@ -75,8 +75,8 @@ class BaseProfileInformationView: UIView {
             make.leading.equalTo(nameLabel.snp.trailing).offset(44)
         }
     }
-    func configure(name: String, informationText: String, location: String, profileImage: UIImage) {
-        profileImageview.image = profileImage
+    func configure(name: String, informationText: String, location: String, profileImage: String) {
+        profileImageview.kf.setImage(with: URL(string: profileImage))
         nameLabel.text = name
         profileInformationLabel.text = informationText
         locationLabel.text = location
@@ -107,10 +107,10 @@ class DogProfileInformationView: BaseProfileInformationView{
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(isFemale: Bool, name: String, informationText: String, location: String, profileImage: UIImage) {
+    func configure(isFemale: Bool, name: String, informationText: String, location: String, profileImage: String) {
         profileTitleLabel.text = "반려견 정보"
         genderIcon.image = isFemale ? .femaleIcon : .maleIcon
-        profileImageview.image = profileImage
+        profileImageview.kf.setImage(with: URL(string: profileImage))
         nameLabel.text = name
         profileInformationLabel.text = informationText
         locationLabel.text = location

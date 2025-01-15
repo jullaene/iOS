@@ -10,7 +10,21 @@ import UIKit
 class MatchingApplyMessageViewController: UIViewController {
     
     let messageView = MatchingApplyMessageView()
-
+    private var matchingApplyRequest = WalkRequestData()
+    private var boardDetail: BoardDetail!
+    private var boardId: Int!
+    
+    init(matchingApplyRequest: WalkRequestData, boardDetail: BoardDetail, boardId: Int) {
+        self.boardId = boardId
+        self.boardDetail = boardDetail
+        self.matchingApplyRequest = matchingApplyRequest
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
@@ -38,8 +52,9 @@ class MatchingApplyMessageViewController: UIViewController {
     }
 }
 extension MatchingApplyMessageViewController: MatchingApplyMessageViewDelegate {
-    func didTapNextButton() {
-        let nextVC = MatchingApplyFinalViewController()
+    func didTapNextButton(message: String) {
+        matchingApplyRequest.memoToOwner = message
+        let nextVC = MatchingApplyFinalViewController(matchingApplyRequest: self.matchingApplyRequest, boardDetailData: boardDetail, boardId: boardId)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
 }

@@ -147,8 +147,10 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
                     let nextVC = MatchingApplyPetExperienceViewController()
                     navigationController?.pushViewController(nextVC, animated: true)
                 }else {
-                    let detailSelectVC = MatchingApplyDetailSelectViewController()
-                    navigationController?.pushViewController(detailSelectVC, animated: true)
+                    if let boardDetail = boardDetail, let boardId = boardId{
+                        let detailSelectVC = MatchingApplyDetailSelectViewController(boardDetail: boardDetail, boardId: boardId)
+                        navigationController?.pushViewController(detailSelectVC, animated: true)
+                    }
                 }
             }catch {
                 CustomAlertViewController
