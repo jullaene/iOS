@@ -15,6 +15,7 @@ class CustomRadarChartView: UIView {
     private let maxScore: CGFloat = 5.0
     private var scores: [CGFloat] = []
     private var customLabels: [UILabel] = []
+    private var axisLayer: CAShapeLayer?
 
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -48,16 +49,8 @@ class CustomRadarChartView: UIView {
         radarChartView.isUserInteractionEnabled = false
         radarChartView.legend.enabled = false
 
-        radarChartView.renderer = CustomRadarChartRenderer(
-            chart: radarChartView,
-            animator: radarChartView.chartAnimator,
-            viewPortHandler: radarChartView.viewPortHandler
-        )
+        radarChartView.renderer = CustomRadarChartRenderer(chart: radarChartView, animator: radarChartView.chartAnimator, viewPortHandler: radarChartView.viewPortHandler)
 
-        configureAxes()
-    }
-
-    private func configureAxes() {
         let yAxis = radarChartView.yAxis
         yAxis.axisMaximum = Double(maxScore)
         yAxis.axisMinimum = 0.0
@@ -80,7 +73,22 @@ class CustomRadarChartView: UIView {
         }
 
         self.scores = scores
-        updateChart()
+
+        let normalizedScores = scores.map {
+            min(max($0, 0), maxScore)
+        }
+
+        let entries = normalizedScores.map { RadarChartDataEntry(value: Double($0)) }
+        guard !entries.isEmpty else {
+            radarChartView.data = nil
+            return
+        }
+
+        let dataSet = RadarChartDataSet(entries: entries, label: "")
+        configureDataSet(dataSet)
+
+        radarChartView.data = RadarChartData(dataSet: dataSet)
+        updateCustomLabels()
     }
 
     override func layoutSubviews() {
@@ -89,29 +97,13 @@ class CustomRadarChartView: UIView {
     }
 
     // MARK: - Private Methods
-    private func updateChart() {
-        let normalizedScores = scores.map { min(max($0, 0), maxScore) }
-        let entries = normalizedScores.map { RadarChartDataEntry(value: Double($0)) }
-
-        guard !entries.isEmpty else {
-            radarChartView.data = nil
-            return
-        }
-
-        let dataSet = createDataSet(entries: entries)
-        radarChartView.data = RadarChartData(dataSet: dataSet)
-        updateCustomLabels()
-    }
-
-    private func createDataSet(entries: [RadarChartDataEntry]) -> RadarChartDataSet {
-        let dataSet = RadarChartDataSet(entries: entries, label: "")
+    private func configureDataSet(_ dataSet: RadarChartDataSet) {
         dataSet.colors = [.mainBlue]
         dataSet.fillColor = .mainBlue
         dataSet.drawFilledEnabled = true
         dataSet.fillAlpha = 1.0
         dataSet.lineWidth = 0
         dataSet.valueTextColor = .clear
-        return dataSet
     }
 
     private func updateCustomLabels() {
@@ -163,11 +155,13 @@ class CustomRadarChartView: UIView {
         attributedText.append(scoreText)
         return attributedText
     }
+
 }
 
 class CustomRadarChartRenderer: RadarChartRenderer {
     override func drawData(context: CGContext) {
         super.drawData(context: context)
+        super.drawWeb(context: context)
     }
 
     override func drawWeb(context: CGContext) {
