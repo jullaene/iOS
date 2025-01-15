@@ -273,9 +273,18 @@ class MatchingViewController: UIViewController {
     func fetchData(_ task: @escaping () async throws -> Void, retryCount: Int = 3) async {
         guard !isFetchingData else { return }
         isFetchingData = true
-        
-        defer { isFetchingData = false }
-        
+
+        DispatchQueue.main.async {
+            self.showLoading()
+        }
+
+        defer {
+            DispatchQueue.main.async {
+                self.hideLoading()
+            }
+            isFetchingData = false
+        }
+
         var attempts = 0
         while attempts < retryCount {
             do {

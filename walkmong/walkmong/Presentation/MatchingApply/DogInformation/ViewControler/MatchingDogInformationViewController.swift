@@ -158,7 +158,8 @@ extension MatchingDogInformationViewController: MatchingDogInformationViewDelega
             do {
                 if let memberWalkingResponse = try await fetchMemberWalkingResponse() {
                     print("✅ User profile: \(memberWalkingResponse)")
-                    let detailSelectVC = MatchingApplyDetailSelectViewController()
+                    guard let boardId = boardId else { return }
+                    let detailSelectVC = MatchingApplyDetailSelectViewController(boardDetail: boardDetail, boardId: boardId)
                     detailSelectVC.configure(with: boardDetail)
                     navigateTo(detailSelectVC)
                 } else {

@@ -8,8 +8,6 @@
 import UIKit
 
 final class MatchingApplyDetailSelectViewController: UIViewController {
-    
-    private var boardDetail: BoardDetail?
 
     private var matchingApplyRequest = WalkRequestData()
     private var boardId: Int!
@@ -19,6 +17,7 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
     
     func configure(with boardDetail: BoardDetail) {
         self.boardDetail = boardDetail
+    }
       
     init(boardDetail: BoardDetail, boardId: Int){
         self.boardId = boardId
