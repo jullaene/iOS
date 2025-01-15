@@ -171,10 +171,10 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-
+        self.matchingCollectionView.layoutIfNeeded()
+        let contentHeight = self.matchingCollectionView.contentSize.height
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            let contentHeight = self.matchingCollectionView.contentSize.height
             self.matchingCollectionView.snp.updateConstraints { make in
                 make.height.equalTo(contentHeight)
             }
@@ -182,8 +182,6 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
                 make.bottom.equalTo(self.matchingCollectionView.snp.bottom).offset(24)
             }
         }
-        print("CollectionView contentSize: \(matchingCollectionView.contentSize)")
-        print("ScrollView contentSize: \(scrollView.contentSize)")
     }
     
     private func setupLocationSelectView() {

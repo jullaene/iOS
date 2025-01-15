@@ -270,7 +270,7 @@ class MatchingViewController: UIViewController {
         navigationController?.pushViewController(dogProfileVC, animated: true)
     }
     
-    func fetchData(_ task: @escaping () async throws -> Void, retryCount: Int = 3) async {
+    func fetchData(_ task: @escaping () async throws -> Void) async {
         guard !isFetchingData else { return }
         isFetchingData = true
 
@@ -285,22 +285,10 @@ class MatchingViewController: UIViewController {
             isFetchingData = false
         }
 
-        var attempts = 0
-        while attempts < retryCount {
-            do {
-                try await task()
-                return
-            } catch let error as NetworkError {
-                attempts += 1
-                if attempts >= retryCount {
-                    print("Max retry attempts reached: \(error.localizedDescription)")
-                    return
-                }
-                print("Retrying... (\(attempts))")
-            } catch {
-                print("Error fetching data: \(error.localizedDescription)")
-                return
-            }
+        do {
+            try await task()
+        } catch {
+            print("Error fetching data: \(error.localizedDescription)")
         }
     }
 }
