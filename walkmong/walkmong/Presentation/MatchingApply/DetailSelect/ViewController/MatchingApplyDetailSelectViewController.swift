@@ -8,9 +8,15 @@
 import UIKit
 
 final class MatchingApplyDetailSelectViewController: UIViewController {
+    
+    private var boardDetail: BoardDetail?
 
     let detailSelectView = MatchingApplyDetailSelectView()
     var detailSelectModel = MatchingApplyDetailSelectModel(dogInformationChecked: false, dateChecked: false, nextButtonEnabled: false)
+    
+    func configure(with boardDetail: BoardDetail) {
+        self.boardDetail = boardDetail
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

@@ -9,8 +9,14 @@ import UIKit
 
 final class MatchingApplyPetExperienceViewController: UIViewController {
     
+    private var boardDetail: BoardDetail?
+    
     private let matchingApplyPetExperienceView = MatchingApplyPetExperienceView()
     
+    func configure(with boardDetail: BoardDetail) {
+        self.boardDetail = boardDetail
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white

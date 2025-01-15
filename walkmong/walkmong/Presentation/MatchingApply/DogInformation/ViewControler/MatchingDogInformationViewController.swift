@@ -14,6 +14,7 @@ class MatchingDogInformationViewController: UIViewController {
         setupUI()
         setupNavigationBar()
         setupProfileDelegate()
+        setupApplyWalkDelegate()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -33,6 +34,7 @@ class MatchingDogInformationViewController: UIViewController {
         self.boardId = boardId
         fetchBoardDetails(for: boardId)
     }
+    
 }
 
 // MARK: - Network Calls
@@ -81,6 +83,10 @@ extension MatchingDogInformationViewController {
 
     private func setupProfileDelegate() {
         dogInfoView.setProfileDelegate(self)
+    }
+    
+    private func setupApplyWalkDelegate() {
+        dogInfoView.delegate = self
     }
 }
 
@@ -136,6 +142,42 @@ extension MatchingDogInformationViewController {
 extension MatchingDogInformationViewController: ProfileViewDelegate {
     func profileButtonTapped() {
         navigateToDogProfile()
+    }
+}
+
+extension MatchingDogInformationViewController: MatchingDogInformationViewDelegate {
+    func applyWalkButtonTapped() {
+        guard let boardDetail = boardDetail else { return }
+        if isUserProfileRegistered() {
+            let detailSelectVC = MatchingApplyDetailSelectViewController()
+            detailSelectVC.configure(with: boardDetail)
+            navigateTo(detailSelectVC)
+        } else {
+            showAlertForProfileRegistration()
+        }
+    }
+
+    private func isUserProfileRegistered() -> Bool {
+        // 사용자 프로필 등록 상태 확인 로직
+        return false // 실제 구현 필요
+    }
+
+    private func showAlertForProfileRegistration() {
+        let alertBuilder = CustomAlertViewController.CustomAlertBuilder(viewController: self)
+        alertBuilder
+            .setTitleState(.useTitleAndSubTitle)
+            .setButtonState(.doubleButton)
+            .setTitleText("내 프로필이 없어요")
+            .setSubTitleText("산책 지원 전에 먼저\n본인 프로필을 등록하시겠어요?")
+            .setLeftButtonTitle("취소")
+            .setRightButtonTitle("등록하기")
+            .setRightButtonAction { [weak self] in
+                guard let self = self, let boardDetail = self.boardDetail else { return }
+                let petExperienceVC = MatchingApplyPetExperienceViewController()
+                petExperienceVC.configure(with: boardDetail)
+                self.navigateTo(petExperienceVC)
+            }
+            .showAlertView()
     }
 }
 
