@@ -9,8 +9,8 @@ import UIKit
 import SnapKit
 
 class PetOwnerDetailReviewView: UIView {
-    // MARK: - 서버 해시태그 매핑
-    private let hashtags: [Hashtag] = Hashtag.allCases
+    // MARK: - 서버에서 전달된 태그
+    private let tags: [MemberWalkingTagEnum] = MemberWalkingTagEnum.allCases
 
     // MARK: - UI Elements
     private let scrollView = UIScrollView()
@@ -69,7 +69,7 @@ class PetOwnerDetailReviewView: UIView {
 
     // MARK: - Initializer
     override init(frame: CGRect) {
-        self.hashtagView = DetailReviewHashtagView(hashtags: Hashtag.allCases.map { $0.displayName })
+        self.hashtagView = DetailReviewHashtagView(hashtags: MemberWalkingTagEnum.allCases.map { $0.description })
         super.init(frame: frame)
         setupUI()
     }
@@ -173,11 +173,11 @@ class PetOwnerDetailReviewView: UIView {
         }
     }
 
-    // MARK: - 해시태그 서버 포맷 변환
-    func getServerFormattedHashtags() -> [String] {
-        let selectedHashtags = hashtagView.getSelectedHashtags()
-        return hashtags
-            .filter { selectedHashtags.contains($0.displayName) }
+    // MARK: - 서버 포맷으로 태그 변환
+    func getServerFormattedTags() -> [String] {
+        let selectedDescriptions = hashtagView.getSelectedHashtags()
+        return tags
+            .filter { selectedDescriptions.contains($0.description) }
             .map { $0.rawValue }
     }
 }

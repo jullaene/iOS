@@ -36,12 +36,8 @@ class WalkReviewCell: UIView {
     func configure(with model: DogReviewModel) {
         profileFrame.configure(with: model.profileData)
 
-        if let totalRating = model.totalRating {
-            totalRatingView.configure(with: totalRating)
-            totalRatingView.isHidden = false
-        } else {
-            totalRatingView.isHidden = true
-        }
+        totalRatingView.configure(with: Double(model.totalRating))
+        totalRatingView.isHidden = model.totalRating <= 0
 
         if let circleTags = model.circleTags, !circleTags.isEmpty {
             configureCircleTagView(with: circleTags)
@@ -50,22 +46,27 @@ class WalkReviewCell: UIView {
             circleTagView.isHidden = true
         }
 
-        if let photos = model.photos, !photos.isEmpty {
-            photoFrame.configure(with: photos)
-            photoFrame.isHidden = false
+        if !model.photos.isEmpty {
+            let images = model.photos.compactMap { url -> UIImage? in
+                guard let data = try? Data(contentsOf: url) else { return nil }
+                return UIImage(data: data)
+            }
+            photoFrame.configure(with: images)
+            photoFrame.isHidden = images.isEmpty
         } else {
             photoFrame.isHidden = true
         }
 
-        if let reviewText = model.reviewText?.trimmingCharacters(in: .whitespacesAndNewlines), !reviewText.isEmpty {
-            reviewTextLabel.text = reviewText
+        let trimmedReviewText = model.reviewText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedReviewText.isEmpty {
+            reviewTextLabel.text = trimmedReviewText
             reviewTextLabel.isHidden = false
         } else {
             reviewTextLabel.isHidden = true
         }
 
-        if let tags = model.tags, !tags.isEmpty {
-            tagView.configure(with: tags)
+        if !model.tags.isEmpty {
+            tagView.configure(with: model.tags)
             tagView.isHidden = false
         } else {
             tagView.isHidden = true

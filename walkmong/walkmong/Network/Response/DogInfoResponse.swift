@@ -16,6 +16,17 @@ struct DogInfo: Codable {
     let dogSize: String
     let weight: Double
     let breed: String
+    let dogGender: String
+    let dogAge: Int
+    let neuteringYn: String
+    let bite: String
+    let friendly: String
+    let barking: String
+    let rabiesYn: String
+    let adultYn: String?
+    let walkRequest: String?
+    let walkNote: String?
+    let additionalRequest: String?
 
     var formattedSize: String {
         switch dogSize {

@@ -33,12 +33,9 @@ final class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         setupFrames()
         setupButtonActions()
     }
-
+    
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupView()
-        setupFrames()
-        setupButtonActions()
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func layoutSubviews() {
@@ -47,9 +44,7 @@ final class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     
     // MARK: - Private Methods
     private func setupButtonActions() {
-        let applyTapGesture = UITapGestureRecognizer(target: self, action: #selector(applyWalkButtonTapped))
-        applyWalkButton.addGestureRecognizer(applyTapGesture)
-        applyWalkButton.isUserInteractionEnabled = true
+        applyWalkButton.addTarget(self, action: #selector(applyWalkButtonTapped), for: .touchUpInside)
     }
 
     func setWalkInfoDelegate(
@@ -102,14 +97,12 @@ final class MatchingDogInformationView: UIView, UIScrollViewDelegate {
     private func setupView() {
         backgroundColor = .white
 
-        // Main ScrollView 설정
         addSubview(mainScrollView)
         mainScrollView.showsVerticalScrollIndicator = false
         mainScrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 102, right: 0))
         }
 
-        // Content View 설정
         mainScrollView.addSubview(contentView)
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()

@@ -21,6 +21,7 @@ class MyPageViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         myPageView.contentViewSection.petView.delegate = self
+        myPageView.contentViewSection.reviewView.delegate = self
     }
     
     override func viewDidLoad() {
@@ -92,6 +93,11 @@ class MyPageViewController: UIViewController {
             }
         }
     }
+    
+    @objc private func navigateToOwnerReviewVC() {
+        let ownerReviewVC = MyPageOwnerReviewViewController()
+        self.navigationController?.pushViewController(ownerReviewVC, animated: true)
+    }
 }
 
 extension MyPageViewController: MyPagePetViewDelegate {
@@ -99,5 +105,11 @@ extension MyPageViewController: MyPagePetViewDelegate {
         let dogProfileVC = DogProfileViewController()
         dogProfileVC.configure(with: dogId)
         navigationController?.pushViewController(dogProfileVC, animated: true)
+    }
+}
+
+extension MyPageViewController: MyPageReviewViewDelegate {
+    func walkerReviewTitleTapped() {
+        navigateToOwnerReviewVC()
     }
 }

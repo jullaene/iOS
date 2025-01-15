@@ -1,58 +1,106 @@
 import UIKit
+import Moya
 import SnapKit
 
-class MatchingDogInformationViewController: UIViewController, ProfileViewDelegate, MatchingDogInformationViewDelegate {
+class MatchingDogInformationViewController: UIViewController {
     private var boardId: Int?
-    
-    // MARK: - Properties
-    private var matchingData: BoardList?
-    private let dogInfoView = MatchingDogInformationView()
-    private var isLoading: Bool = false
     private var boardDetail: BoardDetail?
-
+    private let dogInfoView = MatchingDogInformationView()
+    private let boardService = BoardService()
+    private let memberService = MemberService()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupCustomNavigationBar()
         setupUI()
+        setupNavigationBar()
+        setupProfileDelegate()
+        setupApplyWalkDelegate()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
         toggleTabBar(isHidden: true)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
         toggleTabBar(isHidden: false)
     }
     
     // MARK: - Public Methods
     func configure(with boardId: Int) {
         self.boardId = boardId
+        fetchBoardDetails(for: boardId)
+    }
+    
+}
+
+// MARK: - Network Calls
+extension MatchingDogInformationViewController {
+    private func fetchBoardDetails(for boardId: Int) {
         showLoading()
-        defer { hideLoading() }
-        Task {
+        _Concurrency.Task {
             do {
-                let service = BoardService()
-                let response = try await service.getBoardDetail(boardId: boardId)
-                boardDetail = response
-                self.updateUI(with: response)
-            }catch {
-                print("게시글 상세 정보 조회 실패")
+                let response = try await boardService.getBoardDetail(boardId: boardId)
+                self.boardDetail = response
+                DispatchQueue.main.async { [weak self] in
+                    self?.updateUI()
+                }
+            } catch {
+                print("🚨Failed to fetch board details error: \(error)")
             }
+            hideLoading()
         }
     }
+}
 
-    private func updateUI(with detail: BoardDetail) {
-        guard let dogProfile = detail.dogProfile else {
-            print("❌ Dog profile 이미지가 없음")
-            return
+// MARK: - UI Setup
+extension MatchingDogInformationViewController {
+    private func setupUI() {
+        view.backgroundColor = .white
+        view.addSubview(dogInfoView)
+        dogInfoView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
+            make.leading.trailing.bottom.equalToSuperview()
         }
+    }
+    
+    private func setupNavigationBar() {
+        addCustomNavigationBar(
+            titleText: nil,
+            showLeftBackButton: true,
+            showLeftCloseButton: false,
+            showRightCloseButton: false,
+            showRightRefreshButton: false
+        )
+    }
+    
+    private func toggleTabBar(isHidden: Bool) {
+        tabBarController?.tabBar.isHidden = isHidden
+    }
+    
+    private func setupProfileDelegate() {
+        dogInfoView.setProfileDelegate(self)
+    }
+    
+    private func setupApplyWalkDelegate() {
+        dogInfoView.delegate = self
+    }
+}
 
-        dogInfoView.configureImages(with: [dogProfile])
-
+// MARK: - UI Updates
+extension MatchingDogInformationViewController {
+    private func updateUI() {
+        guard let detail = boardDetail else { return }
+        configureDogInfoView(with: detail)
+    }
+    
+    private func configureDogInfoView(with detail: BoardDetail) {
+        dogInfoView.configureImages(with: [detail.dogProfile])
+        
         dogInfoView.getProfileFrame().updateProfileView(
             dogName: detail.dogName,
             dogSize: detail.dogSize,
@@ -63,22 +111,22 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             distance: detail.distance,
             dogGender: detail.dogGender
         )
-
+        
         dogInfoView.setWalkInfoDelegate(
             date: detail.date ?? "",
             startTime: detail.startTime,
             endTime: detail.endTime,
             locationNegotiationYn: detail.locationNegotiationYn,
-            suppliesProvidedYn: detail.suppliesProvidedYn,
+            suppliesProvidedYn: "Y",
             preMeetAvailableYn: detail.preMeetAvailableYn
         )
-
+        
         dogInfoView.setRelatedInfoDetails(
             walkNote: detail.walkNote,
-            walkRequest: detail.walkRequest,
-            additionalRequest: detail.additionalRequest
+            walkRequest: detail.walkRequest ?? "",
+            additionalRequest: detail.additionalRequest ?? ""
         )
-
+        
         dogInfoView.setOwnerInfoDetails(
             ownerProfile: detail.ownerProfile,
             ownerName: detail.ownerName,
@@ -89,91 +137,97 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
             distance: detail.distance
         )
     }
-    
-    // MARK: - UI Setup
-    private func setupUI() {
-        view.backgroundColor = .white
-        view.addSubview(dogInfoView)
-        dogInfoView.snp.makeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-    }
+}
 
-    private func setupCustomNavigationBar() {
-        addCustomNavigationBar(
-            titleText: nil,
-            showLeftBackButton: true,
-            showLeftCloseButton: false,
-            showRightCloseButton: false,
-            showRightRefreshButton: false
-        )
-    }
-    
-    // MARK: - Private Methods
-    private func configureProfileDelegate() {
-        dogInfoView.setProfileDelegate(self)
-    }
-
-    private func configureViewDelegate() {
-        dogInfoView.delegate = self
-    }
-    
-    private func configureMatchingData() {
-        if let data = matchingData {
-            let dogProfile = data.dogProfile ?? "defaultImage"
-            dogInfoView.configureImages(with: [dogProfile])
-        }
-    }
-    
-    private func toggleTabBar(isHidden: Bool) {
-        tabBarController?.tabBar.isHidden = isHidden
-    }
-
-    // MARK: - ProfileViewDelegate
+// MARK: - ProfileViewDelegate
+extension MatchingDogInformationViewController: ProfileViewDelegate {
     func profileButtonTapped() {
         navigateToDogProfile()
     }
+}
 
-    // MARK: - MatchingDogInformationViewDelegate
+extension MatchingDogInformationViewController: MatchingDogInformationViewDelegate {
     func applyWalkButtonTapped() {
-        showLoading()
-        defer { hideLoading() }
-        Task {
-            let service = MemberService()
-            do {
-                let response = try await service.getMemberWalking()
-                if response.data.dogOwnership.rawValue == "NONE" {
-                    let nextVC = MatchingApplyPetExperienceViewController()
-                    navigationController?.pushViewController(nextVC, animated: true)
-                }else {
-                    if let boardDetail = boardDetail, let boardId = boardId{
-                        let detailSelectVC = MatchingApplyDetailSelectViewController(boardDetail: boardDetail, boardId: boardId)
-                        navigationController?.pushViewController(detailSelectVC, animated: true)
-                    }
-                }
-            }catch {
-                CustomAlertViewController
-                    .CustomAlertBuilder(viewController: self)
-                    .setTitleState(.useTitleAndSubTitle)
-                    .setTitleText("산책 관련 정보 조회 실패")
-                    .setSubTitleText("네트워크 상태를 확인해주세요.")
-                    .setButtonState(.singleButton)
-                    .setSingleButtonTitle("돌아가기")
-                    .showAlertView()
-            }
-        }
-    }
-
-    // MARK: - Navigation
-    private func navigateToDogProfile() {
+        print("🚀 applyWalkButtonTapped called")
         guard let boardDetail = boardDetail else {
-            print("Error: boardDetail is nil. Cannot navigate to dog profile.")
+            print("❌ boardDetail is nil")
             return
         }
 
+        _Concurrency.Task {
+            do {
+                if let memberWalkingResponse = try await fetchMemberWalkingResponse() {
+                    print("✅ User profile: \(memberWalkingResponse)")
+                    let detailSelectVC = MatchingApplyDetailSelectViewController()
+                    detailSelectVC.configure(with: boardDetail)
+                    navigateTo(detailSelectVC)
+                } else {
+                    showAlertForProfileRegistration()
+                }
+            } catch {
+                print("🚨 Error fetching MemberWalkingResponse: \(error)")
+                showAlertForProfileRegistration()
+            }
+        }
+    }
+    
+    private func isUserProfileRegistered() -> Bool {
+        let memberService = MemberService()
+        var isRegistered = false
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        _Concurrency.Task {
+            do {
+                let response = try await memberService.getMemberWalking()
+                isRegistered = response.data.dogOwnership != .none
+            } catch {
+                print("🚨 Error fetching MemberWalkingResponse: \(error)")
+            }
+            semaphore.signal()
+        }
+        semaphore.wait()
+        
+        return isRegistered
+    }
+    
+    private func fetchMemberWalkingResponse() async throws -> MemberWalkingItem? {
+        do {
+            let response = try await memberService.getMemberWalking()
+            return response.data
+        } catch {
+            throw error
+        }
+    }
+    
+    private func showAlertForProfileRegistration() {
+        let alertBuilder = CustomAlertViewController.CustomAlertBuilder(viewController: self)
+        alertBuilder
+            .setTitleState(.useTitleAndSubTitle)
+            .setButtonState(.doubleButton)
+            .setTitleText("내 프로필이 없어요")
+            .setSubTitleText("산책 지원 전에 먼저\n본인 프로필을 등록하시겠어요?")
+            .setLeftButtonTitle("취소")
+            .setRightButtonTitle("등록하기")
+            .setRightButtonAction { [weak self] in
+                guard let self = self, let boardDetail = self.boardDetail else { return }
+                let petExperienceVC = MatchingApplyPetExperienceViewController()
+                petExperienceVC.configure(with: boardDetail)
+                self.navigateTo(petExperienceVC)
+            }
+            .showAlertView()
+    }
+}
+
+// MARK: - Navigation
+extension MatchingDogInformationViewController {
+    private func navigateTo(_ viewController: UIViewController) {
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    private func navigateToDogProfile() {
+        guard let boardDetail = boardDetail else { return }
         let dogProfileVC = DogProfileViewController()
         dogProfileVC.configure(with: boardDetail.dogId)
-        navigationController?.pushViewController(dogProfileVC, animated: true)
+        navigateTo(dogProfileVC)
     }
 }

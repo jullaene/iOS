@@ -8,6 +8,8 @@
 import UIKit
 
 final class MatchingApplyDetailSelectViewController: UIViewController {
+    
+    private var boardDetail: BoardDetail?
 
     private var matchingApplyRequest = WalkRequestData()
     private var boardId: Int!
@@ -15,6 +17,9 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
     let detailSelectView = MatchingApplyDetailSelectView()
     var detailSelectModel = MatchingApplyDetailSelectModel(dogInformationChecked: false, dateChecked: false, nextButtonEnabled: false)
     
+    func configure(with boardDetail: BoardDetail) {
+        self.boardDetail = boardDetail
+      
     init(boardDetail: BoardDetail, boardId: Int){
         self.boardId = boardId
         self.boardDetail = boardDetail
@@ -27,6 +32,7 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
         self.tabBarController?.tabBar.isHidden = true
     }
     

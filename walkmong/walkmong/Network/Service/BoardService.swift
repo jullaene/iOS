@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Moya
 
 struct BoardService {
     private let provider = NetworkProvider<BoardAPI>()
@@ -50,9 +51,9 @@ struct BoardService {
         do {
             let response = try await provider.request(
                 target: .getBoardDetail(boardId: boardId),
-                responseType: BoardDetail.self
+                responseType: BoardDetailResponse.self
             )
-            return response
+            return response.data
         } catch {
             throw error
         }

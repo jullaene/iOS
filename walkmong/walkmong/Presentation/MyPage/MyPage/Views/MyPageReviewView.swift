@@ -9,7 +9,13 @@ import UIKit
 import SnapKit
 import Charts
 
+protocol MyPageReviewViewDelegate: AnyObject {
+    func walkerReviewTitleTapped()
+}
+
 class MyPageReviewView: UIView {
+    
+    weak var delegate: MyPageReviewViewDelegate?
     
     // MARK: - Properties
     private let walkerReviewTitle = ReviewTitleView(title: "받은 산책자 후기", count: 0, showArrow: true)
@@ -65,7 +71,6 @@ class MyPageReviewView: UIView {
         
         setupChartView()
         setupWalkerReviewTapAction()
-        setupOwnerReviewTapAction()
         setupDonutChart()
     }
     
@@ -222,18 +227,9 @@ class MyPageReviewView: UIView {
         walkerReviewTitle.addGestureRecognizer(tapGesture)
         walkerReviewTitle.isUserInteractionEnabled = true
     }
-    
+
     @objc private func walkerReviewTitleTapped() {
-        if let currentViewController = getViewController() {
-            let walkerReviewVC = MyPageWalkerReviewViewController()
-            currentViewController.navigationController?.pushViewController(walkerReviewVC, animated: true)
-        }
-    }
-    
-    private func setupOwnerReviewTapAction() {
-        //        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ownerReviewTitleTapped))
-        //        ownerReviewTitle.addGestureRecognizer(tapGesture)
-        ownerReviewTitle.isUserInteractionEnabled = true
+        delegate?.walkerReviewTitleTapped()
     }
     
     private func setupDonutChart() {

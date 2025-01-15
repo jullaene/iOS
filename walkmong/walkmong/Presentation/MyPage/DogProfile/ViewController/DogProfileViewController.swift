@@ -12,6 +12,7 @@ class DogProfileViewController: UIViewController {
 
     private let dogProfileView = DogProfileView()
     private var dogId: Int?
+    private let dogService = DogService()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,12 +20,25 @@ class DogProfileViewController: UIViewController {
         setupUI()
         fetchDogProfileIfNeeded()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+        tabBarController?.tabBar.isHidden = false
+    }
 
     // MARK: - Configure Method
     func configure(with dogId: Int) {
         self.dogId = dogId
     }
 
+    // MARK: - UI Setup
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(dogProfileView)
@@ -44,11 +58,31 @@ class DogProfileViewController: UIViewController {
         )
     }
 
+    // MARK: - Data Fetching
     private func fetchDogProfileIfNeeded() {
+        guard let dogId = dogId else { return }
+        showLoading()
+        Task {
+            do {
+                let response: DogInfoResponse = try await dogService.getDogProfile(dogId: dogId)
+                DispatchQueue.main.async {
+                    self.handleDogProfileResponse(response)
+                    self.hideLoading()
+                }
+            } catch {
+                self.hideLoading()
+                print("🚨 Failed to fetch dog profile: \(error)")
+            }
+        }
     }
 
+    private func handleDogProfileResponse(_ response: DogInfoResponse) {
+        let dogProfile = response.data
+        updateDogProfileView(with: dogProfile)
+    }
 
-    private func updateDogProfileView(with dogProfile: DogProfile) {
+    // MARK: - UI Updates
+    private func updateDogProfileView(with dogProfile: DogInfo) {
         dogProfileView.configureProfileImage(with: [dogProfile.dogProfile])
         dogProfileView.configureBasicInfo(
             dogName: dogProfile.dogName,

@@ -139,21 +139,11 @@ final class MatchingApplyWalkRequestViewSummarizeViewController: UIViewControlle
     }
     
     private func formatISO8601Date(_ isoString: String) -> String? {
-        let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
-        isoFormatter.timeZone = TimeZone.current
-        
-        guard let date = isoFormatter.date(from: isoString) else {
+        guard let date = ISO8601DateFormatter.date(from: isoString) else {
             print("Failed to parse date: \(isoString)")
             return nil
         }
-        
-        let outputFormatter = DateFormatter()
-        outputFormatter.dateFormat = "yyyy.MM.dd (EEE)\nHH:mm"
-        outputFormatter.locale = Locale(identifier: "ko_KR")
-        outputFormatter.timeZone = TimeZone.current
-        
-        return outputFormatter.string(from: date)
+        return DateFormatter.display.string(from: date)
     }
     
     private func fetchAndDisplayDogProfile(dogId: Int?) {

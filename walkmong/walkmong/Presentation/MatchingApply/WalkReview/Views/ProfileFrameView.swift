@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 class ProfileFrameView: UIView {
 
@@ -70,7 +71,11 @@ class ProfileFrameView: UIView {
     }
 
     func configure(with data: DogReviewModel.ProfileData) {
-        profileImageView.image = data.image ?? UIImage(named: "defaultImage")
+        if let imageURL = data.image {
+            profileImageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "defaultImage"))
+        } else {
+            profileImageView.image = UIImage(named: "defaultImage")
+        }
         reviewerIdLabel.text = data.reviewerId
         walkDateLabel.text = data.walkDate
     }

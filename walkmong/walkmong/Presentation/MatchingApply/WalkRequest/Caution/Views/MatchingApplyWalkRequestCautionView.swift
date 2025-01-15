@@ -33,9 +33,7 @@ final class MatchingApplyWalkRequestCautionView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupView()
-        setupLayout()
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupView() {
