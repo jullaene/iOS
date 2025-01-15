@@ -1,15 +1,9 @@
-//
-//  WalkReviewPhotoFrameView.swift
-//  walkmong
-//
-//  Created by 신호연 on 12/19/24.
-//
-
 import UIKit
 import SnapKit
+import Kingfisher
 
 class WalkReviewPhotoFrameView: UIView {
-    private var photoData: [UIImage] = []
+    private var photoURLs: [URL] = []
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,39 +18,38 @@ class WalkReviewPhotoFrameView: UIView {
         backgroundColor = .clear
     }
 
-    func configure(with photos: [UIImage]) {
+    func configure(with urls: [URL]) {
         subviews.forEach { $0.removeFromSuperview() }
-        photoData = photos
+        photoURLs = urls
 
-        if photos.isEmpty {
+        if urls.isEmpty {
             isHidden = true
         } else {
             isHidden = false
 
-            let firstImage = photos[0]
-            let secondImage = photos.indices.contains(1) ? photos[1] : nil
-
-            let leftImageView = createImageView(with: firstImage)
+            let leftImageView = createImageView()
             leftImageView.tag = 0
             leftImageView.isUserInteractionEnabled = true
             let leftTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapPhoto(_:)))
             leftImageView.addGestureRecognizer(leftTapGesture)
-
             addSubview(leftImageView)
+            leftImageView.kf.setImage(with: urls[0], placeholder: UIImage(named: "defaultImage")) // Kingfisher 적용
+
             leftImageView.snp.makeConstraints {
                 $0.top.leading.bottom.equalToSuperview()
                 $0.width.equalToSuperview().multipliedBy(0.5).offset(-4)
                 $0.height.equalTo(leftImageView.snp.width)
             }
 
-            if let secondImage = secondImage {
-                let rightImageView = createImageView(with: secondImage)
+            if urls.indices.contains(1) {
+                let rightImageView = createImageView()
                 rightImageView.tag = 1
                 rightImageView.isUserInteractionEnabled = true
                 let rightTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapPhoto(_:)))
                 rightImageView.addGestureRecognizer(rightTapGesture)
-
                 addSubview(rightImageView)
+                rightImageView.kf.setImage(with: urls[1], placeholder: UIImage(named: "defaultImage")) // Kingfisher 적용
+
                 rightImageView.snp.makeConstraints {
                     $0.top.trailing.bottom.equalToSuperview()
                     $0.leading.equalTo(leftImageView.snp.trailing).offset(8)
@@ -69,37 +62,33 @@ class WalkReviewPhotoFrameView: UIView {
 
     @objc private func didTapPhoto(_ sender: UITapGestureRecognizer) {
         guard let tappedView = sender.view,
-              let viewController = findParentViewController(),
-              tappedView.tag < photoData.count else { return }
+              let viewController = getViewController(),
+              tappedView.tag < photoURLs.count else { return }
 
-        presentPhotoViewer(from: viewController, photos: photoData, currentIndex: tappedView.tag)
+        presentPhotoViewer(from: viewController, photoURLs: photoURLs, currentIndex: tappedView.tag)
     }
 
-    private func presentPhotoViewer(from viewController: UIViewController, photos: [UIImage], currentIndex: Int) {
-        let photoViewer = PhotoViewerViewController(photos: photos, currentIndex: currentIndex)
+    private func presentPhotoViewer(from viewController: UIViewController, photoURLs: [URL], currentIndex: Int) {
+        let images: [UIImage] = photoURLs.compactMap { url in
+            if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+                return image
+            }
+            return UIImage(named: "defaultImage")
+        }
+
+        let photoViewer = PhotoViewerViewController(photos: images, currentIndex: currentIndex)
 
         let transition = CATransition()
         transition.duration = 0.4
         transition.type = .fade
         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        
+
         viewController.navigationController?.view.layer.add(transition, forKey: kCATransition)
         viewController.navigationController?.pushViewController(photoViewer, animated: false)
     }
 
-    private func findParentViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while responder != nil {
-            responder = responder?.next
-            if let viewController = responder as? UIViewController {
-                return viewController
-            }
-        }
-        return nil
-    }
-
-    private func createImageView(with image: UIImage?) -> UIImageView {
-        let imageView = UIImageView(image: image)
+    private func createImageView() -> UIImageView {
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 5

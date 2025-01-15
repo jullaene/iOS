@@ -11,14 +11,19 @@ import Kingfisher
 
 class MyPageOwnerReviewView: UIView {
     
+    let walkReviewTotalRatingView = WalkReviewTotalRatingView()
+    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    
-    private let filterContainerView = UIView()
+    private let dogFilterScrollView = UIScrollView()
     private var filterButton: UIButton = MyPageOwnerReviewView.createFilterButton()
     private let dogFilterStackView = UIStackView()
     private var filterView: FilterView?
     private var dimView: UIView?
+    
+    func configure(with models: [DogReviewModel]) {
+        addReviewCells(reviews: models)
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,21 +38,24 @@ class MyPageOwnerReviewView: UIView {
     private func setupView() {
         addSubview(scrollView)
         scrollView.addSubview(contentView)
-        
-        filterContainerView.addSubviews(filterButton, dogFilterStackView)
-        contentView.addSubview(filterContainerView)
+
+        contentView.addSubview(dogFilterScrollView)
+        dogFilterScrollView.addSubviews(filterButton, dogFilterStackView)
+
         setupFilterButton()
-        
-        filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
-        
+
+        dogFilterScrollView.isScrollEnabled = true
+        dogFilterScrollView.showsHorizontalScrollIndicator = true
+        dogFilterScrollView.alwaysBounceHorizontal = true
+        dogFilterScrollView.alwaysBounceVertical = false
+        dogFilterScrollView.isUserInteractionEnabled = true
+        dogFilterScrollView.showsHorizontalScrollIndicator = false
+
         dogFilterStackView.axis = .horizontal
         dogFilterStackView.spacing = 8
         dogFilterStackView.alignment = .center
-        
-        addDogFilter(name: "봄별이")
-        addDogFilter(name: "새봄이")
-        
-        setupDummyReviews()
+
+        filterButton.isUserInteractionEnabled = true
     }
     
     private func setupConstraints() {
@@ -56,40 +64,55 @@ class MyPageOwnerReviewView: UIView {
         }
         
         contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalToSuperview()
+            make.edges.equalTo(scrollView)
+            make.width.equalTo(scrollView)
         }
         
-        filterContainerView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(contentView)
-            make.height.equalTo(77)
+        dogFilterScrollView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalToSuperview().offset(20)
+            make.height.equalTo(37)
         }
         
         filterButton.snp.makeConstraints { make in
-            make.centerY.equalTo(filterContainerView)
             make.leading.equalToSuperview().offset(20)
+            make.height.equalTo(37)
         }
         
         dogFilterStackView.snp.makeConstraints { make in
             make.leading.equalTo(filterButton.snp.trailing).offset(8)
-            make.centerY.equalTo(filterContainerView)
-            make.trailing.lessThanOrEqualTo(contentView).offset(-20)
+            make.trailing.equalToSuperview().offset(-20)
+            make.centerY.equalTo(filterButton)
         }
     }
     
-    private func addDogFilter(name: String) {
+    private func addDogFilter(name: String, action: Selector? = nil) {
         let button = UIButton.createStyledButton(
             type: .homeFilter,
             style: .profile,
             title: name
         )
         button.backgroundColor = .gray200
-        
+        if let action = action {
+            button.addTarget(self, action: action, for: .touchUpInside)
+        }
         dogFilterStackView.addArrangedSubview(button)
     }
     
+    func updateDogFilters(with dogs: [DogListItem]) {
+        let existingNames = dogFilterStackView.arrangedSubviews.compactMap {
+            ($0 as? UIButton)?.title(for: .normal)
+        }
+        let newNames = dogs.map { $0.dogName }
+        
+        let filtersToAdd = newNames.filter { !existingNames.contains($0) }
+        for name in filtersToAdd {
+            addDogFilter(name: name)
+        }
+    }
+    
     private func addReviewCells(reviews: [DogReviewModel]) {
-        var previousView: UIView = filterContainerView
+        var previousView: UIView = dogFilterScrollView
         
         for review in reviews {
             let reviewCell = WalkReviewCell()
@@ -109,34 +132,8 @@ class MyPageOwnerReviewView: UIView {
         }
     }
     
-    private func setupDummyReviews() {
-//        let dummyReviews = [
-//            DogReviewModel(
-//                profileData: DogReviewModel.ProfileData(
-//                    image: nil,
-//                    reviewerId: "reviewer123",
-//                    walkDate: "2024년 12월 1일"
-//                ),
-//                circleTags: [],
-//                photos: [],
-//                reviewText: "연락을 당일에 30분 안보셔서 힘들었어요. 사전 산책 가능하시다고 하시고서는 연락도 안보여서.. 힘들었습니다."
-//            ),
-//            DogReviewModel(
-//                profileData: DogReviewModel.ProfileData(
-//                    image: nil,
-//                    reviewerId: "reviewer456",
-//                    walkDate: "2024년 12월 2일"
-//                ),
-//                circleTags: [],
-//                photos: [],
-//                reviewText: "산책은 즐거웠지만, 강아지 상태에 대한 피드백이 부족했어요."
-//            )
-//        ]
-//        addReviewCells(reviews: dummyReviews)
-    }
-    
     private func setupFilterButton() {
-        addSubview(filterButton)
+        dogFilterScrollView.addSubview(filterButton)
         filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
     
@@ -149,23 +146,20 @@ class MyPageOwnerReviewView: UIView {
     // MARK: - Dim View Setup
     private func setupDimViewIfNeeded() {
         if dimView == nil {
-            dimView = UIView()
-            configureDimView()
-
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                window.addSubview(dimView!)
-            }
-
+            dimView = createDimView()
+            guard let window = UIApplication.shared.keyWindow else { return }
+            window.addSubview(dimView!)
             setupDimViewConstraints()
         }
         dimView?.updateDimViewVisibility(isHidden: false)
     }
-    
-    private func configureDimView() {
-        dimView?.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        dimView?.isHidden = true
-        dimView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideFilterView)))
+
+    private func createDimView() -> UIView {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        view.isHidden = true
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideFilterView)))
+        return view
     }
 
     private func setupDimViewConstraints() {
@@ -176,39 +170,31 @@ class MyPageOwnerReviewView: UIView {
     
     // MARK: - Filter View Handling
     private func showFilterView() {
-        if let filterView = filterView {
-            filterView.isHidden = false
-            filterView.animateShow(offset: 0, cornerRadius: 30)
-            return
-        }
-
-        filterView = FilterView()
-        guard let filterView = filterView else { return }
+        guard let window = UIApplication.shared.keyWindow else { return }
         
+        if filterView == nil {
+            filterView = createFilterView()
+            window.addSubview(filterView!)
+            setupFilterViewConstraints()
+        }
+        
+        layoutIfNeeded()
+        window.bringSubviewToFront(filterView!)
+        window.bringSubviewToFront(dimView!)
+        filterView?.animateShow(offset: 0, cornerRadius: 30)
+    }
+
+    private func createFilterView() -> FilterView {
+        let filterView = FilterView()
         filterView.onFilterSelected = { [weak self] selectedText in
             self?.updateFilterButtonTitle(with: selectedText)
         }
-        
         filterView.onHideRequested = { [weak self] in
             self?.hideFilterView()
         }
-        
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
-            window.addSubview(filterView)
-        }
-        
-        setupFilterViewConstraints()
-        layoutIfNeeded()
-        
-        if let dimView = dimView {
-            window?.bringSubviewToFront(dimView)
-            window?.bringSubviewToFront(filterView)
-        }
-        
-        filterView.animateShow(offset: 0, cornerRadius: 30)
+        return filterView
     }
-
+    
     @objc private func hideFilterView() {
         filterView?.animateHide(withDuration: 0.4, offset: 178 + safeAreaInsets.bottom)
         dimView?.updateDimViewVisibility(isHidden: true)
@@ -224,14 +210,10 @@ class MyPageOwnerReviewView: UIView {
     }
     
     private func updateFilterButtonTitle(with title: String) {
-        UIView.performWithoutAnimation {
-            filterButton.subviews.forEach { $0.removeFromSuperview() }
-            
-            UIButton.configureCustomFilter(button: filterButton, style: .light, title: title)
-            filterButton.backgroundColor = .gray200
-            
-            filterButton.layoutIfNeeded()
-        }
+        filterButton.subviews.forEach { $0.removeFromSuperview() }
+        UIButton.configureCustomFilter(button: filterButton, style: .light, title: title)
+        filterButton.backgroundColor = .gray200
+        filterButton.layoutIfNeeded()
     }
     
     // MARK: - Factory Method
@@ -239,6 +221,29 @@ class MyPageOwnerReviewView: UIView {
         let button = UIButton.createStyledButton(type: .customFilter, style: .light, title: "최신순")
         button.backgroundColor = .gray200
         return button
+    }
+    
+    func updateReviews(with reviews: [DogReviewModel]) {
+        contentView.subviews.filter { $0 is WalkReviewCell }.forEach { $0.removeFromSuperview() }
+        
+        var previousView: UIView = dogFilterScrollView
+        
+        for review in reviews {
+            let reviewCell = WalkReviewCell()
+            reviewCell.configure(with: review)
+            contentView.addSubview(reviewCell)
+            
+            reviewCell.snp.makeConstraints { make in
+                make.top.equalTo(previousView.snp.bottom).offset(20)
+                make.leading.trailing.equalToSuperview().inset(20)
+            }
+            
+            previousView = reviewCell
+        }
+        
+        previousView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-20)
+        }
     }
 
 }

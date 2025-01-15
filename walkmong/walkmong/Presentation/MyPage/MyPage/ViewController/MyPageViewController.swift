@@ -95,8 +95,8 @@ class MyPageViewController: UIViewController {
     }
     
     @objc private func navigateToOwnerReviewVC() {
-        let ownerReviewVC = MyPageOwnerReviewViewController()
-        self.navigationController?.pushViewController(ownerReviewVC, animated: true)
+        let nextVC = MyPageOwnerReviewViewController()
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 }
 

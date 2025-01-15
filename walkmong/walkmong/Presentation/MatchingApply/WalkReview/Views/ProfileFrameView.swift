@@ -39,15 +39,6 @@ class ProfileFrameView: UIView {
         return view
     }()
     
-//    private let petTagLabel: CaptionLabel = {
-//        let label = CaptionLabel(text: "Dog Tag", textColor: .gray600)
-//        label.backgroundColor = UIColor.lightBlue
-//        label.textAlignment = .center
-//        label.layer.cornerRadius = 5
-//        label.clipsToBounds = true
-//        return label
-//    }()
-    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -72,7 +63,26 @@ class ProfileFrameView: UIView {
 
     func configure(with data: DogReviewModel.ProfileData) {
         if let imageURL = data.image {
-            profileImageView.kf.setImage(with: imageURL, placeholder: UIImage(named: "defaultImage"))
+            profileImageView.kf.setImage(
+                with: imageURL,
+                placeholder: UIImage(named: "defaultImage"),
+                options: [
+                    .transition(.fade(0.3)),
+                    .cacheOriginalImage
+                ],
+                progressBlock: { receivedSize, totalSize in
+                    print("Loading progress: \(receivedSize)/\(totalSize)")
+                },
+                completionHandler: { result in
+                    switch result {
+                    case .success(let value):
+                        print("Image loaded successfully: \(value.source.url?.absoluteString ?? "")")
+                    case .failure(let error):
+                        print("Image loading failed: \(error.localizedDescription)")
+                        self.profileImageView.image = UIImage(named: "defaultImage")
+                    }
+                }
+            )
         } else {
             profileImageView.image = UIImage(named: "defaultImage")
         }
@@ -110,13 +120,6 @@ class ProfileFrameView: UIView {
             make.width.equalTo(reportLabel)
             make.height.equalTo(0.5)
         }
-        
-//        petTagLabel.snp.makeConstraints { make in
-//            make.leading.equalTo(reviewerIdLabel.snp.trailing).offset(8)
-//            make.centerY.equalTo(reviewerIdLabel)
-//            make.trailing.equalTo(petTagLabel.snp.leading).offset(petTagLabel.intrinsicContentSize.width + 8)
-//            make.height.equalTo(21)
-//        }
     }
     
     // MARK: - Gesture Setup
