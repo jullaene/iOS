@@ -2,14 +2,9 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-protocol MatchingCellDelegate: AnyObject {
-    func didSelectMatchingCell(data: BoardList)
-}
-
 class MatchingCell: UICollectionViewCell {
     
     // MARK: - Properties
-    weak var delegate: MatchingCellDelegate?
     var matchingData: BoardList?
     
     // MARK: - UI Components
@@ -81,7 +76,6 @@ class MatchingCell: UICollectionViewCell {
         super.init(frame: frame)
         isUserInteractionEnabled = true
         setupView()
-        setupTapGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -215,11 +209,6 @@ class MatchingCell: UICollectionViewCell {
         }
     }
     
-    private func setupTapGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        addGestureRecognizer(tapGesture)
-    }
-    
     // MARK: - Configuration
     func configure(with data: BoardList, selectedDate: String) {
 
@@ -296,15 +285,6 @@ class MatchingCell: UICollectionViewCell {
         case "FEMALE": return UIImage(named: "femaleIcon")
         case "MALE": return UIImage(named: "maleIcon")
         default: return nil
-        }
-    }
-    
-    // MARK: - Actions
-    @objc private func handleTap() {
-        if let data = matchingData {
-            delegate?.didSelectMatchingCell(data: data)
-        } else {
-            print("❌ No matching data available.")
         }
     }
 }
