@@ -23,6 +23,7 @@ final class NetworkProvider<T: APIEndpoint> {
     ) async throws -> ResponseType {
         do {
             /// 최초 API 요청
+            print("Request URL: \(target.baseURL.appendingPathComponent(target.path))")
             let response = try await provider.requestAsync(target)
 
             print(response.statusCode)

@@ -18,4 +18,11 @@ struct ApplyService {
         )
     }
     
+    func getApplyHistory(tabStatus: Record, walkMatchingStatus: Status) async throws -> GetApplyHistoryResponse {
+        return try await provider.request(
+            target: .getApplyHistory(tabStatus: tabStatus, walkMatchingStatus: walkMatchingStatus),
+            responseType: GetApplyHistoryResponse.self
+        )
+    }
+    
 }

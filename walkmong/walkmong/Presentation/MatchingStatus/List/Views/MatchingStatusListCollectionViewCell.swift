@@ -9,7 +9,7 @@ import UIKit
 import Kingfisher
 
 protocol MatchingStatusListCollectionViewCellDelegate: AnyObject {
-    func didTapMatchingStatusListCollectionViewCell(matchingResponseData: MatchingStatusListResponseData, record: Record, status: Status)
+    func didTapMatchingStatusListCollectionViewCell(matchingResponseData: ApplyHistoryItem, record: Record, status: Status)
 }
 
 final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
@@ -89,7 +89,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
     
     private lazy var peopleCountLabel = SmallMainParagraphLabel(text: "10")
     
-    private var matchingData: MatchingStatusListResponseData!
+    private var matchingData: ApplyHistoryItem!
     private var record: Record!
     private var status: Status!
     
@@ -106,7 +106,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         for subview in seeInfoButtonViewFrame.subviews {
             subview.removeFromSuperview()
         }
-        for subview in seeInfoButtonViewFrame.subviews {
+        for subview in seeInfoLabelFrame.subviews {
             subview.removeFromSuperview()
         }
     }
@@ -116,12 +116,12 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         self.addSubview(containerView)
         containerView.addSubviews(dateLabel, matchingStateView, profileImageView, dogNameLabel, dogGenderIcon, addressLabel, seeInfoButtonViewFrame)
         matchingStateView.addSubview(matchingStateLabel)
-        if record == .requested && status != .PENDING {
+        if record == .BOARD && status != .PENDING {
             containerView.addSubviews(walkerNameLabel, walkerProfileImageView)
         }else {
             containerView.addSubviews(addressIcon)
         }
-        if record == .requested && status == .PENDING {
+        if record == .BOARD && status == .PENDING {
             // 지원한 산책자 목록 보여줌
             seeInfoButtonViewFrame.addSubview(seeInfoLabelFrame)
             seeInfoLabelFrame.addSubviews(seeInfoLabel, peopleIcon, peopleCountLabel)
@@ -170,7 +170,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
             make.centerY.equalTo(dogNameLabel.snp.centerY)
             make.height.equalTo(16)
         }
-        if record == .requested && status != .PENDING {
+        if record == .BOARD && status != .PENDING {
             addressLabel.snp.makeConstraints { make in
                 make.leading.equalTo(profileImageView.snp.trailing).offset(12)
                 make.top.equalTo(dogNameLabel.snp.bottom).offset(8)
@@ -195,7 +195,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
                 make.leading.equalTo(addressIcon.snp.trailing).offset(2.5)
             }
         }
-        if record == .requested && status == .PENDING {
+        if record == .BOARD && status == .PENDING {
             // 지원한 산책자 목록 보여줌
             seeInfoLabelFrame.snp.makeConstraints { make in
                 make.center.equalToSuperview()
@@ -227,44 +227,53 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setContent(with data: MatchingStatusListResponseData, status: Status, record: Record) {
-        self.status = status
-        self.record = record
+    func setContent(with data: ApplyHistoryItem) {
+        self.status = switch data.walkMatchingStatus {
+            case "PENDING": .PENDING
+            case "BEFORE": .BEFORE
+            case "AFTER": .AFTER
+            case "REJECT": .REJECT
+            default : .PENDING
+        }
+        self.record = switch data.tabStatus {
+            case "APPLY": .APPLY
+            case "BOARD": .BOARD
+            default : .ALL
+        }
         self.matchingData = data
         addSubview()
         setConstraints()
         setButtonAction()
-        matchingStateLabel.text = status.rawValue
-        matchingStateView.backgroundColor = status.backgroundColor
-        matchingStateLabel.textColor = status.textColor
-//        self.profileImageView.kf.setImage(with: URL(string:data.dogProfile))
-        self.profileImageView.image = .puppyImage01
+        matchingStateLabel.text = self.status.rawValue
+        matchingStateView.backgroundColor = self.status.backgroundColor
+        matchingStateLabel.textColor = self.status.textColor
+        self.profileImageView.kf.setImage(with: URL(string:data.dogProfile))
         self.dogNameLabel.text = data.dogName
         self.dogGenderIcon.image = data.dogGender == "MALE" ? .maleIcon : .femaleIcon
         
         // 주소 혹은 산책자 정보 설정
-        if record == .requested && status != .PENDING {
+        if data.tabStatus == "BOARD" && data.walkMatchingStatus != "PENDING" {
             self.addressLabel.text = "산책자"
-            self.walkerNameLabel.text = data.walkerNickname
+            self.walkerNameLabel.text = data.walkerName
             if let profileURL = data.walkerProfile {
-//                self.walkerProfileImageView.kf.setImage(with: URL(string: profileURL))
+                self.walkerProfileImageView.kf.setImage(with: URL(string: profileURL))
             }
-        } else if status == .PENDING {
-            self.addressLabel.text = data.dongAddress + String(format: " %.1f", data.distance) + "km"
-            if record == .requested {
+        } else if data.walkMatchingStatus == "PENDING" {
+            self.addressLabel.text = data.dongAddress ?? "오류" + String(format: " %.1f", data.distance ?? "오류") + "km"
+            if data.tabStatus == "BOARD" {
                 self.peopleCountLabel.text = "2" //FIXME: 지원한 산책자 개수
             }
         }else {
-            self.addressLabel.text = data.dongAddress + " " + data.addressDetail
+            self.addressLabel.text = data.dongAddress
         }
-        if record == .requested && status == .PENDING {
+        if data.tabStatus == "BOARD" && data.walkMatchingStatus == "PENDING" {
             seeInfoLabel.text = "지원한 산책자 보기"
-        }else if record == .applied {
+        }else if data.tabStatus == "APPLY" {
             seeInfoLabel.text = "지원 정보 보기"
         }else {
             seeInfoLabel.text = "산책 정보 보기"
         }
-        if status == .REJECTED || status == .COMPLETED {
+        if data.walkMatchingStatus == "REJECT" || data.walkMatchingStatus == "AFTER" {
             seeInfoLabel.textColor = .white
         }else {
             seeInfoLabel.textColor = .gray600

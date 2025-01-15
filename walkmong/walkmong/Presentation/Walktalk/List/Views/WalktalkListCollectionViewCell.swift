@@ -136,7 +136,7 @@ final class WalktalkListCollectionViewCell: UICollectionViewCell {
         matchingStateView.backgroundColor = status.backgroundColor
         matchingStateLabel.textColor = status.textColor
         dateLabel.text = formatDateRange(start: datamodel.startTime, end: datamodel.endTime)
-        walkerIconView.isHidden = record != .requested
+        walkerIconView.isHidden = record != .BOARD
         nameLabel.text = datamodel.targetName
         textPreviewLabel.text = datamodel.lastChat
         chatCountLabel.text = String(datamodel.notRead)
