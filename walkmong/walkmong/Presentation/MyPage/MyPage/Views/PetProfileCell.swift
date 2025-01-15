@@ -195,10 +195,6 @@ extension PetProfileCell {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if let touchedView = touch.view, touchedView.isDescendant(of: profileButton) {
-            print("프로필 버튼에서 제스처가 차단되었습니다.")
-            return false
-        }
         return true
     }
 }

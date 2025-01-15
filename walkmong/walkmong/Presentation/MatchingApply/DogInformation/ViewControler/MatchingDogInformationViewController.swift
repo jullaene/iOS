@@ -180,13 +180,9 @@ class MatchingDogInformationViewController: UIViewController, ProfileViewDelegat
 
     // MARK: - Navigation
     private func navigateToDogProfile() {
-        guard let boardDetail = boardDetail else {
-            print("Error: boardDetail is nil. Cannot navigate to dog profile.")
-            return
-        }
-
         let dogProfileVC = DogProfileViewController()
-        dogProfileVC.configure(with: boardDetail.dogId)
+//        dogProfileVC.configure(with: boardDetail.dogId)
+        dogProfileVC.configure(with: 1)
         navigationController?.pushViewController(dogProfileVC, animated: true)
     }
 }
