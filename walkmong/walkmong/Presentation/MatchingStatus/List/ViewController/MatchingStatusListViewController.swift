@@ -10,6 +10,7 @@ import UIKit
 final class MatchingStatusListViewController: UIViewController {
     
     private let matchingStatusListView = MatchingStatusListView()
+    private let service = ApplyService()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +32,13 @@ final class MatchingStatusListViewController: UIViewController {
 extension MatchingStatusListViewController: MatchingStatusListViewDelegate {
     func didSelectTabBarIndex(record: Record, status: Status) {
         //TODO: API 호출
+        Task {
+            do {
+                let response = try await service.applyWalk(boardId: <#T##Int#>, request: <#T##WalkRequestData#>)
+            }catch {
+                
+            }
+        }
     }
     
     func didSelectMatchingCell(matchingResponseData: MatchingStatusListResponseData, record: Record, status: Status) {

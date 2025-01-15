@@ -116,12 +116,12 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         self.addSubview(containerView)
         containerView.addSubviews(dateLabel, matchingStateView, profileImageView, dogNameLabel, dogGenderIcon, addressLabel, seeInfoButtonViewFrame)
         matchingStateView.addSubview(matchingStateLabel)
-        if record == .requested && status != .PENDING {
+        if record == .BOARD && status != .PENDING {
             containerView.addSubviews(walkerNameLabel, walkerProfileImageView)
         }else {
             containerView.addSubviews(addressIcon)
         }
-        if record == .requested && status == .PENDING {
+        if record == .BOARD && status == .PENDING {
             // 지원한 산책자 목록 보여줌
             seeInfoButtonViewFrame.addSubview(seeInfoLabelFrame)
             seeInfoLabelFrame.addSubviews(seeInfoLabel, peopleIcon, peopleCountLabel)
@@ -170,7 +170,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
             make.centerY.equalTo(dogNameLabel.snp.centerY)
             make.height.equalTo(16)
         }
-        if record == .requested && status != .PENDING {
+        if record == .BOARD && status != .PENDING {
             addressLabel.snp.makeConstraints { make in
                 make.leading.equalTo(profileImageView.snp.trailing).offset(12)
                 make.top.equalTo(dogNameLabel.snp.bottom).offset(8)
@@ -195,7 +195,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
                 make.leading.equalTo(addressIcon.snp.trailing).offset(2.5)
             }
         }
-        if record == .requested && status == .PENDING {
+        if record == .BOARD && status == .PENDING {
             // 지원한 산책자 목록 보여줌
             seeInfoLabelFrame.snp.makeConstraints { make in
                 make.center.equalToSuperview()
@@ -243,7 +243,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         self.dogGenderIcon.image = data.dogGender == "MALE" ? .maleIcon : .femaleIcon
         
         // 주소 혹은 산책자 정보 설정
-        if record == .requested && status != .PENDING {
+        if record == .BOARD && status != .PENDING {
             self.addressLabel.text = "산책자"
             self.walkerNameLabel.text = data.walkerNickname
             if let profileURL = data.walkerProfile {
@@ -251,20 +251,20 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
             }
         } else if status == .PENDING {
             self.addressLabel.text = data.dongAddress + String(format: " %.1f", data.distance) + "km"
-            if record == .requested {
+            if record == .BOARD {
                 self.peopleCountLabel.text = "2" //FIXME: 지원한 산책자 개수
             }
         }else {
             self.addressLabel.text = data.dongAddress + " " + data.addressDetail
         }
-        if record == .requested && status == .PENDING {
+        if record == .BOARD && status == .PENDING {
             seeInfoLabel.text = "지원한 산책자 보기"
-        }else if record == .applied {
+        }else if record == .APPLY {
             seeInfoLabel.text = "지원 정보 보기"
         }else {
             seeInfoLabel.text = "산책 정보 보기"
         }
-        if status == .REJECTED || status == .COMPLETED {
+        if status == .REJECT || status == .AFTER {
             seeInfoLabel.textColor = .white
         }else {
             seeInfoLabel.textColor = .gray600

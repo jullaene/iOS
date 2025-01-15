@@ -281,11 +281,11 @@ extension MatchingStatusListView: UICollectionViewDataSource {
             case 0:
                 cell.setContent(text: Status.PENDING.rawValue)
             case 1:
-                cell.setContent(text: Status.CONFIRMED.rawValue)
+                cell.setContent(text: Status.BEFORE.rawValue)
             case 2:
-                cell.setContent(text: Status.COMPLETED.rawValue)
+                cell.setContent(text: Status.AFTER.rawValue)
             default:
-                cell.setContent(text: Status.REJECTED.rawValue)
+                cell.setContent(text: Status.REJECT.rawValue)
             }
             return cell
         }

@@ -63,7 +63,7 @@ class WalktalkChatViewController: UIViewController {
 
         walktalkChatContainerView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(walktalkChatUpperView.snp.top).offset(currentMatchingState == .COMPLETED || currentMatchingState == .REJECTED ? 88 - 30 : 149 - 30)
+            make.top.equalTo(walktalkChatUpperView.snp.top).offset(currentMatchingState == .AFTER || currentMatchingState == .REJECT ? 88 - 30 : 149 - 30)
             containerBottomConstraint = make.bottom.equalToSuperview().offset(-38).constraint
         }
 
