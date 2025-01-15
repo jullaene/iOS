@@ -8,14 +8,14 @@
 import UIKit
 
 protocol MatchingStatusListPageCollectionViewCellDelegate: AnyObject {
-    func didSelectMatchingCell(matchingResponseData: MatchingStatusListResponseData, record: Record, status: Status)
+    func didSelectMatchingCell(matchingResponseData: ApplyHistoryItem, record: Record, status: Status)
 }
 
 final class MatchingStatusListPageCollectionViewCell: UICollectionViewCell {
     
     private var selectedMatchingStateIndex: Int = 0
     private var selectedTabbarIndex: Int = 0
-    private var matchingResponseData: [MatchingStatusListResponseData] = []
+    private var matchingResponseData: [ApplyHistoryItem] = []
     
     private let matchingStatusListCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -50,7 +50,7 @@ final class MatchingStatusListPageCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setContent(with dataModel: [MatchingStatusListResponseData], selectedMatchingStateIndex: Int, selectedTabbarIndex: Int) {
+    func setContent(with dataModel: [ApplyHistoryItem], selectedMatchingStateIndex: Int, selectedTabbarIndex: Int) {
         self.selectedTabbarIndex = selectedTabbarIndex
         self.selectedMatchingStateIndex = selectedMatchingStateIndex
         self.matchingResponseData = dataModel
@@ -96,7 +96,7 @@ extension MatchingStatusListPageCollectionViewCell: UICollectionViewDataSource {
 }
 
 extension MatchingStatusListPageCollectionViewCell: MatchingStatusListCollectionViewCellDelegate {
-    func didTapMatchingStatusListCollectionViewCell(matchingResponseData: MatchingStatusListResponseData, record: Record, status: Status) {
+    func didTapMatchingStatusListCollectionViewCell(matchingResponseData: ApplyHistoryItem, record: Record, status: Status) {
         delegate?.didSelectMatchingCell(matchingResponseData: matchingResponseData, record: record, status: status)
     }
 }

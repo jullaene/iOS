@@ -9,7 +9,7 @@ import UIKit
 import Kingfisher
 
 protocol MatchingStatusListCollectionViewCellDelegate: AnyObject {
-    func didTapMatchingStatusListCollectionViewCell(matchingResponseData: MatchingStatusListResponseData, record: Record, status: Status)
+    func didTapMatchingStatusListCollectionViewCell(matchingResponseData: ApplyHistoryItem, record: Record, status: Status)
 }
 
 final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
@@ -89,7 +89,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
     
     private lazy var peopleCountLabel = SmallMainParagraphLabel(text: "10")
     
-    private var matchingData: MatchingStatusListResponseData!
+    private var matchingData: ApplyHistoryItem!
     private var record: Record!
     private var status: Status!
     
@@ -227,7 +227,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setContent(with data: MatchingStatusListResponseData, status: Status, record: Record) {
+    func setContent(with data: ApplyHistoryItem, status: Status, record: Record) {
         self.status = status
         self.record = record
         self.matchingData = data
@@ -245,7 +245,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
         // 주소 혹은 산책자 정보 설정
         if record == .BOARD && status != .PENDING {
             self.addressLabel.text = "산책자"
-            self.walkerNameLabel.text = data.walkerNickname
+            self.walkerNameLabel.text = data.walkerName
             if let profileURL = data.walkerProfile {
 //                self.walkerProfileImageView.kf.setImage(with: URL(string: profileURL))
             }
@@ -255,7 +255,7 @@ final class MatchingStatusListCollectionViewCell: UICollectionViewCell {
                 self.peopleCountLabel.text = "2" //FIXME: 지원한 산책자 개수
             }
         }else {
-            self.addressLabel.text = data.dongAddress + " " + data.addressDetail
+            self.addressLabel.text = data.dongAddress
         }
         if record == .BOARD && status == .PENDING {
             seeInfoLabel.text = "지원한 산책자 보기"
