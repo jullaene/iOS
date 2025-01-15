@@ -15,7 +15,7 @@ enum ApplyAPI {
 extension ApplyAPI: APIEndpoint {
     var path: String {
         switch self {
-        case .applyWalk(let boardId, let request): return "/apply"
+        case .applyWalk(let boardId, let request): return "/apply/\(boardId)"
         }
     }
     
@@ -27,7 +27,7 @@ extension ApplyAPI: APIEndpoint {
     
     var task: Moya.Task {
         switch self {
-        case .applyWalk(let boardId, let request): return .requestParameters(parameters: request, encoding: JSONEncoding.default)
+        case .applyWalk(_, let request): return .requestParameters(parameters: request, encoding: JSONEncoding.default)
         }
     }
 }
