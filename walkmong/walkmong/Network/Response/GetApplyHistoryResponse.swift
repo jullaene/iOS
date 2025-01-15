@@ -16,8 +16,8 @@ struct ApplyHistoryItem: Decodable {
     let dogProfile: String
     let startTime: String
     let endTime: String
-    let dongAddress: String
-    let distance: Double
+    let dongAddress: String?
+    let distance: Double?
     let walkerName: String?
     let walkerProfile: String?
     let walkMatchingStatus: String

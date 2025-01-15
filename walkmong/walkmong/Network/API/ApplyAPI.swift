@@ -16,9 +16,9 @@ enum ApplyAPI {
 extension ApplyAPI: APIEndpoint {
     var path: String {
         switch self {
-        case .applyWalk(let boardId, let request): return "/api/v1/apply/\(boardId)"
+        case .applyWalk(let boardId, _): return "/api/v1/walking/apply/\(boardId)"
         case .getApplyHistory:
-            return "/api/v1/apply/history"
+            return "/api/v1/walking/apply/history"
         }
     }
     
@@ -34,7 +34,7 @@ extension ApplyAPI: APIEndpoint {
         switch self {
         case .applyWalk(_, let request): return .requestParameters(parameters: request, encoding: JSONEncoding.default)
         case .getApplyHistory(tabStatus: let tabStatus, walkMatchingStatus: let walkMatchingStatus):
-            return .requestParameters(parameters: ["tabStatus": tabStatus.rawValue, "walkMatchingStatus": walkMatchingStatus.rawValue], encoding: URLEncoding.queryString)
+            return .requestParameters(parameters: ["tabStatus": tabStatus, "walkMatchingStatus": walkMatchingStatus], encoding: URLEncoding.queryString)
         }
     }
 }

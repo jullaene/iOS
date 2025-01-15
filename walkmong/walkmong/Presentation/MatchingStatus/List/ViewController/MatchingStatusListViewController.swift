@@ -57,6 +57,8 @@ extension MatchingStatusListViewController: MatchingStatusListViewDelegate {
     
     func didSelectTabBarIndex(record: Record, status: Status) {
         Task {
+            showLoading()
+            defer { hideLoading() }
             do {
                 let response = try await service.getApplyHistory(tabStatus: record, walkMatchingStatus: status)
                 matchingStatusListView.setContent(with: response.data)

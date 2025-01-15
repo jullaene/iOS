@@ -89,7 +89,7 @@ extension MatchingStatusListPageCollectionViewCell: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MatchingStatusListCollectionViewCell.className, for: indexPath) as? MatchingStatusListCollectionViewCell else { return UICollectionViewCell() }
-        cell.setContent(with: matchingResponseData[indexPath.row], status: Status.from(index: selectedMatchingStateIndex), record: Record.from(index: selectedTabbarIndex))
+        cell.setContent(with: matchingResponseData[indexPath.row])
         cell.delegate = self
         return cell
     }
