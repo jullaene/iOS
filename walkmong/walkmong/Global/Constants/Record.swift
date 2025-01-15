@@ -8,16 +8,16 @@
 import Foundation
 
 enum Record: String {
-    case applied = "지원한 산책"
-    case requested = "의뢰한 산책"
-    case all = "전체"
+    case APPLY = "지원한 산책"
+    case BOARD = "의뢰한 산책"
+    case ALL = "전체"
     
     static func from(index: Int) -> Record {
         switch index {
-        case 0: return .all
-        case 1: return .applied
-        case 2: return .requested
-        default: return .all
+        case 0: return .ALL
+        case 1: return .APPLY
+        case 2: return .BOARD
+        default: return .ALL
         }
     }
 }

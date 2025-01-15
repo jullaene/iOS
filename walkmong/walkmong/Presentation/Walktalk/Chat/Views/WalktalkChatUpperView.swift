@@ -108,7 +108,7 @@ final class WalktalkChatUpperView: UIView {
         switch currentMatchingState {
         case .PENDING:
             matchingStateInnerView.addSubview(matchingStateFirstButton)
-        case .CONFIRMED:
+        case .BEFORE:
             matchingStateInnerView.addSubviews(
                 matchingStateFirstButton,
                 matchingStateSecondButton,
@@ -121,7 +121,7 @@ final class WalktalkChatUpperView: UIView {
     private func setupConstraints() {
         matchingStateFrameView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.height.equalTo(currentMatchingState == .COMPLETED || currentMatchingState == .REJECTED ? 88 : 149)
+            make.height.equalTo(currentMatchingState == .AFTER || currentMatchingState == .REJECT ? 88 : 149)
             make.horizontalEdges.equalToSuperview()
         }
 
@@ -168,7 +168,7 @@ final class WalktalkChatUpperView: UIView {
                 make.height.equalTo(41)
                 make.width.equalTo(100)
             }
-        }else if currentMatchingState == .CONFIRMED {
+        }else if currentMatchingState == .BEFORE {
             matchingStateSecondButton.snp.remakeConstraints { make in
                 make.leading.equalTo(matchingStateFirstButton.snp.trailing).offset(8)
                 make.bottom.equalToSuperview()
@@ -197,15 +197,15 @@ final class WalktalkChatUpperView: UIView {
             matchingStateFirstButton.setTitle("매칭 확정하기", for: .normal)
             matchingStateView.backgroundColor = .lightBlue
             matchingStateLabel.textColor = .mainBlue
-        case .CONFIRMED:
+        case .BEFORE:
             matchingStateFirstButton.setTitle("사전만남 설정", for: .normal)
             matchingStateView.backgroundColor = .mainBlue
             matchingStateLabel.textColor = .white
-        case .COMPLETED:
+        case .AFTER:
             matchingStateProfileImageView.imageView?.toGrayscale()
             matchingStateView.backgroundColor = .gray400
             matchingStateLabel.textColor = .white
-        case .REJECTED:
+        case .REJECT:
             matchingStateProfileImageView.imageView?.toGrayscale()
             matchingStateView.backgroundColor = .gray200
             matchingStateLabel.textColor = .gray400

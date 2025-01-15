@@ -11,11 +11,23 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
     
     private var boardDetail: BoardDetail?
 
+    private var matchingApplyRequest = WalkRequestData()
+    private var boardId: Int!
+    private var boardDetail: BoardDetail!
     let detailSelectView = MatchingApplyDetailSelectView()
     var detailSelectModel = MatchingApplyDetailSelectModel(dogInformationChecked: false, dateChecked: false, nextButtonEnabled: false)
     
     func configure(with boardDetail: BoardDetail) {
         self.boardDetail = boardDetail
+      
+    init(boardDetail: BoardDetail, boardId: Int){
+        self.boardId = boardId
+        self.boardDetail = boardDetail
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,6 +61,12 @@ extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectView
     func updatePlaceSelected(_ view: MatchingApplyDetailSelectView, _ model: MatchingApplyMapModel) {
         view.updateSelectButtons(buttonType: .selectPlace, value: true, model)
         self.detailSelectModel.placeSelected = model
+        self.matchingApplyRequest.addressDetail = model.buildingName ?? ""
+        self.matchingApplyRequest.addressMemo = model.memo ?? ""
+        self.matchingApplyRequest.roadAddress = model.roadAddress ?? ""
+        self.matchingApplyRequest.dongAddress = model.dongAddress ?? ""
+        self.matchingApplyRequest.latitude = String(describing: model.latitude)
+        self.matchingApplyRequest.longitude = String(describing: model.longitude)
         updateNextButtonState()
     }
     
@@ -64,20 +82,20 @@ extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectView
             let nextVC = MatchingApplyPlaceSearchViewController()
             self.navigationController?.pushViewController(nextVC, animated: true)
         case .envelopeNeeded:
-            self.detailSelectModel.envelopeNeeded = value
+            self.matchingApplyRequest.poopBagYn = value ? "Y" : "N"
             self.detailSelectView.updateSelectButtons(buttonType: .envelopeNeeded, value: value, nil)
         case .mouthCoverNeeded:
-            self.detailSelectModel.mouthCoverNeeded = value
+            self.matchingApplyRequest.muzzleYn = value ? "Y" : "N"
             self.detailSelectView.updateSelectButtons(buttonType: .mouthCoverNeeded, value: value, nil)
         case .leadStringeNeeded:
-            self.detailSelectModel.leadStringNeeded = value
+            self.matchingApplyRequest.dogCollarYn = value ? "Y" : "N"
             self.detailSelectView.updateSelectButtons(buttonType: .leadStringeNeeded, value: value, nil)
         case .preMeetingNeeded:
-            self.detailSelectModel.preMeetingNeeded = value
+            self.matchingApplyRequest.preMeetingYn = value ? "Y" : "N"
             self.detailSelectView.updateSelectButtons(buttonType: .preMeetingNeeded, value: value, nil)
         case .next:
             if self.detailSelectModel.nextButtonEnabled {
-                let nextVC = MatchingApplyMessageViewController()
+                let nextVC = MatchingApplyMessageViewController(matchingApplyRequest: matchingApplyRequest, boardDetail: boardDetail, boardId: boardId)
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
         }
@@ -88,10 +106,10 @@ extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectView
         if self.detailSelectModel.dogInformationChecked &&
             self.detailSelectModel.dateChecked &&
             self.detailSelectModel.placeSelected != nil &&
-            self.detailSelectModel.envelopeNeeded != nil &&
-            self.detailSelectModel.mouthCoverNeeded != nil &&
-            self.detailSelectModel.leadStringNeeded != nil &&
-            self.detailSelectModel.preMeetingNeeded != nil {
+            self.matchingApplyRequest.poopBagYn != "" &&
+            self.matchingApplyRequest.muzzleYn != "" &&
+            self.matchingApplyRequest.dogCollarYn != "" &&
+            self.matchingApplyRequest.preMeetingYn != "" {
             self.detailSelectModel.nextButtonEnabled = true
             detailSelectView.updateSelectButtons(buttonType: .next, value: true, nil)
         }else {

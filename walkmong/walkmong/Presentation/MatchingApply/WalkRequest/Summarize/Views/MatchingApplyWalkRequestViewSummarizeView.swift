@@ -352,7 +352,7 @@ final class MatchingApplyWalkRequestViewSummarizeView: UIView {
             name: "봄별이",
             informationText: "소형견 · 말티즈 · 4kg",
             location: "노원구 공릉동",
-            profileImage: UIImage(named: "puppyImage01") ?? UIImage()
+            profileImage: "url Example" //FIXME: 프로필 URL 넣어주기
         )
     }
     

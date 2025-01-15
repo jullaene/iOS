@@ -162,7 +162,6 @@ extension MatchingDogInformationViewController: MatchingDogInformationViewDelega
                     detailSelectVC.configure(with: boardDetail)
                     navigateTo(detailSelectVC)
                 } else {
-                    print("❌ User profile is not registered")
                     showAlertForProfileRegistration()
                 }
             } catch {

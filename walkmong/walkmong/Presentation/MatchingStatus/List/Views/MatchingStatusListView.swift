@@ -8,7 +8,7 @@
 import UIKit
 protocol MatchingStatusListViewDelegate: AnyObject {
     func didSelectTabBarIndex(record: Record, status: Status)
-    func didSelectMatchingCell(matchingResponseData: MatchingStatusListResponseData, record: Record, status: Status)
+    func didSelectMatchingCell(matchingResponseData: ApplyHistoryItem, record: Record, status: Status)
 }
 
 
@@ -16,7 +16,7 @@ final class MatchingStatusListView: UIView {
         
     private var selectedTabBarIndex: Int = 0
     private var selectedMatchingStateIndex: Int = 0
-    private var matchingResponse: [MatchingStatusListResponseData] = []
+    private var matchingResponse: [ApplyHistoryItem] = []
     weak var delegate: MatchingStatusListViewDelegate?
     
     private let matchingStatusListPageCollectionView: UICollectionView = {
@@ -154,7 +154,7 @@ final class MatchingStatusListView: UIView {
         }
     }
     
-    func setContent(with dataModel: [MatchingStatusListResponseData]){
+    func setContent(with dataModel: [ApplyHistoryItem]){
         matchingResponse = sortMatchingDataByRecentTime(dataModel)
         if matchingResponse.isEmpty {
             //TODO: 비어있을 때 처리
@@ -281,11 +281,11 @@ extension MatchingStatusListView: UICollectionViewDataSource {
             case 0:
                 cell.setContent(text: Status.PENDING.rawValue)
             case 1:
-                cell.setContent(text: Status.CONFIRMED.rawValue)
+                cell.setContent(text: Status.BEFORE.rawValue)
             case 2:
-                cell.setContent(text: Status.COMPLETED.rawValue)
+                cell.setContent(text: Status.AFTER.rawValue)
             default:
-                cell.setContent(text: Status.REJECTED.rawValue)
+                cell.setContent(text: Status.REJECT.rawValue)
             }
             return cell
         }
@@ -293,7 +293,7 @@ extension MatchingStatusListView: UICollectionViewDataSource {
 }
 
 extension MatchingStatusListView {
-    private func sortMatchingDataByRecentTime(_ data: [MatchingStatusListResponseData]) -> [MatchingStatusListResponseData] {
+    private func sortMatchingDataByRecentTime(_ data: [ApplyHistoryItem]) -> [ApplyHistoryItem] {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
@@ -310,7 +310,7 @@ extension MatchingStatusListView {
 }
 
 extension MatchingStatusListView: MatchingStatusListPageCollectionViewCellDelegate {
-    func didSelectMatchingCell(matchingResponseData: MatchingStatusListResponseData, record: Record, status: Status) {
+    func didSelectMatchingCell(matchingResponseData: ApplyHistoryItem, record: Record, status: Status) {
         delegate?.didSelectMatchingCell(matchingResponseData: matchingResponseData, record: record, status: status)
     }
 }
