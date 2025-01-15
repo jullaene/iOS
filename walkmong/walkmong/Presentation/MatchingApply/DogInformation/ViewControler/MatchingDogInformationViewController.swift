@@ -116,7 +116,7 @@ extension MatchingDogInformationViewController {
         
         dogInfoView.setRelatedInfoDetails(
             walkNote: detail.walkNote,
-            walkRequest: detail.walkRequest ?? "N/A",
+            walkRequest: detail.walkRequest ?? "",
             additionalRequest: detail.additionalRequest ?? ""
         )
         

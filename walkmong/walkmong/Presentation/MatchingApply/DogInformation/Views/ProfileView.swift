@@ -123,7 +123,7 @@ class ProfileView: UIView {
     ) {
         nameLabel.text = dogName
         genderIconView.image = UIImage(named: dogGender.genderIconName(for: dogGender))
-        dogInfoLabel.text = "\(dogSize.localizedDogSize()) · \(breed) \(Int(weight)) · \(dogAge)살"
+        dogInfoLabel.text = "\(dogSize.localizedDogSize()) · \(breed) · \(dogAge)살"
         locationLabel.text = "\(dongAddress) \(String().formattedDistance(distance))"
     }
     

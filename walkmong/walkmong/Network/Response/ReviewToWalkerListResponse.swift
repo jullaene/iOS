@@ -7,11 +7,7 @@
 
 import Foundation
 
-struct ReviewToWalkerListResponse: Codable {
-    let message: String
-    let statusCode: Int
-    let data: [ReviewToWalker]
-}
+typealias ReviewToWalkerListResponse = APIResponse<[ReviewToWalker]>
 
 struct ReviewToWalker: Codable {
     let reviewToWalkerId: Int
@@ -23,7 +19,7 @@ struct ReviewToWalker: Codable {
     let taskCompletion: Float
     let timePunctuality: Float
     let communication: Float
-    let profiles: [String]
+    let profiles: [String]?
     let content: String
     let hashtags: [String]
 }
