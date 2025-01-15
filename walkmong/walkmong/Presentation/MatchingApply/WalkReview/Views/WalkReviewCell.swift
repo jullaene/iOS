@@ -37,7 +37,7 @@ class WalkReviewCell: UIView {
         profileFrame.configure(with: model.profileData)
 
         if let totalRating = model.totalRating {
-            totalRatingView.configure(with: totalRating)
+            totalRatingView.configure(with: Double(totalRating))
             totalRatingView.isHidden = false
         } else {
             totalRatingView.isHidden = true

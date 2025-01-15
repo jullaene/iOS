@@ -18,6 +18,6 @@ struct DogReviewModel {
     let circleTags: [(String, String)]? // ("Tag Title", "#Tag Description")
     let photos: [UIImage]? // Maximum 2 photos
     let reviewText: String?
-    let totalRating: Double? // 총평점 (0.0 ~ 5.0)
+    let totalRating: Float? // 총평점 (0.0 ~ 5.0)
     let tags: [String]? // 태그 목록 (ex. ["친절한", "깨끗한"])
 }
