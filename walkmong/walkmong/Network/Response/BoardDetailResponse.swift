@@ -1,5 +1,5 @@
 //
-//  BoardDetailDetailResponse.swift
+//  BoardDetailResponse.swift
 //  walkmong
 //
 //  Created by 신호연 on 1/14/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-typealias BoardDetailDetailResponse = APIResponse<[BoardDetail]>
+typealias BoardDetailResponse = APIResponse<BoardDetail>
 
 struct BoardDetail: Codable {
     let dogId: Int
@@ -26,8 +26,8 @@ struct BoardDetail: Codable {
     let locationNegotiationYn: String
     let preMeetAvailableYn: String
     let walkNote: String
-    let walkRequest: String
-    let additionalRequest: String
+    let walkRequest: String?
+    let additionalRequest: String?
     let ownerName: String
     let ownerAge: Int
     let ownerGender: String

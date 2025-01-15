@@ -48,7 +48,7 @@ extension MatchingDogInformationViewController {
                 self.boardDetail = response
                 self.updateUI(with: response)
             } catch {
-                print("🚨fetchBoardDetails error: \(error)")
+                print("🚨Failed to fetch board details error: \(error)")
             }
             hideLoading()
         }
@@ -132,8 +132,8 @@ extension MatchingDogInformationViewController {
         )
         dogInfoView.setRelatedInfoDetails(
             walkNote: detail.walkNote,
-            walkRequest: detail.walkRequest,
-            additionalRequest: detail.additionalRequest
+            walkRequest: "널 수정 필요",
+            additionalRequest: detail.additionalRequest ?? ""
         )
         dogInfoView.setOwnerInfoDetails(
             ownerProfile: detail.ownerProfile,

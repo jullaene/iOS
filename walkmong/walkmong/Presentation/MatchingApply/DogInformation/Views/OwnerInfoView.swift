@@ -7,7 +7,7 @@ class OwnerInfoView: UIView {
     private let titleLabel = SmallTitleLabel(text: "반려인 정보", textColor: .gray600)
     
     private let profileImageView = UIImage.createImageView(
-        named: "profileExample.png",
+        named: "",
         cornerRadius: 41
     )
     
@@ -36,6 +36,9 @@ class OwnerInfoView: UIView {
     private func setupView() {
         backgroundColor = .gray100
         layer.cornerRadius = 20
+        
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.clipsToBounds = true
         
         let subviews = [
             titleLabel, profileImageView, nameLabel, infoLabel, starIcon, ratingLabel, locationIcon, locationLabel
