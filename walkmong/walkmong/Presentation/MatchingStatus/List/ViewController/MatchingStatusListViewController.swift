@@ -32,10 +32,30 @@ final class MatchingStatusListViewController: UIViewController {
 extension MatchingStatusListViewController: MatchingStatusListViewDelegate {
     func didSelectMatchingCell(matchingResponseData: ApplyHistoryItem, record: Record, status: Status) {
         //TODO: 지원 정보 보기 / 지원한 산책자 보기 / 산책 정보 보기 - 화면 전환
+        // APPLY + PENDING -> MatchingStatusMyApplicationViewController
+        // BOARD + PENDING -> MatchingStatusApplicantListViewController
+        // APPLY + BEFORE -> MatchingStatusWalkInfoForOwnerViewController
+        // BOARD + BEFORE -> MatchingStatusWalkInfoForWalkerViewController
+        if matchingResponseData.tabStatus == "APPLY" {
+            if matchingResponseData.walkMatchingStatus == "PENDING" {
+                let nextVC = MatchingStatusMyApplicationViewController()
+                self.navigationController?.pushViewController(nextVC, animated: true)
+            }else if matchingResponseData.walkMatchingStatus == "BEFORE"{
+                let nextVC = MatchingStatusWalkInfoForOwnerViewController()
+                self.navigationController?.pushViewController(nextVC, animated: true)
+            }
+        }else if matchingResponseData.tabStatus == "BOARD" {
+            if matchingResponseData.walkMatchingStatus == "PENDING" {
+                let nextVC = MatchingStatusApplicantListViewController()
+                self.navigationController?.pushViewController(nextVC, animated: true)
+            }else if matchingResponseData.walkMatchingStatus == "BEFORE"{
+                let nextVC = MatchingStatusWalkInfoForWalkerViewController()
+                self.navigationController?.pushViewController(nextVC, animated: true)
+            }
+        }
     }
     
     func didSelectTabBarIndex(record: Record, status: Status) {
-        //TODO: API 호출
         Task {
             do {
                 let response = try await service.getApplyHistory(tabStatus: record, walkMatchingStatus: status)
