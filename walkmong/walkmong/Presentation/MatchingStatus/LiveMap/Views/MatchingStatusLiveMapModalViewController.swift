@@ -176,7 +176,39 @@ final class MatchingStatusLiveMapModalViewController: UIViewController {
         self.statusLabel.textAlignment = .center
         self.statusLabel.lineBreakMode = .byWordWrapping
         self.statusLabel.lineBreakStrategy = .hangulWordPriority
+        applyTextAttributes(textView: statusLabel, center: true)
+        applyTextAttributes(textView: leftLabel)
+        applyTextAttributes(textView: timeLeftLabel)
+        applyTextAttributes(textView: pastLabel)
+        applyTextAttributes(textView: timePastLabel)
+        applyTextAttributes(textView: titleLabel)
+        applyTextAttributes(textView: requestLabel)
+        applyTextAttributes(textView: referenceLabel)
+        applyTextAttributes(textView: additionalLabel)
+        applyTextAttributes(textView: requestContentLabel)
+        applyTextAttributes(textView: referenceContentLabel)
+        applyTextAttributes(textView: additionalContentLabel)
     }
+    
+    private func applyTextAttributes(textView: UILabel, center: Bool = false) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = (textView.font?.lineHeight ?? 0) * 0.4 // 행간 140%
+        paragraphStyle.alignment = center ? .center : .natural
+        if let text = textView.text {
+            let attributedText = NSMutableAttributedString(
+                string: text,
+                attributes: [
+                    .font: textView.font ?? UIFont.systemFont(ofSize: 16),
+                    .foregroundColor: textView.textColor ?? .gray400,
+                    .paragraphStyle: paragraphStyle,
+                    .kern: -0.32, // 자간 설정
+                ]
+            )
+            textView.attributedText = attributedText
+        }
+
+    }
+
 }
 
 extension MatchingStatusLiveMapModalViewController: MatchingStatusLiveMapButtonViewDelegate {
