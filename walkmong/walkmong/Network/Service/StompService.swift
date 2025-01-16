@@ -52,14 +52,32 @@ class StompService {
     }
     
     func sendMessage(message: String, to roomId: Int) {
-        let payloadObject: [String : Any] = ["type":"TALK","message":message,"roomId":roomId]
-        //        stompClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/pub/message/send")
+        let payloadObject: [String: Any] = [
+            "roomId": roomId,
+            "type": "TALK",
+            "message": message
+        ]
+        
         do {
-            let theJSONData = try JSONSerialization.data(withJSONObject: payloadObject, options: JSONSerialization.WritingOptions())
-            let theJSONText = String(data: theJSONData, encoding: String.Encoding.utf8)
-            stompClient.sendMessage(message: theJSONText!, toDestination: "/pub/message/send", withHeaders: ["Authorization" : "Bearer \(AuthManager.shared.accessToken)"], withReceipt: nil)
-        }catch {
-            print("메시지 데이터 직렬화 실패")
+            let jsonData = try JSONSerialization.data(withJSONObject: payloadObject, options: [])
+            
+            // JSON 문자열로 변환
+            if let jsonText = String(data: jsonData, encoding: .utf8) {
+                // 헤더 설정
+                let headers = ["Authorization": "Bearer \(AuthManager.shared.accessToken)"]
+                
+                // STOMP 메시지 전송
+                stompClient.sendMessage(
+                    message: jsonText,
+                    toDestination: "/pub/message/send",
+                    withHeaders: headers,
+                    withReceipt: nil
+                )
+            } else {
+                print("JSON 문자열 변환 실패")
+            }
+        } catch {
+            print("메시지 데이터 직렬화 실패: \(error.localizedDescription)")
         }
     }
 }

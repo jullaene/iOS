@@ -46,6 +46,7 @@ class WalktalkChatViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
         navigationController?.setNavigationBarHidden(true, animated: true)
         setupStompService()
         getHistory(roomId: roomId)

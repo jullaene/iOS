@@ -70,14 +70,16 @@ final class MainTabBarController: UITabBarController {
         let vc = MatchingStatusListViewController()
         vc.view.backgroundColor = .white
         vc.tabBarItem = UITabBarItem(title: "매칭 현황", image: UIImage(named: "MatchingStateIcon"), tag: 1)
-        return vc
+        let navigationController = UINavigationController(rootViewController: vc)
+        return navigationController
     }
     
     private func createTalkViewController() -> UIViewController {
         let vc = WalktalkListViewController()
         vc.view.backgroundColor = .white
         vc.tabBarItem = UITabBarItem(title: "워크톡", image: UIImage(named: "WalkMongTalkIcon"), tag: 2)
-        return vc
+        let navigationController = UINavigationController(rootViewController: vc)
+        return navigationController
     }
     
     private func createMypageViewController() -> UIViewController {

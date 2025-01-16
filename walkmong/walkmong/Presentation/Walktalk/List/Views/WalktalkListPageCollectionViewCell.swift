@@ -70,7 +70,6 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegateFlowLayout
 
 extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // WalktalkChatViewController 생성
         let chatVC = WalktalkChatViewController(
             datamodel: WalkTalkChatLogModel(
                 matchingState: Status.from(index: selectedMatchingStateIndex),
@@ -84,13 +83,7 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
             ),
             targetName: chatroomResponseData[indexPath.row].targetName
         )
-        
-        // 현재 뷰 컨트롤러 가져오기
-        if let currentVC = self.getViewController() {
-            currentVC.navigationController?.pushViewController(chatVC, animated: true)
-        } else {
-            print("[Error] Could not find current view controller")
-        }
+        self.getViewController()?.navigationController?.pushViewController(chatVC, animated: true)
     }
     
 }

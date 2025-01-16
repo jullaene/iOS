@@ -11,6 +11,11 @@ final class MatchingStatusListViewController: UIViewController {
     
     private let matchingStatusListView = MatchingStatusListView()
     private let service = ApplyService()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,17 +43,21 @@ extension MatchingStatusListViewController: MatchingStatusListViewDelegate {
         // BOARD + BEFORE -> MatchingStatusWalkInfoForWalkerViewController
         if matchingResponseData.tabStatus == "APPLY" {
             if matchingResponseData.walkMatchingStatus == "PENDING" {
+                self.tabBarController?.tabBar.isHidden = false
                 let nextVC = MatchingStatusMyApplicationViewController()
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }else if matchingResponseData.walkMatchingStatus == "BEFORE"{
+                self.tabBarController?.tabBar.isHidden = false
                 let nextVC = MatchingStatusWalkInfoForOwnerViewController()
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
         }else if matchingResponseData.tabStatus == "BOARD" {
             if matchingResponseData.walkMatchingStatus == "PENDING" {
+                self.tabBarController?.tabBar.isHidden = false
                 let nextVC = MatchingStatusApplicantListViewController()
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }else if matchingResponseData.walkMatchingStatus == "BEFORE"{
+                self.tabBarController?.tabBar.isHidden = false
                 let nextVC = MatchingStatusWalkInfoForWalkerViewController()
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
