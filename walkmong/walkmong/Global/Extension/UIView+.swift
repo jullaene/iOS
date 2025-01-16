@@ -70,4 +70,19 @@ extension UIView {
         view.layer.masksToBounds = true
         return view
     }
+    
+    func formatDate(from input: String) -> String? {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd"
+        inputFormatter.locale = Locale(identifier: "ko_KR") // 한국어 요일 표현을 위해 설정
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "yyyy.MM.dd (E) " // 원하는 형식
+        outputFormatter.locale = Locale(identifier: "ko_KR")
+        
+        guard let date = inputFormatter.date(from: input) else {
+            return nil // 입력 문자열이 날짜 형식에 맞지 않는 경우
+        }
+        return outputFormatter.string(from: date)
+    }
 }

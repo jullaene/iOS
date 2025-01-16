@@ -17,6 +17,7 @@ final class MatchingApplyDetailSelectViewController: UIViewController {
     
     func configure(with boardDetail: BoardDetail) {
         self.boardDetail = boardDetail
+        detailSelectView.setContent(boardDetail: boardDetail)
     }
       
     init(boardDetail: BoardDetail, boardId: Int){

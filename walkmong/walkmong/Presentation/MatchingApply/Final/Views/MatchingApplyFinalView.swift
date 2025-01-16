@@ -209,7 +209,7 @@ class MatchingApplyFinalView: UIView {
         planStartInformationView.snp.makeConstraints { make in
             make.top.equalTo(planTitleLabel.snp.bottom).offset(16)
             make.leading.equalToSuperview().offset(20)
-            make.height.equalTo(67)
+            make.height.equalTo(89)
             make.width.equalTo(scrollContentView.snp.width).multipliedBy(0.5).offset(-24)
         }
         planStartLabel.snp.makeConstraints { make in
@@ -222,7 +222,7 @@ class MatchingApplyFinalView: UIView {
         }
         planEndInformationView.snp.makeConstraints { make in            make.top.equalTo(planTitleLabel.snp.bottom).offset(16)
             make.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(67)
+            make.height.equalTo(89)
             make.width.equalTo(scrollContentView.snp.width).multipliedBy(0.5).offset(-24)
         }
         planEndLabel.snp.makeConstraints { make in
@@ -334,8 +334,11 @@ class MatchingApplyFinalView: UIView {
         }
         dogInformationView.configure(isFemale: boardDetail.dogGender == "MALE" ? false : true, name: boardDetail.dogName, informationText: "\(dogSize) · \(boardDetail.breed) · \(boardDetail.weight)kg", location: "\(boardDetail.dongAddress) \(String(format: "%.2f", (boardDetail.distance)))km", profileImage: boardDetail.dogProfile ?? "프로필 이미지 오류")
         walkerInformationView.configure(name: boardDetail.ownerName, informationText: "\(boardDetail.ownerAge/10)0대 · 남성", location: requestData.dongAddress, profileImage: boardDetail.ownerProfile ?? "프로필 이미지 오류")
-        planStartDateLabel.text = boardDetail.startTime
-        planEndDateLabel.text = boardDetail.endTime
+        if let startDate = formatDate(from: boardDetail.date!),
+           let endDate = formatDate(from: boardDetail.date!) {
+            planStartDateLabel.text = startDate + "\n" + boardDetail.startTime
+            planEndDateLabel.text = endDate + "\n" + boardDetail.endTime
+        }
         placeAddressLabel.text = requestData.dongAddress + requestData.addressDetail
         placeMemoLabel.text = requestData.addressMemo
         messageLabel.text = requestData.memoToOwner

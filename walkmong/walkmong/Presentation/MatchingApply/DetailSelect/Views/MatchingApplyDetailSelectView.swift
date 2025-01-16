@@ -121,7 +121,7 @@ class MatchingApplyDetailSelectView: UIView {
         return imageView
     }()
     
-    private let selectPlaceWarningMessageLabel = SmallMainHighlightParagraphLabel(text: "장소 선택 후 반려인과 상의하여 장소를 변경해도 괜찮아요!", textColor: .gray600)
+    private let selectPlaceWarningMessageLabel = SmallMainHighlightParagraphLabel(text: "장소 선택 후 반려인과 상의하여 장소를 변경해도 괜찮아요!", textColor: .mainBlue)
     
     //TODO: 선택한 장소에 따라 UI 업데이트
     private let selectedPlaceLabel = SmallTitleLabel(text: "강남구 학동로 508", textColor: .gray600)
@@ -711,4 +711,12 @@ class MatchingApplyDetailSelectView: UIView {
         placeSelectButtonLabel.removeFromSuperview()
         placeSelectButtonArrowIcon.removeFromSuperview()
     }
+    
+    func setContent(boardDetail: BoardDetail) {
+        if let startDate = formatDate(from: boardDetail.date!), let endDate = formatDate(from: boardDetail.date!){
+            calendarStartDateLabel.text = startDate + boardDetail.startTime
+            calendarEndDateLabel.text = endDate + boardDetail.endTime
+        }
+    }
+    
 }
