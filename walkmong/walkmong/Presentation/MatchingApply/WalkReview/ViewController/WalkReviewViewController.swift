@@ -70,7 +70,7 @@ class WalkReviewViewController: UIViewController {
                 let mappedData = response.data.map { review in
                     DogReviewModel(
                         profileData: .init(
-                            image: review.profiles?.first.flatMap { URL(string: $0) },
+                            image: URL(string: review.ownerProfile),
                             reviewerId: review.ownerName,
                             walkDate: formatDate(review.walkingDay)
                         ),

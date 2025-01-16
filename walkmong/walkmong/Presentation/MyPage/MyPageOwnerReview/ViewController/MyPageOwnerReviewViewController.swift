@@ -72,7 +72,7 @@ class MyPageOwnerReviewViewController: UIViewController {
                 let mappedData = reviews.map { review in
                     DogReviewModel(
                         profileData: .init(
-                            image: review.profiles?.first.flatMap { URL(string: $0) },
+                            image: URL(string: review.ownerProfile),
                             reviewerId: review.ownerName,
                             walkDate: formatDate(review.walkingDay)
                         ),

@@ -12,6 +12,7 @@ typealias ReviewToWalkerListResponse = APIResponse<[ReviewToWalker]>
 struct ReviewToWalker: Codable {
     let reviewToWalkerId: Int
     let ownerName: String
+    let ownerProfile: String
     let dogName: String
     let walkingDay: String
     let photoSharing: Float
