@@ -28,6 +28,8 @@ class MyPageViewController: UIViewController {
         super.viewDidLoad()
         fetchDogList()
         fetchUserProfile()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(showLogoutAlert), name: NSNotification.Name("LogoutTapped"), object: nil)
     }
     
     private func fetchDogList() {
@@ -97,6 +99,20 @@ class MyPageViewController: UIViewController {
     @objc private func navigateToOwnerReviewVC() {
         let nextVC = MyPageOwnerReviewViewController()
         navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
+    @objc private func showLogoutAlert() {
+        CustomAlertViewController.CustomAlertBuilder(viewController: self)
+            .setButtonState(.doubleButton)
+            .setTitleState(.useTitleAndSubTitle)
+            .setTitleText("로그아웃 하시겠습니까?")
+            .setSubTitleText("계속 진행하려면 예를 눌러주세요.")
+            .setLeftButtonTitle("아니오")
+            .setRightButtonTitle("예")
+            .setRightButtonAction {
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.logout()
+            }
+            .showAlertView()
     }
 }
 
