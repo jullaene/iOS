@@ -12,9 +12,9 @@ class MyPageSettingsView: UIView {
     
     private let menuItems: [(String, String)] = [
         ("내가 쓴 산책 후기", "MyPageSettingsArrow"),
-        ("지난 산책", "MyPageSettingsArrow"),
         ("공지사항", "MyPageSettingsArrow"),
-        ("설정", "MyPageSettingsArrow")
+        ("설정", "MyPageSettingsArrow"),
+        ("로그아웃", "MyPageSettingsArrow")
     ]
     
     private let itemHeight: CGFloat = 52
@@ -102,6 +102,15 @@ class MyPageSettingsView: UIView {
             make.width.height.equalTo(28)
         }
         
+        if title == "로그아웃" {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(logoutTapped))
+            container.addGestureRecognizer(tapGesture)
+        }
+        
         return container
+    }
+
+    @objc private func logoutTapped() {
+        NotificationCenter.default.post(name: NSNotification.Name("LogoutTapped"), object: nil)
     }
 }
