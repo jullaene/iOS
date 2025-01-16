@@ -11,10 +11,10 @@ import Moya
 struct MemberService {
     private let provider = NetworkProvider<MemberAPI>()
     
-    func postAddress(request: PostAddressRequest) async throws -> APIResponse<String> {
+    func postAddress(request: PostAddressRequest) async throws -> APIResponse<Int> {
         return try await provider.request(
             target: .postAddress(request: request),
-            responseType: APIResponse<String>.self
+            responseType: APIResponse<Int>.self
         )
     }
     
