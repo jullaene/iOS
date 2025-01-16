@@ -12,6 +12,7 @@ enum ReviewAPI {
     case registerReview(requestBody: [String: Any])
     case reviewToWalkerList
     case reviewToWalkerRegister(walkerId: Int, boardId: Int)
+    case reviewToOwnerList
 }
 
 extension ReviewAPI: APIEndpoint {
@@ -24,6 +25,8 @@ extension ReviewAPI: APIEndpoint {
             return "/api/v1/review/to/walker/list"
         case .reviewToWalkerRegister:
             return "/api/v1/review/to/walker/register"
+        case .reviewToOwnerList:
+            return "/api/v1/review/to/owner/list"
         }
     }
     
@@ -31,7 +34,7 @@ extension ReviewAPI: APIEndpoint {
         switch self {
         case .registerReview, .reviewToWalkerRegister:
             return .post
-        case .reviewToWalkerList:
+        case .reviewToWalkerList, .reviewToOwnerList:
             return .get
         }
     }
@@ -40,7 +43,7 @@ extension ReviewAPI: APIEndpoint {
         switch self {
         case .registerReview(let requestBody):
             return .requestParameters(parameters: requestBody, encoding: JSONEncoding.default)
-        case .reviewToWalkerList:
+        case .reviewToWalkerList, .reviewToOwnerList:
             return .requestPlain
         case .reviewToWalkerRegister(let walkerId, let boardId):
             return .requestParameters(parameters: ["walkerId": walkerId, "boardId": boardId], encoding: URLEncoding.queryString)
