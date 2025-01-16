@@ -16,4 +16,28 @@ struct ReviewService {
             responseType: ReviewToWalkerListResponse.self
         )
     }
+    
+    func reviewToWalkerRegister(requestBody: ReviewToWalkerRegister) async throws -> ReviewToWalkerRegisterResponse {
+        return try await provider.request(
+            target: .registerReview(requestBody: requestBody.toDictionary()),
+            responseType: ReviewToWalkerRegisterResponse.self
+        )
+    }
+}
+
+private extension ReviewToWalkerRegister {
+    func toDictionary() -> [String: Any] {
+        return [
+            "walkerId": walkerId as Any,
+            "boardId": boardId,
+            "timePunctuality": timePunctuality,
+            "communication": communication,
+            "attitude": attitude,
+            "taskCompletion": taskCompletion,
+            "photoSharing": photoSharing,
+            "hashtags": hashtags ?? NSNull(),
+            "images": images ?? NSNull(),
+            "content": content ?? NSNull()
+        ]
+    }
 }

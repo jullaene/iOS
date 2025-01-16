@@ -18,11 +18,9 @@ class PetOwnerReviewViewController: UIViewController {
     private let petOwnerReviewView = PetOwnerReviewView()
     private let networkProvider = NetworkProvider<ReviewAPI>()
     
-    private var walkerId: [Int64] = []
-    private var boardId: [Int64] = []
+    private var boardId: Int
     
-    init(walkerId: [Int64], boardId: [Int64]) {
-        self.walkerId = walkerId
+    init(boardId: Int) {
         self.boardId = boardId
         super.init(nibName: nil, bundle: nil)
     }
@@ -100,7 +98,6 @@ class PetOwnerReviewViewController: UIViewController {
         let basicRatings = ratings.mapValues { Float($0) }
         
         let detailReviewVC = PetOwnerDetailReviewViewController(
-            walkerId: walkerId,
             boardId: boardId,
             basicRatings: basicRatings
         )
@@ -126,7 +123,7 @@ class PetOwnerReviewViewController: UIViewController {
         }
 
         return [
-            "walkerId": walkerId,
+            "walkerId": NSNull(),
             "boardId": boardId,
             "timePunctuality": ratings["timePunctuality"] ?? 0.0,
             "communication": ratings["communication"] ?? 0.0,
