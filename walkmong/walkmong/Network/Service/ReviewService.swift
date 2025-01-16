@@ -17,6 +17,13 @@ struct ReviewService {
         )
     }
     
+    func getReviewToOwnerList() async throws -> ReviewToOwnerListResponse {
+        return try await provider.request(
+            target: .reviewToOwnerList,
+            responseType: ReviewToOwnerListResponse.self
+        )
+    }
+    
     func reviewToWalkerRegister(requestBody: ReviewToWalkerRegister) async throws -> ReviewToWalkerRegisterResponse {
         return try await provider.request(
             target: .registerReview(requestBody: requestBody.toDictionary()),

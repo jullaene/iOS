@@ -43,11 +43,6 @@ final class MyPageWalkerReviewView: UIView {
         dogFilterStackView.axis = .horizontal
         dogFilterStackView.spacing = 8
         dogFilterStackView.alignment = .center
-        
-        addDogFilter(name: "봄별이")
-        addDogFilter(name: "새봄이")
-        
-        setupDummyReviews()
     }
     
     private func setupConstraints() {
@@ -107,32 +102,6 @@ final class MyPageWalkerReviewView: UIView {
         previousView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-20)
         }
-    }
-    
-    private func setupDummyReviews() {
-//        let dummyReviews = [
-//            DogReviewModel(
-//                profileData: DogReviewModel.ProfileData(
-//                    image: nil,
-//                    reviewerId: "reviewer123",
-//                    walkDate: "2024년 12월 1일"
-//                ),
-//                circleTags: [],
-//                photos: [],
-//                reviewText: "연락을 당일에 30분 안보셔서 힘들었어요. 사전 산책 가능하시다고 하시고서는 연락도 안보여서.. 힘들었습니다."
-//            ),
-//            DogReviewModel(
-//                profileData: DogReviewModel.ProfileData(
-//                    image: nil,
-//                    reviewerId: "reviewer456",
-//                    walkDate: "2024년 12월 2일"
-//                ),
-//                circleTags: [],
-//                photos: [],
-//                reviewText: "산책은 즐거웠지만, 강아지 상태에 대한 피드백이 부족했어요."
-//            )
-//        ]
-//        addReviewCells(reviews: dummyReviews)
     }
     
     private func setupFilterButton() {
