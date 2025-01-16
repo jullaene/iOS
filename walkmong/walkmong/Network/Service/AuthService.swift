@@ -11,10 +11,10 @@ import Moya
 struct AuthService {
     private let provider = NetworkProvider<AuthAPI>()
     
-    func signup(request: SignupRequest) async throws -> APIResponse<String> {
+    func signup(request: SignupRequest) async throws -> APIResponse<Int> {
         return try await provider.request(
             target: .signup(request: request),
-            responseType: APIResponse<String>.self
+            responseType: APIResponse<Int>.self
         )
     }
 

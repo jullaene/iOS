@@ -18,6 +18,7 @@ final class SignupProfileImageViewController: UIViewController {
     init(signupData: SignupRequest, addressData: PostAddressRequest) {
         super.init(nibName: nil, bundle: nil)
         self.signupData = signupData
+        self.addressData = addressData
     }
     
     required init?(coder: NSCoder) {
@@ -92,8 +93,9 @@ extension SignupProfileImageViewController: SignupProfileImageViewDelegate {
                     .setTitleState(.useTitleAndSubTitle)
                     .setSingleButtonTitle("돌아가기")
                     .setTitleText("회원가입 실패")
-                    .setSubTitleText("다시 시도해주세요.")
+                    .setSubTitleText(error.message)
                     .showAlertView()
+                print("알 수 없는 에러 발생: \(error.message)")
             } catch {
                 print("알 수 없는 에러 발생: \(error.localizedDescription)")
                 CustomAlertViewController.CustomAlertBuilder(viewController: self)
