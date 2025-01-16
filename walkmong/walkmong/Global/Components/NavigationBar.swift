@@ -6,10 +6,31 @@
 //
 
 import UIKit
+import ObjectiveC
+
+protocol NavigationBarDelegate {
+    func rightButtonTapped()
+}
 
 extension UIViewController {
+    
+    private struct AssociatedKeys {
+        static var delegateKey = "navigationBarDelegateKey"
+    }
+
+    var navigationBarDelegate: NavigationBarDelegate? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.delegateKey) as? NavigationBarDelegate
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.delegateKey, newValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
+    }
+    
     // MARK: - Custom Navigation Bar
-    func addCustomNavigationBar(titleText: String?, showLeftBackButton: Bool, showLeftCloseButton: Bool, showRightCloseButton: Bool, showRightRefreshButton: Bool, backgroundColor: UIColor = .white) {
+    func addCustomNavigationBar(titleText: String?, showLeftBackButton: Bool, showLeftCloseButton: Bool, showRightCloseButton: Bool, showRightRefreshButton: Bool, backgroundColor: UIColor = .white,        delegate: NavigationBarDelegate? = nil
+) {
+        self.navigationBarDelegate = delegate
         
         let navigationBarView = UIView()
         navigationBarView.backgroundColor = backgroundColor
@@ -79,6 +100,7 @@ extension UIViewController {
                 let button = UIButton()
                 button.setImage(.refreshButton, for: .normal)
                 button.tintColor = .mainBlue
+                button.addTarget(self, action: #selector(handleRefreshButtonTapped), for: .touchUpInside)
                 return button
             }()
             navigationBarView.addSubview(refreshBarButton)
@@ -95,6 +117,10 @@ extension UIViewController {
         }
     }
     
+    @objc private func handleRefreshButtonTapped() {
+        navigationBarDelegate?.rightButtonTapped()
+    }
+    
     // MARK: - Button Handlers with Effects
     @objc private func handleBackButtonTapped() {
         triggerCustomTransition(type: .push, direction: .fromLeft)
@@ -104,10 +130,6 @@ extension UIViewController {
     @objc private func handleCloseButtonTapped() {
         triggerCustomTransition(type: .fade, direction: nil)
         popViewController()
-    }
-    
-    @objc private func handleRefreshButtonTapped() {
-        print("Refresh button tapped")
     }
     
     @objc private func popViewController() {
