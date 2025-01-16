@@ -15,7 +15,7 @@ class StompService {
     weak var delegate: StompServiceDelegate?
     
     init() {
-        guard let urlString = SecretManager.shared.BASE_URL,
+        guard let urlString = SecretManager.shared.SOCKET_URL,
               let url = URL(string: urlString) else {
             fatalError("Initialization failed: Missing URL")
         }
@@ -51,8 +51,16 @@ class StompService {
         stompClient.unsubscribe(destination: destination)
     }
     
-    func sendMessage(body: String, to destination: String, with receipt: String) {
-        stompClient.sendMessage(message: body, toDestination: destination, withHeaders: connectionHeaders, withReceipt: receipt)
+    func sendMessage(message: String, to roomId: Int) {
+        let payloadObject: [String : Any] = ["type":"TALK","message":message,"roomId":roomId]
+        //        stompClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/pub/message/send")
+        do {
+            let theJSONData = try JSONSerialization.data(withJSONObject: payloadObject, options: JSONSerialization.WritingOptions())
+            let theJSONText = String(data: theJSONData, encoding: String.Encoding.utf8)
+            stompClient.sendMessage(message: theJSONText!, toDestination: "/pub/message/send", withHeaders: ["Authorization" : "Bearer \(AuthManager.shared.accessToken)"], withReceipt: nil)
+        }catch {
+            print("메시지 데이터 직렬화 실패")
+        }
     }
 }
 
@@ -68,7 +76,7 @@ extension StompService: StompClientLibDelegate {
     }
     
     func serverDidSendError(client: StompClientLib!, withErrorMessage description: String, detailedErrorMessage message: String?) {
-        print("[STOMP] Sent Error: \(description)")
+        print("[STOMP] Sent Error: \(description)\n\(message ?? "")")
     }
     
     func stompClientDidConnect(client: StompClientLib!) {

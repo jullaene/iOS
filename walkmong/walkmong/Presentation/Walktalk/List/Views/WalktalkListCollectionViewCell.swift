@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class WalktalkListCollectionViewCell: UICollectionViewCell {
     
@@ -140,7 +141,7 @@ final class WalktalkListCollectionViewCell: UICollectionViewCell {
         nameLabel.text = datamodel.targetName
         textPreviewLabel.text = datamodel.lastChat
         chatCountLabel.text = String(datamodel.notRead)
-        profileImageView.image = .defaultProfile //FIXME: 이미지 렌더링 필요
+        profileImageView.setImage(from: datamodel.dogProfile, placeholder: "puppy")
         timeLabel.text = formatLastChatTime(datamodel.lastChatTime)
     }
     

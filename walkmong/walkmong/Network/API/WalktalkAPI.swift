@@ -19,11 +19,11 @@ extension WalktalkAPI: APIEndpoint {
     var path: String {
         switch self {
         case .createChatroom(boardId: let boardId):
-            return "/chatroom/\(boardId)"
+            return "/api/v1/chatroom/\(boardId)"
         case .getHistory(roomId: let roomId):
-            return "/chatroom/history/\(roomId)"
+            return "/api/v1/chatroom/history/\(roomId)"
         case .getChatroom:
-            return "/chatroom/list"
+            return "/api/v1/chatroom/list"
         }
     }
     
@@ -41,7 +41,7 @@ extension WalktalkAPI: APIEndpoint {
         case .createChatroom, .getHistory:
             return .requestPlain
         case .getChatroom(record: let record, status: let status):
-            return .requestParameters(parameters: ["record": record, "status": status], encoding: URLEncoding.queryString)
+            return .requestParameters(parameters: ["record": record.enumForChat, "status": status.enumForChat], encoding: URLEncoding.queryString)
         }
     }
 }
