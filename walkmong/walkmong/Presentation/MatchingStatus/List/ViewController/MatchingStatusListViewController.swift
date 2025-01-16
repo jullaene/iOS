@@ -15,6 +15,7 @@ final class MatchingStatusListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
     override func viewDidLoad() {
@@ -25,11 +26,11 @@ final class MatchingStatusListViewController: UIViewController {
     private func setUI() {
         view.backgroundColor = .white
         view.addSubview(matchingStatusListView)
+        addCustomNavigationBar(titleText: "매칭 현황", showLeftBackButton: false, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         matchingStatusListView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
             make.horizontalEdges.bottom.equalToSuperview()
         }
-        addCustomNavigationBar(titleText: "매칭 현황", showLeftBackButton: false, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         matchingStatusListView.delegate = self
     }
 }
