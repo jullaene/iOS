@@ -11,10 +11,10 @@ import Moya
 struct AuthService {
     private let provider = NetworkProvider<AuthAPI>()
     
-    func signup(request: SignupRequest) async throws -> APIResponse<String> {
+    func signup(request: SignupRequest) async throws -> APIResponse<Int> {
         return try await provider.request(
             target: .signup(request: request),
-            responseType: APIResponse<String>.self
+            responseType: APIResponse<Int>.self
         )
     }
 
@@ -27,7 +27,7 @@ struct AuthService {
             )
         } catch let error as MoyaError {
             if case .statusCode(let response) = error, (400...499).contains(response.statusCode) {
-                throw NetworkError.clientError(message: error.localizedDescription)
+                throw NetworkError.errorWithMessage(message: error.localizedDescription)
             }
             throw error
         }

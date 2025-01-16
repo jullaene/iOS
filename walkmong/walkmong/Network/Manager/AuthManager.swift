@@ -46,6 +46,6 @@ class AuthManager {
     }
     
     func isLoggedIn() -> Bool {
-        return accessToken != nil
+        return accessToken != nil && UserDefaults.standard.bool(forKey: "KEEP_LOGIN")
     }
 }

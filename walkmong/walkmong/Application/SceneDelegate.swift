@@ -67,6 +67,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 return
             }
         }
+        UserDefaults.standard.set(false, forKey: "KEEP_LOGIN")
         if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
             let loginViewController = LoginViewController()
             sceneDelegate.changeRootViewController(loginViewController, animated: true)

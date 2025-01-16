@@ -11,8 +11,8 @@ struct MatchingApplyMapModel: Codable{
     var dongAddress: String?
     var roadAddress: String?
     var buildingName: String?
-    var latitude: Double?
-    var longitude: Double?
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
     var didSelectLocation: Bool
     var memo: String?
 }

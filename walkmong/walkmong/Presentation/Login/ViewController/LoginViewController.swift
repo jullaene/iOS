@@ -71,12 +71,13 @@ extension LoginViewController: LoginViewDelegate {
     }
     
     private func handleLoginSuccess(response: RefreshAccessTokenResponse, keepLogin: Bool, keepEmail: String? = nil) {
+        AuthManager.shared.accessToken = response.data.accessToken
+        AuthManager.shared.refreshToken = response.data.refreshToken
         if keepLogin {
-            AuthManager.shared.accessToken = response.data.accessToken
-            AuthManager.shared.refreshToken = response.data.refreshToken
+            UserDefaults.standard.setValue(keepLogin, forKey: "KEEP_LOGIN")
         }
         if let keepEmail = keepEmail {
-            UserDefaults.setValue(keepEmail, forKey: "USER_EMAIL")
+            UserDefaults.standard.setValue(keepEmail, forKey: "USER_EMAIL")
         }
         let mainTabBarController = MainTabBarController()
         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
