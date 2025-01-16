@@ -25,10 +25,8 @@ final class NetworkProvider<T: APIEndpoint> {
             /// 최초 API 요청
             print("Request URL: \(target.baseURL.appendingPathComponent(target.path))")
             let response = try await provider.requestAsync(target)
-
-            print(response.statusCode)
-            if let data = try? JSONDecoder().decode(ResponseType.self, from: response.data){
-                print(data)
+            if let errorMessage = String(data: response.data, encoding: .utf8) {
+                print(errorMessage)
             }
             // 상태 코드 처리
             switch response.statusCode {
@@ -46,20 +44,14 @@ final class NetworkProvider<T: APIEndpoint> {
                 } else {
                     throw NetworkError.unauthorized
                 }
-            case 403:
-                // 403: 권한 없음 처리
-                throw NetworkError.forbidden
-            case 400...499:
-                // 클라이언트 에러 처리
-                if let errorMessage = String(data: response.data, encoding: .utf8) {
-                    throw NetworkError.clientError(message: errorMessage)
-                }
-                throw NetworkError.unknown
-            case 500...599:
-                // 서버 에러 처리
-                throw NetworkError.serverError
             default:
-                throw NetworkError.unknown
+                if let jsonObject = try? JSONSerialization.jsonObject(with: response.data, options: []) as? [String: Any],
+                   let message = jsonObject["message"] as? String {
+                    print(message) // 메시지만 출력
+                    throw NetworkError.errorWithMessage(message: message)
+                } else {
+                    throw NetworkError.unknown
+                }
             }
         } catch let error as MoyaError {
             /// 기타 네트워크 관련 에러 처리

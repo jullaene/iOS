@@ -344,6 +344,7 @@ class MatchingApplyFinalView: UIView {
     @objc private func checkBoxButtonTapped() {
         checkBoxButton.isSelected.toggle()
         nextButton.backgroundColor = checkBoxButton.isSelected ? .gray600 : .gray300
+        nextButton.setButtonState(isEnabled: checkBoxButton.isSelected)
         delegate?.didCheckedInformation(button: checkBoxButton)
     }
     

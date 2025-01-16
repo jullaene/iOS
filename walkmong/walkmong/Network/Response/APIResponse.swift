@@ -14,12 +14,29 @@ struct APIResponse<DTO: Decodable>: Decodable {
 }
 
 enum NetworkError: Error {
-    case clientError(message: String)
+    case errorWithMessage(message: String)
     case serverError
     case unauthorized
     case tokenRefreshFailed
     case forbidden
     case unknown
+    
+    var message: String {
+        switch self {
+        case .unauthorized:
+            return "Unauthorized access. Please log in again."
+        case .forbidden:
+            return "You do not have permission to perform this action."
+        case .errorWithMessage(let message):
+            return (message)
+        case .serverError:
+            return "Server error. Please try again later."
+        case .tokenRefreshFailed:
+            return "Failed to refresh the token. Please log in again."
+        case .unknown:
+            return "An unknown error occurred."
+        }
+    }
 }
 
 struct EmptyDTO: Decodable {}

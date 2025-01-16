@@ -27,7 +27,7 @@ struct AuthService {
             )
         } catch let error as MoyaError {
             if case .statusCode(let response) = error, (400...499).contains(response.statusCode) {
-                throw NetworkError.clientError(message: error.localizedDescription)
+                throw NetworkError.errorWithMessage(message: error.localizedDescription)
             }
             throw error
         }

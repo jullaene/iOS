@@ -14,6 +14,7 @@ class MatchingApplyFinalViewController: UIViewController {
     private var boardDetailData: BoardDetail!
     private var boardId: Int!
     private var checked: Bool = false
+    private let service = ApplyService()
     
     init(matchingApplyRequest: WalkRequestData, boardDetailData: BoardDetail, boardId: Int){
         self.boardDetailData = boardDetailData
@@ -62,9 +63,9 @@ extension MatchingApplyFinalViewController: MatchingApplyFinalViewDelegate {
     func didTapApplyButton() {
         if checked {
             Task {
-                let service = ApplyService()
                 do {
-                    _ = try await service.applyWalk(boardId: boardId, request: matchingApplyRequest)
+                    let response = try await service.applyWalk(boardId: boardId, request: matchingApplyRequest)
+                    print("지원 성공: \(response)")
                     CustomAlertViewController
                         .CustomAlertBuilder(viewController: self)
                         .setTitleState(.useTitleOnly)
@@ -73,12 +74,12 @@ extension MatchingApplyFinalViewController: MatchingApplyFinalViewDelegate {
                         .setSingleButtonTitle("확인")
                         .showAlertView()
                     self.navigationController?.popToRootViewController(animated: true)
-                }catch {
+                }catch let error as NetworkError {
                     CustomAlertViewController
                         .CustomAlertBuilder(viewController: self)
                         .setTitleState(.useTitleAndSubTitle)
                         .setTitleText("산책 지원 실패")
-                        .setSubTitleText("네트워크 상태를 확인해주세요.")
+                        .setSubTitleText(error.message)
                         .setButtonState(.singleButton)
                         .setSingleButtonTitle("돌아가기")
                         .showAlertView()

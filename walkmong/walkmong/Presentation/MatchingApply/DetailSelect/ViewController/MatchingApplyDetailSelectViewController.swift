@@ -64,8 +64,8 @@ extension MatchingApplyDetailSelectViewController: MatchingApplyDetailSelectView
         self.matchingApplyRequest.addressMemo = model.memo ?? ""
         self.matchingApplyRequest.roadAddress = model.roadAddress ?? ""
         self.matchingApplyRequest.dongAddress = model.dongAddress ?? ""
-        self.matchingApplyRequest.latitude = String(describing: model.latitude)
-        self.matchingApplyRequest.longitude = String(describing: model.longitude)
+        self.matchingApplyRequest.latitude = String(model.latitude)
+        self.matchingApplyRequest.longitude = String(model.longitude)
         updateNextButtonState()
     }
     
