@@ -23,6 +23,12 @@ final class MatchingStatusMyApplicationViewController: UIViewController {
         loadData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
     private func setupView() {
         view.backgroundColor = .gray100
         view.addSubview(matchingStatusMyApplicationView)
