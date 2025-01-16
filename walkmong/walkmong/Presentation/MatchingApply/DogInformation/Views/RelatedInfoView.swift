@@ -110,8 +110,8 @@ class RelatedInfoView: UIView {
     
     // MARK: - Public Methods
     func updateDetails(walkNote: String, walkRequest: String, additionalRequest: String) {
-        requestDescriptionLabel.text = walkNote
-        referenceDescriptionLabel.text = walkRequest
+        requestDescriptionLabel.text = walkRequest
+        referenceDescriptionLabel.text = walkNote
         additionalInfoDescriptionLabel.text = additionalRequest
     }
     

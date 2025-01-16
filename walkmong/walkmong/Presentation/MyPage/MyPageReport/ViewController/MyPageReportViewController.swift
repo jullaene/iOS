@@ -18,9 +18,16 @@ class MyPageReportViewController: UIViewController, UINavigationControllerDelega
         setupSubmitButtonAction()
         setupReasonButtonActions()
         configureTextView()
+        
         checkSubmitButtonState()
         setupTapToDismissKeyboard()
         navigationController?.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        self.tabBarController?.tabBar.isHidden = true
     }
     
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
