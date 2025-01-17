@@ -23,6 +23,12 @@ final class MatchingStatusWalkInfoForOwnerViewController: UIViewController {
         loadData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
     private func setupView() {
         view.backgroundColor = .gray100
         view.addSubview(matchingStatusWalkInfoForOwnerView)
@@ -34,7 +40,7 @@ final class MatchingStatusWalkInfoForOwnerViewController: UIViewController {
     
     private func setupNavigationBar() {
         addCustomNavigationBar(
-            titleText: "산책 지원서",
+            titleText: "산책 정보",
             showLeftBackButton: true,
             showLeftCloseButton: false,
             showRightCloseButton: false,

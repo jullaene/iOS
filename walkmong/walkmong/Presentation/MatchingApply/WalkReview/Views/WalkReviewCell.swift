@@ -47,12 +47,9 @@ class WalkReviewCell: UIView {
         }
 
         if !model.photos.isEmpty {
-            let images = model.photos.compactMap { url -> UIImage? in
-                guard let data = try? Data(contentsOf: url) else { return nil }
-                return UIImage(data: data)
-            }
-            photoFrame.configure(with: images)
-            photoFrame.isHidden = images.isEmpty
+            let urls = model.photos.compactMap { $0 }
+            photoFrame.configure(with: urls)
+            photoFrame.isHidden = urls.isEmpty
         } else {
             photoFrame.isHidden = true
         }

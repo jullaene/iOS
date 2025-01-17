@@ -15,12 +15,10 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     private var selectedImages: [UIImage] = []
     private let maxHashtagSelection = 3
     private let maxImageSelection = 2
-    private var walkerId: [Int64] = []
-    private var boardId: [Int64] = []
+    private var boardId: Int
     private var basicRatings: [String: Float] = [:]
     
-    init(walkerId: [Int64], boardId: [Int64], basicRatings: [String: Float]) {
-        self.walkerId = walkerId
+    init(boardId: Int, basicRatings: [String: Float]) {
         self.boardId = boardId
         self.basicRatings = basicRatings
         super.init(nibName: nil, bundle: nil)
@@ -121,23 +119,26 @@ class PetOwnerDetailReviewViewController: UIViewController, UIImagePickerControl
     }
     
     @objc private func handleSubmitButtonTap() {
-        guard !walkerId.isEmpty, !boardId.isEmpty else {
-            print("필수 데이터(walkerId 또는 boardId)가 설정되지 않았습니다.")
-            return
-        }
-        
-        let ratings = collectRatings() ?? [:]
-        let content = collectReviewContent() ?? ""
-        
-        let requestBody: [String: Any] = collectDetailedReviewData(
-            walkerId: walkerId,
+        let requestBody = ReviewToWalkerRegister(
+            walkerId: nil,
             boardId: boardId,
-            ratings: ratings,
-            content: content
+            timePunctuality: basicRatings["timePunctuality"] ?? 0.0,
+            communication: basicRatings["communication"] ?? 0.0,
+            attitude: basicRatings["attitude"] ?? 0.0,
+            taskCompletion: basicRatings["taskCompletion"] ?? 0.0,
+            photoSharing: basicRatings["photoSharing"] ?? 0.0,
+            hashtags: collectSelectedHashtags().isEmpty ? nil : collectSelectedHashtags(),
+            images: selectedImages.isEmpty ? nil : selectedImages.map { $0.pngData()?.base64EncodedString() ?? "" },
+            content: collectReviewContent() ?? nil
         )
-        
+
         Task {
-            await sendReviewData(requestBody: requestBody)
+            do {
+                let response = try await ReviewService().reviewToWalkerRegister(requestBody: requestBody)
+                print("후기 등록 성공: \(response.message)")
+            } catch {
+                print("후기 등록 실패: \(error.localizedDescription)")
+            }
         }
     }
     

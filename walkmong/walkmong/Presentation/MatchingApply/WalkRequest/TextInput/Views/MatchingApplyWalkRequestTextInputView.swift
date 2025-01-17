@@ -85,7 +85,7 @@ final class MatchingApplyWalkRequestTextInputView: UIView {
     }
     
     private func createTitleLabel(text: String) -> UILabel {
-        let titleLabel = SmallTitleLabel(text: text, textColor: .gray600)
+        let titleLabel = MainParagraphLabel(text: text, textColor: .gray600)
         return titleLabel
     }
     

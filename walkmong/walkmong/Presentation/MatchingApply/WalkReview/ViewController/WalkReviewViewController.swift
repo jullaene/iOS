@@ -64,21 +64,21 @@ class WalkReviewViewController: UIViewController {
         showLoading()
         Task {
             do {
-                let response = try await reviewService.getReviewToWalkerList()
+                let response = try await reviewService.getReviewToOwnerList()
                 print("Decoded Response: \(response)")
                 
                 let mappedData = response.data.map { review in
                     DogReviewModel(
                         profileData: .init(
-                            image: review.profiles?.first.flatMap { URL(string: $0) },
-                            reviewerId: review.ownerName,
+                            image: URL(string: review.reviewerProfile),
+                            reviewerId: review.reviewer,
                             walkDate: formatDate(review.walkingDay)
                         ),
-                        circleTags: [],
-                        photos: review.profiles?.compactMap { URL(string: $0) } ?? [],
+                        circleTags: [("사회성", review.sociality), ("활동량", review.activity), ("공격성", review.aggressiveness)],
+                        photos: review.images.compactMap { URL(string: $0) },
                         reviewText: review.content,
-                        totalRating: calculateAverageRating(review),
-                        tags: review.hashtags
+                        totalRating: 0,
+                        tags: []
                     )
                 }
                 walkReviewView.configure(with: mappedData)
@@ -90,15 +90,15 @@ class WalkReviewViewController: UIViewController {
         }
     }
 
-    private func calculateAverageRating(_ review: ReviewToWalker) -> Float {
-        let ratings = [review.photoSharing, review.attitude, review.taskCompletion, review.timePunctuality, review.communication]
-        let total = ratings.reduce(0, +)
-        return total / Float(ratings.count)
-    }
-
     private func formatDate(_ dateString: String) -> String {
-        guard let date = ISO8601DateFormatter.date(from: dateString) else { return dateString }
-        let formattedDate = Date.formattedDate(date, format: "yyyy년 MM월 dd일")
-        return "\(formattedDate) 산책 진행"
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        guard let date = formatter.date(from: dateString) else { return dateString }
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "yyyy년 MM월 dd일"
+        return "\(outputFormatter.string(from: date)) 산책 진행"
     }
 }

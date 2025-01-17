@@ -19,7 +19,7 @@ class WalkReviewTotalRatingView: UIView {
     private let reviewStarIcon = UIImageView(image: UIImage(named: "reviewStarIcon"))
     private let ratingLabel = SmallTitleLabel(text: "0.0", textColor: .gray600)
     private let arrowIcon = UIImageView(image: UIImage(named: "reviewArrowIcon"))
-    private let radarChartView = CustomRadarChartView()
+    let radarChartView = CustomRadarChartView()
 
     // MARK: - State
     private var isExpanded = false

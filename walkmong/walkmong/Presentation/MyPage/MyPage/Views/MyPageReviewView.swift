@@ -422,7 +422,12 @@ extension MyPageReviewView {
         let otherPercent = 100 - topTags.reduce(0) { $0 + $1.goodPercent }
         
         var entries: [PieChartDataEntry] = topTags.map {
-            PieChartDataEntry(value: Double($0.goodPercent), label: $0.hashtagNm.description)
+            let cleanTagName = $0.hashtagNm.description.replacingOccurrences(
+                of: "^[^ ]+ ",
+                with: "",
+                options: .regularExpression
+            )
+            return PieChartDataEntry(value: Double($0.goodPercent), label: cleanTagName)
         }
         
         if otherPercent > 0 {

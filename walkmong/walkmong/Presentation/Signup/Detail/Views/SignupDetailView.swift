@@ -40,10 +40,12 @@ final class SignupDetailView: UIView {
     
     private let scrollContentView = UIView()
     
-    private let nameLabel = MiddleTitleLabel(text: "이름을 입력해주세요.")
+    private let titleLabel = MiddleTitleLabel(text: "개인 정보를 알려주세요")
+    
+    private let nameLabel = SmallTitleLabel(text: "이름을 입력해주세요.")
     private let nameTextField = TextField(placeHolderText: "본명을 입력해주세요", keyboardType: .namePhonePad, shouldHideText: false, textContentType: .name, useCustomDelegate: true)
     
-    private let genderLabel = MiddleTitleLabel(text: "성별을 선택해주세요.")
+    private let genderLabel = SmallTitleLabel(text: "성별을 선택해주세요.")
     private let maleButton = UIButton.createStyledButton(type: .smallSelection, style: .light, title: "남")
     private let femaleButton = UIButton.createStyledButton(type: .smallSelection, style: .light, title: "여")
     
@@ -56,14 +58,14 @@ final class SignupDetailView: UIView {
     private let dayTextField = TextField(placeHolderText: "00", keyboardType: .numberPad, shouldHideText: false, textContentType: nil, useCustomDelegate: true)
     private let dayLabel = MainParagraphLabel(text: "일")
     
-    private let phoneNumberLabel = MiddleTitleLabel(text: "전화번호를 입력해주세요.")
+    private let phoneNumberLabel = SmallTitleLabel(text: "전화번호를 입력해주세요.")
     private let firstNumberTextField = TextField(placeHolderText: "", keyboardType: .phonePad, shouldHideText: false, textContentType: .telephoneNumber, useCustomDelegate: true)
     private let firstNumberDashLabel = MainParagraphLabel(text: "-")
     private let secondNumberTextField = TextField(placeHolderText: "", keyboardType: .phonePad, shouldHideText: false, textContentType: .telephoneNumber, useCustomDelegate: true)
     private let secondNumberDashLabel = MainParagraphLabel(text: "-")
     private let thirdNumberTextField = TextField(placeHolderText: "", keyboardType: .phonePad, shouldHideText: false, textContentType: .telephoneNumber, useCustomDelegate: true)
     
-    private let nicknameLabel = MiddleTitleLabel(text: "닉네임을 입력해주세요.")
+    private let nicknameLabel = SmallTitleLabel(text: "닉네임을 입력해주세요.")
     private let nicknameTextField = TextField(placeHolderText: "6자 이내로 입력해주세요", keyboardType: .default, shouldHideText: false, textContentType: .nickname)
     private let nicknameTextFieldWithSubtitle: TextFieldWithSubtitle
     private let nicknameCheckButton: UIButton = {
@@ -77,7 +79,7 @@ final class SignupDetailView: UIView {
         return button
     }()
     
-    private let placeSelectLabel = MiddleTitleLabel(text: "동네를 입력해주세요.")
+    private let placeSelectLabel = SmallTitleLabel(text: "동네를 입력해주세요.")
     private let selectPlaceButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .gray100
@@ -110,7 +112,7 @@ final class SignupDetailView: UIView {
     private func addSubview() {
         addSubviews(scrollView)
         scrollView.addSubview(scrollContentView)
-        scrollContentView.addSubviews(nameLabel, nameTextField, genderLabel, maleButton, femaleButton, birthdayLabel, yearTextField, yearLabel, monthTextField, monthLabel, dayTextField, dayLabel, phoneNumberLabel, firstNumberTextField, firstNumberDashLabel, secondNumberTextField, secondNumberDashLabel, thirdNumberTextField, nicknameLabel, nicknameTextFieldWithSubtitle, placeSelectLabel, selectPlaceButton, nextButton)
+        scrollContentView.addSubviews(titleLabel, nameLabel, nameTextField, genderLabel, maleButton, femaleButton, birthdayLabel, yearTextField, yearLabel, monthTextField, monthLabel, dayTextField, dayLabel, phoneNumberLabel, firstNumberTextField, firstNumberDashLabel, secondNumberTextField, secondNumberDashLabel, thirdNumberTextField, nicknameLabel, nicknameTextFieldWithSubtitle, placeSelectLabel, selectPlaceButton, nextButton)
         nicknameTextField.addSubview(nicknameCheckButton)
         selectPlaceButton.addSubviews(placeSelectButtonLabel ,placeSelectButtonArrowIcon)
     }
@@ -125,9 +127,13 @@ final class SignupDetailView: UIView {
             make.width.equalToSuperview()
             make.bottom.equalTo(selectPlaceButton.snp.bottom).offset(144)
         }
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(20)
+        }
         nameLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.top.equalToSuperview().inset(24)
+            make.top.equalTo(titleLabel.snp.bottom).offset(35)
         }
         nameTextField.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
