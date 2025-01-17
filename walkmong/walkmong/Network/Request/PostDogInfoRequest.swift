@@ -10,7 +10,6 @@ import Moya
 import UIKit
 
 struct PostDogInfoRequest {
-    var memberId: String = ""
     var name: String = ""
     var dogSize: String = ""
     var profile: UIImage = UIImage()
@@ -34,7 +33,7 @@ extension PostDogInfoRequest {
         var formData: [MultipartFormData] = []
         
         let fields = [
-            "memberId": memberId, "name": name, "dogSize": dogSize, "gender": gender,
+            "name": name, "dogSize": dogSize, "gender": gender,
             "birthYear": birthYear, "breed": breed, "weight": weight,
             "neuteringYn": neuteringYn, "bite": bite, "friendly": friendly,
             "barking": barking, "rabiesYn": rabiesYn, "adultYn": adultYn,

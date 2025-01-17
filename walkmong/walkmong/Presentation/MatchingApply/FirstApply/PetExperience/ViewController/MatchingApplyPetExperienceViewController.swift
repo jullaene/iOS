@@ -8,14 +8,10 @@
 import UIKit
 
 final class MatchingApplyPetExperienceViewController: UIViewController {
-    
-    private var boardDetail: BoardDetail?
-    
+        
     private let matchingApplyPetExperienceView = MatchingApplyPetExperienceView()
     
-    func configure(with boardDetail: BoardDetail) {
-        self.boardDetail = boardDetail
-    }
+    private var request = PostDogExperienceRequest()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +21,7 @@ final class MatchingApplyPetExperienceViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
@@ -55,7 +52,8 @@ final class MatchingApplyPetExperienceViewController: UIViewController {
 
 extension MatchingApplyPetExperienceViewController: MatchingApplyPetExperienceViewDelegate {
     func didSelectExperience(_ experienceYn: String) {
-        let nextVC = MatchingApplyPetWalkExperienceViewController()
+        request.dogOwnershipYn = experienceYn
+        let nextVC = MatchingApplyPetWalkExperienceViewController(request: request)
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }

@@ -29,8 +29,8 @@ final class MatchingApplyPetWalkExperienceView: UIView {
     private let nextButton = NextButton(text: "다음으로")
     
     private var selectedExperienceButton: UIButton?
-    private var selectedBreedButton: UIButton?
-    
+    private var selectedBreedButtons: [UIButton] = []
+
     weak var delegate: MatchingApplyPetWalkExperienceViewDelegate?
 
     override init(frame: CGRect) {
@@ -106,23 +106,27 @@ final class MatchingApplyPetWalkExperienceView: UIView {
     }
     
     @objc private func breedButtonTapped(_ sender: UIButton) {
-        if selectedBreedButton != sender {
-            if let previousButton = selectedBreedButton {
-                previousButton.isSelected = false
-                previousButton.backgroundColor = .gray100
-                previousButton.setTitleColor(.gray500, for: .normal)
+        if selectedBreedButtons.contains(sender) {
+            if let index = selectedBreedButtons.firstIndex(of: sender) {
+                selectedBreedButtons.remove(at: index)
             }
-            self.selectedBreedButton = sender
-            if let currentButton = self.selectedBreedButton {
-                currentButton.isSelected = true
-                currentButton.backgroundColor = .mainBlue
-                currentButton.setTitleColor(.gray100, for: .selected)
-            }
+            sender.isSelected = false
+            sender.backgroundColor = .gray100
+            sender.setTitleColor(.gray500, for: .normal)
+        } else {
+            selectedBreedButtons.append(sender)
+            sender.isSelected = true
+            sender.backgroundColor = .mainBlue
+            sender.setTitleColor(.gray100, for: .selected)
         }
-        if let _ = selectedBreedButton, let _ = selectedExperienceButton {
+        
+        if !selectedBreedButtons.isEmpty, let _ = selectedExperienceButton {
             nextButton.setButtonState(isEnabled: true)
+        } else {
+            nextButton.setButtonState(isEnabled: false)
         }
     }
+
     
     @objc private func experienceButtonTapped(_ sender: UIButton) {
         if selectedExperienceButton != sender {
@@ -138,20 +142,27 @@ final class MatchingApplyPetWalkExperienceView: UIView {
                 currentButton.setTitleColor(.gray100, for: .selected)
             }
         }
-        if let _ = selectedBreedButton, let _ = selectedExperienceButton {
+        if !selectedBreedButtons.isEmpty, let _ = selectedExperienceButton {
             nextButton.setButtonState(isEnabled: true)
+        } else {
+            nextButton.setButtonState(isEnabled: false)
         }
     }
     
     @objc private func nextButtonTapped() {
-        let selectedBreed = switch selectedBreedButton {
-        case smallBreedButton:
-            "SMALL"
-        case mediumBreedButton:
-            "MEDIUM"
-        default:
-            "BIG"
-        }
-        delegate?.didTapNextButton(selectedExperienceButton == experienceYesButton, selectedBreed)
+        let selectedBreeds = selectedBreedButtons.map { button in
+            switch button {
+            case smallBreedButton:
+                return "SMALL"
+            case mediumBreedButton:
+                return "MEDIUM"
+            case bigBreedButton:
+                return "BIG"
+            default:
+                return ""
+            }
+        }.filter { !$0.isEmpty }
+        delegate?.didTapNextButton(selectedExperienceButton == experienceYesButton, selectedBreeds.joined(separator: ", "))
     }
+
 }

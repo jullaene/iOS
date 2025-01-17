@@ -17,6 +17,7 @@ final class RegisterPetInfoView: UIView {
     private var imageSelected: Bool = false
     private var configuration = PHPickerConfiguration()
     private var picker: PHPickerViewController?
+    private var weight: String = ""
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -330,7 +331,6 @@ final class RegisterPetInfoView: UIView {
         let gender = maleButton.isSelected ? "MALE" : "FEMALE"
         let breed = breedTextField.text!
         let year = yearTextField.text!
-        let weight = weightTextField.text!
         let adult = adultYesButton.isSelected ? "Y" : "N"
         let dogSize = smallBreedButton.isSelected ? "SMALL" : mediumBreedButton.isSelected ? "MEDIUM" : bigBreedButton.isSelected ? "BIG" : ""
         let neuteringYn = surgeryYesButton.isSelected ? "Y" : "N"
@@ -372,6 +372,7 @@ extension RegisterPetInfoView: UITextFieldDelegate {
             
             // 숫자만 있는지 확인
             if text.isNumber {
+                weight = textField.text ?? "0"
                 textField.text = "\(text) kg"
             } else if text.hasSuffix(" kg") {
                 // 이미 "kg"가 있다면 그대로 둠

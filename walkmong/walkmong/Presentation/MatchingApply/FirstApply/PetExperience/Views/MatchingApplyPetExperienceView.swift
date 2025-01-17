@@ -97,7 +97,18 @@ final class MatchingApplyPetExperienceView: UIView {
     }
     
     private func getExperienceYn() -> String {
-        return selectedButton == zeroButton ? "N" : "Y"
+        switch self.selectedButton {
+        case tenYearsButton:
+            return "MORE_THAN_10"
+        case fiveYearsButton:
+            return "MORE_THAN_5"
+        case threeYearsOverButton:
+            return "MORE_THAN_3"
+        case threeYearsUnderButton:
+            return "LESS_THAN_3"
+        default:
+            return "NONE"
+        }
     }
     
     @objc private func nextButtonTapped() {

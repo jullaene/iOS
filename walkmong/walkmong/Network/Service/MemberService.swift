@@ -25,4 +25,11 @@ struct MemberService {
         )
     }
     
+    func postDogExperience(request: PostDogExperienceRequest) async throws -> APIResponse<Int> {
+        return try await provider.request(
+            target: .postDogExperience(request: request),
+            responseType: APIResponse<Int>.self
+        )
+    }
+    
 }

@@ -77,7 +77,14 @@ extension RegisterPetMessageViewController: RegisterPetMessageViewDelegate {
             //TODO: API 호출
             do {
                 let response = try await service.registerDogProfile(dogProfile: requestData)
-                self.navigationController?.popToRootViewController(animated: true)
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setTitleText("\(requestData.name) 등록 성공")
+                    .setSubTitleText("이제 산책 지원을 해볼까요?")
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .showAlertView()
             }catch {
                 CustomAlertViewController
                     .CustomAlertBuilder(viewController: self)
