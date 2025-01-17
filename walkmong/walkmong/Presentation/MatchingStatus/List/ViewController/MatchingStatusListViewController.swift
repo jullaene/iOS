@@ -56,8 +56,8 @@ extension MatchingStatusListViewController: MatchingStatusListViewDelegate {
         }else if matchingResponseData.tabStatus == "BOARD" {
             if matchingResponseData.walkMatchingStatus == "PENDING" {
                 self.tabBarController?.tabBar.isHidden = false
-                let nextVC = MatchingStatusApplicantListViewController()
-                self.navigationController?.pushViewController(nextVC, animated: true)
+//                let nextVC = MatchingStatusApplicantListViewController()  // FIXME: - 데이터 넘겨야함
+//                self.navigationController?.pushViewController(nextVC, animated: true)
             }else if matchingResponseData.walkMatchingStatus == "BEFORE"{
                 self.tabBarController?.tabBar.isHidden = false
                 let nextVC = MatchingStatusWalkInfoForWalkerViewController()
