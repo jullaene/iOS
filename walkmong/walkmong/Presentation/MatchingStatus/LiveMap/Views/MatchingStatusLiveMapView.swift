@@ -10,7 +10,9 @@ import NMapsMap
 
 final class MatchingStatusLiveMapView: UIView {
     
-    let mapView: NMFNaverMapView = {
+    private var marker: NMFMarker?
+    
+    private let mapView: NMFNaverMapView = {
         let mapView = NMFNaverMapView()
         return mapView
     }()
@@ -37,17 +39,21 @@ final class MatchingStatusLiveMapView: UIView {
     }
     
     func updateLocation(position: NMGLatLng) {
-        let locationOverlay = mapView.mapView.locationOverlay
-        locationOverlay.location = position
+        let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: position.lat, lng: position.lng))
+        cameraUpdate.animation = .easeIn
+        mapView.mapView.moveCamera(cameraUpdate)
+        marker?.mapView = nil
+        marker = NMFMarker(position: position)
+        marker?.iconImage = NMFOverlayImage(image: .walkmongCurrentLocationIcon)
+        marker?.width = 40
+        marker?.height = 40
+        marker?.mapView = mapView.mapView
     }
     
     func setupMap() {
         mapView.showScaleBar = false
         mapView.showZoomControls = false
         mapView.mapView.zoomLevel = 15
-        let locationOverlay = mapView.mapView.locationOverlay
-        locationOverlay.icon = NMFOverlayImage(image: .currentLocationIcon)
-        locationOverlay.anchor = CGPoint(x: 0.5, y: 0.5)
     }
 
 }

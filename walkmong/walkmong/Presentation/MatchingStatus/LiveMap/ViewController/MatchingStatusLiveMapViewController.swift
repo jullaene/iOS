@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreLocation
+import NMapsMap
 
 final class MatchingStatusLiveMapViewController: UIViewController {
     
@@ -14,10 +15,12 @@ final class MatchingStatusLiveMapViewController: UIViewController {
     private var Location_Address: CLLocation?
     private var lastMyLocation: CLLocation?
     private let isWalker: Bool
+    private let boardId: Int
     private let mapView = MatchingStatusLiveMapView()
     private let boardService = BoardService()
 
-    init(isWalker: Bool) {
+    init(isWalker: Bool, boardId: Int) {
+        self.boardId = boardId
         self.isWalker = isWalker
         super.init(nibName: nil, bundle: nil)
     }
@@ -46,7 +49,7 @@ final class MatchingStatusLiveMapViewController: UIViewController {
         mapView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(60)
             make.horizontalEdges.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-350)
         }
     }
     private func showSheet(dogNickname: String, walkerNickname: String? = nil) {
@@ -66,20 +69,21 @@ final class MatchingStatusLiveMapViewController: UIViewController {
             sheet.prefersGrabberVisible = true // Grabber 표시
             sheet.prefersScrollingExpandsWhenScrolledToEdge = true // 스크롤로 시트 확장 가능
 
-            // 완전히 내려가지 않도록 설정
-            sheet.prefersEdgeAttachedInCompactHeight = false // 작은 화면에서도 시트 고정
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = true // 스크롤로 확장만 허용
+            sheet.delegate = self
+            sheet.prefersEdgeAttachedInCompactHeight = true // 작은 화면에서도 시트 고정
             sheet.largestUndimmedDetentIdentifier = .large // 배경 흐림 효과 적용
         }
         present(viewControllerToPresent, animated: true, completion: nil)
     }
     
     private func setToGetCurrentLocation() {
-        self.locationManager.requestWhenInUseAuthorization()
-        self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self.locationManager.distanceFilter = kCLDistanceFilterNone
-        self.locationManager.startUpdatingLocation()
+        locationManager.requestAlwaysAuthorization()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.distanceFilter = kCLDistanceFilterNone
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.pausesLocationUpdatesAutomatically = false
+        locationManager.startUpdatingLocation()
     }
 }
 
@@ -92,8 +96,10 @@ extension MatchingStatusLiveMapViewController: NavigationBarDelegate {
         //TODO: 위치 갱신 로직
         if isWalker {
             showSheet(dogNickname: "반려견 이름")
+            fetchCurrentLocation()
         }else {
             showSheet(dogNickname: "반려견 이름", walkerNickname: "산책자 이름")
+            getCurrentLocation()
         }
     }
 }
@@ -102,16 +108,34 @@ extension MatchingStatusLiveMapViewController {
     //TODO: 게시글 상세 정보 API 호출
     
     private func fetchCurrentLocation() {
+        guard let lat = Location_Address?.coordinate.latitude,
+              let lng = Location_Address?.coordinate.longitude else { return }
+
+        let taskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+
         Task {
             do {
-                if let lat = Location_Address?.coordinate.latitude, let lng = Location_Address?.coordinate.longitude {
-                    _ = try await boardService.saveCurrentLocation(boardId: 0, latitude: lat, longitude: lng)
-                }
+                _ = try await boardService.saveCurrentLocation(boardId: boardId, latitude: lat, longitude: lng)
+                mapView.updateLocation(position: NMGLatLng(lat: lat, lng: lng))
+                print("위치 저장 성공: \(lat), \(lng)")
+            } catch let error as NetworkError {
+                print("위치 저장 실패: \(error.message)")
+            }
+            UIApplication.shared.endBackgroundTask(taskIdentifier)
+        }
+    }
+
+    
+    private func getCurrentLocation() {
+        Task {
+            do {
+                let response = try await boardService.getCurrentLocation(boardId: boardId)
+                mapView.updateLocation(position: NMGLatLng(lat: response.data.latitude, lng: response.data.longitude))
             }catch let error as NetworkError {
                 CustomAlertViewController
                     .CustomAlertBuilder(viewController: self)
                     .setTitleState(.useTitleAndSubTitle)
-                    .setTitleText("위치 공유 성공")
+                    .setTitleText("위치 공유 실패")
                     .setSubTitleText(error.message)
                     .setButtonState(.singleButton)
                     .setSingleButtonTitle("돌아가기")
@@ -123,11 +147,17 @@ extension MatchingStatusLiveMapViewController {
 }
 
 extension MatchingStatusLiveMapViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){
-        guard let location = locations.last else {
-            return
-        }
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
         Location_Address = location
-        print("위도 : ",lastMyLocation?.coordinate.latitude," 경도 : ",lastMyLocation?.coordinate.longitude)
+        lastMyLocation = location
+        fetchCurrentLocation()
+    }
+
+}
+
+extension MatchingStatusLiveMapViewController: UISheetPresentationControllerDelegate {
+    func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        return false
     }
 }
