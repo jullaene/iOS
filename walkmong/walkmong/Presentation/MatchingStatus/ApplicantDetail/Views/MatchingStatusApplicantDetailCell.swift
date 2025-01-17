@@ -18,7 +18,6 @@ final class MatchingStatusApplicantDetailCell: UIView {
     )
     
     private let nameLabel = UpperTitleLabel(text: "", textColor: .gray600)
-    private let infoLabel = SmallMainParagraphLabel(text: "", textColor: .gray600)
     private let profileButton: UIButton = {
         let button = UIButton()
         button.setTitle("프로필", for: .normal)
@@ -48,7 +47,7 @@ final class MatchingStatusApplicantDetailCell: UIView {
         backgroundColor = .gray100
         layer.cornerRadius = 20
         
-        addSubviews(profileImageView, nameLabel, infoLabel, profileButton, locationIcon, locationLabel)
+        addSubviews(profileImageView, nameLabel, profileButton, locationIcon, locationLabel)
         setupConstraints()
     }
     
@@ -63,11 +62,6 @@ final class MatchingStatusApplicantDetailCell: UIView {
         nameLabel.snp.makeConstraints { make in
             make.top.equalTo(profileImageView)
             make.leading.equalTo(profileImageView.snp.trailing).offset(12)
-        }
-        
-        infoLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(nameLabel)
-            make.leading.equalTo(nameLabel.snp.trailing).offset(24)
         }
         
         profileButton.snp.makeConstraints { make in
@@ -101,8 +95,7 @@ final class MatchingStatusApplicantDetailCell: UIView {
         profileImageView.setImage(from: ownerProfile, placeholder: "profileExample")
         nameLabel.text = ownerName
         let genderText = ownerGender == "FEMALE" ? "여성" : "남성"
-        infoLabel.text = "\(ownerAge)살 · \(genderText)"
-        locationLabel.text = "\(dongAddress) \(formatDistance(distance))"
+        locationLabel.text = "\(dongAddress)"
     }
     
     // MARK: - Helper Methods

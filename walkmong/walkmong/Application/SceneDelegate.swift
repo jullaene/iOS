@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window = UIWindow(windowScene: windowScene)
 
-        let rootViewController = SplashViewController()
+        let rootViewController = MatchingStatusApplicantDetailViewController()
         window?.rootViewController = rootViewController
         
         window?.overrideUserInterfaceStyle = .light

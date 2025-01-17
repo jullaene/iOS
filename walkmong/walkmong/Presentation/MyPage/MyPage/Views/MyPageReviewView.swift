@@ -166,7 +166,7 @@ class MyPageReviewView: UIView {
         }
     }
     
-    private func setupChartView() {
+    func setupChartView() {
         leftView.backgroundColor = .gray400
         leftView.layer.cornerRadius = 10
         leftView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
@@ -222,7 +222,7 @@ class MyPageReviewView: UIView {
         radarChart.updateScores(scores)
     }
     
-    private func setupWalkerReviewTapAction() {
+    func setupWalkerReviewTapAction() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(walkerReviewTitleTapped))
         walkerReviewTitle.addGestureRecognizer(tapGesture)
         walkerReviewTitle.isUserInteractionEnabled = true
@@ -232,7 +232,7 @@ class MyPageReviewView: UIView {
         delegate?.walkerReviewTitleTapped()
     }
     
-    private func setupDonutChart() {
+    func setupDonutChart() {
         // 1. 데이터 설정
         let entries: [PieChartDataEntry] = [
             PieChartDataEntry(value: 40, label: "친절해요"),
@@ -283,7 +283,7 @@ class MyPageReviewView: UIView {
     }
     
     // 범례 뷰 생성
-    private func createLegendView(for entries: [PieChartDataEntry], colors: [UIColor]) -> UIView {
+    func createLegendView(for entries: [PieChartDataEntry], colors: [UIColor]) -> UIView {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 16
