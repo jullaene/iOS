@@ -35,7 +35,7 @@ final class OnboardingViewController: UIViewController {
         if currentPage < totalPages - 1 {
             onboardingView.scrollToPage(currentPage + 1)
         } else {
-            let mainTabBarController = MainTabBarController()
+            let mainTabBarController = SignupFirstViewController()
             if let window = UIApplication.shared.keyWindow {
                 window.rootViewController = UINavigationController(rootViewController: mainTabBarController)
                 window.makeKeyAndVisible()
