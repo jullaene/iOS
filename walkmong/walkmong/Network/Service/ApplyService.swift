@@ -25,4 +25,28 @@ struct ApplyService {
         )
     }
     
+    func getApplyForm(boardId: Int) async throws -> ApplyFormResponse {
+        return try await provider.request(target: .getApplyForm(boardId: boardId), responseType: ApplyFormResponse.self)
+    }
+    
+    func getApplyApplicant(boardId: Int) async throws -> ApplyApplicantResponse {
+        return try await provider.request(target: .getApplyApplicant(boardId: boardId), responseType: ApplyApplicantResponse.self)
+    }
+    
+    func postWalkingApplyForm(board: Int, applyId: Int) async throws -> EmptyResponse {
+        return try await provider.request(target: .postWalkingApplyForm(boardId: board, applyId: applyId), responseType: EmptyResponse.self)
+    }
+    
+    func deleteApplyCancel(applyId: Int) async throws -> EmptyResponse {
+        return try await provider.request(target: .deleteApplyCancel(applyId: applyId), responseType: EmptyResponse.self)
+    }
+    
+    func deleteApplyCancelMatching(applyId: Int) async throws -> EmptyResponse {
+        return try await provider.request(target: .deleteApplyCancelMatching(applyId: applyId), responseType: EmptyResponse.self)
+    }
+    
+    func getApplyDetail(boardId: Int) async throws -> ApplyDetailResponse {
+        return try await provider.request(target: .getApplyDetail(boardId: boardId), responseType: ApplyDetailResponse.self)
+    }
+    
 }
