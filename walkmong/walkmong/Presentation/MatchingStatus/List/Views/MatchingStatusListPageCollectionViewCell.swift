@@ -74,14 +74,6 @@ extension MatchingStatusListPageCollectionViewCell: UICollectionViewDelegateFlow
     }
 }
 
-extension MatchingStatusListPageCollectionViewCell: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let VC = MatchingStatusListViewController()
-        self.getViewController()?.navigationController?.pushViewController(VC, animated: true)
-    }
-    
-}
-
 extension MatchingStatusListPageCollectionViewCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return matchingResponseData.count
