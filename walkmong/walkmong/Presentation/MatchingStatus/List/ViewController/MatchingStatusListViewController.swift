@@ -23,11 +23,6 @@ final class MatchingStatusListViewController: UIViewController {
         setUI()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: true)
-    }
-    
     private func setUI() {
         self.navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .white
