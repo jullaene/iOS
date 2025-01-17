@@ -23,13 +23,15 @@ final class MatchingStatusMyApplicationView: UIView {
     )
     private let walkSuppliesProvided: UIView = CustomView.createCustomView(
         titleText: "산책 용품 제공",
-        contentText: "배변봉투, 입마개, 리드줄(목줄)이 필요해요."
+        contentText: "배변봉투, 입마개, 리드줄(목줄)이 필요해요.",
+        contentTextAlignment: .center
     )
     private let preMeeting: UIView = CustomView.createCustomView(
         titleText: "사전 만남",
         warningText: "매칭 확정 후 산책자와 상의하여 사전 만남을 진행해 주세요",
         warningColor: .mainBlue,
-        contentText: "산책일 전 사전 만남이 필요해요."
+        contentText: "산책일 전 사전 만남이 필요해요.",
+        contentTextAlignment: .center
     )
     private let sendMessage: UIView = CustomView.createCustomView(
         titleText: "반려인에게 전달할 메시지",
