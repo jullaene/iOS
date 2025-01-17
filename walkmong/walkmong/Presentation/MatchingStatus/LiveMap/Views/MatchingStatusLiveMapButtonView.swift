@@ -63,6 +63,7 @@ final class MatchingStatusLiveMapButtonView: UIView {
     
     func setConstraints() {
         if isWalker {
+            contactButton.setTitle("반려인 연락하기", for: .normal)
             contactButton.backgroundColor = .gray600
             contactButton.setTitleColor(.white, for: .normal)
             contactButton.snp.makeConstraints { make in

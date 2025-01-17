@@ -7,7 +7,14 @@
 
 import UIKit
 
+protocol MatchingStatusLiveMapModalViewControllerDelegate: AnyObject {
+    func didTapContactButton()
+    func didTapEndButton()
+}
+
 final class MatchingStatusLiveMapModalViewController: UIViewController {
+    
+    weak var delegate: MatchingStatusLiveMapModalViewControllerDelegate?
     
     private var dogNickname: String
     private var walkerNickname: String?
@@ -213,11 +220,10 @@ final class MatchingStatusLiveMapModalViewController: UIViewController {
 
 extension MatchingStatusLiveMapModalViewController: MatchingStatusLiveMapButtonViewDelegate {
     func didTapContactButton() {
-        //TODO: 채팅으로 전환
+        delegate?.didTapContactButton()
     }
     
     func didTapEndButton() {
-        //TODO: 매칭 상태 변경
-        //TODO: 후기 작성으로 전환
+        delegate?.didTapEndButton()
     }
 }
