@@ -6,7 +6,7 @@ class MatchingCell: UICollectionViewCell {
     
     // MARK: - Properties
     var matchingData: BoardList?
-    var matchingDataInBoardDTO: ApplicantBoardDto?
+    var matchingDataInBoardDTO: ApplyApplicant?
     
     // MARK: - UI Components
     private let mainView: UIView = {
@@ -226,7 +226,7 @@ class MatchingCell: UICollectionViewCell {
         genderIcon.image = genderIconImage(for: data.dogGender)
     }
     
-    func configure(with data: ApplicantBoardDto, selectedDate: String, matchingStatus: Status) {
+    func configure(with data: ApplyApplicant, selectedDate: String, matchingStatus: Status) {
 
         matchingDataInBoardDTO = data
         configureDateLabel(selectedDate: selectedDate, startTime: data.startTime, endTime: data.endTime)

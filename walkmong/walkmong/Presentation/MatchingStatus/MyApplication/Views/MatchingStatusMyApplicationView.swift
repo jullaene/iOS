@@ -135,9 +135,9 @@ final class MatchingStatusMyApplicationView: UIView {
         dogProfileView.layer.cornerRadius = 10
         
         let dogProfileCell = MatchingCell()
-        if let board = data.boardDto {
-            dogProfileCell.configure(with: board, selectedDate: "수정", matchingStatus: .PENDING)
-        }
+//        if let board = data. {
+//            dogProfileCell.configure(with: board, selectedDate: "수정", matchingStatus: .PENDING)
+//        }
         dogProfileCell.setCustomViewAppearance(
             hideSizeLabel: true,
             backgroundColor: .clear
