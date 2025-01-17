@@ -38,8 +38,8 @@ class PetOwnerDetailReviewView: UIView {
         return imageView
     }()
 
-    private let ratingValueLabel: LargeTitleLabel = {
-        return LargeTitleLabel(text: "5.0", textColor: .gray600)
+    private let ratingValueLabel: MainHighlightParagraphLabel = {
+        return MainHighlightParagraphLabel(text: "5.0", textColor: .gray600)
     }()
     
     private let feedbackTitleLabel: LargeTitleLabel = {
