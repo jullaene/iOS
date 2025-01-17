@@ -20,6 +20,7 @@ final class MatchingStatusLiveMapViewController: UIViewController {
     private let mapView = MatchingStatusLiveMapView()
     private let boardService = BoardService()
     private let applyService = ApplyService()
+    private var applyDetail: ApplyDetail?
 
     init(isWalker: Bool, boardId: Int) {
         self.boardId = boardId
@@ -99,11 +100,10 @@ extension MatchingStatusLiveMapViewController: NavigationBarDelegate {
     }
     
     private func refreshLocation() {
-        //TODO: 위치 갱신 로직
         if isWalker {
-            fetchCurrentLocation()
+            fetchCurrentLocation() // 상대방에게 위치 전송
         }else {
-            getCurrentLocation()
+            getCurrentLocation() // 상대방 위치 업데이트
         }
     }
 }
@@ -114,7 +114,10 @@ extension MatchingStatusLiveMapViewController {
         Task {
             do {
                 let response = try await applyService.getApplyDetail(boardId: boardId)
-                updateModalView(data: response.data)
+                applyDetail = response.data
+                if let applyDetail = applyDetail {
+                    updateModalView(data: applyDetail)
+                }
             }catch let error as NetworkError{
                 CustomAlertViewController
                     .CustomAlertBuilder(viewController: self)
@@ -197,6 +200,9 @@ extension MatchingStatusLiveMapViewController: CLLocationManagerDelegate {
         guard let location = locations.last else { return }
         Location_Address = location
         lastMyLocation = location
+        if let data = applyDetail {
+            updateModalView(data: data) // 남은 시간 업데이트
+        }
         fetchCurrentLocation()
     }
 
