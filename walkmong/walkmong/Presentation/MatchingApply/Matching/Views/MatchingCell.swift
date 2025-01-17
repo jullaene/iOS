@@ -6,6 +6,7 @@ class MatchingCell: UICollectionViewCell {
     
     // MARK: - Properties
     var matchingData: BoardList?
+    var matchingDataInBoardDTO: ApplicantBoardDto?
     
     // MARK: - UI Components
     private let mainView: UIView = {
@@ -221,6 +222,20 @@ class MatchingCell: UICollectionViewCell {
         sizeLabel.text = data.dogSize.localizedDogSize()
         postContentLabel.text = data.content
         locationTimeLabel.text = "\(data.dongAddress) \(data.formattedDistance) · \(data.readableCreatedAt)"
+        
+        genderIcon.image = genderIconImage(for: data.dogGender)
+    }
+    
+    func configure(with data: ApplicantBoardDto, selectedDate: String, matchingStatus: Status) {
+
+        matchingDataInBoardDTO = data
+        configureDateLabel(selectedDate: selectedDate, startTime: data.startTime, endTime: data.endTime)
+        configureMatchingStatus(for: matchingStatus.rawValue)
+        configurePuppyImage(with: data.dogProfile)
+        
+        nameLabel.text = data.dogName
+        postContentLabel.text = data.content
+        locationTimeLabel.text = data.dongAddress
         
         genderIcon.image = genderIconImage(for: data.dogGender)
     }

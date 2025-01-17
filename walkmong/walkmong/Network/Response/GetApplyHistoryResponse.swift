@@ -23,4 +23,5 @@ struct ApplyHistoryItem: Decodable {
     let walkMatchingStatus: String
     let content: String
     let boardId: Int
+    let applyId: Int
 }

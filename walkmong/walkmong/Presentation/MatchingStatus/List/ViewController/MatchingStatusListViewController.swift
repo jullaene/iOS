@@ -46,7 +46,7 @@ extension MatchingStatusListViewController: MatchingStatusListViewDelegate {
         if matchingResponseData.tabStatus == "APPLY" {
             if matchingResponseData.walkMatchingStatus == "PENDING" {
                 self.tabBarController?.tabBar.isHidden = false
-                let nextVC = MatchingStatusMyApplicationViewController()
+                let nextVC = MatchingStatusMyApplicationViewController(applyId: matchingResponseData.applyId)
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }else if matchingResponseData.walkMatchingStatus == "BEFORE"{
                 self.tabBarController?.tabBar.isHidden = false

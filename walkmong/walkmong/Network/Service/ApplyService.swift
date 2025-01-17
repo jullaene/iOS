@@ -29,12 +29,16 @@ struct ApplyService {
         return try await provider.request(target: .getApplyForm(boardId: boardId), responseType: ApplyFormResponse.self)
     }
     
-    func getApplyApplicant(boardId: Int) async throws -> ApplyApplicantResponse {
-        return try await provider.request(target: .getApplyApplicant(boardId: boardId), responseType: ApplyApplicantResponse.self)
+    func getApplyApplicant(boardId: Int, applyId: Int) async throws -> ApplyApplicantResponse {
+        return try await provider.request(target: .getApplyApplicant(boardId: boardId, applyId: applyId), responseType: ApplyApplicantResponse.self)
     }
     
-    func postWalkingApplyForm(board: Int, applyId: Int) async throws -> EmptyResponse {
-        return try await provider.request(target: .postWalkingApplyForm(boardId: board, applyId: applyId), responseType: EmptyResponse.self)
+    func postApplyForm(boardId: Int, applyId: Int) async throws -> EmptyResponse {
+        return try await provider.request(target: .getApplyApplicant(boardId: boardId, applyId: applyId), responseType: EmptyResponse.self)
+    }
+    
+    func getApplyMyForm(applyId: Int) async throws -> ApplyApplicantResponse {
+        return try await provider.request(target: .getApplyMyForm(applyId: applyId), responseType: ApplyApplicantResponse.self)
     }
     
     func deleteApplyCancel(applyId: Int) async throws -> EmptyResponse {
@@ -45,8 +49,8 @@ struct ApplyService {
         return try await provider.request(target: .deleteApplyCancelMatching(applyId: applyId), responseType: EmptyResponse.self)
     }
     
-    func getApplyDetail(boardId: Int) async throws -> ApplyDetailResponse {
-        return try await provider.request(target: .getApplyDetail(boardId: boardId), responseType: ApplyDetailResponse.self)
+    func getApplyDetail(boardId: Int, applyId: Int) async throws -> ApplyDetailResponse {
+        return try await provider.request(target: .getApplyDetail(boardId: boardId, applyId: applyId), responseType: ApplyDetailResponse.self)
     }
     
 }
