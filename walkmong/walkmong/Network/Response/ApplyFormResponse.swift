@@ -52,3 +52,4 @@ struct RatingDto: Codable {
     let timePunctuality, communication, attitude, taskCompletion: Int
     let photoSharing, participants: Int
 }
+
