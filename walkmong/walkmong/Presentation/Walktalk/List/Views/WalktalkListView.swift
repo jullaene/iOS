@@ -26,6 +26,7 @@ final class WalktalkListView: UIView {
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.backgroundColor = .white
         collectionView.register(WalktalkListPageCollectionViewCell.self, forCellWithReuseIdentifier: WalktalkListPageCollectionViewCell.className)
         return collectionView

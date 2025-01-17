@@ -15,7 +15,7 @@ class StompService {
     weak var delegate: StompServiceDelegate?
     
     init() {
-        guard let urlString = SecretManager.shared.BASE_URL,
+        guard let urlString = SecretManager.shared.SOCKET_URL,
               let url = URL(string: urlString) else {
             fatalError("Initialization failed: Missing URL")
         }
@@ -51,8 +51,34 @@ class StompService {
         stompClient.unsubscribe(destination: destination)
     }
     
-    func sendMessage(body: String, to destination: String, with receipt: String) {
-        stompClient.sendMessage(message: body, toDestination: destination, withHeaders: connectionHeaders, withReceipt: receipt)
+    func sendMessage(message: String, to roomId: Int) {
+        let payloadObject: [String: Any] = [
+            "roomId": roomId,
+            "type": "TALK",
+            "message": message
+        ]
+        
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: payloadObject, options: [])
+            
+            // JSON 문자열로 변환
+            if let jsonText = String(data: jsonData, encoding: .utf8) {
+                // 헤더 설정
+                let headers = ["Authorization": "Bearer \(AuthManager.shared.accessToken)"]
+                
+                // STOMP 메시지 전송
+                stompClient.sendMessage(
+                    message: jsonText,
+                    toDestination: "/pub/message/send",
+                    withHeaders: headers,
+                    withReceipt: nil
+                )
+            } else {
+                print("JSON 문자열 변환 실패")
+            }
+        } catch {
+            print("메시지 데이터 직렬화 실패: \(error.localizedDescription)")
+        }
     }
 }
 
@@ -68,7 +94,7 @@ extension StompService: StompClientLibDelegate {
     }
     
     func serverDidSendError(client: StompClientLib!, withErrorMessage description: String, detailedErrorMessage message: String?) {
-        print("[STOMP] Sent Error: \(description)")
+        print("[STOMP] Sent Error: \(description)\n\(message ?? "")")
     }
     
     func stompClientDidConnect(client: StompClientLib!) {

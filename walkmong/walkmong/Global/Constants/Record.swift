@@ -20,4 +20,15 @@ enum Record: String {
         default: return .ALL
         }
     }
+    
+    var enumForChat: String {
+        switch self {
+        case .ALL:
+            return "all"
+        case .APPLY:
+            return "applied"
+        case .BOARD:
+            return "requested"
+        }
+    }
 }

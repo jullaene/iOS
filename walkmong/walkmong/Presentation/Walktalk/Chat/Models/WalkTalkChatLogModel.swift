@@ -13,5 +13,5 @@ struct WalkTalkChatLogModel{
     let date: String
     let roomId: Int
     let profileImageUrl: String
-    let data: [MessageSendModel?]?
+    let data: [MessageReceivedModel?]?
 }

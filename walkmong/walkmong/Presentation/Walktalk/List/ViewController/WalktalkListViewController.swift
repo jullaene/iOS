@@ -25,8 +25,10 @@ final class WalktalkListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+        self.tabBarController?.tabBar.isHidden = false
         setUI()
         setupStompService()
+        stompService.connect()
     }
     
     private func setupStompService() {
@@ -65,13 +67,27 @@ extension WalktalkListViewController {
             do {
                 let response = try await service.getChatroom(record: record, status: status)
                 chatRoomData = response.data
-                stompService.connect()
                 walktalkListView.setContent(with: response.data)
-            } catch {
-                print("채팅방 조회 실패: \(error)")
+                subscribeToChatrooms()
+            } catch let error as NetworkError {
+                print("채팅방 조회 실패: \(error.message)")
                 walktalkListView.setContent(with: [])
             }
         }
+    }
+    
+    private func subscribeToChatrooms() {
+        guard let data = chatRoomData else { return }
+        for chatRoom in data {
+            let target = "/sub/chat/room/\(chatRoom.roomId)"
+            if !subscribedRooms.contains(target) {
+                print("여기로 구독: " + target)
+                stompService.subscribe(to: target)
+                subscribedRooms.insert(target)
+                stompService.sendMessage(message: "ㅋㅋㅋ테스트에요 ㅠㅠ", to: chatRoom.roomId)
+            }
+        }
+
     }
 }
 
@@ -143,11 +159,11 @@ extension WalktalkListViewController {
         }
         return roomId
     }
-    private func decodeMessage(_ message: String) -> MessageSendModel? {
+    private func decodeMessage(_ message: String) -> MessageReceivedModel? {
         let decoder = JSONDecoder()
         guard let data = message.data(using: .utf8) else { return nil }
         do {
-            return try decoder.decode(MessageSendModel.self, from: data)
+            return try decoder.decode(MessageReceivedModel.self, from: data)
         } catch {
             print("디코딩 오류: \(error)")
             return nil

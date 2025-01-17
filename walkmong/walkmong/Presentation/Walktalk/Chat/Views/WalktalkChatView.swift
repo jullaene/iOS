@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 protocol WalktalkChatViewDelegate: AnyObject {
-    func didSendMessage(_ message: String)
+    func didSendMessage(_ message: String, to roomId: Int)
 }
 
 class WalktalkChatView: UIView {
@@ -18,6 +18,7 @@ class WalktalkChatView: UIView {
     private var keyboardInputTextViewHeightConstraint: Constraint?
     private let maxTextViewHeight: CGFloat = 100
     private let userID: Int = 0
+    private let roomId: Int = 1
     private var chatLog: [HistoryItem] = []
     private var sectionedMessages: [(sectionTitle: String, messages: [HistoryItem])] = []
     
@@ -170,7 +171,7 @@ class WalktalkChatView: UIView {
     @objc private func sendButtonTapped() {
         guard let text = keyboardInputTextView.text, !text.isEmpty, keyboardInputTextView.textColor != .lightGray else { return }
 
-        delegate?.didSendMessage(text)
+        delegate?.didSendMessage(text, to: roomId)
         appendMessage(HistoryItem(message: text, senderId: userID, createdAt: Date.currentTimestamp()))
         keyboardInputTextView.text = "메시지 보내기"
         keyboardInputTextView.textColor = UIColor(hexCode: "#D8DDE4")

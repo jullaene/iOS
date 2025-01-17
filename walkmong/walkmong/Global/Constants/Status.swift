@@ -39,5 +39,18 @@ enum Status: String {
         case .REJECT: return .gray400
         }
     }
+    
+    var enumForChat: String {
+        switch self {
+        case .PENDING:
+            return "PENDING"
+        case .BEFORE:
+            return "CONFIRMED"
+        case .AFTER:
+            return "COMPLETED"
+        case .REJECT:
+            return "REJECTED"
+        }
+    }
 
 }

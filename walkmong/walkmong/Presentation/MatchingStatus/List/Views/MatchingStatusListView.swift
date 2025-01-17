@@ -26,6 +26,7 @@ final class MatchingStatusListView: UIView {
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.backgroundColor = .white
         collectionView.register(MatchingStatusListPageCollectionViewCell.self, forCellWithReuseIdentifier: MatchingStatusListPageCollectionViewCell.className)
         return collectionView

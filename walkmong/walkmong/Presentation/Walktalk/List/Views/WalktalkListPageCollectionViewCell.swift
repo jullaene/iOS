@@ -70,16 +70,20 @@ extension WalktalkListPageCollectionViewCell: UICollectionViewDelegateFlowLayout
 
 extension WalktalkListPageCollectionViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let VC = WalktalkChatViewController(datamodel: WalkTalkChatLogModel(
-            matchingState: Status.from(index: selectedMatchingStateIndex),
-            dogName: chatroomResponseData[indexPath.row].dogName,
-            date: formatDateRange(
-                start: chatroomResponseData[indexPath.row].startTime,
-                end: chatroomResponseData[indexPath.row].endTime),
-            roomId: chatroomResponseData[indexPath.row].roomId,
-            profileImageUrl: chatroomResponseData[indexPath.row].dogProfile,
-            data: nil),targetName: chatroomResponseData[indexPath.row].targetName)
-        self.getViewController()?.navigationController?.pushViewController(VC, animated: true)
+        let chatVC = WalktalkChatViewController(
+            datamodel: WalkTalkChatLogModel(
+                matchingState: Status.from(index: selectedMatchingStateIndex),
+                dogName: chatroomResponseData[indexPath.row].dogName,
+                date: formatDateRange(
+                    start: chatroomResponseData[indexPath.row].startTime,
+                    end: chatroomResponseData[indexPath.row].endTime),
+                roomId: chatroomResponseData[indexPath.row].roomId,
+                profileImageUrl: chatroomResponseData[indexPath.row].dogProfile,
+                data: nil
+            ),
+            targetName: chatroomResponseData[indexPath.row].targetName
+        )
+        self.getViewController()?.navigationController?.pushViewController(chatVC, animated: true)
     }
     
 }
