@@ -14,6 +14,11 @@ final class RegisterPetInfoViewController: UIViewController {
     private var keyboardManager: KeyboardEventManager?
     private var containerBottomConstraint: Constraint?
     private var requestData = PostDogInfoRequest()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

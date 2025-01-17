@@ -16,6 +16,13 @@ final class MatchingApplyPetWalkExperienceViewController: UIViewController {
         view.backgroundColor = .white
         setUI()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
     private func addSubview() {
         view.addSubview(matchingApplyPetWalkExperienceView)
     }

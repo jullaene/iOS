@@ -10,12 +10,20 @@ import UIKit
 final class MatchingApplyFirstIntroductionViewController: UIViewController {
 
     private let matchingApplyFirstIntroductionView = MatchingApplyFirstIntroductionView()
+    private let service = MemberService()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setUI()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = true
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
     private func addSubview() {
         view.addSubview(matchingApplyFirstIntroductionView)
     }
@@ -40,6 +48,7 @@ final class MatchingApplyFirstIntroductionViewController: UIViewController {
 extension MatchingApplyFirstIntroductionViewController: MatchingApplyFirstIntroductionViewDelegate {
     func didTapNextButton(_ message: String) {
         //TODO: 산책 추가 정보 등록 API 호출
+        
         self.navigationController?.popToRootViewController(animated: true)
     }
 }
