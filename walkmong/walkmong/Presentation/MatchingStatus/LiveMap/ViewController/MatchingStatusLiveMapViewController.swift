@@ -18,6 +18,7 @@ final class MatchingStatusLiveMapViewController: UIViewController {
     private let isWalker: Bool
     private let boardId: Int
     private let mapView = MatchingStatusLiveMapView()
+    private let boardService = BoardService()
     private let applyService = ApplyService()
 
     init(isWalker: Bool, boardId: Int) {
@@ -39,6 +40,7 @@ final class MatchingStatusLiveMapViewController: UIViewController {
         if isWalker {
             setToGetCurrentLocation()
         }
+        getBoardDetail()
         refreshLocation()
     }
     
@@ -112,23 +114,23 @@ extension MatchingStatusLiveMapViewController {
     private func getBoardDetail() {
         Task {
             do {
-//                let response = try await applyService
-//                if isWalker {
-//                    showSheet(dogNickname: response.dogName)
-//                }else {
-//                    showSheet(dogNickname: response.dogName, walkerNickname: response.ownerName)
-//                }
-//                if let vc = viewControllerToPresent {
-//                    vc.setContent(requestMessage: response.walkRequest ?? "", referenceMessage: response.walkNote, additionalMessage: response.additionalRequest ?? "")
-//                    let timeDifference = calculateTimeDifference(startTime: response.startTime, endTime: response.endTime)
-//                    vc.setTime(timePast: timeDifference.timePast, timeLeft: timeDifference.timeLeft)
-//                }
+                let response = try await applyService.getApplyDetail(boardId: boardId)
+                updateModalView(data: response.data)
             }catch let error as NetworkError{
                 CustomAlertViewController
                     .CustomAlertBuilder(viewController: self)
                     .setTitleState(.useTitleAndSubTitle)
                     .setTitleText("매칭 상세 조회 실패")
                     .setSubTitleText(error.message)
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .showAlertView()
+            }catch {
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setTitleText("매칭 상세 조회 실패")
+                    .setSubTitleText("네트워크 상태를 확인해주세요")
                     .setButtonState(.singleButton)
                     .setSingleButtonTitle("돌아가기")
                     .showAlertView()
@@ -154,6 +156,22 @@ extension MatchingStatusLiveMapViewController {
         }
     }
 
+    private func updateModalView(data: ApplyDetail) {
+        DispatchQueue.main.async { [self] in
+            if isWalker {
+                showSheet(dogNickname: data.dogName)
+            }else {
+                showSheet(dogNickname: data.dogName, walkerNickname: data.walkerNickname)
+            }
+            if let vc = viewControllerToPresent {
+                vc.setContent(requestMessage: data.walkRequest, referenceMessage: data.walkNote, additionalMessage: data.additionalRequest)
+                let timeDifference = calculateTimeDifference(startTime: data.startTime, endTime: data.endTime)
+                vc.setTime(timePast: timeDifference.timePast, timeLeft: timeDifference.timeLeft)
+            }else {
+            }
+        }
+
+    }
     
     private func getCurrentLocation() {
         Task {

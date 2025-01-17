@@ -49,8 +49,8 @@ struct ApplyService {
         return try await provider.request(target: .deleteApplyCancelMatching(applyId: applyId), responseType: EmptyResponse.self)
     }
     
-    func getApplyDetail(boardId: Int, applyId: Int) async throws -> ApplyDetailResponse {
-        return try await provider.request(target: .getApplyDetail(boardId: boardId, applyId: applyId), responseType: ApplyDetailResponse.self)
+    func getApplyDetail(boardId: Int) async throws -> ApplyDetailResponse {
+        return try await provider.request(target: .getApplyDetail(boardId: boardId), responseType: ApplyDetailResponse.self)
     }
     
 }
