@@ -10,8 +10,8 @@ import Foundation
 typealias ApplyApplicantResponse = APIResponse<ApplyApplicant>
 
 struct ApplyApplicant: Codable {
-    let applicantDto: [ApplicantDto]
-    let boardDto: ApplicantBoardDto
+    let applicantDto: [ApplicantDto]?
+    let boardDto: ApplicantBoardDto?
 }
 
 struct ApplicantDto: Codable {

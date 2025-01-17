@@ -130,12 +130,14 @@ final class MatchingStatusMyApplicationView: UIView {
     }
     
     // MARK: - 데이터 설정
-    func updateDogProfile(with data: BoardList) {
+    func updateDogProfile(with data: ApplyApplicant) {
         dogProfileView.backgroundColor = .white
         dogProfileView.layer.cornerRadius = 10
         
         let dogProfileCell = MatchingCell()
-        dogProfileCell.configure(with: data, selectedDate: "수정")
+        if let board = data.boardDto {
+            dogProfileCell.configure(with: board, selectedDate: "수정", matchingStatus: .PENDING)
+        }
         dogProfileCell.setCustomViewAppearance(
             hideSizeLabel: true,
             backgroundColor: .clear

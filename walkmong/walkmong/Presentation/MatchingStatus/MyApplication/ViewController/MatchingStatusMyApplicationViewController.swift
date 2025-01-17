@@ -12,7 +12,8 @@ final class MatchingStatusMyApplicationViewController: UIViewController {
     
     // MARK: - Properties
     private let matchingStatusMyApplicationView = MatchingStatusMyApplicationView()
-    private var matchingData: BoardList?
+    private var applyId: Int?
+    private let service = ApplyService()
     
     // MARK: - Life Cycle
     
@@ -20,7 +21,20 @@ final class MatchingStatusMyApplicationViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupNavigationBar()
-        loadData()
+        if let applyId = self.applyId {
+            Task {
+                await getApplyMyForm(applyId: applyId)
+            }
+        }
+    }
+    
+    init(applyId: Int) {
+        self.applyId = applyId
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,26 +62,17 @@ final class MatchingStatusMyApplicationViewController: UIViewController {
             backgroundColor: .clear
         )
     }
-    
-    // MARK: - Data Management
-    private func loadData() {
-        let dogProfileData = BoardList(
-            boardId: 1,
-            startTime: "2025-01-03T00:32:40",
-            endTime: "2025-01-03T14:32:30",
-            matchingYn: "Y",
-            dogName: "봄별이",
-            dogProfile: "https://vetmed.tamu.edu/news/wp-content/uploads/sites/9/2023/05/AdobeStock_472713009-1024x768.jpeg",
-            dogGender: "FEMALE",
-            breed: "말티즈",
-            weight: 4,
-            dogSize: "SMALL",
-            content: "Helloworld",
-            dongAddress: "마포구 공덕동",
-            distance: 1000,
-            createdAt: "2025-01-02T00:32:40"
-        )
-        matchingStatusMyApplicationView.updateDogProfile(with: dogProfileData)
+ 
+    func getApplyMyForm(applyId: Int) async {
+        Task {
+            showLoading()
+            defer { hideLoading() }
+            do {
+                let response = try await service.getApplyMyForm(applyId: applyId)
+                matchingStatusMyApplicationView.updateDogProfile(with: response.data)
+            } catch {
+                print("Error fetching or decoding ApplyMyForm: \(error)")
+            }
+        }
     }
-    
 }
