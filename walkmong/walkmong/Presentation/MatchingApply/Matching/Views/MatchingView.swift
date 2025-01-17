@@ -247,13 +247,28 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
         
         DispatchQueue.main.async {
             let collectionViewHeight = self.matchingCollectionView.contentSize.height
+            
             self.matchingCollectionView.snp.remakeConstraints { make in
-                make.height.equalTo(collectionViewHeight)
+                if self.data.isEmpty {
+                    make.top.equalTo(self.filterSelectView.snp.bottom).offset(20)
+                    make.height.equalTo(0)
+                } else {
+                    make.top.equalTo(self.filterSelectView.snp.bottom)
+                    make.height.equalTo(collectionViewHeight).priority(.low)
+                }
+                make.bottom.equalToSuperview().offset(-20)
+            }
+            
+            self.contentView.snp.remakeConstraints { make in
+                make.edges.equalToSuperview()
+                make.width.equalTo(self.scrollView.snp.width)
+                if self.data.isEmpty {
+                    make.bottom.equalTo(self.filterSelectView.snp.bottom).offset(20)
+                } else {
+                    make.bottom.equalTo(self.matchingCollectionView.snp.bottom).offset(20)
+                }
             }
         }
-        print("ScrollView Frame: \(scrollView.frame)")
-        print("ContentView Frame: \(contentView.frame)")
-        print("CollectionView Content Size: \(matchingCollectionView.contentSize)")
     }
     
     private func configureDateLabel(_ date: String) -> String {

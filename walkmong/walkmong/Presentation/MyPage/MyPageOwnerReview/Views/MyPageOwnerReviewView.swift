@@ -171,6 +171,12 @@ class MyPageOwnerReviewView: UIView {
     // MARK: - Filter View Handling
     private func showFilterView() {
         guard let window = UIApplication.shared.keyWindow else { return }
+
+        if dimView == nil {
+            dimView = createDimView()
+            window.addSubview(dimView!)
+            setupDimViewConstraints()
+        }
         
         if filterView == nil {
             filterView = createFilterView()
@@ -178,10 +184,12 @@ class MyPageOwnerReviewView: UIView {
             setupFilterViewConstraints()
         }
         
-        layoutIfNeeded()
-        window.bringSubviewToFront(filterView!)
         window.bringSubviewToFront(dimView!)
+        window.bringSubviewToFront(filterView!)
+
+        layoutIfNeeded()
         filterView?.animateShow(offset: 0, cornerRadius: 30)
+        dimView?.updateDimViewVisibility(isHidden: false)
     }
 
     private func createFilterView() -> FilterView {
