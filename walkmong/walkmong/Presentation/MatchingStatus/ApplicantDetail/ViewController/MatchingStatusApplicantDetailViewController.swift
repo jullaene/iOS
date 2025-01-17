@@ -12,7 +12,9 @@ final class MatchingStatusApplicantDetailViewController: UIViewController {
     
     // MARK: - Properties
     private let applicationDetailView = MatchingStatusApplicantDetailView()
+    private let myPageView = MyPageView()
     private var matchingData: BoardList?
+    private let memberService = MemberService()
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -73,4 +75,56 @@ final class MatchingStatusApplicantDetailViewController: UIViewController {
         )
         applicationDetailView.configureApplicantsList(with: applicant)
     }
+    
+    private func fetchUserProfile() {
+        Task {
+            do {
+                let response = try await memberService.getMemberWalking()
+                let memberWalking = response.data
+                DispatchQueue.main.async {
+                    self.myPageView.updateProfileName(memberWalking.name)
+                    self.myPageView.updateProfileImage(memberWalking.profile)
+                    
+                    self.myPageView.updateWalkInfo(
+                        dogOwnership: memberWalking.dogOwnership,
+                        dogWalkingExperience: memberWalking.dogWalkingExperience,
+                        availabilityWithSize: memberWalking.availabilityWithSize
+                    )
+                    
+                    let radarScores: [CGFloat] = [
+                        CGFloat(memberWalking.photoSharing),
+                        CGFloat(memberWalking.attitude),
+                        CGFloat(memberWalking.communication),
+                        CGFloat(memberWalking.timePunctuality),
+                        CGFloat(memberWalking.taskCompletion)
+                    ]
+                    self.myPageView.contentViewSection.reviewView.updateWalkerReviewCount(memberWalking.walkerReviewCount)
+                    self.myPageView.contentViewSection.reviewView.updateWalkerParticipantCount(memberWalking.walkerReviewCount)
+                    self.myPageView.contentViewSection.reviewView.updateOwnerParticipantCount(memberWalking.ownerReviewCount)
+                    self.myPageView.contentViewSection.reviewView.updateChartData(scores: radarScores)
+                    let averageScore = radarScores.reduce(0, +) / CGFloat(radarScores.count)
+                    self.myPageView.contentViewSection.reviewView.updateStarRating(averageScore: averageScore)
+                    self.myPageView.contentViewSection.reviewView.configureKeywords(
+                        name: memberWalking.name,
+                        tags: memberWalking.tags
+                    )
+                    self.myPageView.contentViewSection.reviewView.updateOwnerReviewSection(goodPercent: CGFloat(memberWalking.goodPercent) / 100, participantCount: memberWalking.ownerReviewCount)
+                }
+            } catch {
+                print("Error fetching user profile: \(error)")
+            }
+        }
+    }
+    
+    @objc private func navigateToOwnerReviewVC() {
+        let nextVC = MyPageOwnerReviewViewController()
+        navigationController?.pushViewController(nextVC, animated: true)
+    }
 }
+
+extension MatchingStatusApplicantDetailViewController: MyPageReviewViewDelegate {
+    func walkerReviewTitleTapped() {
+        navigateToOwnerReviewVC()
+    }
+}
+

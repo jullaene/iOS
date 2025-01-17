@@ -53,7 +53,7 @@ final class MatchingStatusApplicantDetailView: UIView {
     private let applyWalkButton = UIButton.createStyledButton(type: .large, style: .dark, title: "매칭 확정")
 
     // User Rating
-    private let userRatingView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
+    private let userRatingView = UIView.createRoundedView(backgroundColor: .white, cornerRadius: 15)
     private let userRatingTitleLabel = SmallTitleLabel(text: "전체 사용자 평가", textColor: .gray600)
     private let participantCountLabel = SmallMainParagraphLabel(text: "참여자수", textColor: .gray400)
     private let starRatingLabel = MainHighlightParagraphLabel(text: "평점", textColor: .gray600)
@@ -61,7 +61,7 @@ final class MatchingStatusApplicantDetailView: UIView {
     private let starIcon = UIImage.createImageView(named: "MyPageStarIcon")
     
     // Keyword
-    private let keywordView = UIView.createRoundedView(backgroundColor: .gray100, cornerRadius: 15)
+    private let keywordView = UIView.createRoundedView(backgroundColor: .white, cornerRadius: 15)
     private let keywordTitleLabel = SmallTitleLabel(text: "()님의 키워드 TOP 3", textColor: .gray600)
     private let keywordBubbleContainer = UIView()
     
