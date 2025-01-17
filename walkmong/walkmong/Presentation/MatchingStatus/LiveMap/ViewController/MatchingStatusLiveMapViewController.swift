@@ -15,6 +15,7 @@ final class MatchingStatusLiveMapViewController: UIViewController {
     private var lastMyLocation: CLLocation?
     private let isWalker: Bool
     private let mapView = MatchingStatusLiveMapView()
+    private let boardService = BoardService()
 
     init(isWalker: Bool) {
         self.isWalker = isWalker
@@ -99,6 +100,26 @@ extension MatchingStatusLiveMapViewController: NavigationBarDelegate {
 
 extension MatchingStatusLiveMapViewController {
     //TODO: 게시글 상세 정보 API 호출
+    
+    private func fetchCurrentLocation() {
+        Task {
+            do {
+                if let lat = Location_Address?.coordinate.latitude, let lng = Location_Address?.coordinate.longitude {
+                    _ = try await boardService.saveCurrentLocation(boardId: 0, latitude: lat, longitude: lng)
+                }
+            }catch let error as NetworkError {
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setTitleText("위치 공유 성공")
+                    .setSubTitleText(error.message)
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .showAlertView()
+            }
+        }
+    }
+    
 }
 
 extension MatchingStatusLiveMapViewController: CLLocationManagerDelegate {
