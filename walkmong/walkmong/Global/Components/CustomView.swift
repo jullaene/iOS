@@ -34,7 +34,7 @@ class CustomView: UIView {
 
         if let warningText = warningText, let warningColor = warningColor {
             let warningIcon = UIImage.createImageView(
-                named: "WarningIcon",
+                named: "WarningIconMainBlue",
                 contentMode: .scaleAspectFit
             )
             warningIcon.tintColor = warningColor
