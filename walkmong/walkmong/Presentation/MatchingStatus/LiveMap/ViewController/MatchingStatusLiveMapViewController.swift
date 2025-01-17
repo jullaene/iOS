@@ -58,6 +58,7 @@ final class MatchingStatusLiveMapViewController: UIViewController {
     private func showSheet(dogNickname: String, walkerNickname: String? = nil) {
         viewControllerToPresent = MatchingStatusLiveMapModalViewController(dogNickname: dogNickname, walkerNickname: walkerNickname)
         viewControllerToPresent?.modalPresentationStyle = .pageSheet
+        viewControllerToPresent?.delegate = self
         let detentIdentifier = UISheetPresentationController.Detent.Identifier("customDetent")
         let customDetent = UISheetPresentationController.Detent.custom(identifier: detentIdentifier) { _ in
             
@@ -100,10 +101,8 @@ extension MatchingStatusLiveMapViewController: NavigationBarDelegate {
     private func refreshLocation() {
         //TODO: 위치 갱신 로직
         if isWalker {
-            showSheet(dogNickname: "반려견 이름")
             fetchCurrentLocation()
         }else {
-            showSheet(dogNickname: "반려견 이름", walkerNickname: "산책자 이름")
             getCurrentLocation()
         }
     }
@@ -245,5 +244,41 @@ extension MatchingStatusLiveMapViewController {
         let timeLeftText = minutesLeft > 0 ? minutesLeft : 0
         
         return (timePastText, timeLeftText)
+    }
+}
+
+extension MatchingStatusLiveMapViewController: MatchingStatusLiveMapModalViewControllerDelegate {
+    func didTapContactButton() {
+        let nextVC = WalktalkListViewController()
+        self.navigationController?.popToViewController(nextVC, animated: true)
+    }
+    
+    func didTapEndButton() {
+        Task {
+            do {
+                _ = try await boardService.changeStatus(status: "AFTER", boardId: boardId)
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setTitleText("산책 종료")
+                    .setSubTitleText("후기를 작성해주세요")
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .setSingleButtonAction({
+                        let nextVC = MatchingStatusListViewController()
+                        self.navigationController?.popToViewController(nextVC, animated: true)
+                    })
+                    .showAlertView()
+            }catch let error as NetworkError {
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setTitleText("산책 종료 실패")
+                    .setSubTitleText(error.message)
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .showAlertView()
+            }
+        }
     }
 }

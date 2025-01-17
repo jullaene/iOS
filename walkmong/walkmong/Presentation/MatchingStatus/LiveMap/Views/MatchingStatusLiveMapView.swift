@@ -45,8 +45,8 @@ final class MatchingStatusLiveMapView: UIView {
         marker?.mapView = nil
         marker = NMFMarker(position: position)
         marker?.iconImage = NMFOverlayImage(image: .walkmongCurrentLocationIcon)
-        marker?.width = 40
-        marker?.height = 40
+        marker?.width = 50
+        marker?.height = 50
         marker?.mapView = mapView.mapView
     }
     

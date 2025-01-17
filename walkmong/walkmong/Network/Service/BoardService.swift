@@ -73,4 +73,11 @@ struct BoardService {
         )
     }
     
+    func changeStatus(status: String, boardId: Int) async throws -> APIResponse<String> {
+        return try await provider.request(
+            target: .changeStatus(status: status, boardId: boardId),
+            responseType: APIResponse<String>.self
+        )
+    }
+    
 }

@@ -15,6 +15,7 @@ enum BoardAPI {
     case getBoardDetail(boardId: Int)
     case saveCurrentLocation(boardId: Int, latitude: Double, longitude: Double)
     case getCurrentLocation(boardId: Int)
+    case changeStatus(status: String, boardId: Int)
 }
 
 extension BoardAPI: APIEndpoint {
@@ -24,6 +25,8 @@ extension BoardAPI: APIEndpoint {
             return .get
         case .registerBoard, .saveCurrentLocation:
             return .post
+        case .changeStatus:
+            return .patch
         }
     }
     
@@ -40,6 +43,8 @@ extension BoardAPI: APIEndpoint {
             return "/api/v1/board/detail/\(boardId)"
         case .saveCurrentLocation(let boardId, _, _), .getCurrentLocation(let boardId):
             return "/api/v1/board/geo/\(boardId)"
+        case .changeStatus(_, let boardId):
+            return "/api/v1/board/walk/status/\(boardId)"
         }
     }
     
@@ -53,6 +58,8 @@ extension BoardAPI: APIEndpoint {
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         case .saveCurrentLocation(_, latitude: let latitude, longitude: let longitude):
             return .requestParameters(parameters: ["latitude": latitude, "longitude": longitude], encoding: JSONEncoding.default)
+        case .changeStatus(status: let status, _):
+            return .requestParameters(parameters: ["status": status], encoding: URLEncoding.queryString)
         }
     }
 }
