@@ -55,7 +55,6 @@ final class SplashView: UIView {
         splashText.snp.makeConstraints { make in
             make.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(81)
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(splashIllustration.snp.top).offset(-117)
         }
         
         splashIllustration.snp.makeConstraints { make in

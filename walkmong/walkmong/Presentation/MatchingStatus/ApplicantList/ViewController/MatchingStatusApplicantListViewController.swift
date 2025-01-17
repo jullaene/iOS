@@ -22,6 +22,12 @@ final class MatchingStatusApplicantListViewController: UIViewController {
         loadData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
     // MARK: - Setup View
     private func setupView() {
         view.backgroundColor = .white
