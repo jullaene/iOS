@@ -30,7 +30,8 @@ final class MatchingStatusListViewController: UIViewController {
         addCustomNavigationBar(titleText: "매칭 현황", showLeftBackButton: false, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         matchingStatusListView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
-            make.horizontalEdges.bottom.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-86)
         }
         matchingStatusListView.delegate = self
     }
