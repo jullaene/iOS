@@ -11,6 +11,17 @@ final class MatchingApplyPetWalkExperienceViewController: UIViewController {
     
     private let matchingApplyPetWalkExperienceView = MatchingApplyPetWalkExperienceView()
 
+    private var request: PostDogExperienceRequest!
+    
+    init(request: PostDogExperienceRequest) {
+        self.request = request
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -45,7 +56,9 @@ final class MatchingApplyPetWalkExperienceViewController: UIViewController {
 
 extension MatchingApplyPetWalkExperienceViewController: MatchingApplyPetWalkExperienceViewDelegate {
     func didTapNextButton(_ experience: Bool, _ breed: String) {
-        let nextVC = MatchingApplyFirstIntroductionViewController()
+        request.dogWalkingExperienceYn = experience ? "Y" : "N"
+        request.availabilityWithSize = breed
+        let nextVC = MatchingApplyFirstIntroductionViewController(request: request)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
 }

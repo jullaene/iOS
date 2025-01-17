@@ -11,7 +11,17 @@ final class MatchingApplyFirstIntroductionViewController: UIViewController {
 
     private let matchingApplyFirstIntroductionView = MatchingApplyFirstIntroductionView()
     private let service = MemberService()
-
+    private var request: PostDogExperienceRequest!
+    
+    init(request: PostDogExperienceRequest) {
+        self.request = request
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -47,8 +57,24 @@ final class MatchingApplyFirstIntroductionViewController: UIViewController {
 
 extension MatchingApplyFirstIntroductionViewController: MatchingApplyFirstIntroductionViewDelegate {
     func didTapNextButton(_ message: String) {
-        //TODO: 산책 추가 정보 등록 API 호출
-        
-        self.navigationController?.popToRootViewController(animated: true)
+        showLoading()
+        defer { hideLoading() }
+        Task {
+            do {
+                request.introduction = message
+                _ = try await service.postDogExperience(request: request)
+                self.navigationController?.popToRootViewController(animated: true)
+            }catch let error as NetworkError {
+                hideLoading()
+                CustomAlertViewController
+                    .CustomAlertBuilder(viewController: self)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setTitleText("프로필 등록 실패")
+                    .setSubTitleText(error.message)
+                    .setButtonState(.singleButton)
+                    .setSingleButtonTitle("돌아가기")
+                    .showAlertView()
+            }
+        }
     }
 }

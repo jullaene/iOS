@@ -210,9 +210,8 @@ extension MatchingDogInformationViewController: MatchingDogInformationViewDelega
             .setLeftButtonTitle("취소")
             .setRightButtonTitle("등록하기")
             .setRightButtonAction { [weak self] in
-                guard let self = self, let boardDetail = self.boardDetail else { return }
+                guard let self = self else { return }
                 let petExperienceVC = MatchingApplyPetExperienceViewController()
-                petExperienceVC.configure(with: boardDetail)
                 self.navigateTo(petExperienceVC)
             }
             .showAlertView()
