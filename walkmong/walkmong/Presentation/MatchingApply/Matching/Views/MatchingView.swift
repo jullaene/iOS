@@ -46,6 +46,7 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
     var matchingCells: [MatchingCell] = []
     private let matchingCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.scrollDirection = .vertical
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(MatchingCell.self, forCellWithReuseIdentifier: MatchingCell.className)
@@ -117,16 +118,19 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
         contentView.addSubviews(matchingCollectionView, filterSelectView, customView)
         scrollView.contentInsetAdjustmentBehavior = .never
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.bounces = false
         
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
-            make.height.equalToSuperview().offset(-86)
+            make.bottom.equalToSuperview().offset(-86)
         }
         
         contentView.snp.makeConstraints { make in
-            make.width.horizontalEdges.top.equalToSuperview()
+            make.edges.equalToSuperview()
+            make.width.equalTo(scrollView.snp.width)
+            // 스크롤이 가능하도록 높이를 동적으로 설정
             make.bottom.equalTo(matchingCollectionView.snp.bottom).offset(24)
         }
         
@@ -143,7 +147,8 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
         matchingCollectionView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.top.equalTo(filterSelectView.snp.bottom)
-            make.height.equalTo(400)
+            make.height.equalTo(1).priority(.low)
+            make.bottom.equalToSuperview()
         }
     }
 
@@ -167,21 +172,6 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(alertIconTapped))
         alertIcon.isUserInteractionEnabled = true
         alertIcon.addGestureRecognizer(tapGesture)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.matchingCollectionView.layoutIfNeeded()
-        let contentHeight = self.matchingCollectionView.contentSize.height
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.matchingCollectionView.snp.updateConstraints { make in
-                make.height.equalTo(contentHeight)
-            }
-            self.contentView.snp.updateConstraints { make in
-                make.bottom.equalTo(self.matchingCollectionView.snp.bottom).offset(24)
-            }
-        }
     }
     
     private func setupLocationSelectView() {
@@ -254,7 +244,16 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
     func updateMatchingCells(with data: [BoardList]) {
         self.data = data
         matchingCollectionView.reloadData()
-        layoutSubviews()
+        
+        DispatchQueue.main.async {
+            let collectionViewHeight = self.matchingCollectionView.contentSize.height
+            self.matchingCollectionView.snp.remakeConstraints { make in
+                make.height.equalTo(collectionViewHeight)
+            }
+        }
+        print("ScrollView Frame: \(scrollView.frame)")
+        print("ContentView Frame: \(contentView.frame)")
+        print("CollectionView Content Size: \(matchingCollectionView.contentSize)")
     }
     
     private func configureDateLabel(_ date: String) -> String {
@@ -330,6 +329,6 @@ extension MatchingView: UICollectionViewDelegateFlowLayout {
         return UIEdgeInsets(top: 16, left: 20, bottom: 16, right: 20)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: matchingCollectionView.bounds.width-40, height: 151)
+        return CGSize(width: matchingCollectionView.bounds.width, height: 151)
     }
 }

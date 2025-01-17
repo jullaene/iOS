@@ -162,7 +162,7 @@ class PetOwnerReviewViewController: UIViewController {
     private func showAlert(message: String) {
         CustomAlertViewController
             .CustomAlertBuilder(viewController: self)
-            .setTitleState(.useTitleOnly)
+            .setTitleState(.useTitleAndSubTitle)
             .setButtonState(.singleButton)
             .setTitleText("알림")
             .setSubTitleText(message)

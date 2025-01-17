@@ -21,4 +21,6 @@ struct ApplyHistoryItem: Decodable {
     let walkerName: String?
     let walkerProfile: String?
     let walkMatchingStatus: String
+    let content: String
+    let boardId: Int
 }

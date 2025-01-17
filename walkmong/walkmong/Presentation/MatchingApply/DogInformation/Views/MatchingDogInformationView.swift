@@ -110,6 +110,8 @@ final class MatchingDogInformationView: UIView, UIScrollViewDelegate {
         }
         
         contentView.addSubview(imageView)
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.trailing.equalToSuperview()
