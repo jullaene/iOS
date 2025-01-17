@@ -6,6 +6,7 @@ class MatchingCell: UICollectionViewCell {
     
     // MARK: - Properties
     var matchingData: BoardList?
+
     var matchingDataInBoardDTO: ApplyApplicant?
     
     // MARK: - UI Components

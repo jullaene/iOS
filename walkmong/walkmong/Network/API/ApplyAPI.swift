@@ -17,7 +17,7 @@ enum ApplyAPI {
     case getApplyMyForm(applyId: Int)
     case deleteApplyCancel(applyId: Int)
     case deleteApplyCancelMatching(applyId: Int)
-    case getApplyDetail(boardId: Int, applyId: Int)
+    case getApplyDetail(boardId: Int)
 
 }
 
@@ -40,7 +40,7 @@ extension ApplyAPI: APIEndpoint {
             return "/api/v1/walking/apply/cancel/\(applyId)"
         case .deleteApplyCancelMatching(let applyId):
             return "/api/v1/walking/apply/cancel/matching/\(applyId)"
-        case .getApplyDetail(let boardId, _):
+        case .getApplyDetail(let boardId):
             return "/api/v1/walking/apply/detail/\(boardId)"
 
         }
@@ -63,9 +63,9 @@ extension ApplyAPI: APIEndpoint {
             return .requestParameters(parameters: request, encoding: JSONEncoding.default)
         case .getApplyHistory(tabStatus: let tabStatus, walkMatchingStatus: let walkMatchingStatus):
             return .requestParameters(parameters: ["tabStatus": tabStatus, "walkMatchingStatus": walkMatchingStatus], encoding: URLEncoding.queryString)
-        case .getApplyForm, .postApplyForm, .getApplyMyForm, .deleteApplyCancel, .deleteApplyCancelMatching:
+        case .getApplyForm, .postApplyForm, .getApplyMyForm, .deleteApplyCancel, .deleteApplyCancelMatching, .getApplyDetail:
             return .requestPlain
-        case .getApplyApplicant(_, let applyId), .getApplyDetail(_, let applyId):
+        case .getApplyApplicant(_, let applyId):
             return .requestParameters(parameters: ["applyId": applyId], encoding: JSONEncoding.default)
             // 리퀘스트 바디 라고 적힌 게 있는 경우 -> .requestParameters()
             // 리퀘스트 바디 도 없고 쿼리 파라미터도 없는 경우 -> .requestPlain

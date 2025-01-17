@@ -58,4 +58,26 @@ struct BoardService {
             throw error
         }
     }
+    
+    func saveCurrentLocation(boardId: Int, latitude: Double, longitude: Double) async throws -> APIResponse<String> {
+        return try await provider.request(
+            target: .saveCurrentLocation(boardId: boardId, latitude: latitude, longitude: longitude),
+            responseType: APIResponse<String>.self
+        )
+    }
+    
+    func getCurrentLocation(boardId: Int) async throws -> GetCurrentLocationResponse {
+        return try await provider.request(
+            target: .getCurrentLocation(boardId: boardId),
+            responseType: GetCurrentLocationResponse.self
+        )
+    }
+    
+    func changeStatus(status: String, boardId: Int) async throws -> APIResponse<String> {
+        return try await provider.request(
+            target: .changeStatus(status: status, boardId: boardId),
+            responseType: APIResponse<String>.self
+        )
+    }
+    
 }

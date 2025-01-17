@@ -45,7 +45,8 @@ final class WalktalkListViewController: UIViewController {
         view.addSubview(walktalkListView)
         walktalkListView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(52)
-            make.horizontalEdges.bottom.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-86)
         }
         addCustomNavigationBar(titleText: "워크톡", showLeftBackButton: false, showLeftCloseButton: false, showRightCloseButton: false, showRightRefreshButton: false)
         walktalkListView.delegate = self
