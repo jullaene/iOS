@@ -145,8 +145,7 @@ extension MatchingApplyWalkRequestDogProfileSelectionView: UICollectionViewDataS
             }
         } else {
             cell.configureAsAddPet()
-            let nextVC = RegisterPetInfoViewController()
-            self.getViewController()?.navigationController?.pushViewController(nextVC, animated: true)
+            
         }
         
         return cell
@@ -157,7 +156,8 @@ extension MatchingApplyWalkRequestDogProfileSelectionView: UICollectionViewDataS
 extension MatchingApplyWalkRequestDogProfileSelectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == profiles.count {
-            return
+            let nextVC = RegisterPetInfoViewController()
+            self.getViewController()?.navigationController?.pushViewController(nextVC, animated: true)
         }
         
         if let previousIndexPath = selectedIndexPath {
