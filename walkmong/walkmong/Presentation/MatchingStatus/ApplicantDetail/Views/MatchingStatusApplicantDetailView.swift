@@ -2,7 +2,14 @@ import UIKit
 import SnapKit
 import Charts
 
+protocol MatchingStatusApplicantDetailViewDelegate: AnyObject {
+    func didTapApplyButton()
+    func didTapWalktalkButton()
+}
+
 final class MatchingStatusApplicantDetailView: UIView {
+    
+    weak var delegate: MatchingStatusApplicantDetailViewDelegate?
     
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -69,6 +76,7 @@ final class MatchingStatusApplicantDetailView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViewHierarchy()
+        setupButtonActions()
     }
 
     required init?(coder: NSCoder) {
@@ -216,5 +224,19 @@ final class MatchingStatusApplicantDetailView: UIView {
         distance: Double
     ) {
 //        walkerReviewTitle.text = "\(ownerName)님의 산책자 후기"
+    }
+    
+    private func setupButtonActions() {
+        let tapGesture = UITapGestureRecognizer(target: self.walkTalkButton, action: #selector(didTapWalkTalkButton))
+        self.walkTalkButton.addGestureRecognizer(tapGesture)
+        applyWalkButton.addTarget(self, action: #selector(didTapApplyWalkButton), for: .touchUpInside)
+    }
+    
+    @objc private func didTapWalkTalkButton() {
+        delegate?.didTapWalktalkButton()
+    }
+    
+    @objc private func didTapApplyWalkButton() {
+        delegate?.didTapApplyButton()
     }
 }

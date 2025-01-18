@@ -7,11 +7,7 @@
 
 import Foundation
 
-typealias CreateChatroomResponse = APIResponse<CreateChatroomResponseData>
-
-struct CreateChatroomResponseData: Decodable {
-    var roomId: Int
-}
+typealias CreateChatroomResponse = APIResponse<Int?>
 
 typealias GetHistoryResponse = APIResponse<[HistoryItem]>
 
