@@ -302,8 +302,8 @@ extension WalktalkListView {
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         
         return data.sorted { first, second in
-            guard let firstDate = dateFormatter.date(from: first.lastChatTime),
-                  let secondDate = dateFormatter.date(from: second.lastChatTime) else {
+            guard let firstDate = dateFormatter.date(from: first.lastChatTime ?? ""),
+                  let secondDate = dateFormatter.date(from: second.lastChatTime ?? "") else {
                 return false
             }
             return firstDate > secondDate // 내림차순

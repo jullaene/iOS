@@ -20,13 +20,14 @@ struct HistoryItem: Decodable {
 typealias GetChatroomResponse = APIResponse<[ChatroomResponseData]>
 
 struct ChatroomResponseData: Decodable {
+    var tabStatus: String
     var dogName: String
     var dogProfile: String
     var startTime: String
     var endTime: String
     var chatTarget: Int
-    var lastChat: String
-    var lastChatTime: String
+    var lastChat: String?
+    var lastChatTime: String?
     var targetName: String
     var notRead: Int
     var roomId: Int

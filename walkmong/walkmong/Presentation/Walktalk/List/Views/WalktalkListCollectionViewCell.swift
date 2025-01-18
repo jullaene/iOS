@@ -137,12 +137,17 @@ final class WalktalkListCollectionViewCell: UICollectionViewCell {
         matchingStateView.backgroundColor = status.backgroundColor
         matchingStateLabel.textColor = status.textColor
         dateLabel.text = formatDateRange(start: datamodel.startTime, end: datamodel.endTime)
-        walkerIconView.isHidden = record != .BOARD
+        walkerIconView.isHidden = datamodel.tabStatus != "BOARD"
         nameLabel.text = datamodel.targetName
-        textPreviewLabel.text = datamodel.lastChat
-        chatCountLabel.text = String(datamodel.notRead)
+        if datamodel.notRead > 0 {
+            chatCountLabel.text = String(datamodel.notRead)
+        }else {
+            chatCountView.isHidden = true
+            chatCountLabel.text = String(datamodel.notRead)
+        }
+        textPreviewLabel.text = datamodel.lastChat ?? "\(datamodel.targetName)님과 채팅을 시작해보세요."
         profileImageView.setImage(from: datamodel.dogProfile, placeholder: "puppy")
-        timeLabel.text = formatLastChatTime(datamodel.lastChatTime)
+        timeLabel.text = formatLastChatTime(datamodel.lastChatTime ?? "")
     }
     
 }
