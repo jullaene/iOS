@@ -47,7 +47,7 @@ extension MatchingStatusListViewController: MatchingStatusListViewDelegate {
         if matchingResponseData.tabStatus == "APPLY" {
             if matchingResponseData.walkMatchingStatus == "PENDING" {
                 self.tabBarController?.tabBar.isHidden = false
-                let nextVC = MatchingStatusMyApplicationViewController(applyId: matchingResponseData.applyId)
+                let nextVC = MatchingStatusMyApplicationViewController(applyId: matchingResponseData.applyId ?? 1)
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }else if matchingResponseData.walkMatchingStatus == "BEFORE"{
                 self.tabBarController?.tabBar.isHidden = false
@@ -74,8 +74,10 @@ extension MatchingStatusListViewController: MatchingStatusListViewDelegate {
             do {
                 let response = try await service.getApplyHistory(tabStatus: record, walkMatchingStatus: status)
                 matchingStatusListView.setContent(with: response.data)
+            }catch let error as NetworkError{
+                print("매칭 조회 error", error.message)
             }catch {
-                
+                print("매칭 조회 error...")
             }
         }
     }
