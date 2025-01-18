@@ -171,17 +171,7 @@ class MatchingView: UIView, MatchingViewLocationProvider, CalendarViewDelegate {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.matchingCollectionView.layoutIfNeeded()
-        let contentHeight = self.matchingCollectionView.contentSize.height
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.matchingCollectionView.snp.updateConstraints { make in
-                make.height.equalTo(contentHeight)
-            }
-            self.contentView.snp.updateConstraints { make in
-                make.bottom.equalTo(self.matchingCollectionView.snp.bottom).offset(24)
-            }
-        }
+        contentView.layoutIfNeeded()
     }
     
     private func setupLocationSelectView() {

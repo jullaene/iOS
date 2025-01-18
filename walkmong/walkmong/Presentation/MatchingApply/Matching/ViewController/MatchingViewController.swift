@@ -44,6 +44,7 @@ class MatchingViewController: UIViewController {
                     await self.getAddressList()
                 }
                 self.saveCurrentState()
+                hideLoading()
             }
         }
         hideLoading()
@@ -84,9 +85,7 @@ class MatchingViewController: UIViewController {
 
     @objc private func reloadMatchingData() {
         _Concurrency.Task {
-            await fetchData {
-                await self.getBoardList()
-            }
+            await self.getBoardList()
         }
     }
 
@@ -270,25 +269,19 @@ class MatchingViewController: UIViewController {
         navigationController?.pushViewController(dogProfileVC, animated: true)
     }
     
-    func fetchData(_ task: @escaping () async throws -> Void) async {
+    private func fetchData(_ task: @escaping () async -> Void) async {
         guard !isFetchingData else { return }
         isFetchingData = true
 
+        defer { isFetchingData = false }
+
+        await task()
+    }
+    
+    func updateData(with newData: [BoardList]) {
+        self.matchingData = newData
         DispatchQueue.main.async {
-            self.showLoading()
-        }
-
-        defer {
-            DispatchQueue.main.async {
-                self.hideLoading()
-            }
-            isFetchingData = false
-        }
-
-        do {
-            try await task()
-        } catch {
-            print("Error fetching data: \(error.localizedDescription)")
+            self.matchingView.updateMatchingCells(with: newData)
         }
     }
 }
@@ -387,9 +380,7 @@ extension MatchingViewController: DropdownViewDelegate {
         
         UserDefaults.standard.set(location, forKey: "selectedLocation")
         _Concurrency.Task {
-            await fetchData {
-                await self.getBoardList()
-            }
+            await self.getBoardList()
         }
     }
 }
@@ -397,9 +388,7 @@ extension MatchingViewController: DropdownViewDelegate {
 extension MatchingViewController: MatchingViewDelegate {
     func didSelectDate(_ date: String) {
         _Concurrency.Task {
-            await fetchData {
-                await self.getBoardList()
-            }
+            await self.getBoardList()
         }
     }
 }
