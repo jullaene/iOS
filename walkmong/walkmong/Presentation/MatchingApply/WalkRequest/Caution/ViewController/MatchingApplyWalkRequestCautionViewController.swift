@@ -96,9 +96,23 @@ final class MatchingApplyWalkRequestCautionViewController: UIViewController {
             return
         }
 
-        let startTime = Date.currentTimestamp()
-        let endTime = Date.currentTimestamp()
-        print("startTime: \(startTime), endTime: \(endTime)")
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
+        isoFormatter.timeZone = TimeZone.current
+
+        // ISO8601 형식 -> Date 변환
+        guard let startDate = isoFormatter.date(from: requestData.startTime),
+              let endDate = isoFormatter.date(from: requestData.endTime) else {
+            print("ISO8601 형식으로 시간을 변환할 수 없습니다: startTime=\(requestData.startTime), endTime=\(requestData.endTime)")
+            showErrorAlert(NSError(domain: "Invalid ISO8601 Format", code: 400, userInfo: nil))
+            return
+        }
+
+        // Date -> 백엔드 요구 형식으로 변환
+        let startTime = Date.formattedDate(startDate, format: "yyyy-MM-dd HH:mm:ss.SSSSSS")
+        let endTime = Date.formattedDate(endDate, format: "yyyy-MM-dd HH:mm:ss.SSSSSS")
+
+        print("변환된 startTime: \(startTime), endTime: \(endTime)")
         
         let parameters: [String: Any] = [
             "dogId": requestData.dogId,
@@ -112,9 +126,12 @@ final class MatchingApplyWalkRequestCautionViewController: UIViewController {
             "additionalRequest": requestData.additionalRequest
         ]
         
+        print("전송 데이터: \(parameters)")
+        
         Task {
             do {
                 let response = try await BoardService().registerBoard(parameters: parameters)
+                print("등록 성공: \(response)")
             } catch {
                 print("등록 실패: \(error)")
                 showErrorAlert(error)
