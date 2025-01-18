@@ -74,7 +74,9 @@ class WalkReviewViewController: UIViewController {
                             reviewerId: review.reviewer,
                             walkDate: formatDate(review.walkingDay)
                         ),
-                        circleTags: [("사회성", review.sociality), ("활동량", review.activity), ("공격성", review.aggressiveness)],
+                        circleTags: [("사회성", mapTag(for: review.sociality)),
+                                     ("활동량", mapTag(for: review.activity)),
+                                     ("공격성", mapTag(for: review.aggressiveness))],
                         photos: review.images.compactMap { URL(string: $0) },
                         reviewText: review.content,
                         totalRating: 0,
@@ -87,6 +89,27 @@ class WalkReviewViewController: UIViewController {
                 self.hideLoading()
                 print("Error: \(error.localizedDescription)")
             }
+        }
+    }
+    
+    private func mapTag(for value: String) -> String {
+        switch value {
+        case "PEOPLE_FRIENDLY": return "#사람 좋아함"
+        case "DOG_FRIENDLY": return "#강아지 좋아함"
+        case "SHY": return "#낯가림 있음"
+        case "PLAYFUL": return "#애교 많음"
+        case "GUARDED": return "#경계심 심함"
+        case "RUNNING_CONSTANTLY": return "#계속 뜀"
+        case "RUNNING_OCCASIONALLY": return "#가끔 뜀"
+        case "WALKING_FAST": return "#빠르게 걸음"
+        case "WALKING_SLOWLY": return "#천천히 걸음"
+        case "FREQUENTLY_STOPPING": return "#자주 멈춤"
+        case "DOCILE": return "#온순함"
+        case "OCCASIONAL_BARKING": return "#가끔 짖음"
+        case "FREQUENT_BARKING": return "#자주 짖음"
+        case "BITING": return "#물려고 함"
+        case "NIPPING": return "#입질 있음"
+        default: return "#알 수 없음"
         }
     }
 
