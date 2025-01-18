@@ -145,6 +145,8 @@ extension MatchingApplyWalkRequestDogProfileSelectionView: UICollectionViewDataS
             }
         } else {
             cell.configureAsAddPet()
+            let nextVC = RegisterPetInfoViewController()
+            self.getViewController()?.navigationController?.pushViewController(nextVC, animated: true)
         }
         
         return cell

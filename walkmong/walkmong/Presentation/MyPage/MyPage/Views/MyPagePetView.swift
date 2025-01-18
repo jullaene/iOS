@@ -141,9 +141,13 @@ class MyPagePetView: UIView, UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard indexPath.item < petProfiles.count else { return }
-        let selectedPet = petProfiles[indexPath.item]
-        delegate?.didSelectPet(dogId: selectedPet.dogId)
+        if indexPath.item < petProfiles.count {
+            let selectedPet = petProfiles[indexPath.item]
+            delegate?.didSelectPet(dogId: selectedPet.dogId)
+        }else {
+            let nextVC = RegisterPetInfoViewController()
+            self.getViewController()?.navigationController?.pushViewController(nextVC, animated: true)
+        }
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
