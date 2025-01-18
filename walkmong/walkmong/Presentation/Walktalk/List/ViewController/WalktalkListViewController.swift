@@ -54,6 +54,8 @@ final class WalktalkListViewController: UIViewController {
 }
 extension WalktalkListViewController {
     func getChatroom(record: Record, status: Status){
+        showLoading()
+        defer { hideLoading() }
         Task {
             do {
                 let response = try await service.getChatroom(record: record, status: status)

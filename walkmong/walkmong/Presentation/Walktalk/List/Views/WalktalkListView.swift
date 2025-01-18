@@ -191,9 +191,9 @@ extension WalktalkListView: UICollectionViewDelegate {
             walktalkListPageCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
             walktalkListPageCollectionView.isPagingEnabled = true
             moveIndicatorBar(targetIndex: indexPath.row)
-            delegate?.didSelectTabBarIndex(record: Record.from(index: selectedTabBarIndex),status: Status.from(index: selectedMatchingStateIndex))
+            delegate?.didSelectTabBarIndex(record: Record.from(index: indexPath.row),status: Status.from(index: selectedMatchingStateIndex))
             walktalkListTabBarCollectionView.reloadData()
-            walktalkListPageCollectionView.reloadData()
+            walktalkListPageCollectionView.reloadItems(at: [indexPath])
         }else if collectionView == walktalkListMatchingStateCollectionView {
             if let previousCell = collectionView.cellForItem(at: IndexPath(item: selectedMatchingStateIndex, section: 0)) as? MatchingStateCollectionViewCell{
                 previousCell.setSelected(textColor: .gray500, backgroundColor: .gray200)
