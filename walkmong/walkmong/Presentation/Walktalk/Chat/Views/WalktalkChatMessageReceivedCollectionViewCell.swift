@@ -27,8 +27,10 @@ class WalktalkChatMessageReceivedCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private let messageLabel: MainParagraphLabel = {
-        let label = MainParagraphLabel(text: "메시지 내용")
+    private let messageLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Pretendard-Medium", size: 16)
+        label.textColor = .gray600
         label.numberOfLines = 0
         label.lineBreakStrategy = .hangulWordPriority
         label.lineBreakMode = .byWordWrapping
