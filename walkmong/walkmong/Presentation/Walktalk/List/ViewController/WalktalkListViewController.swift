@@ -53,16 +53,6 @@ final class WalktalkListViewController: UIViewController {
     }
 }
 extension WalktalkListViewController {
-    func createChatroom(boardId: Int) {
-        Task {
-            do {
-                let response = try await service.createChatroom(boardId: boardId)
-            } catch {
-                print("채팅방 생성 실패: \(error)")
-            }
-        }
-    }
-    
     func getChatroom(record: Record, status: Status){
         Task {
             do {

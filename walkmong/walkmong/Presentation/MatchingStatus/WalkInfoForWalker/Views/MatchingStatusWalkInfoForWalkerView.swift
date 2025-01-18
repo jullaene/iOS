@@ -9,7 +9,14 @@ import UIKit
 import SnapKit
 import NMapsMap
 
+protocol MatchingStatusWalkInfoForWalkerViewDelegate: AnyObject {
+    func didTapWalkTalkButton()
+    func didTapApplyButton()
+}
+
 final class MatchingStatusWalkInfoForWalkerView: UIView {
+    
+    weak var delegate: MatchingStatusWalkInfoForWalkerViewDelegate?
     
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -72,6 +79,7 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        setupButtonActions()
     }
     
     required init?(coder: NSCoder) {
@@ -236,6 +244,20 @@ final class MatchingStatusWalkInfoForWalkerView: UIView {
         mapView.isUserInteractionEnabled = false
         centerMarker.position = initialPosition
         centerMarker.mapView = mapView.mapView
+    }
+    
+    private func setupButtonActions() {
+        let tapGesture = UITapGestureRecognizer(target: self.walkTalkButton, action: #selector(didTapWalkTalkButton))
+        self.walkTalkButton.addGestureRecognizer(tapGesture)
+        applyWalkButton.addTarget(self, action: #selector(didTapApplyWalkButton), for: .touchUpInside)
+    }
+    
+    @objc private func didTapWalkTalkButton() {
+        delegate?.didTapWalkTalkButton()
+    }
+    
+    @objc private func didTapApplyWalkButton() {
+        delegate?.didTapApplyButton()
     }
 
 }

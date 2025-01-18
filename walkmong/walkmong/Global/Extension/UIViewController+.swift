@@ -31,5 +31,33 @@ extension UIViewController {
     func hideLoading() {
         self.view.viewWithTag(999)?.removeFromSuperview()
     }
+    
+    func createChatroom(boardId: Int) {
+        let service = WalktalkService()
+        Task {
+            do {
+                _ = try await service.createChatroom(boardId: boardId)
+                self.navigationController?.popToRootViewController(animated: true)
+                self.tabBarController?.selectedIndex = 2
+            } catch let error as NetworkError {
+                CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                    .setButtonState(.singleButton)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setSingleButtonTitle("돌아가기")
+                    .setTitleText("채팅방 생성 실패")
+                    .setSubTitleText(error.message)
+                    .showAlertView()
+            } catch {
+                // 기타 알 수 없는 오류 처리
+                CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                    .setButtonState(.singleButton)
+                    .setTitleState(.useTitleAndSubTitle)
+                    .setSingleButtonTitle("돌아가기")
+                    .setTitleText("오류 발생")
+                    .setSubTitleText("알 수 없는 오류가 발생했습니다.\n다시 시도해주세요.")
+                    .showAlertView()
+            }
+        }
+    }
 
 }

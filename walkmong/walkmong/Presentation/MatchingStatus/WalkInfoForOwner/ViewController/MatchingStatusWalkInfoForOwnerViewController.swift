@@ -8,7 +8,44 @@
 import UIKit
 import SnapKit
 
-final class MatchingStatusWalkInfoForOwnerViewController: UIViewController {
+final class MatchingStatusWalkInfoForOwnerViewController: UIViewController, MatchingStatusWalkInfoForOwnerViewDelegate {
+    func didTapWalkTalkButton() {
+        if let id = self.matchingData?.boardId {
+            createChatroom(boardId: id)
+        }
+    }
+    
+    func didTapApplyButton() {
+        CustomAlertViewController.CustomAlertBuilder(viewController: self)
+            .setButtonState(.doubleButton)
+            .setTitleState(.useTitleAndSubTitle)
+            .setTitleText("지원 취소")
+            .setSubTitleText("정말 지원을 취소하시겠습니까?")
+            .setLeftButtonTitle("아니요")
+            .setRightButtonTitle("네")
+            .setRightButtonAction({
+//                applyId가 없음...
+//                Task {
+//                    do{
+//                        if let id = self.matchingData?.boardId {
+//                            _ = try await self.service.deleteApplyCancel(applyId: id)
+//                        }
+//                        self.navigationController?.popToRootViewController(animated: true)
+//                    }catch {
+//                        CustomAlertViewController.CustomAlertBuilder(viewController: self)
+//                            .setButtonState(.singleButton)
+//                            .setTitleState(.useTitleAndSubTitle)
+//                            .setTitleText("지원 취소 실패")
+//                            .setSubTitleText("네트워크 상태를 확인해주세요.")
+//                            .setSingleButtonTitle("돌아가기")
+//                            .showAlertView()
+//                    }
+//                }
+            })
+            .showAlertView()
+
+    }
+    
     
     // MARK: - Properties
     private let matchingStatusWalkInfoForOwnerView = MatchingStatusWalkInfoForOwnerView()
@@ -36,6 +73,7 @@ final class MatchingStatusWalkInfoForOwnerViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
             make.leading.trailing.bottom.equalToSuperview()
         }
+        matchingStatusWalkInfoForOwnerView.delegate = self
     }
     
     private func setupNavigationBar() {

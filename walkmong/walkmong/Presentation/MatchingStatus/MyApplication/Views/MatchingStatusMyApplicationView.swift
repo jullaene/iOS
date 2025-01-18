@@ -8,7 +8,14 @@
 import UIKit
 import SnapKit
 
+protocol MatchingStatusMyApplicationViewDelegate: AnyObject {
+    func didTapWalkTalkButton()
+    func didTapApplyButton()
+}
+
 final class MatchingStatusMyApplicationView: UIView {
+    
+    weak var delegate: MatchingStatusMyApplicationViewDelegate?
     
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -54,6 +61,7 @@ final class MatchingStatusMyApplicationView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        setupButtonActions()
     }
     
     required init?(coder: NSCoder) {
@@ -147,5 +155,19 @@ final class MatchingStatusMyApplicationView: UIView {
             make.top.bottom.equalToSuperview().inset(20)
             make.leading.trailing.equalToSuperview().inset(12)
         }
+    }
+    
+    private func setupButtonActions() {
+        let tapGesture = UITapGestureRecognizer(target: self.walkTalkButton, action: #selector(didTapWalkTalkButton))
+        self.walkTalkButton.addGestureRecognizer(tapGesture)
+        applyWalkButton.addTarget(self, action: #selector(didTapApplyWalkButton), for: .touchUpInside)
+    }
+    
+    @objc private func didTapWalkTalkButton() {
+        delegate?.didTapWalkTalkButton()
+    }
+    
+    @objc private func didTapApplyWalkButton() {
+        delegate?.didTapApplyButton()
     }
 }

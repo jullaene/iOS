@@ -41,8 +41,8 @@ struct ApplyService {
         return try await provider.request(target: .getApplyMyForm(applyId: applyId), responseType: ApplyApplicantResponse.self)
     }
     
-    func deleteApplyCancel(applyId: Int) async throws -> EmptyResponse {
-        return try await provider.request(target: .deleteApplyCancel(applyId: applyId), responseType: EmptyResponse.self)
+    func deleteApplyCancel(applyId: Int) async throws -> APIResponse<String> {
+        return try await provider.request(target: .deleteApplyCancel(applyId: applyId), responseType: APIResponse<String>.self)
     }
     
     func deleteApplyCancelMatching(applyId: Int) async throws -> EmptyResponse {

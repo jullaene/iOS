@@ -8,7 +8,43 @@
 import UIKit
 import SnapKit
 
-final class MatchingStatusApplicantDetailViewController: UIViewController {
+final class MatchingStatusApplicantDetailViewController: UIViewController, MatchingStatusApplicantDetailViewDelegate {
+    func didTapWalktalkButton() {
+        if let id = self.matchingData?.boardId {
+            createChatroom(boardId: id)
+        }
+    }
+    
+    func didTapApplyButton() {
+        CustomAlertViewController.CustomAlertBuilder(viewController: self)
+            .setButtonState(.doubleButton)
+            .setTitleState(.useTitleAndSubTitle)
+            .setTitleText("지원 취소")
+            .setSubTitleText("정말 지원을 취소하시겠습니까?")
+            .setLeftButtonTitle("아니요")
+            .setRightButtonTitle("네")
+            .setRightButtonAction({
+                Task {
+                    do{
+                        if let id = self.matchingData?.boardId {
+                            let boardService = BoardService()
+                            _ = try await boardService.changeStatus(status: "AFTER", boardId: id)
+                        }
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }catch {
+                        CustomAlertViewController.CustomAlertBuilder(viewController: self)
+                            .setButtonState(.singleButton)
+                            .setTitleState(.useTitleAndSubTitle)
+                            .setTitleText("매칭 확정 실패")
+                            .setSubTitleText("네트워크 상태를 확인해주세요.")
+                            .setSingleButtonTitle("돌아가기")
+                            .showAlertView()
+                    }
+                }
+            })
+            .showAlertView()
+    }
+    
     
     // MARK: - Properties
     private let applicationDetailView = MatchingStatusApplicantDetailView()
@@ -32,6 +68,7 @@ final class MatchingStatusApplicantDetailViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
             make.leading.trailing.bottom.equalToSuperview()
         }
+        applicationDetailView.delegate = self
     }
     
     private func setupNavigationBar() {
