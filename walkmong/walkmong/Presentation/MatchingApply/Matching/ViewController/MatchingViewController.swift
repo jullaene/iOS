@@ -32,7 +32,7 @@ class MatchingViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(isNavigationBarHidden, animated: animated)
-        
+        self.tabBarController?.tabBar.isHidden = false
         if shouldReloadData() {
             showLoading()
             _Concurrency.Task {

@@ -73,6 +73,7 @@ extension LoginViewController: LoginViewDelegate {
     private func handleLoginSuccess(response: RefreshAccessTokenResponse, keepLogin: Bool, keepEmail: String? = nil) {
         AuthManager.shared.accessToken = response.data.accessToken
         AuthManager.shared.refreshToken = response.data.refreshToken
+        UserDefaults.standard.setValue(response.data.memberId, forKey: "MEMBER_ID")
         if keepLogin {
             UserDefaults.standard.setValue(keepLogin, forKey: "KEEP_LOGIN")
         }

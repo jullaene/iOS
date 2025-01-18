@@ -12,4 +12,5 @@ typealias RefreshAccessTokenResponse = APIResponse<AccessToken>
 struct AccessToken: Codable {
     let accessToken: String
     let refreshToken: String
+    let memberId: Int
 }

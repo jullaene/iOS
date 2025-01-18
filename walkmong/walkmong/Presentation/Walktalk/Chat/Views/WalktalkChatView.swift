@@ -17,7 +17,7 @@ class WalktalkChatView: UIView {
     private var keyboardFrameHeightConstraint: Constraint?
     private var keyboardInputTextViewHeightConstraint: Constraint?
     private let maxTextViewHeight: CGFloat = 100
-    private let userID: Int = 0
+    private let userID: Int = UserDefaults.standard.value(forKey: "MEMBER_ID") as! Int
     private let roomId: Int = 1
     private var chatLog: [HistoryItem] = []
     private var sectionedMessages: [(sectionTitle: String, messages: [HistoryItem])] = []
